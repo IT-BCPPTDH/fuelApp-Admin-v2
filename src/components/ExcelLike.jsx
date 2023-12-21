@@ -2,41 +2,11 @@ import { useState, useCallback, useEffect } from 'react'
 import { Workbook } from '@fortune-sheet/react'
 import { socket } from '../socket'
 
-const ExcelLike = () => {
-  const [isConnected, setIsConnected] = useState(socket.connected)
-
-  const [dataXls, setDataXls] = useState()
+const ExcelLike = ({dataXls, setDataXls }) => {
 
   useEffect(() => {
-    function onConnect () {
-      setIsConnected(true)
-    }
-
-    function onDisconnect () {
-      setIsConnected(false)
-    }
-
-    function onFooEvent (value) {
-      console.log(value)
-      setDataXls(JSON.parse(value))
-    }
-
-    socket.on('connect', onConnect)
-    socket.on('disconnect', onDisconnect)
-    socket.on('update', onFooEvent)
-
-    return () => {
-      socket.off('connect', onConnect)
-      socket.off('disconnect', onDisconnect)
-      socket.off('update', onFooEvent)
-    }
-  }, [])
-
-  useEffect(() => {
-    socket.emit('getData', 'TimeEntry-20231221-bcp', e => {
-      console.log(e)
-    })
-  }, [])
+    console.log(dataXls)
+  }, [dataXls]);
 
   const transformDataFormat = data => {
     let dataArray = []
@@ -93,7 +63,7 @@ const ExcelLike = () => {
         // setIsLoading(false);
       })
     },
-    [transformSheetData]
+    [transformSheetData, setDataXls]
   )
 
   const onOp = useCallback(e => {
