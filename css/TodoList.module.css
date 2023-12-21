@@ -1,0 +1,18 @@
+.todolist {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    max-width: 620px;
+    padding: 24px 0;
+}
+
+.todos {
+    display: flex;
+    flex-direction: column;
+}
+
+.iscompleted label{
+    text-decoration: line-through;
+    text-decoration-thickness: 2px;
+    text-decoration-color: rgb(255, 69, 69);
+}
