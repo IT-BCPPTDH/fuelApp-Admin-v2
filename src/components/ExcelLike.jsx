@@ -4,9 +4,13 @@ import { socket } from '../socket'
 
 const ExcelLike = ({dataXls, setDataXls }) => {
 
-  useEffect(() => {
-    console.log(dataXls)
-  }, [dataXls]);
+  // useEffect(() => {
+   
+  //   if(typeof dataXls === 'undefined'){
+  //     console.log(dataXls)
+  //     setDataXls( [{ name: 'Sheet1', celldata: [{ r: 0, c: 0, v: null }] }],)
+  //   }
+  // }, [dataXls, setDataXls]);
 
   const transformDataFormat = data => {
     let dataArray = []
@@ -59,7 +63,8 @@ const ExcelLike = ({dataXls, setDataXls }) => {
         value: transformedData
       }
 
-      socket.emit('pit-control', JSON.stringify(object), () => {
+      socket.emit('pit-control', JSON.stringify(object), (e) => {
+        console.log(e)
         // setIsLoading(false);
       })
     },

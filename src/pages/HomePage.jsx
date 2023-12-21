@@ -86,7 +86,9 @@ export const HomePage = () => {
 
       <div className={styles.example}>{/* <Divider /> */}</div>
       <div className={styles.tableContainer}>
-        <ExcelLike dataXls={dataXls} setDataXls={setDataXls} />
+      {dataXls && 
+        <ExcelLike dataXls={dataXls} setDataXls={setDataXls}/>
+      }
       </div>
     </>
   )
