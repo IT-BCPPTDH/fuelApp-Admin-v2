@@ -3,91 +3,73 @@ import { Workbook } from '@fortune-sheet/react'
 import { socket } from '../socket'
 
 const ExcelLike = () => {
+  const [isConnected, setIsConnected] = useState(socket.connected)
 
-  const [isConnected, setIsConnected] = useState(socket.connected);
-
-  // const [dataXls, setDataXls] = useState(() => {
-  //   const dataSaved = localStorage.getItem('datanya')
-  //   if (dataSaved) {
-  //     return JSON.parse(dataSaved)
-  //   } else {
-  //     return [
-  //       {
-  //         name: 'Sheet1',
-  //         celldata: [{ r: 0, c: 0, v: { v: 'fortune' } }],
-  //         order: 0,
-  //         row: 25,
-  //         column: 30
-  //       }
-  //     ]
-  //   }
-  // })
   const [dataXls, setDataXls] = useState()
-  
+
   useEffect(() => {
-    function onConnect() {
-      setIsConnected(true);
+    function onConnect () {
+      setIsConnected(true)
     }
 
-    function onDisconnect() {
-      setIsConnected(false);
+    function onDisconnect () {
+      setIsConnected(false)
     }
 
-    function onFooEvent(value) {
+    function onFooEvent (value) {
+      console.log(value)
       setDataXls(JSON.parse(value))
     }
 
-    socket.on('connect', onConnect);
-    socket.on('disconnect', onDisconnect);
-    socket.on('foo', onFooEvent);
+    socket.on('connect', onConnect)
+    socket.on('disconnect', onDisconnect)
+    socket.on('update', onFooEvent)
 
     return () => {
-      socket.off('connect', onConnect);
-      socket.off('disconnect', onDisconnect);
-      socket.off('foo', onFooEvent);
-    };
-  }, []);
+      socket.off('connect', onConnect)
+      socket.off('disconnect', onDisconnect)
+      socket.off('update', onFooEvent)
+    }
+  }, [])
 
   useEffect(() => {
-    socket.emit('getData', 'TimeEntry-20231221-bcp', (e)=>{
+    socket.emit('getData', 'TimeEntry-20231221-bcp', e => {
       console.log(e)
     })
-  }, []);
+  }, [])
 
   const transformDataFormat = data => {
     let dataArray = []
-    if(data){
-      // console.log(data)
+    if (data) {
       data.map((row, rowIndex) =>
-      row.map((cell, colIndex) => {
-        if (!cell) {
-          return null
-        }
-
-        const { bg, bl, cl, ct, fc, ff, fs, ht, it, m, v, vt } = cell
-
-        dataArray.push({
-          c: colIndex,
-          r: rowIndex,
-          v: {
-            bg: bg || null,
-            bl: bl || 0,
-            cl: cl || null,
-            ct: ct || { fa: 'General', t: 'n' },
-            fc: fc || 'rgb(51, 51, 51)',
-            ff: ff || 0,
-            fs: fs || 11,
-            ht: ht || 0,
-            it: it || 0,
-            m: m || '',
-            v: v || null,
-            vt: vt || 0
+        row.map((cell, colIndex) => {
+          if (!cell) {
+            return null
           }
+
+          const { bg, bl, cl, ct, fc, ff, fs, ht, it, m, v, vt } = cell
+
+          dataArray.push({
+            c: colIndex,
+            r: rowIndex,
+            v: {
+              bg: bg || null,
+              bl: bl || 0,
+              cl: cl || null,
+              ct: ct || { fa: 'General', t: 'n' },
+              fc: fc || 'rgb(51, 51, 51)',
+              ff: ff || 0,
+              fs: fs || 11,
+              ht: ht || 0,
+              it: it || 0,
+              m: m || '',
+              v: v || null,
+              vt: vt || 0
+            }
+          })
         })
-      })
-    )
+      )
     }
- 
 
     return dataArray
   }
@@ -96,30 +78,26 @@ const ExcelLike = () => {
     return { ...sheet, celldata: transformedData }
   }, [])
 
-  const onChange = useCallback(e => {
-  // console.log(e)
-    const transformedData = e.map(sheet => transformSheetData(sheet))
+  const onChange = useCallback(
+    e => {
+      const transformedData = e.map(sheet => transformSheetData(sheet))
+      setDataXls(transformedData)
 
-    // console.log(transformedData)
+      const keynya = 'TimeEntry-20231221-bcp'
+      const object = {
+        key: keynya,
+        value: transformedData
+      }
 
-    setDataXls(transformedData)
-    // localStorage.setItem('datanya', JSON.stringify(transformedData))
-
-    const keynya = 'TimeEntry-20231221-bcp'
-    const object = {
-      key: keynya,
-      value: transformedData
-    }
-
-    // console.log(object)
-    
-    socket.emit('pit-control', JSON.stringify(object), () => {
-      // setIsLoading(false);
-    });
-  }, [transformSheetData])
+      socket.emit('pit-control', JSON.stringify(object), () => {
+        // setIsLoading(false);
+      })
+    },
+    [transformSheetData]
+  )
 
   const onOp = useCallback(e => {
-    console.log(e)
+    // console.log(e)
   }, [])
 
   return (
