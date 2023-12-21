@@ -5,24 +5,24 @@ import { socket } from '../socket'
 const ExcelLike = () => {
 
   const [isConnected, setIsConnected] = useState(socket.connected);
-  const [fooEvents, setFooEvents] = useState([]);
 
-  const [dataXls, setDataXls] = useState(() => {
-    const dataSaved = localStorage.getItem('datanya')
-    if (dataSaved) {
-      return JSON.parse(dataSaved)
-    } else {
-      return [
-        {
-          name: 'Sheet1',
-          celldata: [{ r: 0, c: 0, v: { v: 'fortune' } }],
-          order: 0,
-          row: 25,
-          column: 30
-        }
-      ]
-    }
-  })
+  // const [dataXls, setDataXls] = useState(() => {
+  //   const dataSaved = localStorage.getItem('datanya')
+  //   if (dataSaved) {
+  //     return JSON.parse(dataSaved)
+  //   } else {
+  //     return [
+  //       {
+  //         name: 'Sheet1',
+  //         celldata: [{ r: 0, c: 0, v: { v: 'fortune' } }],
+  //         order: 0,
+  //         row: 25,
+  //         column: 30
+  //       }
+  //     ]
+  //   }
+  // })
+  const [dataXls, setDataXls] = useState()
   
   useEffect(() => {
     function onConnect() {
@@ -34,8 +34,6 @@ const ExcelLike = () => {
     }
 
     function onFooEvent(value) {
-      console.log(JSON.parse(value))
-      setFooEvents(JSON.parse(value));
       setDataXls(JSON.parse(value))
     }
 
@@ -59,6 +57,7 @@ const ExcelLike = () => {
   const transformDataFormat = data => {
     let dataArray = []
     if(data){
+      // console.log(data)
       data.map((row, rowIndex) =>
       row.map((cell, colIndex) => {
         if (!cell) {
@@ -94,8 +93,7 @@ const ExcelLike = () => {
   }
   const transformSheetData = useCallback(sheet => {
     const transformedData = transformDataFormat(sheet.data)
-    // delete sheet.data; // Remove the 'data' key
-    return { ...sheet, celldata: transformedData, data: [] }
+    return { ...sheet, celldata: transformedData }
   }, [])
 
   const onChange = useCallback(e => {
@@ -105,7 +103,7 @@ const ExcelLike = () => {
     // console.log(transformedData)
 
     setDataXls(transformedData)
-    localStorage.setItem('datanya', JSON.stringify(transformedData))
+    // localStorage.setItem('datanya', JSON.stringify(transformedData))
 
     const keynya = 'TimeEntry-20231221-bcp'
     const object = {
@@ -113,7 +111,7 @@ const ExcelLike = () => {
       value: transformedData
     }
 
-    console.log(object)
+    // console.log(object)
     
     socket.emit('pit-control', JSON.stringify(object), () => {
       // setIsLoading(false);
