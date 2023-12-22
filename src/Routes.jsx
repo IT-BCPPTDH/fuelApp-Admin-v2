@@ -1,27 +1,31 @@
-import { useState, useEffect } from 'react'
-import { Route, Routes } from 'react-router-dom'
-import { HomePage } from './pages/HomePage'
-import Cookies from 'js-cookie'
+import { useState, useEffect } from 'react';
+import { Route, Routes } from 'react-router-dom';
+import { HomePage } from './pages/HomePage'; // Adjust the import if needed
+import { Loginpage } from './components/card'; // Adjust the import if needed
+import Cookies from 'js-cookie';
 
 const RouteApp = () => {
+  const [authen, setAuthen] = useState(() => {
+    const userCookie = Cookies.get('user');
+    return Boolean(userCookie);
+  });
 
-    const [authen, setAuthen] = useState(() => {
-        const userCookie = Cookies.get('user')
-        return Boolean(userCookie)
-      })
-    
-      useEffect(() => {
-        const userCookie = Cookies.get('user')
-        if (userCookie) {
-          setAuthen(true)
-        }
-      }, [authen])
+  useEffect(() => {
+    const userCookie = Cookies.get('user');
+    if (userCookie) {
+      setAuthen(true);
+    }
+  }, []);
 
   return (
     <Routes>
+      
       <Route path='/' element={<HomePage />} />
-    </Routes>
-  )
-}
+      <Route path='/login' element={<Loginpage />} />
 
-export default RouteApp
+    </Routes>
+  );
+};
+
+export default RouteApp;
+
