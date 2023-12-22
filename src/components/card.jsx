@@ -19,8 +19,9 @@ const useStyles = makeStyles({
     width: "450px",
     backgroundColor: "#e3f3ff", 
     position: "absolute",
-   
+    justifyContent:"center",
     boxShadow: "0 0 20px rgba(0, 0, 0, 0.2)", 
+
   },
 });
 export const Loginpage = () => {

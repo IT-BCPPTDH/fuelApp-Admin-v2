@@ -1,4 +1,5 @@
 import * as React from "react";
+import { useState } from "react";
 import {
   makeStyles,
   shorthands,
@@ -9,7 +10,8 @@ import {
 } from "@fluentui/react-components";
 import { Button } from "@fluentui/react-components";
 import Logo from '../images/dewa.png';
-
+import { useNavigate } from "react-router-dom";
+import Cookies from 'js-cookie';
 const { spacingVerticalXXS, spacingVerticalMNudge, spacingHorizontalMNudge, colorNeutralBackgroundInverted, colorNeutralForegroundInverted2 } = tokens;
 
 const useStyles = makeStyles({
@@ -65,9 +67,32 @@ const useStyles = makeStyles({
 export const InputForm = () => {
   const underlineId1 = useId("input-underline1");
   const underlineId2 = useId("input-underline2");
-
+  const [jde, setJde] = useState(""); 
+  const [password, setPassword] = useState("");
+  const navigate = useNavigate(); 
   const styles = useStyles();
-  
+
+  const handleLogin = async () => {
+    try {
+
+      const response = await fetch("https://be-collector.thinkmatch.id/auth/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ JDE:jde, password }),
+      });
+      if (response.ok) {
+        navigate('/');
+        console.log("Berhasil Masuk");
+      } else {
+        console.error("Gagal Masuk");
+      }
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  };
+
   return (
     <div className={styles.base}>
       <div className={styles.field}>
@@ -75,12 +100,29 @@ export const InputForm = () => {
         <div className={styles.label}>Sign In</div>
       </div>
       <div className={styles.field}>
-        <Input appearance="underline" id={underlineId1} placeholder="Username" className={styles.input} />
+        <Input
+          appearance="underline"
+          id={underlineId1}
+          placeholder="Enter JDE"
+          className={styles.input}
+          value={jde}
+          onChange={(e) => setJde(e.target.value)}
+        />
       </div>
       <div className={styles.field}>
-        <Input appearance="underline" id={underlineId2} placeholder="Password" className={styles.input} />
+        <Input
+          appearance="underline"
+          id={underlineId2}
+          placeholder="Password "
+          className={styles.input}
+          type="password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+        />
       </div>
-      <Button className={styles.signInButton}>Login</Button>
+      <Button className={styles.signInButton} onClick={handleLogin}>
+        Login
+      </Button>
     </div>
       
   );

@@ -19,9 +19,10 @@ const RouteApp = () => {
 
   return (
     <Routes>
+       <Route path='/login' element={<Loginpage />} />
       
       <Route path='/' element={<HomePage />} />
-      <Route path='/login' element={<Loginpage />} />
+     
 
     </Routes>
   );
