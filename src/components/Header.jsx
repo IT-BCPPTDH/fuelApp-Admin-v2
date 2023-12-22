@@ -18,12 +18,15 @@ const Header = () => {
       className={styles.root}
       style={{ padding: '10px 38px', borderBottom: '1px solid #c8c8c8' }}
     >
-      <Image alt='Darma Henwa' src={Logo} height={26} width={130} />
-      <Subtitle2
-        style={{ position: 'relative', right: '50px', color: '#107c10' }}
-      >
-        Pit Control Data Collector
-      </Subtitle2>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '65px' }}>
+        <Image alt='Darma Henwa' src={Logo} height={26} width={130} />
+        <Subtitle2
+          style={{ position: 'relative', right: '50px', color: '#555' }}
+        >
+          Pit Control Data Collector
+        </Subtitle2>
+      </div>
+
       <Image
         alt="Erik's avatar"
         shape='circular'

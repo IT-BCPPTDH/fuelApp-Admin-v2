@@ -1,7 +1,9 @@
 import { useState, useEffect } from 'react'
 import { Route, Routes } from 'react-router-dom'
-import { HomePage } from './pages/HomePage'
 import Cookies from 'js-cookie'
+import { HomePage } from './pages/HomePage'
+import DashboardPage from './pages/DashboardPage'
+
 
 const RouteApp = () => {
 
@@ -19,7 +21,8 @@ const RouteApp = () => {
 
   return (
     <Routes>
-      <Route path='/' element={<HomePage />} />
+      <Route path='/' element={<DashboardPage />} />
+      <Route path='/home' element={<HomePage />} />
     </Routes>
   )
 }
