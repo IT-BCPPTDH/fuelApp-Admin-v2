@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { makeStyles, tokens, Field } from '@fluentui/react-components'
+import { makeStyles, tokens, Field, Spinner } from '@fluentui/react-components'
 import Title from '../components/Title'
 import ExcelLike from '../components/ExcelLike'
 import { DatePicker } from '@fluentui/react-datepicker-compat'
@@ -86,8 +86,9 @@ export const HomePage = () => {
 
       <div className={styles.example}>{/* <Divider /> */}</div>
       <div className={styles.tableContainer}>
-      {dataXls && 
-        <ExcelLike dataXls={dataXls} setDataXls={setDataXls}/>
+      {dataXls ? 
+        <ExcelLike dataXls={dataXls} setDataXls={setDataXls}/> :
+        <Spinner size="small" label="Please wait while loading all data..." />
       }
       </div>
     </>

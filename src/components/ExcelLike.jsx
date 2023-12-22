@@ -1,16 +1,9 @@
 import { useState, useCallback, useEffect } from 'react'
 import { Workbook } from '@fortune-sheet/react'
 import { socket } from '../socket'
+import { makeStyles, shorthands, Spinner } from "@fluentui/react-components";
 
 const ExcelLike = ({dataXls, setDataXls }) => {
-
-  // useEffect(() => {
-   
-  //   if(typeof dataXls === 'undefined'){
-  //     console.log(dataXls)
-  //     setDataXls( [{ name: 'Sheet1', celldata: [{ r: 0, c: 0, v: null }] }],)
-  //   }
-  // }, [dataXls, setDataXls]);
 
   const transformDataFormat = data => {
     let dataArray = []

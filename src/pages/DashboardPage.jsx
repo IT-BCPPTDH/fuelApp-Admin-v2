@@ -190,6 +190,7 @@ const DashboardPage = () => {
         }}
       >
         <Title title='Data Collection' />
+        
       </div>
       <section>
         <Header
