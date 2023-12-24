@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Route, Routes } from 'react-router-dom';
-import { HomePage } from './pages/HomePage'; // Adjust the import if needed
-import { Loginpage } from './components/card'; // Adjust the import if needed
+import { HomePage } from './pages/HomePage'; 
+import { Loginpage } from './components/card'; 
 import Cookies from 'js-cookie';
 
 const RouteApp = () => {

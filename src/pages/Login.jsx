@@ -1,6 +1,6 @@
 import React from "react";
 import { Loginpage } from "../components/card";
-import backgroundImage from "../images/bglogin.png"; // Update the path accordingly
+import backgroundImage from "../images/bglogin.png"; 
 
 const Login = () => {
   return (
@@ -13,7 +13,7 @@ const Login = () => {
             background-size: cover;
             posision:absolute;x
             margin: 0; 
-            height: 100vh; 
+            height: 42vh; 
             overflow: hidden; 
           }
         `}

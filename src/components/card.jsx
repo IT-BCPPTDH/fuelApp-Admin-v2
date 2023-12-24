@@ -28,16 +28,23 @@ export const Loginpage = () => {
   const styles = useStyles();
 
   return (
-    <div className={styles.fluentProvider}>
+    <>
+        <div className={styles.fluentProvider}>
       <Card className={styles.card}>
         <CardHeader
           header={
             <Body1>
               <InputForm />
+            
             </Body1>
           }
         />
       </Card>
+   
     </div>
+   
+    </>
+
+      
   );
 };
