@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import {
   makeStyles,
   shorthands,
@@ -8,7 +8,10 @@ import {
   Subtitle1,
   Text,
   Divider,
-  tokens
+  tokens,
+  Title2,
+  useModalAttributes,
+  useFocusFinders
 } from '@fluentui/react-components'
 import {
   MoreHorizontal20Regular,
@@ -22,6 +25,10 @@ import {
   CardPreview
 } from '@fluentui/react-components'
 import Title from '../components/Title'
+import axios from 'axios'
+import { DatePicker } from '@fluentui/react-datepicker-compat'
+import { forSocket } from '../helpers/convertDate'
+import { useNavigate } from 'react-router-dom'
 
 const resolveAsset = asset => {
   const ASSET_URL =
@@ -68,6 +75,30 @@ const useStyles = makeStyles({
     justifyItems: 'center',
     minHeight: '20px'
     // backgroundColor: tokens.colorNeutralBackground1,
+  },
+  dialog: {
+    position: "fixed",
+    backgroundColor: tokens.colorNeutralBackground1,
+    ...shorthands.inset(0),
+    ...shorthands.padding("10px"),
+    ...shorthands.margin("auto"),
+    ...shorthands.borderStyle("none"),
+    ...shorthands.overflow("unset"),
+    boxShadow: tokens.shadow16,
+    width: "450px",
+    height: "200px",
+    display: "flex",
+    flexDirection: "column",
+  },
+
+  footer: {
+    display: "flex",
+    marginTop: "auto",
+    justifyContent: "end",
+    ...shorthands.gap("5px"),
+  },
+  control: {
+    maxWidth: '300px'
   }
 })
 
@@ -95,7 +126,7 @@ const CardExample = props => {
   const styles = useStyles()
 
   return (
-    <Card className={styles.card} orientation='horizontal'>
+    <Card className={styles.card} orientation='horizontal' href={`${props.link}`}>
       <CardPreview className={styles.horizontalCardImage}>
         <img
           className={styles.horizontalCardImage}
@@ -174,11 +205,57 @@ const dataFilesSample = [
 
 const DashboardPage = () => {
   const styles = useStyles()
+  const navigate = useNavigate();
+
+  const [dateFile, setDateFile] = useState()
+  const [dataFile, setDataFile] = useState([])
+  const [open, setOpen] = useState(false);
+  const { triggerAttributes, modalAttributes } = useModalAttributes({
+    trapFocus: true,
+  });
+  const { findFirstFocusable } = useFocusFinders();
+  const triggerRef = useRef(null);
+  const dialogRef = useRef(null);
+
+  const getData = async () =>{
+    let response = await axios.get('http://localhost:3939/v1/getallfile')
+    setDataFile(response.data.data)
+  }
 
   useEffect(() => {
     document.title = 'Homepage Data Collection - PTDH'
-  }, [])
+    getData()
+    if (open && dialogRef.current) {
+      findFirstFocusable(dialogRef.current)?.focus();
+    }
+  }, [open,findFirstFocusable])
 
+
+  const onClickTrigger = () => {
+    setOpen(true);
+  };
+
+  const onClickClose = () => {
+    setOpen(false);
+    triggerRef.current?.focus();
+  };
+
+  const onDialogKeydown = (e) => {
+    if (e.key === "Escape") {
+      setOpen(false);
+      triggerRef.current?.focus();
+    }
+  };
+
+  const handleDate = (date) =>{
+    let dt = forSocket(date)
+    setDateFile(dt)
+  }
+
+  const createFile = () =>{
+    navigate(`/collector/TimeEntry-${dateFile}-bcp`)
+  }
+  
   return (
     <div className={styles.main}>
       <div
@@ -205,9 +282,29 @@ const DashboardPage = () => {
             flexFlow: 'wrap'
           }}
         >
-          {dataFilesSample.map((v, i) => (
+          {/* {dataFilesSample.map((v, i) => (
             <CardExample key={i} name={v.name} desc={v.desc} link={v.link} />
-          ))}
+          ))} */}
+          {
+          dataFile?(
+            <>
+            <Button ref={triggerRef} {...triggerAttributes} onClick={onClickTrigger} style={{width: '100px',maxWidth: '100%',height: '55px'}} className={styles.signInButton}>
+                  +
+            </Button>  
+            {
+              dataFile?.map((v, i) => (
+                <CardExample key={i} name={v.key}  link={`/collector/${v.key}`}/>
+              ))
+            }
+            </>
+            ):(
+              <>
+                <Button ref={triggerRef} {...triggerAttributes} onClick={onClickTrigger} style={{width: '100px',maxWidth: '100%',height: '55px'}} className={styles.signInButton}>
+                  +
+                </Button>  
+              </>  
+              )
+            }
         </div>
       </section>
       <div className={styles.divider}>
@@ -227,9 +324,33 @@ const DashboardPage = () => {
           }}
         >
           {dataFiles.map((v, i) => (
-            <CardExample key={i} name={v.name} desc={v.desc} link={v.link} />
+            <CardExample key={i} name={v.name} desc={v.desc} />
           ))}
-        </div>
+      {open &&(
+          <div
+            onKeyDown={onDialogKeydown}
+            ref={dialogRef}
+            aria-modal="true"
+            role="dialog"
+            className={styles.dialog}
+            aria-label="Example dialog"
+          >
+            <Title2 as="h2">Example dialog</Title2>
+            <DatePicker
+            className={styles.control}
+            placeholder='Select a date...'
+            // {...props}
+            // value={date}
+            onSelectDate={handleDate}
+          />
+            <div className={styles.footer}>
+              <Button onClick={createFile}>Create</Button>
+              <Button onClick={onClickClose}>Close</Button>
+            </div>
+          </div>
+      )
+    }
+    </div>
       </section>
     </div>
   )

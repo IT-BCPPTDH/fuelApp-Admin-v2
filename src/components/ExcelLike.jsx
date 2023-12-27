@@ -3,7 +3,7 @@ import { Workbook } from '@fortune-sheet/react'
 import { socket } from '../socket'
 import { makeStyles, shorthands, Spinner } from "@fluentui/react-components";
 
-const ExcelLike = ({dataXls, setDataXls }) => {
+const ExcelLike = ({dataXls, setDataXls, dateSocket, id }) => {
 
   const transformDataFormat = data => {
     let dataArray = []
@@ -50,12 +50,11 @@ const ExcelLike = ({dataXls, setDataXls }) => {
       const transformedData = e.map(sheet => transformSheetData(sheet))
       setDataXls(transformedData)
 
-      const keynya = 'TimeEntry-20231221-bcp'
+      const keynya = `${id}`
       const object = {
         key: keynya,
         value: transformedData
       }
-
       socket.emit('pit-control', JSON.stringify(object), (e) => {
         console.log(e)
         // setIsLoading(false);
@@ -68,6 +67,7 @@ const ExcelLike = ({dataXls, setDataXls }) => {
     // console.log(e)
   }, [])
 
+  console.log(1,id)
   return (
     <div
       style={{

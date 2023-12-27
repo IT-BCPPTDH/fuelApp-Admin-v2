@@ -33,11 +33,28 @@ const lightTheme = {
 };
 
 function App() {
+  const [authen, setAuthen] = useState(() => {
+    const userCookie = Cookies.get('token');
+    return Boolean(userCookie);
+  });
+
+  useEffect(() => {
+    const userCookie = Cookies.get('token');
+    if (userCookie) {
+      setAuthen(true);
+    }
+  }, []);  
   
   return (
     <FluentProvider theme={lightTheme}>
       <Router>
         <Routes>
+        {
+            !authen?(
+              <>
+              <Route path="*" exec element={<Login />} />
+              </>
+            ):(
               <Route
                 path="*"
                 element={
@@ -52,6 +69,8 @@ function App() {
                   </div>
                 }
               />
+            )
+        }
         </Routes>
       </Router>
     </FluentProvider>

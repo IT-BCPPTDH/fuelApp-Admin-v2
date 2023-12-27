@@ -20,21 +20,25 @@ const RouteApp = () => {
   }, []);  
 
   return (
-    <Routes>
-      {
-            !authen?(
-              <>
-              <Route path="*" exec element={<Login />} />
-              </>
-            ):(
-              <>
-              <Route path='/' element={<DashboardPage />} />
-              <Route path='/home' element={<HomePage />} />
-              </>
-            )
-        }
+    // <Routes>
+    //   {
+    //         !authen?(
+    //           <>
+    //           <Route path="*" exec element={<Login />} />
+    //           </>
+    //         ):(
+    //           <>
+    //           <Route path='/' element={<DashboardPage />} />
+    //           <Route path='/collector/:id' element={<HomePage />} />
+    //           </>
+    //         )
+    //     }
       
-    </Routes>
+    // </Routes>
+    <Routes>
+      <Route path='/' element={<DashboardPage />} />
+      <Route path='/collector/:id' element={<HomePage />} />    
+  </Routes>
   )
 }
 

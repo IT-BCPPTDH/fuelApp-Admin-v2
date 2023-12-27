@@ -69,7 +69,7 @@ export const InputForm = () => {
   const underlineId2 = useId("input-underline2");
   const [jde, setJde] = useState(""); 
   const [password, setPassword] = useState("");
-  const navigate = useNavigate(); 
+  // const navigate = useNavigate(); 
   const styles = useStyles();
 
   const handleLogin = async () => {
@@ -85,7 +85,7 @@ export const InputForm = () => {
       console.log(response)
       if (response.status === 200) {
         Cookies.set('token', response.jwt, { expires: 1 });
-        navigate('/');
+        // navigate('/');
         window.location.reload()
       } else {
         console.error("Gagal Masuk");
