@@ -1,53 +1,61 @@
-import { BrowserRouter as Router} from 'react-router-dom'
+import { useEffect, useState } from 'react';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import {
   FluentProvider,
-  createLightTheme
-} from '@fluentui/react-components'
+  createLightTheme,
+} from '@fluentui/react-components';
+import Login from './pages/Login';
+import Sidebar from './components/Sidebar';
+import Header from './components/Header';
+import RouteApp from './Routes';
+import './style.css';
+import Cookies from 'js-cookie';
 
-import Sidebar from './components/Sidebar'
-import Header from './components/Header'
-import './style.css'
-import RouteApp from './Routes'
+const dh = {
+  palette: {
+    themePrimary: '#0078D4', // Primary color
+    themeSecondary: '#2B88D8', // Secondary color
+    themeTertiary: '#71AFE5', // Tertiary color
+    neutralPrimary: '#333333', // Primary text color
+    neutralSecondary: '#666666', // Secondary text color
+    neutralBackground: '#F4F4F4', // Background color
+  },
+  typography: {
+    defaultFontStyle: {
+      fontFamily: '"Segoe UI", sans-serif',
+    },
+  },
+ 
+};
 
-function App () {
-  const dh = {
-    10: '#020402',
-    20: '#141B10',
-    30: '#1F2D18',
-    40: '#263A1D',
-    50: '#2E4823',
-    60: '#365628',
-    70: '#3D652D',
-    80: '#457433',
-    90: '#4E8338',
-    100: '#56923D',
-    110: '#5EA243',
-    120: '#66B248',
-    130: '#7BC15E',
-    140: '#96CD7D',
-    150: '#AFD99B',
-    160: '#C9E5BA'
-  }
+const lightTheme = {
+  ...createLightTheme(dh),
+};
 
-  const lightTheme = {
-    ...createLightTheme(dh)
-  }
-
+function App() {
+  
   return (
     <FluentProvider theme={lightTheme}>
       <Router>
-        <div style={{ display: 'flex' }}>
-          <Sidebar />
-          <div style={{ flex: '1 1 auto' }}>
-            <Header />
-            <div className={`container`}>
-             <RouteApp />
-            </div>
-          </div>
-        </div>
+        <Routes>
+              <Route
+                path="*"
+                element={
+                  <div style={{ display: 'flex' }}>
+                    <Sidebar />
+                    <div style={{ flex: '1 1 auto' }}>
+                      <Header />
+                      <div className={`container`}>
+                        <RouteApp />
+                      </div>
+                    </div>
+                  </div>
+                }
+              />
+        </Routes>
       </Router>
     </FluentProvider>
-  )
+  );
 }
 
-export default App
+export default App;
