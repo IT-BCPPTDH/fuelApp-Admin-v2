@@ -191,7 +191,7 @@ const DashboardPage = () => {
   const dialogRef = useRef(null);
 
   const getData = async () =>{
-    let response = await axios.get('http://localhost:3939/v1/getallfile')
+    let response = await axios.get(`${import.meta.env.VITE_LINK_BACKEND}/v1/getallfile`)
     setDataFile(response.data.data)
   }
 
