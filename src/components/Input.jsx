@@ -12,6 +12,7 @@ import { Button } from "@fluentui/react-components";
 import Logo from '../images/dewa.png';
 import { useNavigate } from "react-router-dom";
 import Cookies from 'js-cookie';
+import axios from "axios";
 const { spacingVerticalXXS, spacingVerticalMNudge, spacingHorizontalMNudge, colorNeutralBackgroundInverted, colorNeutralForegroundInverted2 } = tokens;
 
 const useStyles = makeStyles({
@@ -74,18 +75,12 @@ export const InputForm = () => {
 
   const handleLogin = async () => {
     try {
-
-      const response = await fetch("https://be-collector.thinkmatch.id/auth/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ JDE:jde, password }),
-      });
-      console.log(response)
+      let response = await axios.post(`${import.meta.env.VITE_LINK_BACKEND}/auth/login`,{JDE:jde,password:password})
+      
       if (response.status === 200) {
-        Cookies.set('token', response.jwt, { expires: 1 });
-        // navigate('/');
+        Cookies.set('token', response.data.jwt, { expires: 1 });
+        Cookies.set('user', JSON.stringify(response.data.user), { expires: 1 });
+        
         window.location.reload()
       } else {
         console.error("Gagal Masuk");

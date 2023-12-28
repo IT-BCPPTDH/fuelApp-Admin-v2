@@ -4,7 +4,7 @@ import Title from '../components/Title'
 import ExcelLike from '../components/ExcelLike'
 import { DatePicker } from '@fluentui/react-datepicker-compat'
 import { socket } from '../socket'
-import { forSocket } from '../helpers/convertDate'
+import { dateToString, forSocket } from '../helpers/convertDate'
 import { useParams } from 'react-router-dom'
 
 const useStyles = makeStyles({
@@ -32,8 +32,7 @@ export const HomePage = () => {
   const styles = useStyles()
 
   const [isConnected, setIsConnected] = useState(socket.connected)
-  const [date, setDate] = useState(new Date)
-  const [dateSocket, setDateSocket] = useState(forSocket(new Date))
+  
 
   const [dataXls, setDataXls] = useState()
   const { id } = useParams();
@@ -48,7 +47,7 @@ export const HomePage = () => {
     }
 
     function onFooEvent (value) {
-      console.log(value)
+      // console.log(value)
       setDataXls(JSON.parse(value))
     }
 
@@ -67,16 +66,9 @@ export const HomePage = () => {
     socket.emit('getData', `${id}`, e => {
       console.log(e)
     })
-  }, [dateSocket])
+  }, [])
 
-  const handleDate = (date) =>{
-    setDate(date)
-    let dt = forSocket(date)
-    setDateSocket(dt)
-    socket.emit('getData', `TimeEntry-${dateSocket}-bcp`, e => {
-      console.log(e)
-    })
-  }
+
   
   return (
     <>
@@ -88,8 +80,8 @@ export const HomePage = () => {
           justifyContent: 'space-between'
         }}
       >
-        {/* <Title title='Time Entry 19 December 2023, Site: BCP' />
-        <Field label='Select a date'>
+        <Title title={`Time Entry ${dateToString(id)}, Site: BCP`} />
+        {/* <Field label='Select a date'>
           <DatePicker
             className={styles.control}
             placeholder='Select a date...'
@@ -103,7 +95,7 @@ export const HomePage = () => {
       <div className={styles.example}>{/* <Divider /> */}</div>
       <div className={styles.tableContainer}>
       {dataXls ? 
-        <ExcelLike dataXls={dataXls} setDataXls={setDataXls} dateSocket={dateSocket} id={id}/> :
+        <ExcelLike dataXls={dataXls} setDataXls={setDataXls}  id={id}/> :
         <Spinner size="small" label="Please wait while loading all data..." />
       }
       </div>

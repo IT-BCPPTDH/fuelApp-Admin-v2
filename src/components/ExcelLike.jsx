@@ -2,8 +2,16 @@ import { useState, useCallback, useEffect } from 'react'
 import { Workbook } from '@fortune-sheet/react'
 import { socket } from '../socket'
 import { makeStyles, shorthands, Spinner } from "@fluentui/react-components";
+import Cookies from 'js-cookie';
 
-const ExcelLike = ({dataXls, setDataXls, dateSocket, id }) => {
+const ExcelLike = ({dataXls, setDataXls, id }) => {
+
+  const [user, setUser] = useState(() => {
+    let userCookie = Cookies.get('user');
+    userCookie = JSON.parse(userCookie);
+    return userCookie
+    
+  });
 
   const transformDataFormat = data => {
     let dataArray = []
@@ -53,7 +61,8 @@ const ExcelLike = ({dataXls, setDataXls, dateSocket, id }) => {
       const keynya = `${id}`
       const object = {
         key: keynya,
-        value: transformedData
+        value: transformedData,
+        user:`${user.JDE} - ${user.fullname}`
       }
       socket.emit('pit-control', JSON.stringify(object), (e) => {
         console.log(e)
@@ -67,7 +76,6 @@ const ExcelLike = ({dataXls, setDataXls, dateSocket, id }) => {
     // console.log(e)
   }, [])
 
-  console.log(1,id)
   return (
     <div
       style={{

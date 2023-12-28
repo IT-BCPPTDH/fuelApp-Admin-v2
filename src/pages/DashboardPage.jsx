@@ -29,6 +29,7 @@ import axios from 'axios'
 import { DatePicker } from '@fluentui/react-datepicker-compat'
 import { forSocket } from '../helpers/convertDate'
 import { useNavigate } from 'react-router-dom'
+import Cookies from 'js-cookie'
 
 const resolveAsset = asset => {
   const ASSET_URL =
@@ -125,8 +126,12 @@ const Header = ({ title, description }) => {
 const CardExample = props => {
   const styles = useStyles()
 
+  const handlerClick = () =>{
+    props.navigate(`${props.link}`)
+  }
+
   return (
-    <Card className={styles.card} orientation='horizontal' href={`${props.link}`}>
+    <Card className={styles.card} orientation='horizontal' onClick={handlerClick}>
       <CardPreview className={styles.horizontalCardImage}>
         <img
           className={styles.horizontalCardImage}
@@ -170,38 +175,6 @@ const dataFiles = [
   }
 ]
 
-const dataFilesSample = [
-  {
-    name: 'Time Entry 20 Desember 2023',
-    desc: 'Data Time Entry by Pit Control',
-    link: '/collector/time-entry'
-  },
-  {
-    name: 'Production 21 Desember 2023',
-    desc: 'Data Collector for Production Records',
-    link: '/collector/production'
-  },
-  {
-    name: 'Mine Plan 20 Desember 2023',
-    desc: 'Data Collector for Mine Planning Activity',
-    link: '/collector/mine-plan'
-  },
-  {
-    name: 'Time Entry 21 Desember 2023',
-    desc: 'Data Time Entry by Pit Control',
-    link: '/collector/time-entry'
-  },
-  {
-    name: 'Production 20 Desember 2023',
-    desc: 'Data Collector for Production Records',
-    link: '/collector/production'
-  },
-  {
-    name: 'Mine Plan 21 Desember 2023',
-    desc: 'Data Collector for Mine Planning Activity',
-    link: '/collector/mine-plan'
-  }
-]
 
 const DashboardPage = () => {
   const styles = useStyles()
@@ -293,7 +266,7 @@ const DashboardPage = () => {
             </Button>  
             {
               dataFile?.map((v, i) => (
-                <CardExample key={i} name={v.key}  link={`/collector/${v.key}`}/>
+                <CardExample key={i} name={v.key}  link={`/collector/${v.key}`} desc={`last updated by ${v.updated_at}`} navigate={navigate}/>
               ))
             }
             </>
@@ -333,14 +306,12 @@ const DashboardPage = () => {
             aria-modal="true"
             role="dialog"
             className={styles.dialog}
-            aria-label="Example dialog"
+            aria-label="Select Date"
           >
-            <Title2 as="h2">Example dialog</Title2>
+            <Title2 as="h2">Select Date</Title2>
             <DatePicker
             className={styles.control}
             placeholder='Select a date...'
-            // {...props}
-            // value={date}
             onSelectDate={handleDate}
           />
             <div className={styles.footer}>
