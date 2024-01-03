@@ -11,7 +11,8 @@ import {
   tokens,
   Title2,
   useModalAttributes,
-  useFocusFinders
+  useFocusFinders,
+  mergeClasses
 } from '@fluentui/react-components'
 import {
   MoreHorizontal20Regular,
@@ -130,17 +131,42 @@ const CardExample = props => {
     props.navigate(`${props.link}`)
   }
 
+  const handlerDate = (date) =>{
+    if(date){
+      date = new Date(date)
+  
+      const options = { day: 'numeric', 
+                        month: 'long', 
+                        year: 'numeric' ,
+                        hour: '2-digit',
+                        minute: '2-digit',
+                        second: '2-digit'
+                      };
+      const result = date.toLocaleDateString('id-ID', options);
+  
+      return result
+    }else{
+      return null
+    }
+  }
   return (
-    <Card className={styles.card} orientation='horizontal' onClick={handlerClick}>
-      <CardPreview className={styles.horizontalCardImage}>
+    <Card className={styles.card} onClick={handlerClick}>
+      {/* <CardPreview className={styles.horizontalCardImage}>
         <img
           className={styles.horizontalCardImage}
           src={resolveAsset('xlsx.png')}
           alt={props.name}
         />
-      </CardPreview>
+      </CardPreview> */}
 
       <CardHeader
+        image={
+          <img
+          className={styles.horizontalCardImage}
+          src={resolveAsset('xlsx.png')}
+          alt={props.name}
+        />
+        }
         header={<Text weight='semibold'>{props.name}</Text>}
         description={
           <Caption1 className={styles.caption}>{props.desc}</Caption1>
@@ -153,6 +179,9 @@ const CardExample = props => {
           />
         }
       />
+      <p className={styles.text} style={{marginLeft:'62px'}}>
+        <Caption1 className={styles.caption}>{handlerDate(props.time)}</Caption1>
+      </p>
     </Card>
   )
 }
@@ -255,18 +284,15 @@ const DashboardPage = () => {
             flexFlow: 'wrap'
           }}
         >
-          {/* {dataFilesSample.map((v, i) => (
-            <CardExample key={i} name={v.name} desc={v.desc} link={v.link} />
-          ))} */}
           {
           dataFile?(
             <>
-            <Button ref={triggerRef} {...triggerAttributes} onClick={onClickTrigger} style={{width: '100px',maxWidth: '100%',height: '55px'}} className={styles.signInButton}>
+            <Button ref={triggerRef} {...triggerAttributes} onClick={onClickTrigger} style={{width: '100px',maxWidth: '100%',height: '55px',marginTop:'20px'}} className={styles.signInButton}>
                   +
             </Button>  
             {
               dataFile?.map((v, i) => (
-                <CardExample key={i} name={v.key}  link={`/collector/${v.key}`} desc={`last updated by ${v.updated_at}`} navigate={navigate}/>
+                <CardExample key={i} name={v.key}  link={`/collector/${v.key}`} desc={`last updated by ${v.updated_by}`} navigate={navigate} time={v.updated_at}/>
               ))
             }
             </>
