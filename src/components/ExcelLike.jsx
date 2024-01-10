@@ -56,18 +56,20 @@ const ExcelLike = ({dataXls, setDataXls, id }) => {
   const onChange = useCallback(
     e => {
       const transformedData = e.map(sheet => transformSheetData(sheet))
-      setDataXls(transformedData)
 
-      const keynya = `${id}`
-      const object = {
-        key: keynya,
-        value: transformedData,
-        user:`${user.JDE} - ${user.fullname}`
+      if(JSON.stringify(transformedData) !== JSON.stringify(dataXls)){
+        setDataXls(transformedData)
+        const keynya = `${id}`
+        const object = {
+          key: keynya,
+          value: transformedData,
+          user:`${user.JDE} - ${user.fullname}`
+        }
+        socket.emit('pit-control', JSON.stringify(object), (e) => {
+          console.log(e)
+          // setIsLoading(false);
+        })
       }
-      socket.emit('pit-control', JSON.stringify(object), (e) => {
-        console.log(e)
-        // setIsLoading(false);
-      })
     },
     [transformSheetData, setDataXls]
   )

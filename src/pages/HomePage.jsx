@@ -60,7 +60,7 @@ export const HomePage = () => {
       socket.off('disconnect', onDisconnect)
       socket.off('update', onFooEvent)
     }
-  }, [])
+  }, [dataXls])
 
   useEffect(() => {
     socket.emit('getData', `${id}`, e => {
