@@ -1,5 +1,5 @@
 import { Subtitle2, makeStyles, Image } from '@fluentui/react-components'
-import Logo from '../images/DH-Logo-150.png'
+import Logo from '../images/dewa.png'
 
 const useStyles = makeStyles({
   root: {

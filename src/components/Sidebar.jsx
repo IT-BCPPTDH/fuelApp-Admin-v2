@@ -13,6 +13,7 @@ import {
 } from '@fluentui/react-components';
 import { useNavigate } from 'react-router-dom';
 import Elipse from '../images/Ellipse.png';
+import Cookies from 'js-cookie';
 
 const useStyles = makeStyles({
   root: {
@@ -38,6 +39,23 @@ const Sidebar = () => {
 
   const handleTabClick = (route) => {
     navigate(route);
+  };
+
+  const handleLogout = () => {
+    deleteAllCookies()
+    window.location.reload()
+  }
+
+  const deleteAllCookies = () => {
+    // Get all cookie names
+    const cookieNames = Cookies.get();
+  
+    // Loop through the cookie names and remove each cookie
+    for (const cookieName in cookieNames) {
+      Cookies.remove(cookieName);
+    }
+
+    localStorage.clear()
   };
 
   return (
@@ -76,7 +94,7 @@ const Sidebar = () => {
         <Tab
           value='tab3'
           style={{ marginBottom: '10px' }}
-          onClick={() => handleTabClick('/logout')}
+          onClick={() => handleLogout()}
         >
           <div className={styles.tabStyle}>
             <Open24Regular />

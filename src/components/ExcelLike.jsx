@@ -2,8 +2,16 @@ import { useState, useCallback, useEffect } from 'react'
 import { Workbook } from '@fortune-sheet/react'
 import { socket } from '../socket'
 import { makeStyles, shorthands, Spinner } from "@fluentui/react-components";
+import Cookies from 'js-cookie';
 
-const ExcelLike = ({dataXls, setDataXls }) => {
+const ExcelLike = ({dataXls, setDataXls, id }) => {
+
+  const [user, setUser] = useState(() => {
+    let userCookie = Cookies.get('user');
+    userCookie = JSON.parse(userCookie);
+    return userCookie
+    
+  });
 
   const transformDataFormat = data => {
     let dataArray = []
@@ -48,18 +56,20 @@ const ExcelLike = ({dataXls, setDataXls }) => {
   const onChange = useCallback(
     e => {
       const transformedData = e.map(sheet => transformSheetData(sheet))
-      setDataXls(transformedData)
 
-      const keynya = 'TimeEntry-20231221-bcp'
-      const object = {
-        key: keynya,
-        value: transformedData
+      if(JSON.stringify(transformedData) !== JSON.stringify(dataXls)){
+        setDataXls(transformedData)
+        const keynya = `${id}`
+        const object = {
+          key: keynya,
+          value: transformedData,
+          user:`${user.JDE} - ${user.fullname}`
+        }
+        socket.emit('pit-control', JSON.stringify(object), (e) => {
+          console.log(e)
+          // setIsLoading(false);
+        })
       }
-
-      socket.emit('pit-control', JSON.stringify(object), (e) => {
-        console.log(e)
-        // setIsLoading(false);
-      })
     },
     [transformSheetData, setDataXls]
   )
