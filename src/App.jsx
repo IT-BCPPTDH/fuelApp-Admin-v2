@@ -8,8 +8,8 @@ import Login from './pages/Login';
 import Sidebar from './components/Sidebar';
 import Header from './components/Header';
 import RouteApp from './Routes';
-import './style.css';
 import Cookies from 'js-cookie';
+import '../css/style.css';
 
 const dh = {
   palette: {
@@ -19,13 +19,19 @@ const dh = {
     neutralPrimary: '#333333', // Primary text color
     neutralSecondary: '#666666', // Secondary text color
     neutralBackground: '#F4F4F4', // Background color
+    brandBackground: '#0078D4'
+  },
+  color: {
+    colorBrandBackground: '#0078D4',
+    colorBrandForeground: '#FFFFFF',
+    colorCompoundBrandStroke: '#000000',
   },
   typography: {
     defaultFontStyle: {
       fontFamily: '"Segoe UI", sans-serif',
     },
-  },
- 
+  }
+  
 };
 
 const lightTheme = {
@@ -51,9 +57,7 @@ function App() {
         <Routes>
         {
             !authen?(
-              <>
-              <Route path="*" exec element={<Login />} />
-              </>
+              <Route path="*" element={<Login />} />
             ):(
               <Route
                 path="*"

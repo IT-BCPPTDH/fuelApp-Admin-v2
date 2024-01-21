@@ -11,26 +11,26 @@ import {
   tokens,
   Title2,
   useModalAttributes,
-  useFocusFinders,
-  mergeClasses
+  useFocusFinders
+  // mergeClasses
 } from '@fluentui/react-components'
 import {
-  MoreHorizontal20Regular,
-  Open16Regular,
-  Share16Regular
+  MoreHorizontal20Regular
+  // Open16Regular,
+  // Share16Regular
 } from '@fluentui/react-icons'
 import {
   Card,
-  CardHeader,
-  CardFooter,
-  CardPreview
+  CardHeader
+  // CardFooter,
+  // CardPreview
 } from '@fluentui/react-components'
 import Title from '../components/Title'
 import axios from 'axios'
 import { DatePicker } from '@fluentui/react-datepicker-compat'
 import { forSocket } from '../helpers/convertDate'
 import { useNavigate } from 'react-router-dom'
-import Cookies from 'js-cookie'
+// import Cookies from 'js-cookie'
 
 const resolveAsset = asset => {
   const ASSET_URL =
@@ -47,7 +47,7 @@ const useStyles = makeStyles({
     rowGap: '36px'
   },
   title: {
-    ...shorthands.margin(0, 0, '12px')
+    ...shorthands.margin(0, 0)
   },
   description: {
     ...shorthands.margin(0, 0, '12px')
@@ -79,31 +79,30 @@ const useStyles = makeStyles({
     // backgroundColor: tokens.colorNeutralBackground1,
   },
   dialog: {
-    position: "fixed",
+    position: 'fixed',
     backgroundColor: tokens.colorNeutralBackground1,
     ...shorthands.inset(0),
-    ...shorthands.padding("10px"),
-    ...shorthands.margin("auto"),
-    ...shorthands.borderStyle("none"),
-    ...shorthands.overflow("unset"),
+    ...shorthands.padding('10px'),
+    ...shorthands.margin('auto'),
+    ...shorthands.borderStyle('none'),
+    ...shorthands.overflow('unset'),
     boxShadow: tokens.shadow16,
-    width: "450px",
-    height: "200px",
-    display: "flex",
-    flexDirection: "column",
+    width: '450px',
+    height: '200px',
+    display: 'flex',
+    flexDirection: 'column'
   },
 
   footer: {
-    display: "flex",
-    marginTop: "auto",
-    justifyContent: "end",
-    ...shorthands.gap("5px"),
+    display: 'flex',
+    marginTop: 'auto',
+    justifyContent: 'end',
+    ...shorthands.gap('5px')
   },
   control: {
     maxWidth: '300px'
   }
 })
-
 const Header = ({ title, description }) => {
   const styles = useStyles()
 
@@ -127,25 +126,26 @@ const Header = ({ title, description }) => {
 const CardExample = props => {
   const styles = useStyles()
 
-  const handlerClick = () =>{
+  const handlerClick = () => {
     props.navigate(`${props.link}`)
   }
 
-  const handlerDate = (date) =>{
-    if(date){
+  const handlerDate = date => {
+    if (date) {
       date = new Date(date)
-  
-      const options = { day: 'numeric', 
-                        month: 'long', 
-                        year: 'numeric' ,
-                        hour: '2-digit',
-                        minute: '2-digit',
-                        second: '2-digit'
-                      };
-      const result = date.toLocaleDateString('id-ID', options);
-  
+
+      const options = {
+        day: 'numeric',
+        month: 'long',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit'
+      }
+      const result = date.toLocaleDateString('id-ID', options)
+
       return result
-    }else{
+    } else {
       return null
     }
   }
@@ -162,10 +162,10 @@ const CardExample = props => {
       <CardHeader
         image={
           <img
-          className={styles.horizontalCardImage}
-          src={resolveAsset('xlsx.png')}
-          alt={props.name}
-        />
+            className={styles.horizontalCardImage}
+            src={resolveAsset('xlsx.png')}
+            alt={props.name}
+          />
         }
         header={<Text weight='semibold'>{props.name}</Text>}
         description={
@@ -179,8 +179,10 @@ const CardExample = props => {
           />
         }
       />
-      <p className={styles.text} style={{marginLeft:'62px'}}>
-        <Caption1 className={styles.caption}>{handlerDate(props.time)}</Caption1>
+      <p className={styles.text} style={{ marginLeft: '62px' }}>
+        <Caption1 className={styles.caption}>
+          {handlerDate(props.time)}
+        </Caption1>
       </p>
     </Card>
   )
@@ -188,9 +190,9 @@ const CardExample = props => {
 
 const dataFiles = [
   {
-    name: 'Time Entry',
+    name: 'Operator Timesheet Data Entry',
     desc: 'Data Collector for Activity Time Entry',
-    link: '/collector/time-entry'
+    link: '/timesheet-dataentry'
   },
   {
     name: 'Production',
@@ -204,60 +206,60 @@ const dataFiles = [
   }
 ]
 
-
 const DashboardPage = () => {
   const styles = useStyles()
-  const navigate = useNavigate();
+  const navigate = useNavigate()
 
   const [dateFile, setDateFile] = useState()
   const [dataFile, setDataFile] = useState([])
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(false)
   const { triggerAttributes, modalAttributes } = useModalAttributes({
-    trapFocus: true,
-  });
-  const { findFirstFocusable } = useFocusFinders();
-  const triggerRef = useRef(null);
-  const dialogRef = useRef(null);
+    trapFocus: true
+  })
+  const { findFirstFocusable } = useFocusFinders()
+  const triggerRef = useRef(null)
+  const dialogRef = useRef(null)
 
-  const getData = async () =>{
-    let response = await axios.get(`${import.meta.env.VITE_LINK_BACKEND}/v1/getallfile`)
+  const getData = async () => {
+    let response = await axios.get(
+      `${import.meta.env.VITE_LINK_BACKEND}/v1/getallfile`
+    )
     setDataFile(response.data.data)
   }
 
   useEffect(() => {
-    document.title = 'Homepage Data Collection - PTDH'
+    document.title = 'Homepage MED/MOD Data Entry App - PTDH'
     getData()
     if (open && dialogRef.current) {
-      findFirstFocusable(dialogRef.current)?.focus();
+      findFirstFocusable(dialogRef.current)?.focus()
     }
-  }, [open,findFirstFocusable])
-
+  }, [open, findFirstFocusable])
 
   const onClickTrigger = () => {
-    setOpen(true);
-  };
+    setOpen(true)
+  }
 
   const onClickClose = () => {
-    setOpen(false);
-    triggerRef.current?.focus();
-  };
+    setOpen(false)
+    triggerRef.current?.focus()
+  }
 
-  const onDialogKeydown = (e) => {
-    if (e.key === "Escape") {
-      setOpen(false);
-      triggerRef.current?.focus();
+  const onDialogKeydown = e => {
+    if (e.key === 'Escape') {
+      setOpen(false)
+      triggerRef.current?.focus()
     }
-  };
+  }
 
-  const handleDate = (date) =>{
+  const handleDate = date => {
     let dt = forSocket(date)
     setDateFile(dt)
   }
 
-  const createFile = () =>{
+  const createFile = () => {
     navigate(`/collector/TimeEntry-${dateFile}-bcp`)
   }
-  
+
   return (
     <div className={styles.main}>
       <div
@@ -268,12 +270,26 @@ const DashboardPage = () => {
           justifyContent: 'space-between'
         }}
       >
-        <Title title='Data Collection' />
-        
+        <Title title='Homepage' />
+        <Button
+          ref={triggerRef}
+          {...triggerAttributes}
+          onClick={onClickTrigger}
+          style={{
+            width: '70px',
+            maxWidth: '100%',
+            height: '35px',
+            fontSize: '26px',
+            fontWeight: '300'
+          }}
+          className={styles.signInButton}
+        >
+          +
+        </Button>
       </div>
       <section>
         <Header
-          title='Latest Updates'
+          title='Last Data Stored'
           description='Latest form has been updated by you,'
         />
         <div
@@ -284,26 +300,32 @@ const DashboardPage = () => {
             flexFlow: 'wrap'
           }}
         >
-          {
-          dataFile?(
+          {dataFile ? (
             <>
-            <Button ref={triggerRef} {...triggerAttributes} onClick={onClickTrigger} style={{width: '100px',maxWidth: '100%',height: '55px',marginTop:'20px'}} className={styles.signInButton}>
-                  +
-            </Button>  
-            {
-              dataFile?.map((v, i) => (
-                <CardExample key={i} name={v.key}  link={`/collector/${v.key}`} desc={`last updated by ${v.updated_by}`} navigate={navigate} time={v.updated_at}/>
-              ))
-            }
+              {dataFile?.map((v, i) => (
+                <CardExample
+                  key={i}
+                  name={v.key}
+                  link={`/collector/${v.key}`}
+                  desc={`last updated by ${v.updated_by}`}
+                  navigate={navigate}
+                  time={v.updated_at}
+                />
+              ))}
             </>
-            ):(
-              <>
-                <Button ref={triggerRef} {...triggerAttributes} onClick={onClickTrigger} style={{width: '100px',maxWidth: '100%',height: '55px'}} className={styles.signInButton}>
-                  +
-                </Button>  
-              </>  
-              )
-            }
+          ) : (
+            <>
+              <Button
+                ref={triggerRef}
+                {...triggerAttributes}
+                onClick={onClickTrigger}
+                style={{ width: '100px', maxWidth: '100%', height: '55px' }}
+                className={styles.signInButton}
+              >
+                +
+              </Button>
+            </>
+          )}
         </div>
       </section>
       <div className={styles.divider}>
@@ -311,7 +333,7 @@ const DashboardPage = () => {
       </div>
       <section>
         <Header
-          title='Templates'
+          title='Entry Data by Template'
           description='All default template to collect data from operation activities as usual. This template act as input form.'
         />
         <div
@@ -323,31 +345,30 @@ const DashboardPage = () => {
           }}
         >
           {dataFiles.map((v, i) => (
-            <CardExample key={i} name={v.name} desc={v.desc} />
+            <CardExample key={i} name={v.name} desc={v.desc} link={v.link} navigate={navigate}/>
           ))}
-      {open &&(
-          <div
-            onKeyDown={onDialogKeydown}
-            ref={dialogRef}
-            aria-modal="true"
-            role="dialog"
-            className={styles.dialog}
-            aria-label="Select Date"
-          >
-            <Title2 as="h2">Select Date</Title2>
-            <DatePicker
-            className={styles.control}
-            placeholder='Select a date...'
-            onSelectDate={handleDate}
-          />
-            <div className={styles.footer}>
-              <Button onClick={createFile}>Create</Button>
-              <Button onClick={onClickClose}>Close</Button>
+          {open && (
+            <div
+              onKeyDown={onDialogKeydown}
+              ref={dialogRef}
+              aria-modal='true'
+              role='dialog'
+              className={styles.dialog}
+              aria-label='Select Date'
+            >
+              <Title2 as='h2'>Select Date</Title2>
+              <DatePicker
+                className={styles.control}
+                placeholder='Select a date...'
+                onSelectDate={handleDate}
+              />
+              <div className={styles.footer}>
+                <Button onClick={createFile}>Create</Button>
+                <Button onClick={onClickClose}>Close</Button>
+              </div>
             </div>
-          </div>
-      )
-    }
-    </div>
+          )}
+        </div>
       </section>
     </div>
   )

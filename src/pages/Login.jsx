@@ -1,11 +1,9 @@
-import React from "react";
-import { Loginpage } from "../components/card";
-import backgroundImage from "../images/bglogin.png"; 
+import { Loginpage } from '../components/LoginPage'
+import backgroundImage from '../images/bglogin.png'
 
 const Login = () => {
   return (
     <>
-    
       <style>
         {`
           body {
@@ -18,13 +16,10 @@ const Login = () => {
           }
         `}
       </style>
-      <h1>
-        <Loginpage />
-      </h1>
+
+      <Loginpage />
     </>
-  );
-};
+  )
+}
 
-export default Login;
-
-
+export default Login

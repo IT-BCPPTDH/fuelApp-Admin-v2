@@ -1,0 +1,12 @@
+.fui-CalendarDayGrid__dayIsToday{
+    background-color: #7ebf56!important;
+}
+
+.fui-Calendar__goTodayButton:disabled{
+    background-color: #ccc!important;
+    color: #848181!important;
+}
+.fui-Combobox__expandIcon{
+    position: relative;
+    right: 10px
+}

@@ -1,8 +1,8 @@
-import {Subtitle1} from '@fluentui/react-components'
+import {Title3} from '@fluentui/react-components'
 const Title = (props) => {
     const {title} = props
     return (
-        <Subtitle1>{title}</Subtitle1>
+        <Title3>{title}</Title3>
     )
 }
 

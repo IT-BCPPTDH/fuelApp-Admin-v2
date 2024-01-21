@@ -15,9 +15,7 @@ import {
 import Title from '../components/Title'
 import { timeEntry } from '../data/time-entry'
 import { getData } from "../data/spreadsheet";
-// import SpreadsheetUI from '../components/Spreadsheet';
 
-import XSpreadsheet from '../components/XSpreadsheet';
 import { TablistMenu } from '../components/Tablist';
 import ExcelLike from '../components/ExcelLike';
 import { DatePicker } from "@fluentui/react-datepicker-compat";
@@ -50,43 +48,40 @@ const useStyles = makeStyles({
 })
 
 
-const columns = [
-  { columnKey: 'unitNo', label: 'Unit No.' },
-  { columnKey: 'productModel', label: 'Product Model' },
-  { columnKey: 'description', label: 'Description' },
-  { columnKey: 'owner', label: 'Owner' },
-  { columnKey: 'productionDate', label: 'Production Date' },
-  { columnKey: 'shift', label: 'Shift' },
-  { columnKey: 'operatorId', label: 'Operator ID' },
-  { columnKey: 'operatorName', label: 'Operator Name' },
-  { columnKey: 'smuStart', label: 'SMU Start' },
-  { columnKey: 'smuFinish', label: 'SMU Finish' },
-  { columnKey: 'hm', label: 'HM' },
-  { columnKey: 'activity', label: 'Activity' },
-  { columnKey: 'startTime', label: 'Start Time' },
-  { columnKey: 'endTime', label: 'End Time' },
-  { columnKey: 'duration', label: 'Duration' },
-  { columnKey: 'convertDuration', label: 'Convert Duration' },
-  { columnKey: 'bdNumber', label: 'BD Number' },
-  { columnKey: 'fromEquipment', label: 'From Equipment' },
-  { columnKey: 'material', label: 'Material' },
-  { columnKey: 'matGroup', label: 'Mat Group' },
-  { columnKey: 'distance', label: 'DISTANCE' },
-  { columnKey: 'loadingLocation', label: 'Loading Location' },
-  { columnKey: 'dumpingLocation', label: 'Dumping Location' },
-  { columnKey: 'trip', label: 'Trip' },
-  { columnKey: 'bcm', label: 'BCM' },
-  { columnKey: 'notes', label: 'Notes' },
-  { columnKey: 'cutOffStatus', label: 'Cut Off Status' },
-  { columnKey: 'loc', label: 'LOC' }
-]
+// const columns = [
+//   { columnKey: 'unitNo', label: 'Unit No.' },
+//   { columnKey: 'productModel', label: 'Product Model' },
+//   { columnKey: 'description', label: 'Description' },
+//   { columnKey: 'owner', label: 'Owner' },
+//   { columnKey: 'productionDate', label: 'Production Date' },
+//   { columnKey: 'shift', label: 'Shift' },
+//   { columnKey: 'operatorId', label: 'Operator ID' },
+//   { columnKey: 'operatorName', label: 'Operator Name' },
+//   { columnKey: 'smuStart', label: 'SMU Start' },
+//   { columnKey: 'smuFinish', label: 'SMU Finish' },
+//   { columnKey: 'hm', label: 'HM' },
+//   { columnKey: 'activity', label: 'Activity' },
+//   { columnKey: 'startTime', label: 'Start Time' },
+//   { columnKey: 'endTime', label: 'End Time' },
+//   { columnKey: 'duration', label: 'Duration' },
+//   { columnKey: 'convertDuration', label: 'Convert Duration' },
+//   { columnKey: 'bdNumber', label: 'BD Number' },
+//   { columnKey: 'fromEquipment', label: 'From Equipment' },
+//   { columnKey: 'material', label: 'Material' },
+//   { columnKey: 'matGroup', label: 'Mat Group' },
+//   { columnKey: 'distance', label: 'DISTANCE' },
+//   { columnKey: 'loadingLocation', label: 'Loading Location' },
+//   { columnKey: 'dumpingLocation', label: 'Dumping Location' },
+//   { columnKey: 'trip', label: 'Trip' },
+//   { columnKey: 'bcm', label: 'BCM' },
+//   { columnKey: 'notes', label: 'Notes' },
+//   { columnKey: 'cutOffStatus', label: 'Cut Off Status' },
+//   { columnKey: 'loc', label: 'LOC' }
+// ]
 
 export const HomePage = () => {
   const styles = useStyles()
-  // let [data] = useState(getData())
-
   const [isConnected, setIsConnected] = useState(socket.connected)
-
   const [dataXls, setDataXls] = useState()
 
   useEffect(() => {
@@ -99,7 +94,6 @@ export const HomePage = () => {
     }
 
     function onFooEvent (value) {
-      // console.log(value)
       setDataXls(JSON.parse(value))
     }
 
@@ -119,7 +113,7 @@ export const HomePage = () => {
     socket.emit('getData', 'TimeEntry-20231221-bcp', e => {
       console.log(e)
     })
-  }, [])
+  }, [isConnected])
 
 
   return (
@@ -195,10 +189,6 @@ export const HomePage = () => {
             ))}
           </TableBody>
         </Table> */}
-
-        
-        {/* <XSpreadsheet /> */}
-
         
         <ExcelLike dataXls={dataXls} setDataXls={setDataXls} />
       </div>
