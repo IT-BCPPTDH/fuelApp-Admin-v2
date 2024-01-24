@@ -76,8 +76,8 @@ const activitiesArray = [
   'Queuing at Road'
 ]
 const tabs = [
-  { label: 'Time Entry Support', value: 'time-entry-support' },
-  { label: 'Time Entry Digger', value: 'time-entry-digger' },
+  { label: 'Time Entry Support', value: 'time-entry/support/' },
+  { label: 'Time Entry Digger', value: 'time-entry/digger/' },
   { label: 'Time Entry Hauler', value: 'time-entry-hauler' }
 ]
 const shiftOptions = ['Day', 'Night']
@@ -102,9 +102,7 @@ const HeaderPage = ({ title }) => {
 const FooterPage = ({ handleSubmit, buttonDisabled }) => {
   return (
     <div className='row mt1em'>
-      <div className='col-6'>
-       
-      </div>
+      <div className='col-6'></div>
       <div className='col-6'>
         <CompoundButton
           onClick={() => handleSubmit(1)}
@@ -264,7 +262,7 @@ export default function TimeSheetPage () {
     let lastStartTimeVal = null
     let arrayTime = []
     let validateResult = false
-    
+
     const options = {
       data: [],
       columns: [
@@ -279,6 +277,7 @@ export default function TimeSheetPage () {
         { type: 'text', width: '100', title: 'Start' },
         { type: 'text', width: '100', title: 'End' },
         { type: 'text', width: '100', title: 'Duration' },
+        
         {
           type: 'dropdown',
           width: '130',
@@ -294,7 +293,6 @@ export default function TimeSheetPage () {
       tableOverflow: true,
       onchange: onchange,
       updateTable: function (instance, cell, col, row, val, label, cellName) {
-
         if (col == 2 || col == 3) {
           let val = cell.innerText
           if (val !== '') {
@@ -314,7 +312,7 @@ export default function TimeSheetPage () {
           if (col == 2 && row == index + 1) {
             const resVal = calculateTotalTimeFromArray(arrayTime)
             validateResult = parseFloat(resVal) == 12 ? true : false
-            if(!validateResult){
+            if (!validateResult) {
               cell.innerText = lastEndTimeVal
             }
           }
@@ -330,9 +328,8 @@ export default function TimeSheetPage () {
 
         if (cellName == 'E14') {
           const resVal = calculateTotalTimeFromArray(arrayTime)
-          setTotalDuration(resVal)       
+          setTotalDuration(resVal)
         }
-
       }
     }
     if (!jRef.current.jspreadsheet) {
@@ -512,9 +509,12 @@ export default function TimeSheetPage () {
   ]
 
   useEffect(() => {
-    const disabled = (parseFloat(totalDuration) > 12 || parseFloat(totalDuration) < 12) ? true: false
+    const disabled =
+      parseFloat(totalDuration) > 12 || parseFloat(totalDuration) < 12
+        ? true
+        : false
     setButtonDisabled(disabled)
-  }, [totalDuration]);
+  }, [totalDuration])
 
   return (
     <>
@@ -524,7 +524,7 @@ export default function TimeSheetPage () {
         <div ref={jRef} className='mt1em' />
         <div className='row'>
           <div className='col-6'>
-          <DynamicTablistMenu tabs={tabs} />
+            <DynamicTablistMenu tabs={tabs} />
           </div>
           <div className='col-6 flex-row'>
             <InfoLabel
@@ -533,20 +533,21 @@ export default function TimeSheetPage () {
             >
               Total Duration: {totalDuration}
             </InfoLabel>
-           
-              {(parseFloat(totalDuration) > 12 || parseFloat(totalDuration) < 12) ? (
-                 <div className="status-element status-invalidated">
-                    INVALIDATED
-                 </div>
-                ): (
-                  <div className="status-element status-validated">
-                    VALIDATED
-                  </div>
-                 )}
-            
+
+            {parseFloat(totalDuration) > 12 ||
+            parseFloat(totalDuration) < 12 ? (
+              <div className='status-element status-invalidated'>
+                INVALIDATED
+              </div>
+            ) : (
+              <div className='status-element status-validated'>VALIDATED</div>
+            )}
           </div>
         </div>
-        <FooterPage handleSubmit={handleSubmit} buttonDisabled={buttonDisabled} />
+        <FooterPage
+          handleSubmit={handleSubmit}
+          buttonDisabled={buttonDisabled}
+        />
       </div>
 
       {/* <button onClick={getData}>Get Data</button> */}

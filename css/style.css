@@ -1,84 +1,95 @@
-.mt1em{
+.mt1em {
    margin-top: 1em;
 }
-.mt2em{
+
+.mt2em {
    margin-top: 2em;
 }
-.flex-row{
-      display: flex;
-      flex-direction: row;
-      align-items: center;
+
+.flex-row {
+   display: flex;
+   flex-direction: row;
+   align-items: center;
 }
-.flex-space-between{
+
+.flex-space-between {
    display: flex;
    flex-direction: row;
    align-items: center;
    justify-content: space-between
 }
-button:hover{
+
+button:hover {
    opacity: .7;
 }
-.border-input-error{
-   border-color: red!important;
+
+.border-input-error {
+   border-color: red !important;
 }
- .container {
-    min-height: calc(92vh);
-    padding: 30px 32px;
-    max-width: 1365px;
- }
 
- .x-spreadsheet-toolbar{
-    width: 1295px !important;
-    background: #f4f5ed !important;
- }
- .x-spreadsheet-bottombar{
-    background: #f4f5ed !important;
- }
+.container {
+   min-height: calc(92vh);
+   padding: 30px 32px;
+   max-width: 1365px;
+}
 
- .fortune-toolbar{
-    background: #eaeaea!important;
- }
- .btn-group-xls{
-    margin-top: 2em;
-    display: flex;
-    align-items: center;
-    justify-content: end;
-    column-gap: 15px; 
- }
- .control {
+.x-spreadsheet-toolbar {
+   width: 1295px !important;
+   background: #f4f5ed !important;
+}
+
+.x-spreadsheet-bottombar {
+   background: #f4f5ed !important;
+}
+
+.fortune-toolbar {
+   background: #eaeaea !important;
+}
+
+.btn-group-xls {
+   margin-top: 2em;
+   display: flex;
+   align-items: center;
+   justify-content: end;
+   column-gap: 15px;
+}
+
+.control {
    max-width: "300px",
- }
+}
 
- .form-wrapper{
+.form-wrapper {
    padding: 1.5em 2em;
-    background-color: #f5f5f5;
-    margin: 2em 0;
-    border: 1px solid #ddd;
-    box-shadow: 0 1px 5px 0 #0000001f;
- }
+   background-color: #f5f5f5;
+   margin: 2em 0;
+   border: 1px solid #ddd;
+   box-shadow: 0 1px 5px 0 #0000001f;
+}
 
- .jexcel > thead > tr > td{
+.jexcel>thead>tr>td {
    background-color: #f5fad5;
    height: 30px;
    font-weight: 600;
- }
+}
 
- .f1ksivud::after {
+.f1ksivud::after {
    background-color: #7ebf56 !important;
 }
 
-.status-element{
+.status-element {
    margin-left: 1em;
    border: 1px solid #ddd;
    padding: 2px 10px;
    min-width: 400px;
    text-align: center;
 }
-.status-validated{
+
+.status-validated {
    background-color: green;
    color: #f4f5ed;
 }
-.status-invalidated{
+
+.status-invalidated {
    background-color: red;
    color: #fff;
 }
