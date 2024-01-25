@@ -46,6 +46,24 @@ button:hover {
    background: #eaeaea !important;
 }
 
+.jmodal_content::-webkit-scrollbar {
+   height: 10px;
+}
+
+.jmodal_content::-webkit-scrollbar {
+   width: 12px;
+}
+
+.jmodal_content::-webkit-scrollbar-track {
+   border: 1px solid #fff;
+   background: #eee;
+}
+
+.jmodal_content::-webkit-scrollbar-thumb {
+   border: 1px solid #fff;
+   background: #888;
+}
+
 .btn-group-xls {
    margin-top: 2em;
    display: flex;

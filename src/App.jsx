@@ -9,6 +9,7 @@ import Sidebar from './components/Sidebar';
 import Header from './components/Header';
 import RouteApp from './Routes';
 import Cookies from 'js-cookie';
+import '../css/jspreadsheet.css';
 import '../css/style.css';
 
 const dh = {

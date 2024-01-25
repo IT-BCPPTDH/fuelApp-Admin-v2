@@ -1,6 +1,6 @@
 import { useRef, useEffect, useCallback, useState } from 'react'
 import jspreadsheet from 'jspreadsheet-ce'
-import 'jspreadsheet-ce/dist/jspreadsheet.css'
+// import 'jspreadsheet-ce/dist/jspreadsheet.css'
 import Title from '../components/Title'
 import {
   CompoundButton,
@@ -14,6 +14,9 @@ import {
 } from '@fluentui/react-icons'
 import { DynamicTablistMenu } from '../components/Tablist'
 import FormComponent from '../components/FormComponent'
+import { HeaderPageForm } from '../components/FormComponent/HeaderPageForm'
+import {calculateTotalTimeFromArray} from '../helpers/timeHelper'
+import { FooterPageForm } from '../components/FormComponent/FooterPageForm'
 
 const activitiesArray = [
   'Breakdown',
@@ -84,62 +87,6 @@ const shiftOptions = ['Day', 'Night']
 const unitOptions = ['DT11223', 'DT11224', 'DT11225', 'DT11226']
 const jdeOptions = ['112233', '223344', '334455', '445566', '556677']
 
-const HeaderPage = ({ title }) => {
-  return (
-    <div className='flex-space-between'>
-      <Title title={title} />
-      <Button
-        icon={<ArrowCircleLeft24Regular />}
-        iconPosition='before'
-        style={{ backgroundColor: '#607d8b', color: '#ffffff' }}
-      >
-        Cancel Entry
-      </Button>
-    </div>
-  )
-}
-
-const FooterPage = ({ handleSubmit, buttonDisabled }) => {
-  return (
-    <div className='row mt1em'>
-      <div className='col-6'></div>
-      <div className='col-6'>
-        <CompoundButton
-          onClick={() => handleSubmit(1)}
-          icon={<SaveArrowRight24Regular primaryFill='#ffffff' />}
-          iconPosition='after'
-          size='small'
-          style={{
-            float: 'right',
-            marginRight: '0',
-            padding: '0 1.5em',
-            backgroundColor: '#035bb6',
-            color: '#fff'
-          }}
-          disabled={buttonDisabled}
-        >
-          Save & Exit Form
-        </CompoundButton>
-        <CompoundButton
-          onClick={() => handleSubmit(2)}
-          icon={<SaveArrowRight24Regular primaryFill='#ffffff' />}
-          iconPosition='after'
-          size='small'
-          style={{
-            float: 'right',
-            marginRight: '0.6em',
-            padding: '0 1.5em',
-            backgroundColor: 'green',
-            color: '#fff'
-          }}
-          disabled={buttonDisabled}
-        >
-          Save & Entry Other
-        </CompoundButton>
-      </div>
-    </div>
-  )
-}
 export default function TimeSheetPage () {
   const jRef = useRef(null)
   const currentDate = new Date()
@@ -198,21 +145,6 @@ export default function TimeSheetPage () {
 
     return formattedTotalTime
   }, [])
-
-  const calculateTotalTimeFromArray = timeArray => {
-    const totalMinutes = timeArray.reduce((total, formattedTime) => {
-      const [hours, minutes] = formattedTime.split('.').map(Number)
-      return total + hours * 60 + minutes
-    }, 0)
-
-    const totalHours = Math.floor(totalMinutes / 60)
-    const remainingMinutes = totalMinutes % 60
-    const formattedTotalTime = `${String(totalHours).padStart(2, '0')}.${String(
-      remainingMinutes
-    ).padStart(2, '0')}`
-
-    return formattedTotalTime
-  }
 
   const transformData = useCallback(
     inputData => {
@@ -518,7 +450,7 @@ export default function TimeSheetPage () {
 
   return (
     <>
-      <HeaderPage title={`Form Operator Activity Timesheet - Data Entry`} />
+      <HeaderPageForm title={`Form Operator Activity Timesheet - Data Entry`} />
       <div className='form-wrapper'>
         <FormComponent handleChange={handleChange} components={components} />
         <div ref={jRef} className='mt1em' />
@@ -544,7 +476,7 @@ export default function TimeSheetPage () {
             )}
           </div>
         </div>
-        <FooterPage
+        <FooterPageForm
           handleSubmit={handleSubmit}
           buttonDisabled={buttonDisabled}
         />
