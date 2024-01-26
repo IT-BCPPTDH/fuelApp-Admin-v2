@@ -1,6 +1,6 @@
 import { useRef, useEffect, useCallback, useState } from 'react'
 import jspreadsheet from 'jspreadsheet-ce'
-import 'jspreadsheet-ce/dist/jspreadsheet.css'
+// import 'jspreadsheet-ce/dist/jspreadsheet.css'
 import Title from '../components/Title'
 import {
   CompoundButton,
@@ -13,138 +13,23 @@ import {
   ArrowCircleLeft24Regular
 } from '@fluentui/react-icons'
 import { DynamicTablistMenu } from '../components/Tablist'
-import FormComponent from '../components/FormComponent'
+import FormComponent from '../components/FormComponent';
 import Cookies from 'js-cookie'
 import Services from '../services/timeEntry'
 import { getLocalStorage } from '../helpers/toLocalStorage'
+import { HeaderPageForm } from '../components/FormComponent/HeaderPageForm'
+import {calculateTotalTimeFromArray} from '../helpers/timeHelper'
+import { FooterPageForm } from '../components/FormComponent/FooterPageForm'
 
-// const activitiesArray = [
-//   'Breakdown',
-//   'PM Service',
-//   'Rain',
-//   'Slippery',
-//   'Safety Talk',
-//   'Shift Change/Prestart Check',
-//   'Rest and Meal',
-//   'Daily Pray',
-//   'Blasting',
-//   'Refuelling/Greasing',
-//   'Survey/Sample',
-//   'Safety Fatigue Test',
-//   'Friday Pray',
-//   'Sunday Pray',
-//   'Fasting',
-//   'Foggy',
-//   'Public Holiday',
-//   'No Operator',
-//   'Operator Fatigue',
-//   'Waiting Operator',
-//   'No Truck',
-//   'No Equipment Support',
-//   'Lighting Plant Problem',
-//   'Washing Equipment',
-//   'Front Maintenance',
-//   'Road Maintenance',
-//   'Disposal Maintenance',
-//   'Stockpile Full/Crusher Maintenance',
-//   'No Working Area',
-//   'Blockade',
-//   'Dust',
-//   'Standby Accident',
-//   'Stop Loading DT Refuelling',
-//   'No Stock/Material',
-//   'No Job',
-//   'Others',
-//   'Toilet',
-//   'Queuing',
-//   'No Digger',
-//   'Tyre Check',
-//   'Cleaning Vessel Truck',
-//   'Working Production',
-//   'Pit Support',
-//   'Coal Cleaning',
-//   'Travel Blasting',
-//   'Travel Loading Point',
-//   'Travel to Maintenance',
-//   'Rehabilitation',
-//   'Waiting Truck',
-//   'Dump Maintenance',
-//   'Haul Road Maintenance (HRM)',
-//   'Stockpile ROM Maintenance',
-//   'PLM Support',
-//   'Maintenance Groundtest',
-//   'Others',
-//   'Working Support',
-//   'Queuing at Front',
-//   'Queuing at Road'
-// ]
 const tabs = [
-  { label: 'Time Entry Support', value: 'time-entry-support' },
-  { label: 'Time Entry Digger', value: 'time-entry-digger' },
+  { label: 'Time Entry Support', value: 'time-entry/support/' },
+  { label: 'Time Entry Digger', value: 'time-entry/digger/' },
   { label: 'Time Entry Hauler', value: 'time-entry-hauler' }
 ]
 const shiftOptions = ['Day', 'Night']
 const unitOptions = ['DT11223', 'DT11224', 'DT11225', 'DT11226']
 // const jdeOptions = ['112233', '223344', '334455', '445566', '556677']
 
-const HeaderPage = ({ title }) => {
-  return (
-    <div className='flex-space-between'>
-      <Title title={title} />
-      <Button
-        icon={<ArrowCircleLeft24Regular />}
-        iconPosition='before'
-        style={{ backgroundColor: '#607d8b', color: '#ffffff' }}
-      >
-        Cancel Entry
-      </Button>
-    </div>
-  )
-}
-
-const FooterPage = ({ handleSubmit, buttonDisabled }) => {
-  return (
-    <div className='row mt1em'>
-      <div className='col-6'>
-       
-      </div>
-      <div className='col-6'>
-        <CompoundButton
-          onClick={() => handleSubmit(1)}
-          icon={<SaveArrowRight24Regular primaryFill='#ffffff' />}
-          iconPosition='after'
-          size='small'
-          style={{
-            float: 'right',
-            marginRight: '0',
-            padding: '0 1.5em',
-            backgroundColor: '#035bb6',
-            color: '#fff'
-          }}
-          disabled={buttonDisabled}
-        >
-          Save & Exit Form
-        </CompoundButton>
-        <CompoundButton
-          onClick={() => handleSubmit(2)}
-          icon={<SaveArrowRight24Regular primaryFill='#ffffff' />}
-          iconPosition='after'
-          size='small'
-          style={{
-            float: 'right',
-            marginRight: '0.6em',
-            padding: '0 1.5em',
-            backgroundColor: 'green',
-            color: '#fff'
-          }}
-          disabled={buttonDisabled}
-        >
-          Save & Entry Other
-        </CompoundButton>
-      </div>
-    </div>
-  )
-}
 export default function TimeSheetPage () {
   const jRef = useRef(null)
   const currentDate = new Date()
@@ -213,21 +98,6 @@ export default function TimeSheetPage () {
 
     return formattedTotalTime
   }, [])
-
-  const calculateTotalTimeFromArray = timeArray => {
-    const totalMinutes = timeArray.reduce((total, formattedTime) => {
-      const [hours, minutes] = formattedTime.split('.').map(Number)
-      return total + hours * 60 + minutes
-    }, 0)
-
-    const totalHours = Math.floor(totalMinutes / 60)
-    const remainingMinutes = totalMinutes % 60
-    const formattedTotalTime = `${String(totalHours).padStart(2, '0')}.${String(
-      remainingMinutes
-    ).padStart(2, '0')}`
-
-    return formattedTotalTime
-  }
 
   const transformData = useCallback(
     inputData => {
@@ -305,6 +175,7 @@ export default function TimeSheetPage () {
     let act = getLocalStorage('timeEntry-activity')
     let mastr = getLocalStorage('timeEntry-master')
     setMaster(mastr)
+
     const options = {
       data: [],
       columns: [
@@ -319,6 +190,7 @@ export default function TimeSheetPage () {
         { type: 'text', width: '100', title: 'Start' },
         { type: 'text', width: '100', title: 'End' },
         { type: 'text', width: '100', title: 'Duration' },
+        
         {
           type: 'dropdown',
           width: '130',
@@ -349,6 +221,7 @@ export default function TimeSheetPage () {
           // console.log(cell.innerText)
         }
 
+
         if (col == 2 || col == 3) {
           let val = cell.innerText
           if (val !== '') {
@@ -370,7 +243,7 @@ export default function TimeSheetPage () {
           if (col == 2 && row == index + 1) {
             const resVal = calculateTotalTimeFromArray(arrayTime)
             validateResult = parseFloat(resVal) == 12 ? true : false
-            if(!validateResult){
+            if (!validateResult) {
               cell.innerText = lastEndTimeVal
               val = lastEndTimeVal
             }
@@ -388,8 +261,9 @@ export default function TimeSheetPage () {
 
         if (cellName == 'E14') {
           const resVal = calculateTotalTimeFromArray(arrayTime)
-          setTotalDuration(resVal)       
+          setTotalDuration(resVal)
         }
+
         
         // arrTemp[col] = val
         // console.log(1,arrTemp)
@@ -404,6 +278,7 @@ export default function TimeSheetPage () {
         onchange(arrTemp)
 
         // console.log(arrTemp)
+
       }
       
     }
@@ -621,20 +496,25 @@ export default function TimeSheetPage () {
   }
 
   useEffect(() => {
-    const disabled = (parseFloat(totalDuration) > 12 || parseFloat(totalDuration) < 12) ? true: false
+    const disabled =
+      parseFloat(totalDuration) > 12 || parseFloat(totalDuration) < 12
+        ? true
+        : false
     setButtonDisabled(disabled)
+
     getDataFirst()
   }, [totalDuration]);
 
+
   return (
     <>
-      <HeaderPage title={`Form Operator Activity Timesheet - Data Entry`} />
+      <HeaderPageForm title={`Form Operator Activity Timesheet - Data Entry`} />
       <div className='form-wrapper'>
         <FormComponent handleChange={handleChange} components={components} />
         <div ref={jRef} className='mt1em' />
         <div className='row'>
           <div className='col-6'>
-          <DynamicTablistMenu tabs={tabs} />
+            <DynamicTablistMenu tabs={tabs} />
           </div>
           <div className='col-6 flex-row'>
             <InfoLabel
@@ -643,21 +523,20 @@ export default function TimeSheetPage () {
             >
               Total Duration: {totalDuration}
             </InfoLabel>
-           
-              {(parseFloat(totalDuration) > 12 || parseFloat(totalDuration) < 12) ? (
-                 <div className="status-element status-invalidated">
-                    INVALIDATED
-                 </div>
-                ): (
-                  <div className="status-element status-validated">
-                    VALIDATED
-                  </div>
-                 )}
-            
+
+            {parseFloat(totalDuration) > 12 ||
+            parseFloat(totalDuration) < 12 ? (
+              <div className='status-element status-invalidated'>
+                INVALIDATED
+              </div>
+            ) : (
+              <div className='status-element status-validated'>VALIDATED</div>
+            )}
           </div>
         </div>
-        <FooterPage handleSubmit={handleSubmit} buttonDisabled={false} />
-        {/* <FooterPage handleSubmit={handleSubmit} buttonDisabled={buttonDisabled} /> */}
+
+        <FooterPage handleSubmit={handleSubmit} buttonDisabled={buttonDisabled} /> 
+
       </div>
 
       {/* <button onClick={getData}>Get Data</button> */}

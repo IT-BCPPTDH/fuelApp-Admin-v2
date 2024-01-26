@@ -198,12 +198,17 @@ const dataFiles = [
   {
     name: 'Production',
     desc: 'Data Collector for Production Records',
-    link: '/collector/production'
+    link: '/production'
   },
   {
     name: 'Mine Plan',
     desc: 'Data Collector for Mine Planning Activity',
-    link: '/collector/mine-plan'
+    link: '/mineplan'
+  },
+  {
+    name: 'Time Entry Mines-Protes',
+    desc: 'Template Time Entry model Mines',
+    link: '/time-entry-mines'
   }
 ]
 

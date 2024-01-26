@@ -29,7 +29,7 @@ const useStyles = makeStyles({
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
-    cursor: 'pointer', // Add cursor style to indicate it's clickable
+    cursor: 'pointer', 
   },
 });
 
@@ -47,10 +47,9 @@ const Sidebar = () => {
   }
 
   const deleteAllCookies = () => {
-    // Get all cookie names
+
     const cookieNames = Cookies.get();
   
-    // Loop through the cookie names and remove each cookie
     for (const cookieName in cookieNames) {
       Cookies.remove(cookieName);
     }
