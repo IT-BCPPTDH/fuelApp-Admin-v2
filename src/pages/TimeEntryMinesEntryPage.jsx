@@ -30,7 +30,7 @@ export const TimeEntryMinesEntryPage = () => {
     const arrayDuration = data.map(k => k[14])
     const totalTimeDuration = calculateTotalTimeFromArray(arrayDuration)
     if (totalTimeDuration !== 'NaN.NaN') {
-      console.log(totalTimeDuration)
+      // console.log(totalTimeDuration)
       setTotalDuration(totalTimeDuration)
     }
 
@@ -103,7 +103,7 @@ export const TimeEntryMinesEntryPage = () => {
       tableWidth: `${(width * 87) / 100}px`,
       tableOverflow: true,
       updateTable: function (instance, cell, col, row, val, label, cellName) {
-        isChange()
+        // isChange()
       }
     }
 
