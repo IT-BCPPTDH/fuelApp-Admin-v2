@@ -67,7 +67,7 @@ export const FormElement = ({ inputId, name, label, type, options, value, onChan
             //   ))}
             // </Combobox>
 
-            <ComboBoxCustom inputId={inputId} name={name} label={label} options={options} handleChange={onChange} />
+            <ComboBoxCustom inputId={inputId} name={name} label={label} options={options} handleChange={onChange} value={value}/>
           );
         case 'Input':
           return (
@@ -122,7 +122,7 @@ const ComboBoxCustom = (props) => {
   const onOptionSelect = (event, data) => {
     const matchingOption =
       data.optionText && options.includes(data.optionText);
-    if (matchingOption) {
+    if (!matchingOption) {
       setCustomSearch(undefined);
     } else {
       setCustomSearch(data.optionText);
@@ -130,16 +130,18 @@ const ComboBoxCustom = (props) => {
     }
     
   };
-
+  const defVal = [props.value]
+  
   return (
 
       <Combobox
         aria-labelledby={inputId}
          style={{  maxWidth: '200px',  minWidth: '180px' }}
         freeform
-        placeholder={`Select ${label}`}
-        onChange={onChange}
+        placeholder={props.value?props.value:`Select ${label}`}
+        onChange={handleChange}
         onOptionSelect={onOptionSelect}
+        defaultSelectedOptions={defVal}
       >
         {customSearch ? (
           <Option key="freeform" text={customSearch}>
