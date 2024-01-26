@@ -14,67 +14,70 @@ import {
 } from '@fluentui/react-icons'
 import { DynamicTablistMenu } from '../components/Tablist'
 import FormComponent from '../components/FormComponent'
+import Cookies from 'js-cookie'
+import Services from '../services/timeEntry'
+import { getLocalStorage } from '../helpers/toLocalStorage'
 
-const activitiesArray = [
-  'Breakdown',
-  'PM Service',
-  'Rain',
-  'Slippery',
-  'Safety Talk',
-  'Shift Change/Prestart Check',
-  'Rest and Meal',
-  'Daily Pray',
-  'Blasting',
-  'Refuelling/Greasing',
-  'Survey/Sample',
-  'Safety Fatigue Test',
-  'Friday Pray',
-  'Sunday Pray',
-  'Fasting',
-  'Foggy',
-  'Public Holiday',
-  'No Operator',
-  'Operator Fatigue',
-  'Waiting Operator',
-  'No Truck',
-  'No Equipment Support',
-  'Lighting Plant Problem',
-  'Washing Equipment',
-  'Front Maintenance',
-  'Road Maintenance',
-  'Disposal Maintenance',
-  'Stockpile Full/Crusher Maintenance',
-  'No Working Area',
-  'Blockade',
-  'Dust',
-  'Standby Accident',
-  'Stop Loading DT Refuelling',
-  'No Stock/Material',
-  'No Job',
-  'Others',
-  'Toilet',
-  'Queuing',
-  'No Digger',
-  'Tyre Check',
-  'Cleaning Vessel Truck',
-  'Working Production',
-  'Pit Support',
-  'Coal Cleaning',
-  'Travel Blasting',
-  'Travel Loading Point',
-  'Travel to Maintenance',
-  'Rehabilitation',
-  'Waiting Truck',
-  'Dump Maintenance',
-  'Haul Road Maintenance (HRM)',
-  'Stockpile ROM Maintenance',
-  'PLM Support',
-  'Maintenance Groundtest',
-  'Others',
-  'Working Support',
-  'Queuing at Front',
-  'Queuing at Road'
-]
+// const activitiesArray = [
+//   'Breakdown',
+//   'PM Service',
+//   'Rain',
+//   'Slippery',
+//   'Safety Talk',
+//   'Shift Change/Prestart Check',
+//   'Rest and Meal',
+//   'Daily Pray',
+//   'Blasting',
+//   'Refuelling/Greasing',
+//   'Survey/Sample',
+//   'Safety Fatigue Test',
+//   'Friday Pray',
+//   'Sunday Pray',
+//   'Fasting',
+//   'Foggy',
+//   'Public Holiday',
+//   'No Operator',
+//   'Operator Fatigue',
+//   'Waiting Operator',
+//   'No Truck',
+//   'No Equipment Support',
+//   'Lighting Plant Problem',
+//   'Washing Equipment',
+//   'Front Maintenance',
+//   'Road Maintenance',
+//   'Disposal Maintenance',
+//   'Stockpile Full/Crusher Maintenance',
+//   'No Working Area',
+//   'Blockade',
+//   'Dust',
+//   'Standby Accident',
+//   'Stop Loading DT Refuelling',
+//   'No Stock/Material',
+//   'No Job',
+//   'Others',
+//   'Toilet',
+//   'Queuing',
+//   'No Digger',
+//   'Tyre Check',
+//   'Cleaning Vessel Truck',
+//   'Working Production',
+//   'Pit Support',
+//   'Coal Cleaning',
+//   'Travel Blasting',
+//   'Travel Loading Point',
+//   'Travel to Maintenance',
+//   'Rehabilitation',
+//   'Waiting Truck',
+//   'Dump Maintenance',
+//   'Haul Road Maintenance (HRM)',
+//   'Stockpile ROM Maintenance',
+//   'PLM Support',
+//   'Maintenance Groundtest',
+//   'Others',
+//   'Working Support',
+//   'Queuing at Front',
+//   'Queuing at Road'
+// ]
 const tabs = [
   { label: 'Time Entry Support', value: 'time-entry-support' },
   { label: 'Time Entry Digger', value: 'time-entry-digger' },
@@ -82,7 +85,7 @@ const tabs = [
 ]
 const shiftOptions = ['Day', 'Night']
 const unitOptions = ['DT11223', 'DT11224', 'DT11225', 'DT11226']
-const jdeOptions = ['112233', '223344', '334455', '445566', '556677']
+// const jdeOptions = ['112233', '223344', '334455', '445566', '556677']
 
 const HeaderPage = ({ title }) => {
   return (
@@ -147,21 +150,31 @@ export default function TimeSheetPage () {
   const currentDate = new Date()
   const [totalDuration, setTotalDuration] = useState()
   const [buttonDisabled, setButtonDisabled] = useState(true)
-
+  const [master, setMaster] = useState()
+  const [jdeOptions, setJdeOptions] = useState(()=>{
+    let op = getLocalStorage('timeEntry-operator')
+    return op
+  })
+  const [masterOP, setMasterOP] = useState(()=>{
+    let op = getLocalStorage('timeEntry-masterOP')
+    return op
+  })
+  
   const [formData, setFormData] = useState({
     formID: 'Time Entry Support',
     site: 'BCP',
     stafEntry: 'Nama Lengkap',
     tanggal: currentDate,
-    shift: 'Day',
-    unitNo: 'DT11223',
+    shift: '',
+    unitNo: '',
     lastUpdate: '-',
-    jdeOperator: '123456',
-    nameOperator: 'Operator Utama',
+    jdeOperator: '',
+    nameOperator: '',
     hmAwal: '10005.10',
     hmAkhir: '10023.10',
     hm: '18'
   })
+  const [formValue, setFormValue] = useState()
 
   const formatTime = useCallback(input => {
     const parts = input.split('.')
@@ -222,7 +235,7 @@ export default function TimeSheetPage () {
 
       for (let i = 0; i < inputData.length; i++) {
         const currentData = inputData[i]
-
+        
         const start_time = formatTime(currentData[2])
         const end_time = formatTime(currentData[3])
         const duration = calculateTotalTime(start_time, end_time)
@@ -250,11 +263,17 @@ export default function TimeSheetPage () {
   )
 
   const onchange = useCallback(
-    (element, cell, colIndex, rowIndex, newValue) => {
-      if (newValue !== '') {
-        const data = jRef.current.jspreadsheet.getJson()
-        console.log(transformData(data))
-      }
+    (val) => {
+      // console.log(val)
+      // console.log(transformData(val))
+      // if (newValue !== '') {
+        
+        // const data = jRef.current.jspreadsheet.getData()
+        // console.log(data)
+        // console.log(transformData(data))
+        let dt = transformData(val)
+        setFormValue(dt)
+      // }
     },
     [jRef, transformData]
   )
@@ -264,7 +283,28 @@ export default function TimeSheetPage () {
     let lastStartTimeVal = null
     let arrayTime = []
     let validateResult = false
+    let delAct = null
+    let arrData = []
+    let arrTemp=[
+      ['','','','','','','','',''],
+      ['','','','','','','','',''],
+      ['','','','','','','','',''],
+      ['','','','','','','','',''],
+      ['','','','','','','','',''],
+      ['','','','','','','','',''],
+      ['','','','','','','','',''],
+      ['','','','','','','','',''],
+      ['','','','','','','','',''],
+      ['','','','','','','','',''],
+      ['','','','','','','','',''],
+      ['','','','','','','','',''],
+      ['','','','','','','','',''],
+      ['','','','','','','','',''],
+    ]
     
+    let act = getLocalStorage('timeEntry-activity')
+    let mastr = getLocalStorage('timeEntry-master')
+    setMaster(mastr)
     const options = {
       data: [],
       columns: [
@@ -272,7 +312,7 @@ export default function TimeSheetPage () {
           type: 'dropdown',
           width: '250',
           title: 'Activity',
-          source: activitiesArray,
+          source: act,
           autocomplete: true
         },
         { type: 'text', width: '215', title: 'Delay Description' },
@@ -292,8 +332,22 @@ export default function TimeSheetPage () {
       minDimensions: [9, 14],
       tableHeight: '375px',
       tableOverflow: true,
-      onchange: onchange,
+      // onchange: onchange,
       updateTable: function (instance, cell, col, row, val, label, cellName) {
+        
+        if(col==0){
+          let v = cell.innerText
+          let a = mastr?.find(obj => obj.activityname === v);
+          delAct = a?.delaydescription
+        }
+
+        if(col==1){
+          if(delAct!=null){
+            cell.innerHTML = delAct
+            val = delAct
+          }
+          // console.log(cell.innerText)
+        }
 
         if (col == 2 || col == 3) {
           let val = cell.innerText
@@ -306,9 +360,11 @@ export default function TimeSheetPage () {
         for (let index = 0; index < 20; index++) {
           if (col == 2 && row == index) {
             lastStartTimeVal = cell.innerText
+            val = cell.innerText
           }
           if (col == 3 && row == index) {
             lastEndTimeVal = cell.innerText
+            val = cell.innerText
           }
 
           if (col == 2 && row == index + 1) {
@@ -316,6 +372,7 @@ export default function TimeSheetPage () {
             validateResult = parseFloat(resVal) == 12 ? true : false
             if(!validateResult){
               cell.innerText = lastEndTimeVal
+              val = lastEndTimeVal
             }
           }
 
@@ -323,6 +380,7 @@ export default function TimeSheetPage () {
             const result = calculateTotalTime(lastStartTimeVal, lastEndTimeVal)
             if (result !== 'NaN.NaN') {
               cell.innerText = result
+              val = cell.innerText
               arrayTime[index] = result
             }
           }
@@ -332,26 +390,44 @@ export default function TimeSheetPage () {
           const resVal = calculateTotalTimeFromArray(arrayTime)
           setTotalDuration(resVal)       
         }
+        
+        // arrTemp[col] = val
+        // console.log(1,arrTemp)
+        // if(row>arrTemp[row].length-1){
+        //   arrTemp.push(['','','','','','','','',''],)
+        // }
+        arrTemp[row][col] = val
+        // console.log(col,row,val)
+        // arrData[row]={
+      
+        // }
+        onchange(arrTemp)
 
+        // console.log(arrTemp)
       }
+      
     }
     if (!jRef.current.jspreadsheet) {
       jspreadsheet(jRef.current, options)
     }
-
     return () => {
       jspreadsheet.destroy(jRef)
     }
   }, [onchange, calculateTotalTime, formatTime])
 
-  const handleSubmit = type => {
-    // const data = jRef.current.jspreadsheet.getJson()
-    console.log(type)
+  const handleSubmit = async(type) => {
+    let act = JSON.stringify(formValue)
+    let data ={
+      ...formData,
+      activity: act
+    }
+    
+    let dt = await Services.postTimeEntrySupport(data)
+    console.log(dt)
   }
 
   const handleChange = (ev, data) => {
     const { name, value } = data
-
     if (name === 'hmAwal' || name === 'hmAkhir') {
       const isValidNumber = /^(\d+(\.\d{0,2})?)?$/.test(value)
 
@@ -388,6 +464,15 @@ export default function TimeSheetPage () {
       }
     } else {
       setFormData(prevFormData => ({ ...prevFormData, [name]: value }))
+    }
+
+    if(name === 'jdeOperator'){
+      let mo = masterOP?.find(v => v.jde === value)
+      setFormData({
+        ...formData,
+        nameOperator: mo.fullname,
+        jdeOperator: value
+      })
     }
   }
 
@@ -476,7 +561,7 @@ export default function TimeSheetPage () {
       label: 'Nama Operator',
       value: formData.nameOperator,
       readOnly: false,
-      disabled: false,
+      disabled: true,
       type: 'Input'
     },
     {
@@ -511,9 +596,34 @@ export default function TimeSheetPage () {
     }
   ]
 
+  const getDataFirst = () =>{
+    let user = Cookies.get('user')
+    user = JSON.parse(user)
+
+    const now = new Date();
+    const currentHour = now.getHours();
+    let shift = null
+    if(currentHour >= 6 && currentHour < 18){
+      shift = 'Day'
+    }else{
+      shift = 'Night'
+    }
+
+
+
+    let dt = formData
+    dt = {
+      ...dt,
+      shift: shift,
+      stafEntry: user.fullname
+    }
+    setFormData(dt)
+  }
+
   useEffect(() => {
     const disabled = (parseFloat(totalDuration) > 12 || parseFloat(totalDuration) < 12) ? true: false
     setButtonDisabled(disabled)
+    getDataFirst()
   }, [totalDuration]);
 
   return (
@@ -546,7 +656,8 @@ export default function TimeSheetPage () {
             
           </div>
         </div>
-        <FooterPage handleSubmit={handleSubmit} buttonDisabled={buttonDisabled} />
+        <FooterPage handleSubmit={handleSubmit} buttonDisabled={false} />
+        {/* <FooterPage handleSubmit={handleSubmit} buttonDisabled={buttonDisabled} /> */}
       </div>
 
       {/* <button onClick={getData}>Get Data</button> */}

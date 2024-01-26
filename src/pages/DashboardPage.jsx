@@ -30,7 +30,8 @@ import axios from 'axios'
 import { DatePicker } from '@fluentui/react-datepicker-compat'
 import { forSocket } from '../helpers/convertDate'
 import { useNavigate } from 'react-router-dom'
-// import Cookies from 'js-cookie'
+import Services from '../services/timeEntry'
+import { toLocalStorage } from '../helpers/toLocalStorage'
 
 const resolveAsset = asset => {
   const ASSET_URL =
@@ -226,8 +227,29 @@ const DashboardPage = () => {
     )
     setDataFile(response.data.data)
   }
+  const getDataMaster = async () =>{
+    try{
+      let dataMaster = await Services.getMasterTimeEntry()
+      let dataMasterOp = await Services.getMasterTimeEntryOperator()
+      let act =[]
+      let op = []
+      dataMaster?.data?.map(v=>{
+        act.push(v.activityname)
+      })
+      dataMasterOp?.data?.map(v=>{
+        op.push(v.jde)
+      })
+      toLocalStorage('timeEntry-activity',act)
+      toLocalStorage('timeEntry-master',dataMaster.data)
+      toLocalStorage('timeEntry-operator',op)
+      toLocalStorage('timeEntry-masterOP',dataMasterOp.data)
+    }catch(err){
+      console.log(err)
+    }
+  }
 
   useEffect(() => {
+    getDataMaster()
     document.title = 'Homepage MED/MOD Data Entry App - PTDH'
     getData()
     if (open && dialogRef.current) {
