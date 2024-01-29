@@ -1,28 +1,25 @@
-import { useRef, useEffect, useCallback, useState } from 'react'
+import { useRef, useEffect, useState } from 'react'
 import jspreadsheet from 'jspreadsheet-ce'
 import { HeaderPageForm } from '../components/FormComponent/HeaderPageForm'
 import FormComponent from '../components/FormComponent'
-import {
-  CompoundButton,
-  useId,
-  Button,
-  InfoLabel
-} from '@fluentui/react-components'
+import { InfoLabel } from '@fluentui/react-components'
 import { calculateTotalTimeFromArray } from '../helpers/timeHelper'
 import { FooterPageForm } from '../components/FormComponent/FooterPageForm'
+import { DynamicTablistMenu } from '../components/Tablist'
+import DataJson from '../data/test-data.json'
+import { tabsRekapTimeEntry } from '../helpers/tabArrayHelper'
 
 export const TimeEntryMinesEntryPage = () => {
   const jRef = useRef(null)
   const [totalDuration, setTotalDuration] = useState(0)
   const [buttonDisabled, setButtonDisabled] = useState(true)
-  //   const [totalConvertDuration, setTotalConvertDuration] = useState(0)
 
   const handleChange = (ev, data) => {
     const { name, value } = data
   }
-  const handleSubmit = () =>{
-    
-  }
+
+  const handleSubmit = () => {}
+
 
   const isChange = () => {
     const data = jRef.current.jspreadsheet.getData()
@@ -30,43 +27,37 @@ export const TimeEntryMinesEntryPage = () => {
     const arrayDuration = data.map(k => k[14])
     const totalTimeDuration = calculateTotalTimeFromArray(arrayDuration)
     if (totalTimeDuration !== 'NaN.NaN') {
-      // console.log(totalTimeDuration)
       setTotalDuration(totalTimeDuration)
     }
-
-    // const convArrayDuration = data.map((k) => k[15])
-    // const totalConvertDuration = calculateTotalTimeFromArray(convArrayDuration)
-    // if(totalConvertDuration !== "NaN.NaN"){
-    //     console.log(totalConvertDuration)
-    //     setTotalConvertDuration(totalConvertDuration)
-    // }
   }
 
   const components = [
-    {
-      inputId: useId('formID'),
-      grid: 'col-2',
-      label: 'Form ID',
-      value: 'Time Entry Operator',
-      type: 'StaticInfo'
-    },
-    {
-      inputId: useId('tanggal'),
-      name: 'tanggal',
-      grid: 'col-2',
-      label: 'Tanggal',
-      value: '',
-      readOnly: false,
-      disabled: false,
-      type: 'DatePicker'
-    }
+    // {
+    //   inputId: useId('formID'),
+    //   grid: 'col-2',
+    //   label: 'Form ID',
+    //   value: 'Time Entry Operator',
+    //   type: 'StaticInfo'
+    // },
+    // {
+    //   inputId: useId('tanggal'),
+    //   name: 'tanggal',
+    //   grid: 'col-2',
+    //   label: 'Tanggal',
+    //   value: '',
+    //   readOnly: false,
+    //   disabled: false,
+    //   type: 'DatePicker'
+    // }
   ]
 
   useEffect(() => {
     let width = screen.width
 
     const options = {
-      data: [],
+      data: DataJson,
+      lazyLoading:true,
+      loadingSpin:true,
       columns: [
         { type: 'text', width: '100', title: 'Unit No' },
         { type: 'text', width: '200', title: 'Product Model' },
@@ -126,8 +117,14 @@ export const TimeEntryMinesEntryPage = () => {
 
   return (
     <>
-      <HeaderPageForm title={`Form Time Entry Mines-Protes`} />
+      <HeaderPageForm title={`Time Entry BCP - 11 Januari 2024`} />
+
       <div className='form-wrapper'>
+        <div className='row'>
+          <div className='col-6'>
+            <DynamicTablistMenu tabs={tabsRekapTimeEntry} active="time-sheet-mines"/>
+          </div>
+        </div>
         <FormComponent handleChange={handleChange} components={components} />
         <div ref={jRef} className='mt1em' />
         <div className='row'>

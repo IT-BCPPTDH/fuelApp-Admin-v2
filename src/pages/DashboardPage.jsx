@@ -206,9 +206,9 @@ const dataFiles = [
     link: '/mineplan'
   },
   {
-    name: 'Time Entry Mines-Protes',
+    name: 'Time Sheet Mines/Protes',
     desc: 'Template Time Entry model Mines',
-    link: '/time-entry-mines'
+    link: '/time-sheet-mines'
   }
 ]
 
@@ -298,7 +298,7 @@ const DashboardPage = () => {
         }}
       >
         <Title title='Homepage' />
-        <Button
+        {/* <Button
           ref={triggerRef}
           {...triggerAttributes}
           onClick={onClickTrigger}
@@ -312,7 +312,7 @@ const DashboardPage = () => {
           className={styles.signInButton}
         >
           +
-        </Button>
+        </Button> */}
       </div>
       <section>
         <Header
