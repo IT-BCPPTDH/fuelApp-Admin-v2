@@ -12,7 +12,7 @@ const useStyles = makeStyles({
   },
 });
 
-export const DynamicTablistMenu = ({ tabs }) => {
+export const DynamicTablistMenu = ({ tabs, active }) => {
   const styles = useStyles();
   const navigate = useNavigate();
 
@@ -30,7 +30,7 @@ export const DynamicTablistMenu = ({ tabs }) => {
 
   return (
     <div className={styles.root}>
-      <TabList defaultSelectedValue={tabs[0].value} size="small">
+      <TabList defaultSelectedValue={active} size="small">
         {renderTabs()}
       </TabList>
     </div>
