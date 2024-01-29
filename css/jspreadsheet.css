@@ -175,6 +175,7 @@
 
 .jexcel_overflow > tbody > tr > td {
     overflow: hidden;
+    font-size: 12px;
 }
 
 .jexcel > tbody > tr > td:last-child

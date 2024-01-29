@@ -509,99 +509,6 @@ const statisCol = [
   { index: 99, activity: 'D19' }
 ]
 
-// const statisCol = [
-//   { index: 11, activity: 'B1' },
-//   { index: 12, activity: 'B2' },
-//   { index: 13, activity: 'B3' },
-//   { index: 14, activity: 'B4' },
-//   { index: 16, activity: 'W1' },
-//   { index: 17, activity: 'W2' },
-//   { index: 18, activity: 'W3' },
-//   { index: 19, activity: 'W4' },
-//   { index: 20, activity: 'W5' },
-//   { index: 21, activity: 'W6' },
-//   { index: 22, activity: 'W7' },
-//   { index: 23, activity: 'W8' },
-//   { index: 24, activity: 'W9' },
-//   { index: 25, activity: 'W10' },
-//   { index: 26, activity: 'W11' },
-//   { index: 27, activity: 'W12' },
-//   { index: 28, activity: 'W13' },
-//   { index: 29, activity: 'W14' },
-//   { index: 30, activity: 'W15' },
-//   { index: 31, activity: 'W16' },
-//   { index: 32, activity: 'W17' },
-//   { index: 33, activity: 'W18' },
-//   { index: 34, activity: 'W19' },
-//   { index: 35, activity: 'W20' },
-//   { index: 36, activity: 'W21' },
-//   { index: 37, activity: 'W22' },
-//   { index: 38, activity: 'W23' },
-//   { index: 39, activity: 'W24' },
-//   { index: 40, activity: 'W25' },
-//   { index: 41, activity: 'W26' },
-//   { index: 42, activity: 'W27' },
-//   { index: 43, activity: 'W28' },
-//   { index: 44, activity: 'W29' },
-//   { index: 45, activity: 'W30' },
-//   { index: 46, activity: 'W31' },
-//   { index: 47, activity: 'W32' },
-//   { index: 48, activity: 'W33' },
-//   { index: 49, activity: 'W34' },
-//   { index: 50, activity: 'W35' },
-//   { index: 51, activity: 'W36' },
-//   { index: 52, activity: 'W37' },
-//   { index: 53, activity: 'W38' },
-//   { index: 54, activity: 'W39' },
-//   { index: 55, activity: 'W40' },
-//   { index: 56, activity: 'W41' },
-//   { index: 57, activity: 'W42' },
-//   { index: 58, activity: 'W43' },
-//   { index: 59, activity: 'W44' },
-//   { index: 60, activity: 'W45' },
-//   { index: 61, activity: 'W46' },
-//   { index: 62, activity: 'W47' },
-//   { index: 63, activity: 'W48' },
-//   { index: 64, activity: 'W49' },
-//   { index: 65, activity: 'W50' },
-//   { index: 66, activity: 'W51' },
-//   { index: 67, activity: 'W52' },
-//   { index: 68, activity: 'W53' },
-//   { index: 70, activity: 'S1' },
-//   { index: 71, activity: 'S2' },
-//   { index: 72, activity: 'S3' },
-//   { index: 73, activity: 'S4' },
-//   { index: 74, activity: 'S5' },
-//   { index: 75, activity: 'S6' },
-//   { index: 76, activity: 'S7' },
-//   { index: 77, activity: 'S8' },
-//   { index: 78, activity: 'S9' },
-//   { index: 79, activity: 'S10' },
-//   { index: 80, activity: 'S11' },
-//   { index: 81, activity: 'S12' },
-//   { index: 82, activity: 'S13' },
-//   { index: 83, activity: 'S14' },
-//   { index: 85, activity: 'D1' },
-//   { index: 86, activity: 'D2' },
-//   { index: 87, activity: 'D3' },
-//   { index: 88, activity: 'D4' },
-//   { index: 89, activity: 'D5' },
-//   { index: 90, activity: 'D6' },
-//   { index: 91, activity: 'D7' },
-//   { index: 92, activity: 'D8' },
-//   { index: 93, activity: 'D9' },
-//   { index: 94, activity: 'D10' },
-//   { index: 95, activity: 'D11' },
-//   { index: 96, activity: 'D12' },
-//   { index: 97, activity: 'D13' },
-//   { index: 98, activity: 'D14' },
-//   { index: 99, activity: 'D15' },
-//   { index: 100, activity: 'D16' },
-//   { index: 101, activity: 'D17' },
-//   { index: 102, activity: 'D18' },
-//   { index: 103, activity: 'D19' }
-// ];
-
 //This is working code
 const convertKeysToCamelCase = data => {
   return data.map(item => {
@@ -698,27 +605,27 @@ function getActivityCode (activityValue) {
 }
 
 export function getTimeSheetData () {
-  const keyStructure = [
-    'unitNo',
-    'productModel',
-    'productionDate',
-    'loc',
-    'shift',
-    'operatorId',
-    'operatorName',
-    ...Array.from({ length: 4 }, (_, i) => `B${i + 1}`),
-    'Total',
-    ...Array.from({ length: 53 }, (_, i) => `W${i + 1}`),
-    'Total WH',
-    ...Array.from({ length: 14 }, (_, i) => `S${i + 1}`),
-    'Total SPO',
-    ...Array.from({ length: 23 }, (_, i) => `D${i + 1}`),
-    'Total N-SPO',
-    'Check',
-    'Variance'
-  ]
+  // const keyStructure = [
+  //   'unitNo',
+  //   'productModel',
+  //   'productionDate',
+  //   'loc',
+  //   'shift',
+  //   'operatorId',
+  //   'operatorName',
+  //   ...Array.from({ length: 4 }, (_, i) => `B${i + 1}`),
+  //   'Total',
+  //   ...Array.from({ length: 53 }, (_, i) => `W${i + 1}`),
+  //   'Total WH',
+  //   ...Array.from({ length: 14 }, (_, i) => `S${i + 1}`),
+  //   'Total SPO',
+  //   ...Array.from({ length: 23 }, (_, i) => `D${i + 1}`),
+  //   'Total N-SPO',
+  //   'Check',
+  //   'Variance'
+  // ]
 
-  console.log(keyStructure)
+  // console.log(keyStructure)
 
   let dataTS = convertKeysToCamelCase(TimeSheetJson)
   dataTS = groupDataByUnitNo(dataTS)
@@ -739,6 +646,7 @@ const createFinalData = dataDay => {
 
       let myArray = Array.from({ length: 111 }, () => '-')
       let activityDurations = {}
+
       element.forEach(ele => {
         let dataAct = null
         if (ele.activity.includes('Working Production')) {
@@ -763,6 +671,9 @@ const createFinalData = dataDay => {
         myArray[5] = ele.operatorId
         myArray[6] = ele.operatorName
         myArray[indexAct] = parseFloat(activityDurations[indexAct] / 100, 2)
+        myArray[105] = ele.smuStart
+        myArray[106] = ele.smuFinish
+        myArray[107] = ele.hm
       })
 
       groupedData.push(myArray)
