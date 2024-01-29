@@ -542,17 +542,17 @@ export const colHelperTimesheet = {
     },
     {
       type: 'text',
-      title: 'Validitas HM',
+      title: 'Validasi HM',
       width: '100'
     },
      {
         type: 'text',
-        title: 'Validitas TS',
+        title: 'Check',
         width: '100'
       },
       {
         type: 'text',
-        title: 'Variance',
+        title: 'Var',
         width: '100'
       }
   ],
@@ -1175,6 +1175,7 @@ export const colArrayHelper = {
   ],
   arrHM:['Hours Meter (HM)'],
   arrCodeHM:[
-    'Awal', 'Akhir', 'Total HM', 'Validitas HM'
-  ]
+    'Awal', 'Akhir', 'Total HM', 'Validasi HM'
+  ],
+  arrCheck:['Check', 'Var']
 }
