@@ -16,6 +16,7 @@ const FormComponent = ({ handleChange, components }) => {
             onChange={handleChange}
             disabled={val.disabled}
             readOnly={val.readOnly}
+            columns={val.columns}
           />
         </div>
       ))}
