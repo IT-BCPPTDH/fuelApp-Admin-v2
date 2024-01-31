@@ -66,12 +66,12 @@ export default function CoalHauling() {
   return (
     <>
       <Title title="Entry Data Hauling" />
-      <div className={`container`}>
+      
         <div className="row">
-          <div className="col-8">
+          <div className="col-7">
             <InputHauling />
           </div>
-          <div className="col-4">
+          <div className="col-5">
             <CardDataHauling />
             {/* <Selectable/> */}
           </div>
@@ -79,7 +79,7 @@ export default function CoalHauling() {
             <TableHauling />
           </div>
         </div>
-      </div>
+      
     </>
   );
 }

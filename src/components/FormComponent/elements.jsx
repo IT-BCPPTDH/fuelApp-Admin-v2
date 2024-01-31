@@ -94,26 +94,26 @@ export const FormElement = ({
       case "RadioButton":
         return (
           <RadioGroup
+            id={inputId}
             layout="horizontal"
             onChange={(e) => onChange(e, { name: name, value: e.target.value })}
           >
-            {options.map((option) => (
-              <Radio value={option} label={option} />
+            {options.map((option,key) => (
+              <Radio key={key} value={option} label={option} />
             ))}
           </RadioGroup>
         );
       case "TimePicker":
-        return <TimePicker startHour={8} endHour={20} />;
+        return <TimePicker id={inputId} startHour={8} endHour={20} />;
       case "TextDataView":
-        // return <Label>{value}</Label>;
         return (
           <>
-            <div className="data-value">{value}</div>
+            <div id={inputId} className="data-value">{value}</div>
           </>
         );
      
       case "StaticInfo":
-        return <h5 className={styles.formName}>{value}</h5>;
+        return <h5 id={inputId}className={styles.formName}>{value}</h5>;
       default:
         return null;
     }
@@ -162,6 +162,7 @@ const ComboBoxCustom = (props) => {
   return (
 
     <Combobox
+      id={inputId}
       aria-labelledby={inputId}
       style={{ maxWidth: "200px", minWidth: "180px" }}
       freeform

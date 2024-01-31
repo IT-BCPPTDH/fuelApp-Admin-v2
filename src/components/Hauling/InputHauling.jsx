@@ -23,14 +23,14 @@ const useStyles = makeStyles({
 const InputHauling = () => {
   const comp = [
     {
-      InputId: useId("dateform"),
+      inputId: useId("dateform"),
       grid: "col-4",
       label: "Tanggal",
       value: "",
       type: "DatePicker",
     },
     {
-      InputId: useId("shift"),
+      inputId: useId("shift"),
       grid: "col-4",
       label: "Shift",
       value: "",
@@ -38,14 +38,14 @@ const InputHauling = () => {
       options: ["Day", "Night"],
     },
     {
-      InputId: useId(""),
+      inputId: useId(""),
       grid: "col-4",
       label: "",
       value: "",
       type: "",
     },
     {
-      InputId: useId("nounit"),
+      inputId: useId("nounit"),
       grid: "col-4",
       label: "No Unit",
       value: "",
@@ -53,7 +53,7 @@ const InputHauling = () => {
       options: ["HMP6618", "HMP1182"],
     },
     {
-      InputId: useId("operator"),
+      inputId: useId("operator"),
       grid: "col-4",
       label: "Operator",
       value: "",
@@ -61,7 +61,7 @@ const InputHauling = () => {
       options: ["AT5166 - Maulana Putra", "AB4426 - Setiyo Baskoro"],
     },
     {
-      InputId: useId("loader"),
+      inputId: useId("loader"),
       grid: "col-4",
       label: "Loader",
       value: "",
@@ -69,14 +69,14 @@ const InputHauling = () => {
       options: ["EXA1772", "EXA1167"],
     },
     {
-      InputId: useId("tonnace"),
+      inputId: useId("tonnace"),
       grid: "col-4",
       label: "Tonnace",
       value: "",
       type: "Input",
     },
     {
-      InputId: useId("seam"),
+      inputId: useId("seam"),
       grid: "col-4",
       label: "Seam",
       value: "",
@@ -84,7 +84,7 @@ const InputHauling = () => {
       options: ["A", "B", "BC"],
     },
     {
-      InputId: useId("dummpingpoint"),
+      inputId: useId("dummpingpoint"),
       grid: "col-4",
       label: "Dummping Point",
       value: "",
@@ -92,21 +92,21 @@ const InputHauling = () => {
       options: ["A", "B", "BC"],
     },
     {
-      InputId: useId("rom"),
+      inputId: useId("rom"),
       grid: "col-4",
       label: "Rom",
       value: "",
       type: "Input",
     },
     {
-      InputId: useId("inrom"),
+      inputId: useId("inrom"),
       grid: "col-4",
       label: "In Rom",
       value: "",
       type: "Input",
     },
     {
-      InputId: useId("outrom"),
+      inputId: useId("outrom"),
       grid: "col-4",
       label: "Out Rom",
       value: "",
@@ -119,16 +119,7 @@ const InputHauling = () => {
 
   return (
     <>
-      <p>
-        <small>Insert Box</small>
-      </p>
-      {/* <div className="form-wrapper">
-        <div className={styles.card}>
-          <FormComponent components={comp} className={styles.control} />
-          <Button className={styles.button}>Simpan</Button>
-        </div>
-      </div> */}
-      <div className="form-wrapper wrapper">
+      <div className="form-wrapper wrapper" style={{marginBottom: '0', paddingTop: '3em'}}>
         <div className="input-base">
           <FormComponent components={comp} className={styles.control} />
         </div>

@@ -4,16 +4,10 @@ import {
   useId,
   makeStyles,
   Card,
-  CardHeader,
 } from "@fluentui/react-components";
-import FormComponent from "../FormComponent";
+
 
 const useStyles = makeStyles({
-  card: {
-    // width: "160px",
-    // height: "30px",
-    marginTop: "-7px",
-  },
   caption: {
     fontSize: "16px",
     textAlign: "center",
@@ -75,30 +69,9 @@ const CardDataHauling = () => {
 
   return (
     <>
-      <p>
-        <small>View Data</small>
-      </p>
-      {/* <div className="form-wrapper">
-        <div className={styles.card}>
-          {datacard.map((v, i) => (
-            <Card style={{ marginBottom: "5px" }}>
-              <div className={styles.caption}>
-                <FormComponent components={[v]} />
-              </div>
-            </Card>
-          ))}
-        </div>
-      </div> */}
-      <div className="form-wrapper">
+      <div className="form-wrapper" style={{marginBottom: '0'}}>
         <div className="card-base">
-          {/* {datacard.map((v, i) => (
-            <Card style={{ marginBottom: "5px", grid:"auto-flow / 1fr 1fr 1fr;" }} className={styles.card}>
-              <div className={styles.caption}>
-                <FormComponent components={[v]} />
-              </div>
-            </Card>
-          ))} */}
-          <Card style={{ marginBottom: "3px" }} className="card-data-full">
+          <Card style={{ marginBottom: "10px" }} className="card-data-full">
             <span className={styles.card}>Total Hauling</span>
             <p className={styles.caption}>
               <b>

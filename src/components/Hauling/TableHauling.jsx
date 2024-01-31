@@ -1,120 +1,4 @@
-// import React from "react";
-// import {
-//   Table,
-//   TableBody,
-//   TableCell,
-//   TableCellLayout,
-//   TableColumnDefinition,
-//   TableHeader,
-//   TableHeaderCell,
-//   TableRow,
-//   useTableColumnSizing_unstable,
-//   useTableFeatures,
-// } from "@fluentui/react-components";
-
-// const columns = [
-//   { columnKey: "id", label: "ID" },
-//   { columnKey: "tanggal", label: "Tanggal" },
-//   { columnKey: "shift", label: "Shift" },
-//   { columnKey: "unit", label: "Unit" },
-//   { columnKey: "operator", label: "Operator" },
-//   { columnKey: "tonnace", label: "Tonnace" },
-//   { columnKey: "loader", label: "Loader" },
-//   { columnKey: "pit", label: "Pit" },
-//   { columnKey: "inrom", label: "In Rom" },
-//   { columnKey: "outrom", label: "On Rom" },
-//   { columnKey: "seam", label: "Seam" },
-//   { columnKey: "dumpingpoint", label: "Dumping Point" },
-// ];
-
-// const items = [
-//   {
-//     id: 1,
-//     tanggal: "18/01/2024",
-//     shift: "Day",
-//     unit: "HMP7322",
-//     operator: "Rahmansyah Kurniawan",
-//     tonnace: 169,
-//     loader: "EXA4025",
-//     pit: "A",
-//     inrom: "16:26",
-//     outrom: "17:26",
-//     seam: "A",
-//     dumpingpoint: 1,
-
-//   },
-//   {
-//     id: 2,
-//     tanggal: "18/01/2024",
-//     shift: "Day",
-//     unit: "HMP7322",
-//     operator: "M. Fadel Agustin",
-//     tonnace: 169,
-//     loader: "EXA4025",
-//     pit: "A",
-//     inrom: "16:26",
-//     outrom: "17:26",
-//     seam: "A",
-//     dumpingpoint: 1,
-
-//   },
-// ];
-
-// const TableHauling = () => {
-//   const [columns] = (columns);
-//   const [columnSizingOptions] = {
-//     id: {
-//       idealWidth: 300,
-//       minWidth: 150,
-//     },
-//     tanggal: {
-//       minWidth: 110,
-//       defaultWidth: 250,
-//     },
-//     unit: {
-//       minWidth: 150,
-//     },
-//   };
-
-//   const { getRows, columnSizing_unstable, tableRef } = useTableFeatures(
-//     {
-//       columns,
-//       items,
-//     },
-//     [useTableColumnSizing_unstable({ columnSizingOptions })]
-//   );
-
-//   return (
-//     <div style={{ overflowX: "auto" }}>
-//       <Table sortable aria-label="Default table">
-//         <TableHeader>
-//           <TableRow>
-//             {columns.map((column) => (
-//               <TableHeaderCell key={column.columnKey}>
-//                 {column.label}
-//               </TableHeaderCell>
-//             ))}
-//           </TableRow>
-//         </TableHeader>
-//         <TableBody>
-//           {items.map((item) => (
-//             <TableRow key={item.id}>
-//               {columns.map((column) => (
-//                 <TableCell key={column.columnKey}>
-//                   <TableCellLayout>{item[column.columnKey]}</TableCellLayout>
-//                 </TableCell>
-//               ))}
-//             </TableRow>
-//           ))}
-//         </TableBody>
-//       </Table>
-//     </div>
-//   );
-// };
-
-// export default TableHauling;
-
-import React, { useState, ChangeEvent } from "react";
+import React, { useState } from "react";
 import { SearchBox } from "@fluentui/react-search-preview";
 import {
   Table,
@@ -241,7 +125,7 @@ const items = [
     },
   },
   {
-    id: { label: 1 },
+    id: { label: 2 },
     tanggal: { label: "18/1/2024" },
     shift: { label: "Day" },
     unit: {
@@ -318,9 +202,7 @@ const TableHauling = () => {
 
   return (
     <>
-      <p>
-        <small>DataBase</small>
-      </p>
+      <div className="form-wrapper" style={{marginTop: '10px'}}>
       <div className="search-box">
         <SearchBox placeholder="Search" />
       </div>
@@ -428,6 +310,8 @@ const TableHauling = () => {
           </TableBody>
         </Table>
       </div>
+      </div>
+     
     </>
   );
 };

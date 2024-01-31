@@ -1,38 +1,37 @@
-import axios from 'axios';
-import Cookies from 'js-cookie';
-import { URL_ENUMS } from '../utils/Enums';
+import axios from 'axios'
+import Cookies from 'js-cookie'
+import { URL_ENUMS } from '../utils/Enums'
 
 const api = axios.create({
   maxBodyLength: Infinity
-});
+})
 
 api.interceptors.request.use(config => {
-  const jwt = Cookies.get('token');
-  if (!jwt) throw new Error('JWT not found in cookies');
-  config.headers.Authorization = `Bearer ${jwt}`;
-  return config;
-});
+  const jwt = Cookies.get('token')
+  if (!jwt) throw new Error('JWT not found in cookies')
+  config.headers.Authorization = `Bearer ${jwt}`
+  return config
+})
 
 const getMasterTimeEntry = async () => {
-    const response = await api.get(URL_ENUMS.masterTimeEntry);
-    return response.data
-  }; 
+  const response = await api.get(URL_ENUMS.masterTimeEntry)
+  return response.data
+}
 
-  const getMasterTimeEntryOperator = async () => {
-    const response = await api.get(URL_ENUMS.masterTimeEntryOperator);
-    return response.data
-  }; 
+const getMasterTimeEntryOperator = async () => {
+  const response = await api.get(URL_ENUMS.masterTimeEntryOperator)
+  return response.data
+}
 
-  const postTimeEntrySupport = async (data) => {
-    const response = await api.post(URL_ENUMS.postTimeEntrySupport,data);
-    return response.data
-  }; 
-
+const postTimeEntrySupport = async data => {
+  const response = await api.post(URL_ENUMS.postTimeEntrySupport, data)
+  return response.data
+}
 
 const Services = {
-    getMasterTimeEntry,
-    getMasterTimeEntryOperator,
-    postTimeEntrySupport
+  getMasterTimeEntry,
+  getMasterTimeEntryOperator,
+  postTimeEntrySupport
 }
 
 export default Services

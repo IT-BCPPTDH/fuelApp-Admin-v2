@@ -191,6 +191,11 @@ const CardExample = props => {
 
 const dataFiles = [
   {
+    name: 'Coal Hauling Data Entry',
+    desc: 'Data Collector for Coal Hauling Entry',
+    link: '/coalhauling-dataentry'
+  },
+  {
     name: 'Operator Timesheet Data Entry',
     desc: 'Data Collector for Activity Time Entry',
     link: '/timesheet-dataentry'
@@ -314,7 +319,7 @@ const DashboardPage = () => {
           +
         </Button> */}
       </div>
-      <section>
+      {/* <section>
         <Header
           title='Last Data Stored'
           description='Latest form has been updated by you,'
@@ -357,7 +362,7 @@ const DashboardPage = () => {
       </section>
       <div className={styles.divider}>
         <Divider inset />
-      </div>
+      </div> */}
       <section>
         <Header
           title='Entry Data by Template'
@@ -368,7 +373,8 @@ const DashboardPage = () => {
             display: 'flex',
             alignContent: 'center',
             gap: '20px',
-            flexFlow: 'wrap'
+            flexFlow: 'wrap',
+            marginTop: '2em'
           }}
         >
           {dataFiles.map((v, i) => (
