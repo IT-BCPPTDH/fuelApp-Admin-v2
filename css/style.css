@@ -82,3 +82,10 @@ button:hover{
    background-color: red;
    color: #fff;
 }
+
+/* css view data hauling balqis */
+.data-value{
+   text-align: center;
+   font-size: large;
+   font-weight: bold;
+}
