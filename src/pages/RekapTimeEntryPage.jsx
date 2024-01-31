@@ -1,12 +1,8 @@
 import { useRef, useEffect, useState } from 'react'
 import jspreadsheet from 'jspreadsheet-ce'
 import { HeaderPageForm } from '../components/FormComponent/HeaderPageForm'
-// import FormComponent from '../components/FormComponent'
-// import { InfoLabel, arrowHeights } from '@fluentui/react-components'
-// import { calculateTotalTimeFromArray } from '../helpers/timeHelper'
 import { FooterPageForm } from '../components/FormComponent/FooterPageForm'
 import { DynamicTablistMenu } from '../components/Tablist'
-// import DataJson from '../data/test-data.json'
 import '../../css/rekap.css'
 import { colHelperTimesheet, colArrayHelper } from '../helpers/columnHelper'
 import { getTimeSheetData } from '../helpers/arrayGroupHelper'
@@ -14,202 +10,211 @@ import { tabsRekapTimeEntry } from '../helpers/tabArrayHelper'
 
 export const RekapTimeEntryPage = () => {
   const jRef = useRef(null)
-  const [totalDuration, setTotalDuration] = useState(0)
+  // const [totalDuration, setTotalDuration] = useState(0)
   const [buttonDisabled, setButtonDisabled] = useState(true)
+  // const [dataSpreaSheet, setDataSpreadSheet] = useState([])
 
   const handleSubmit = () => {}
 
   useEffect(() => {
-    let width = screen.width
-    let dataSpreaSheet = getTimeSheetData()
-    const rowLength = dataSpreaSheet.length
+    const fetchData = async () => {
+      try {
+        const width = screen.width
+        const dataSpreaSheet = getTimeSheetData()
+        const rowLength = dataSpreaSheet.length
 
-    let B = Array.from({ length: 4 }, () => null)
-    let C = Array.from({ length: 53 }, () => null)
-    let D = Array.from({ length: 14 }, () => null)
-    let E = Array.from({ length: 23 }, () => null)
+        const B = Array.from({ length: 4 }, () => null)
+        const C = Array.from({ length: 53 }, () => null)
+        const D = Array.from({ length: 14 }, () => null)
+        const E = Array.from({ length: 23 }, () => null)
 
-    let val11=null,val65 = null,val80 = null, val104 = null, val107 = null
+        let val11 = null,
+          val65 = null,
+          val80 = null,
+          val104 = null,
+          val107 = null
 
-    const options = {
-      data: dataSpreaSheet,
-      columns: colHelperTimesheet.columnHeader,
-      nestedHeaders: colHelperTimesheet.nestedHeader,
-      minDimensions: [107, rowLength],
-      tableHeight: '500px',
-      tableWidth: `${(width * 87) / 100}px`,
-      tableOverflow: true,
-      updateTable: function (instance, cell, col, row, val, label, cellName) {
-        if (col >= 7 && col <= 10) {
-          const index = col - 7
-          if (cell.innerText !== '-') {
-            B[index] = parseFloat(cell.innerText, 2)
-          } else {
-            B[index] = null
-          }
-        }
-
-        if (col == 11) {
-          const sumB = B.reduce((acc, curr) => acc + (curr || 0), 0)
-          if (sumB !== 0) {
-            cell.innerText = parseFloat(sumB, 2).toFixed(2)
-            cell.style.fontWeight = 'bold'
-            val11 = parseFloat(sumB, 2)
-          } else {
-            cell.innerText = '-'
-            val11 = null
-          }
-        }
-
-        if (col >= 12 && col <= 64) {
-          const indexC = col - 12
-          if (cell.innerText !== '-') {
-            C[indexC] = parseFloat(cell.innerText, 2)
-          } else {
-            C[indexC] = null
-          }
-        }
-
-        if (col == 65) {
-          const sumC = C.reduce((acc, curr) => acc + (curr || 0), 0)
-          if (sumC !== 0) {
-            cell.innerText = parseFloat(sumC, 2).toFixed(2)
-            cell.style.fontWeight = 'bold'
-            val65 = parseFloat(sumC, 2)
-          } else {
-            cell.innerText = '-'
-            val65 = null
-          }
-        }
-
-        if (col >= 66 && col <= 79) {
-          const indexD = col - 66
-          if (cell.innerText !== '-') {
-            D[indexD] = parseFloat(cell.innerText, 2)
-          } else {
-            D[indexD] = null
-          }
-        }
-
-        if (col == 80) {
-          const sumD = D.reduce((acc, curr) => acc + (curr || 0), 0)
-          if (sumD !== 0) {
-            cell.innerText = parseFloat(sumD, 2).toFixed(2)
-            cell.style.fontWeight = 'bold'
-            val80 = parseFloat(sumD, 2)
-          } else {
-            cell.innerText = '-'
-            val80 = null
-          }
-        }
-
-        if (col >= 81 && col <= 103) {
-          const indexE = col - 81
-          if (cell.innerText !== '-') {
-            E[indexE] = parseFloat(cell.innerText, 2)
-          } else {
-            E[indexE] = null
-          }
-        }
-
-        if (col == 104) {
-          const sumE = E.reduce((acc, curr) => acc + (curr || 0), 0)
-          if (sumE !== 0) {
-            cell.innerText = parseFloat(sumE, 2).toFixed(2)
-            cell.style.fontWeight = 'bold'
-            val104 = parseFloat(sumE, 2)
-          } else {
-            cell.innerText = '-'
-            val104 = null
-          }
-        }
-
-        if (col == 107) {
-          val107 = parseFloat(cell.innerText.replace(',', '.'), 2)
-        }
-
-        if (col == 108) {
-          const res108 = val107 - val65
-          if (res108 != 0) {
-            cell.innerText = parseFloat(res108, 2).toFixed(2)
-          } else {
-            cell.innerText = '-'
-          }
-
-          if (res108 < 0) {
-            cell.style.color = 'red'
-            cell.style.backgroundColor = '#ffd0d0'
-          } else if (res108 > 0) {
-            cell.style.color = '#c07600'
-            cell.style.backgroundColor = '#fff3dc'
-          } else {
-            cell.style.color = 'green'
-          }
-
-          cell.style.fontWeight = 'bold'
-        }
-
-        if(col == 109){
-            const totalTime = val11 + val80 + val104 + val107
-
-            if(totalTime > 12 || totalTime < 12){
-                cell.style.backgroundColor = '#ffd9d9'
-                cell.style.color = "red"
-                cell.innerText = "FALSE"
-            } else {
-                cell.style.backgroundColor = 'transparent'
-                cell.style.color = "black"
-                cell.innerText = "TRUE"
+        const options = {
+          data: dataSpreaSheet,
+          columns: colHelperTimesheet.columnHeader,
+          nestedHeaders: colHelperTimesheet.nestedHeader,
+          minDimensions: [107, rowLength],
+          tableHeight: '500px',
+          tableWidth: `${(width * 87) / 100}px`,
+          tableOverflow: true,
+          lazyLoading: true,
+          loadingSpin: true,
+          updateTable: function (instance, cell, col, row, val) {
+            if (col >= 7 && col <= 10) {
+              const index = col - 7;
+              B[index] = cell.innerText !== '-' ? parseFloat(cell.innerText, 2) : null;
             }
 
-            cell.style.fontWeight = 'bold'
+            if (col == 11) {
+              const sumB = B.reduce((acc, curr) => acc + (curr || 0), 0);
+              val11 = sumB !== 0 ? parseFloat(sumB, 2) : null;
+              cell.innerText = sumB !== 0 ? parseFloat(sumB, 2).toFixed(2) : '-';
+              cell.style.fontWeight = sumB !== 0 ? 'bold' : 'normal';
+            }
+
+            if (col >= 12 && col <= 64) {
+              const indexC = col - 12
+              C[indexC] =
+                cell.innerText !== '-' ? parseFloat(cell.innerText, 2) : null
+            }
+
+            if (col == 65) {
+              const sumC = C.reduce((acc, curr) => acc + (curr || 0), 0)
+              val65 = sumC !== 0 ? parseFloat(sumC, 2) : null
+              cell.innerText = sumC !== 0 ? parseFloat(sumC, 2).toFixed(2) : '-'
+              cell.style.fontWeight = sumC !== 0 ? 'bold' : 'normal'
+            }
+
+            if (col >= 66 && col <= 79) {
+              const indexD = col - 66
+              D[indexD] =
+                cell.innerText !== '-' ? parseFloat(cell.innerText, 2) : null
+            }
+
+            if (col == 80) {
+              const sumD = D.reduce((acc, curr) => acc + (curr || 0), 0)
+              val80 = sumD !== 0 ? parseFloat(sumD, 2) : null
+              cell.innerText = sumD !== 0 ? parseFloat(sumD, 2).toFixed(2) : '-'
+              cell.style.fontWeight = sumD !== 0 ? 'bold' : 'normal'
+            }
+
+            if (col >= 81 && col <= 103) {
+              const indexE = col - 81
+              E[indexE] =
+                cell.innerText !== '-' ? parseFloat(cell.innerText, 2) : null
+            }
+
+            if (col == 104) {
+              const sumE = E.reduce((acc, curr) => acc + (curr || 0), 0)
+              val104 = sumE !== 0 ? parseFloat(sumE, 2) : null
+              cell.innerText = sumE !== 0 ? parseFloat(sumE, 2).toFixed(2) : '-'
+              cell.style.fontWeight = sumE !== 0 ? 'bold' : 'normal'
+            }
+
+            if (col == 107) {
+              val107 = parseFloat(cell.innerText.replace(',', '.'), 2)
+            }
+
+            if (col == 108) {
+              const res108 = val107 - val65
+              cell.innerText =
+                res108 !== 0 ? parseFloat(res108, 2).toFixed(2) : '-'
+              cell.style.fontWeight = res108 !== 0 ? 'bold' : 'normal'
+
+              if (res108 < 0) {
+                cell.style.color = 'red'
+                cell.style.backgroundColor = '#ffd0d0'
+              } else if (res108 > 0) {
+                cell.style.color = '#c07600'
+                cell.style.backgroundColor = '#fff3dc'
+              } else {
+                cell.style.color = 'green'
+              }
+            }
+
+            if (col == 109 || col == 110) {
+              const totalTime = val11 + val80 + val104 + val107
+              const variance = totalTime - 12
+
+              if (col == 109) {
+                cell.innerText = totalTime !== 12 ? 'FALSE' : 'TRUE'
+                cell.style.backgroundColor =
+                  totalTime !== 12 ? '#ffd9d9' : 'transparent'
+                cell.style.color = totalTime !== 12 ? 'red' : 'black'
+              }
+
+              if (col == 110) {
+                cell.innerText = parseFloat(variance, 2).toFixed(2)
+                cell.style.fontWeight = 'bold'
+              }
+            }
+          }
         }
 
-        if(col == 110){
-            const totalTime = val11 + val80 + val104 + val107
-            const variance = totalTime - 12
-            cell.innerText = parseFloat(variance,2).toFixed(2)
-            cell.style.fontWeight = 'bold'
+        if (!jRef.current.jspreadsheet) {
+          jspreadsheet(jRef.current, options)
         }
 
+        // const spreadSheet = jRef.current.jspreadsheet
+        // let B7 = null, B8 = null, B9 = null, B10 = null;
 
+        // for (let index = 0; index < rowLength; index++) {
+        //    B7 = spreadSheet.getValueFromCoords(7, index)
+        //    B8 = spreadSheet.getValueFromCoords(8, index)
+        //    B9 = spreadSheet.getValueFromCoords(9, index)
+        //    B10 = spreadSheet.getValueFromCoords(10, index)
+
+        //   console.log(B7, B8, B9, B10)
+        // }
+
+        // const spreadSheet = jRef.current.jspreadsheet
+        // let BD = Array.from({ length: 4 }, () => null)
+
+        // for (let index = 0; index < rowLength; index++) {
+        //   for (let col = 7; col <= 10; col++) {
+        //     BD[col - 7] = spreadSheet.getValueFromCoords(col, index)
+        //   }
+        // }
+
+        // const sumB = BD.reduce((acc, curr) => acc + (curr || 0), 0)
+        // const value11 = sumB !== 0 ? parseFloat(sumB, 2) : null
+
+        // spreadSheet.setValueFromCoords(
+        //   11,
+        //   index,
+        //   sumB !== 0 ? value11.toFixed(2) : '-',
+        //   true
+        // )
+
+        // spreadSheet.setStyle(11, index, {
+        //   fontWeight: sumB !== 0 ? 'bold' : 'normal'
+        // })
+
+        //   console.log(sumB);
+      } catch (error) {
+        console.error('Error fetching data:', error)
+        // Handle error as needed
       }
     }
 
-    if (!jRef.current.jspreadsheet) {
-      jspreadsheet(jRef.current, options)
-    }
+    fetchData()
 
-    return () => {
-      jspreadsheet.destroy(jRef)
-    }
+    // return () => {
+    //   jspreadsheet.destroy(jRef);
+    // };
   }, [])
 
-  useEffect(() => {
-    const disabled =
-      parseFloat(totalDuration) > 12 || parseFloat(totalDuration) < 12
-        ? true
-        : false
-    setButtonDisabled(disabled)
-  }, [totalDuration])
+  // useEffect(() => {
+  //   const disabled =
+  //     parseFloat(totalDuration) > 12 || parseFloat(totalDuration) < 12
+  //       ? true
+  //       : false
+  //   setButtonDisabled(disabled)
+  // }, [totalDuration])
 
   useEffect(() => {
     const jsHeader = jRef.current.jspreadsheet
     const nestedHeader = jsHeader.thead.children[0].children
     const colHeader = jsHeader.thead.children[1].children
-    
+
     nestedHeader[0].style.backgroundColor = '#f3f3f3'
     colHeader[0].style.backgroundColor = '#f3f3f3'
 
     for (let index = 1; index < 8; index++) {
-        nestedHeader[index].style.backgroundColor = '#5a5a5a'
-        nestedHeader[index].style.color = "#ffffff"
-        colHeader[index].style.backgroundColor = '#5a5a5a'
-        colHeader[index].style.color = '#ffffff'
+      nestedHeader[index].style.backgroundColor = '#5a5a5a'
+      nestedHeader[index].style.color = '#ffffff'
+      colHeader[index].style.backgroundColor = '#5a5a5a'
+      colHeader[index].style.color = '#ffffff'
     }
-   
+
     nestedHeader[107].style.backgroundColor = 'red'
     nestedHeader[108].style.backgroundColor = 'red'
+
     for (let index = 0; index < nestedHeader.length; index++) {
       const element = nestedHeader[index]
 
@@ -268,10 +273,6 @@ export const RekapTimeEntryPage = () => {
         element.style.color = '#ffffff'
       }
     }
-
-  
-
-
   }, [])
 
   return (

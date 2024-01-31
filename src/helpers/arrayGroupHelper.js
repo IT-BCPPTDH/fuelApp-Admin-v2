@@ -1,4 +1,4 @@
-import TimeSheetJson from '../data/time-entry-data.json'
+import TimeSheetJson from '../data/time-entry-data'
 
 const dtNumbers = [
   'DT4017',
@@ -604,6 +604,49 @@ function getActivityCode (activityValue) {
   return null
 }
 
+const createFinalData = dataDay => {
+  const groupedData = [];
+
+  for (const key in dataDay) {
+    if (Object.hasOwnProperty.call(dataDay, key)) {
+      const element = dataDay[key];
+      const myArray = ['-'.repeat(111)];
+
+      const activityDurations = {};
+
+      element.forEach(ele => {
+        let dataAct = ele.activity;
+        if (ele.activity.includes('Working Production')) {
+          dataAct = ele.activity + ' - ' + ele.material;
+        }
+        const indexAct = getIndexByActivity(getActivityCode(dataAct));
+
+        if (activityDurations[indexAct] === undefined) {
+          activityDurations[indexAct] = ele.duration;
+        } else {
+          activityDurations[indexAct] += ele.duration;
+        }
+
+        myArray[0] = ele.unitNo;
+        myArray[1] = ele.productModel;
+        myArray[2] = ele.productionDate;
+        myArray[3] = ele.loc;
+        myArray[4] = ele.shift;
+        myArray[5] = ele.operatorId;
+        myArray[6] = ele.operatorName;
+        myArray[indexAct] = parseFloat(activityDurations[indexAct] / 100, 2);
+        myArray[105] = ele.smuStart;
+        myArray[106] = ele.smuFinish;
+        myArray[107] = ele.hm;
+      });
+
+      groupedData.push(myArray);
+    }
+  }
+
+  return groupedData;
+};
+
 export function getTimeSheetData () {
   // const keyStructure = [
   //   'unitNo',
@@ -626,8 +669,8 @@ export function getTimeSheetData () {
   // ]
 
   // console.log(keyStructure)
-
-  let dataTS = convertKeysToCamelCase(TimeSheetJson)
+  const dataNya = TimeSheetJson
+  let dataTS = convertKeysToCamelCase(dataNya)
   dataTS = groupDataByUnitNo(dataTS)
   dataTS = groupingUnitOperation(dataTS)
 
@@ -635,50 +678,4 @@ export function getTimeSheetData () {
   const dataNight = createFinalData(dataTS.dataNight)
 
   return [...dataDay, ...dataNight]
-}
-
-const createFinalData = dataDay => {
-  const groupedData = []
-
-  for (const key in dataDay) {
-    if (Object.hasOwnProperty.call(dataDay, key)) {
-      const element = dataDay[key]
-
-      let myArray = Array.from({ length: 111 }, () => '-')
-      let activityDurations = {}
-
-      element.forEach(ele => {
-        let dataAct = null
-        if (ele.activity.includes('Working Production')) {
-          dataAct = getActivityCode(ele.activity + ' - ' + ele.material)
-        } else {
-          dataAct = getActivityCode(ele.activity)
-        }
-
-        let indexAct = getIndexByActivity(dataAct)
-
-        if (activityDurations[indexAct] === undefined) {
-          activityDurations[indexAct] = ele.duration
-        } else {
-          activityDurations[indexAct] += ele.duration
-        }
-
-        myArray[0] = ele.unitNo
-        myArray[1] = ele.productModel
-        myArray[2] = ele.productionDate
-        myArray[3] = ele.loc
-        myArray[4] = ele.shift
-        myArray[5] = ele.operatorId
-        myArray[6] = ele.operatorName
-        myArray[indexAct] = parseFloat(activityDurations[indexAct] / 100, 2)
-        myArray[105] = ele.smuStart
-        myArray[106] = ele.smuFinish
-        myArray[107] = ele.hm
-      })
-
-      groupedData.push(myArray)
-    }
-  }
-
-  return groupedData
 }
