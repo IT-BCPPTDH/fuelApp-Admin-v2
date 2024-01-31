@@ -12,28 +12,109 @@ export const RekapTimeEntryPage = () => {
   const jRef = useRef(null)
   // const [totalDuration, setTotalDuration] = useState(0)
   const [buttonDisabled, setButtonDisabled] = useState(true)
-  // const [dataSpreaSheet, setDataSpreadSheet] = useState([])
+  const dataSpreaSheet = getTimeSheetData()
+  const rowLength = dataSpreaSheet.length
 
   const handleSubmit = () => {}
+
+  const updateCell = () => {
+    const spreadSheet = jRef.current.jspreadsheet
+
+    for (let index = 0; index < rowLength; index++) {
+      /**
+       * Total BD
+       */
+      let totalA = 0
+      for (let a = 7; a <= 10; a++) {
+        let valueA = spreadSheet.getValueFromCoords(a, index) || 0
+        if (!isNaN(valueA)) {
+          totalA += parseFloat(valueA, 2)
+        }
+      }
+      if (totalA !== 0) {
+        spreadSheet.updateCell(11, index, totalA.toFixed(2), true)
+      }
+
+      /**
+       * Total Work
+       */
+      let totalB = 0
+      for (let i = 12; i <= 64; i++) {
+        let valueB = spreadSheet.getValueFromCoords(i, index) || 0
+
+        if (!isNaN(valueB)) {
+          totalB += parseFloat(valueB, 2)
+        }
+      }
+
+      if (totalB !== 0) {
+        spreadSheet.updateCell(65, index, totalB.toFixed(2), true)
+      }
+
+      /**
+       * Total SPO
+       */
+      let totalC = 0
+      for (let i = 66; i <= 79; i++) {
+        let valueC = spreadSheet.getValueFromCoords(i, index) || 0
+
+        if (!isNaN(valueC)) {
+          totalC += parseFloat(valueC, 2)
+        }
+      }
+
+      if (totalC !== 0) {
+        spreadSheet.updateCell(80, index, totalC.toFixed(2), true)
+      }
+
+      /**
+       * Total Non SPO
+       */
+      let totalD = 0
+      for (let i = 81; i <= 103; i++) {
+        let valueD = spreadSheet.getValueFromCoords(i, index) || 0
+
+        if (!isNaN(valueD)) {
+          totalD += parseFloat(valueD, 2)
+        }
+      }
+
+      if (totalD !== 0) {
+        spreadSheet.updateCell(104, index, totalD.toFixed(2), true)
+      }
+
+      let valueHM = spreadSheet.getValueFromCoords(107, index)
+      
+        valueHM = parseFloat(valueHM.replace(',', '.'),2) || 0
+        const varianceHM = valueHM - totalB
+        spreadSheet.updateCell(108, index, varianceHM.toFixed(2), true)
+      
+
+      let totalTime = totalA + totalC + totalD + valueHM
+      let variance = totalTime - 12
+      const valid = totalTime !== 12 ? 'FALSE' : 'TRUE'
+
+      if(parseFloat(valueHM) === 0 && parseFloat(varianceHM) === 0){
+        spreadSheet.updateCell(109, index, '-', true)
+      } else {
+        spreadSheet.updateCell(109, index, valid, true)
+      }
+      
+      spreadSheet.updateCell(110, index, variance.toFixed(2), true)
+
+      const cellElement = document.querySelector(`td[data-x="${109}"][data-y="${index}"]`);
+      if(valid === 'FALSE'){
+        spreadSheet.setStyle([cellElement], 'color', 'red', true, false);
+      } else {
+        spreadSheet.setStyle([cellElement], 'color', 'green', true, false);
+      }
+    }
+  }
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const width = screen.width
-        const dataSpreaSheet = getTimeSheetData()
-        const rowLength = dataSpreaSheet.length
-
-        const B = Array.from({ length: 4 }, () => null)
-        const C = Array.from({ length: 53 }, () => null)
-        const D = Array.from({ length: 14 }, () => null)
-        const E = Array.from({ length: 23 }, () => null)
-
-        let val11 = null,
-          val65 = null,
-          val80 = null,
-          val104 = null,
-          val107 = null
-
         const options = {
           data: dataSpreaSheet,
           columns: colHelperTimesheet.columnHeader,
@@ -44,138 +125,14 @@ export const RekapTimeEntryPage = () => {
           tableOverflow: true,
           lazyLoading: true,
           loadingSpin: true,
-          updateTable: function (instance, cell, col, row, val) {
-            if (col >= 7 && col <= 10) {
-              const index = col - 7;
-              B[index] = cell.innerText !== '-' ? parseFloat(cell.innerText, 2) : null;
-            }
-
-            if (col == 11) {
-              const sumB = B.reduce((acc, curr) => acc + (curr || 0), 0);
-              val11 = sumB !== 0 ? parseFloat(sumB, 2) : null;
-              cell.innerText = sumB !== 0 ? parseFloat(sumB, 2).toFixed(2) : '-';
-              cell.style.fontWeight = sumB !== 0 ? 'bold' : 'normal';
-            }
-
-            if (col >= 12 && col <= 64) {
-              const indexC = col - 12
-              C[indexC] =
-                cell.innerText !== '-' ? parseFloat(cell.innerText, 2) : null
-            }
-
-            if (col == 65) {
-              const sumC = C.reduce((acc, curr) => acc + (curr || 0), 0)
-              val65 = sumC !== 0 ? parseFloat(sumC, 2) : null
-              cell.innerText = sumC !== 0 ? parseFloat(sumC, 2).toFixed(2) : '-'
-              cell.style.fontWeight = sumC !== 0 ? 'bold' : 'normal'
-            }
-
-            if (col >= 66 && col <= 79) {
-              const indexD = col - 66
-              D[indexD] =
-                cell.innerText !== '-' ? parseFloat(cell.innerText, 2) : null
-            }
-
-            if (col == 80) {
-              const sumD = D.reduce((acc, curr) => acc + (curr || 0), 0)
-              val80 = sumD !== 0 ? parseFloat(sumD, 2) : null
-              cell.innerText = sumD !== 0 ? parseFloat(sumD, 2).toFixed(2) : '-'
-              cell.style.fontWeight = sumD !== 0 ? 'bold' : 'normal'
-            }
-
-            if (col >= 81 && col <= 103) {
-              const indexE = col - 81
-              E[indexE] =
-                cell.innerText !== '-' ? parseFloat(cell.innerText, 2) : null
-            }
-
-            if (col == 104) {
-              const sumE = E.reduce((acc, curr) => acc + (curr || 0), 0)
-              val104 = sumE !== 0 ? parseFloat(sumE, 2) : null
-              cell.innerText = sumE !== 0 ? parseFloat(sumE, 2).toFixed(2) : '-'
-              cell.style.fontWeight = sumE !== 0 ? 'bold' : 'normal'
-            }
-
-            if (col == 107) {
-              val107 = parseFloat(cell.innerText.replace(',', '.'), 2)
-            }
-
-            if (col == 108) {
-              const res108 = val107 - val65
-              cell.innerText =
-                res108 !== 0 ? parseFloat(res108, 2).toFixed(2) : '-'
-              cell.style.fontWeight = res108 !== 0 ? 'bold' : 'normal'
-
-              if (res108 < 0) {
-                cell.style.color = 'red'
-                cell.style.backgroundColor = '#ffd0d0'
-              } else if (res108 > 0) {
-                cell.style.color = '#c07600'
-                cell.style.backgroundColor = '#fff3dc'
-              } else {
-                cell.style.color = 'green'
-              }
-            }
-
-            if (col == 109 || col == 110) {
-              const totalTime = val11 + val80 + val104 + val107
-              const variance = totalTime - 12
-
-              if (col == 109) {
-                cell.innerText = totalTime !== 12 ? 'FALSE' : 'TRUE'
-                cell.style.backgroundColor =
-                  totalTime !== 12 ? '#ffd9d9' : 'transparent'
-                cell.style.color = totalTime !== 12 ? 'red' : 'black'
-              }
-
-              if (col == 110) {
-                cell.innerText = parseFloat(variance, 2).toFixed(2)
-                cell.style.fontWeight = 'bold'
-              }
-            }
-          }
+          onafterchanges: updateCell
         }
 
         if (!jRef.current.jspreadsheet) {
           jspreadsheet(jRef.current, options)
         }
 
-        // const spreadSheet = jRef.current.jspreadsheet
-        // let B7 = null, B8 = null, B9 = null, B10 = null;
-
-        // for (let index = 0; index < rowLength; index++) {
-        //    B7 = spreadSheet.getValueFromCoords(7, index)
-        //    B8 = spreadSheet.getValueFromCoords(8, index)
-        //    B9 = spreadSheet.getValueFromCoords(9, index)
-        //    B10 = spreadSheet.getValueFromCoords(10, index)
-
-        //   console.log(B7, B8, B9, B10)
-        // }
-
-        // const spreadSheet = jRef.current.jspreadsheet
-        // let BD = Array.from({ length: 4 }, () => null)
-
-        // for (let index = 0; index < rowLength; index++) {
-        //   for (let col = 7; col <= 10; col++) {
-        //     BD[col - 7] = spreadSheet.getValueFromCoords(col, index)
-        //   }
-        // }
-
-        // const sumB = BD.reduce((acc, curr) => acc + (curr || 0), 0)
-        // const value11 = sumB !== 0 ? parseFloat(sumB, 2) : null
-
-        // spreadSheet.setValueFromCoords(
-        //   11,
-        //   index,
-        //   sumB !== 0 ? value11.toFixed(2) : '-',
-        //   true
-        // )
-
-        // spreadSheet.setStyle(11, index, {
-        //   fontWeight: sumB !== 0 ? 'bold' : 'normal'
-        // })
-
-        //   console.log(sumB);
+        updateCell()
       } catch (error) {
         console.error('Error fetching data:', error)
         // Handle error as needed
@@ -184,9 +141,6 @@ export const RekapTimeEntryPage = () => {
 
     fetchData()
 
-    // return () => {
-    //   jspreadsheet.destroy(jRef);
-    // };
   }, [])
 
   // useEffect(() => {
@@ -272,6 +226,29 @@ export const RekapTimeEntryPage = () => {
         element.style.backgroundColor = 'red'
         element.style.color = '#ffffff'
       }
+    }
+
+    function styleAndDisableCell (cell) {
+      cell.style.backgroundColor = '#f7f7f7'
+      cell.style.fontWeight = 'bold'
+      cell.setAttribute('readonly', 'true')
+      cell.addEventListener('keydown', function (event) {
+        event.preventDefault()
+      })
+      cell.style.pointerEvents = 'none'
+    }
+
+    const tBody = jsHeader.table.children[2].children
+
+    const cellsToStyle = [12, 66, 81, 105, 106, 107, 108, 109, 110, 111]
+
+    for (let index = 0; index < rowLength; index++) {
+      const element = tBody[index]
+
+      cellsToStyle.forEach(cellIndex => {
+        const currentCell = element.children[cellIndex]
+        styleAndDisableCell(currentCell)
+      })
     }
   }, [])
 
