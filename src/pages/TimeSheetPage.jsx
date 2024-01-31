@@ -535,7 +535,7 @@ export default function TimeSheetPage () {
           </div>
         </div>
 
-        <FooterPage handleSubmit={handleSubmit} buttonDisabled={buttonDisabled} /> 
+        <FooterPageForm handleSubmit={handleSubmit} buttonDisabled={buttonDisabled} /> 
 
       </div>
 
