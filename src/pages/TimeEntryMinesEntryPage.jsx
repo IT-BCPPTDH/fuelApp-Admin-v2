@@ -102,9 +102,9 @@ export const TimeEntryMinesEntryPage = () => {
       jspreadsheet(jRef.current, options)
     }
 
-    return () => {
-      jspreadsheet.destroy(jRef)
-    }
+    // return () => {
+    //   jspreadsheet.destroy(jRef)
+    // }
   }, [])
 
   useEffect(() => {
