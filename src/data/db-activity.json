@@ -1,0 +1,378 @@
+[
+ {
+   "Code": "B1",
+   "Activity": "Breakdown - Breakdown"
+ },
+ {
+   "Code": "B2",
+   "Activity": "Breakdown - Ground Test"
+ },
+ {
+   "Code": "B3",
+   "Activity": "Breakdown - PM Service"
+ },
+ {
+   "Code": "B4",
+   "Activity": "Breakdown - Travel Delay PLM"
+ },
+ {
+   "Code": "S1",
+   "Activity": "Idle - Rain"
+ },
+ {
+   "Code": "S2",
+   "Activity": "Idle - Slippery"
+ },
+ {
+   "Code": "S3",
+   "Activity": "Idle - SaFEty Talk"
+ },
+ {
+   "Code": "S4",
+   "Activity": "Idle - Shift Change/Prestart ChECk"
+ },
+ {
+   "Code": "S5",
+   "Activity": "Idle - Rest and Meal"
+ },
+ {
+   "Code": "S6",
+   "Activity": "Idle - Daily Pray"
+ },
+ {
+   "Code": "S7",
+   "Activity": "Idle - Blasting"
+ },
+ {
+   "Code": "S8",
+   "Activity": "Idle - Survey/Sample"
+ },
+ {
+   "Code": "S9",
+   "Activity": "Idle - SaFEty Fatique Test"
+ },
+ {
+   "Code": "S10",
+   "Activity": "Idle - Friday Pray"
+ },
+ {
+   "Code": "S11",
+   "Activity": "Idle - Sunday Pray"
+ },
+ {
+   "Code": "S12",
+   "Activity": "Idle - Fasting"
+ },
+ {
+   "Code": "S13",
+   "Activity": "Idle - Foggy"
+ },
+ {
+   "Code": "S14",
+   "Activity": "Idle - Public Holiday"
+ },
+ {
+   "Code": "D1",
+   "Activity": "Idle - No Operator"
+ },
+ {
+   "Code": "D2",
+   "Activity": "Idle - Operator Fatique"
+ },
+ {
+   "Code": "D3",
+   "Activity": "Idle - Waiting Operator"
+ },
+ {
+   "Code": "D4",
+   "Activity": "Idle - No Truck"
+ },
+ {
+   "Code": "D5",
+   "Activity": "Idle - No Equipment Support"
+ },
+ {
+   "Code": "D6",
+   "Activity": "Idle - Lighting Plant Problem"
+ },
+ {
+   "Code": "D7",
+   "Activity": "Idle - Washing Equipment"
+ },
+ {
+   "Code": "D8",
+   "Activity": "Idle - Front/Road/Disposal Maint."
+ },
+ {
+   "Code": "D9",
+   "Activity": "Idle - Stokcpile Full/Crusher Maint."
+ },
+ {
+   "Code": "D10",
+   "Activity": "Idle - No Working Area"
+ },
+ {
+   "Code": "D11",
+   "Activity": "Idle - Refuelling/Greasing"
+ },
+ {
+   "Code": "D12",
+   "Activity": "Idle - Blockade"
+ },
+ {
+   "Code": "D13",
+   "Activity": "Idle - Dust"
+ },
+ {
+   "Code": "D14",
+   "Activity": "Idle - Standby Accident"
+ },
+ {
+   "Code": "D15",
+   "Activity": "Idle - Stop Loading DT Refuelling"
+ },
+ {
+   "Code": "D16",
+   "Activity": "Idle - No Stock/Material"
+ },
+ {
+   "Code": "D17",
+   "Activity": "Idle - No Job"
+ },
+ {
+   "Code": "D18",
+   "Activity": "Idle - Others"
+ },
+ {
+   "Code": "D19",
+   "Activity": "Idle - Toilet"
+ },
+ {
+   "Code": "D20",
+   "Activity": "Idle - Queuing"
+ },
+ {
+   "Code": "D21",
+   "Activity": "Idle - No Digger"
+ },
+ {
+   "Code": "D22",
+   "Activity": "Idle - Tyre Check"
+ },
+ {
+   "Code": "D23",
+   "Activity": "Idle - Cleaning Vessel Truck"
+ },
+ {
+   "Code": "W1",
+   "Activity": "Working - Working Production"
+ },
+ {
+   "Code": "W2",
+   "Activity": "Working - Working Production"
+ },
+ {
+   "Code": "W3",
+   "Activity": "Working - Working Production"
+ },
+ {
+   "Code": "W4",
+   "Activity": "Working - Working Production"
+ },
+ {
+   "Code": "W5",
+   "Activity": "Working - Working Production"
+ },
+ {
+   "Code": "W6",
+   "Activity": "Working - Working Production"
+ },
+ {
+   "Code": "W7",
+   "Activity": "Working - Working Production"
+ },
+ {
+   "Code": "W8",
+   "Activity": "Working - Working Production"
+ },
+ {
+   "Code": "W9",
+   "Activity": "Working - Working Production"
+ },
+ {
+   "Code": "W10",
+   "Activity": "Working - Coal Cleaning"
+ },
+ {
+   "Code": "W11",
+   "Activity": "Working - Pit Support"
+ },
+ {
+   "Code": "W12",
+   "Activity": "Working - General Support"
+ },
+ {
+   "Code": "W13",
+   "Activity": "Working - General Work"
+ },
+ {
+   "Code": "W14",
+   "Activity": "Working - Enviro Support"
+ },
+ {
+   "Code": "W15",
+   "Activity": "Working - Land Clearing"
+ },
+ {
+   "Code": "W16",
+   "Activity": "Working - Loading Coal at ROM"
+ },
+ {
+   "Code": "W17",
+   "Activity": "Working - Maintenance ROM Port"
+ },
+ {
+   "Code": "W18",
+   "Activity": "Working - PLM Support"
+ },
+ {
+   "Code": "W19",
+   "Activity": "Working - Test Pit"
+ },
+ {
+   "Code": "W20",
+   "Activity": "Working - Travel Blasting"
+ },
+ {
+   "Code": "W21",
+   "Activity": "Working - Travel Delay Non PLM"
+ },
+ {
+   "Code": "W22",
+   "Activity": "Working - Travel for Blasting"
+ },
+ {
+   "Code": "W23",
+   "Activity": "Working - Travel Loading Point"
+ },
+ {
+   "Code": "W24",
+   "Activity": "Working - Waiting Truck"
+ },
+ {
+   "Code": "W25",
+   "Activity": "Working - Working Support"
+ },
+ {
+   "Code": "W26",
+   "Activity": "Working - Hauling Coal to Port"
+ },
+ {
+   "Code": "W27",
+   "Activity": "Working - Dump Maintenance OB"
+ },
+ {
+   "Code": "W28",
+   "Activity": "Working - Dump Maintenance TS Inpit"
+ },
+ {
+   "Code": "W29",
+   "Activity": "Working - PIT Road Maintenance (HRM)"
+ },
+ {
+   "Code": "W30",
+   "Activity": "Working - Pit Road Maintenance"
+ },
+ {
+   "Code": "W31",
+   "Activity": "Working - PLR Maintenance"
+ },
+ {
+   "Code": "W32",
+   "Activity": "Working - Haul Road Mntc TS outpit"
+ },
+ {
+   "Code": "W33",
+   "Activity": "Working - Pit Lighting Inpit"
+ },
+ {
+   "Code": "W34",
+   "Activity": "Working - Pit Lighting OB"
+ },
+ {
+   "Code": "W35",
+   "Activity": "Working - Pit Lightning Coal"
+ },
+ {
+   "Code": "W36",
+   "Activity": "Working - Slurry Pump"
+ },
+ {
+   "Code": "W37",
+   "Activity": "Working - Blasting OB"
+ },
+ {
+   "Code": "W38",
+   "Activity": "Working - Drill & Blast Coal"
+ },
+ {
+   "Code": "W39",
+   "Activity": "Working - Drill and Blast Support"
+ },
+ {
+   "Code": "W40",
+   "Activity": "Working - Drilling for Blasting"
+ },
+ {
+   "Code": "W41",
+   "Activity": "Working - Project"
+ },
+ {
+   "Code": "W42",
+   "Activity": "Working - Rehandling Coal at ROM Port"
+ },
+ {
+   "Code": "W43",
+   "Activity": "Working - Stockpile ROM Maintenance"
+ },
+ {
+   "Code": "W44",
+   "Activity": "Working - Rehabilitation"
+ },
+ {
+   "Code": "W45",
+   "Activity": "Working - PAF Treatment"
+ },
+ {
+   "Code": "W46",
+   "Activity": "Working - CSR Activities"
+ },
+ {
+   "Code": "W47",
+   "Activity": "Working - Drop Structure"
+ },
+ {
+   "Code": "W48",
+   "Activity": "Working - Warehouse Support"
+ },
+ {
+   "Code": "W49",
+   "Activity": "Working - KPC Equipment"
+ },
+ {
+   "Code": "W50",
+   "Activity": "Working - Maintenance Groundtest"
+ },
+ {
+   "Code": "W51",
+   "Activity": "Working - Mobilization"
+ },
+ {
+   "Code": "W52",
+   "Activity": "Working - Others (diluar tanggungan DH)"
+ },
+ {
+   "Code": "W53",
+   "Activity": "Working - Rental"
+ }
+]
