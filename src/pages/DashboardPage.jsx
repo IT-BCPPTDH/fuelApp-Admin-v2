@@ -30,7 +30,8 @@ import axios from 'axios'
 import { DatePicker } from '@fluentui/react-datepicker-compat'
 import { forSocket } from '../helpers/convertDate'
 import { useNavigate } from 'react-router-dom'
-// import Cookies from 'js-cookie'
+import Services from '../services/timeEntry'
+import { toLocalStorage } from '../helpers/toLocalStorage'
 
 const resolveAsset = asset => {
   const ASSET_URL =
@@ -197,12 +198,17 @@ const dataFiles = [
   {
     name: 'Production',
     desc: 'Data Collector for Production Records',
-    link: '/collector/production'
+    link: '/production'
   },
   {
     name: 'Mine Plan',
     desc: 'Data Collector for Mine Planning Activity',
-    link: '/collector/mine-plan'
+    link: '/mineplan'
+  },
+  {
+    name: 'Time Sheet Mines/Protes',
+    desc: 'Template Time Entry model Mines',
+    link: '/time-sheet-mines'
   }
 ]
 
@@ -226,8 +232,29 @@ const DashboardPage = () => {
     )
     setDataFile(response.data.data)
   }
+  const getDataMaster = async () =>{
+    try{
+      let dataMaster = await Services.getMasterTimeEntry()
+      let dataMasterOp = await Services.getMasterTimeEntryOperator()
+      let act =[]
+      let op = []
+      dataMaster?.data?.map(v=>{
+        act.push(v.activityname)
+      })
+      dataMasterOp?.data?.map(v=>{
+        op.push(v.jde)
+      })
+      toLocalStorage('timeEntry-activity',act)
+      toLocalStorage('timeEntry-master',dataMaster.data)
+      toLocalStorage('timeEntry-operator',op)
+      toLocalStorage('timeEntry-masterOP',dataMasterOp.data)
+    }catch(err){
+      console.log(err)
+    }
+  }
 
   useEffect(() => {
+    getDataMaster()
     document.title = 'Homepage MED/MOD Data Entry App - PTDH'
     getData()
     if (open && dialogRef.current) {
@@ -271,7 +298,7 @@ const DashboardPage = () => {
         }}
       >
         <Title title='Homepage' />
-        <Button
+        {/* <Button
           ref={triggerRef}
           {...triggerAttributes}
           onClick={onClickTrigger}
@@ -285,7 +312,7 @@ const DashboardPage = () => {
           className={styles.signInButton}
         >
           +
-        </Button>
+        </Button> */}
       </div>
       <section>
         <Header

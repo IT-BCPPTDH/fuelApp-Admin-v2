@@ -55,7 +55,6 @@ export const FormElement = ({
       const day = date.getDate().toString().padStart(2, "0");
       const month = (date.getMonth() + 1).toString().padStart(2, "0");
       const year = date.getFullYear();
-
       return `${day}-${month}-${year}`;
     }
     return "";
@@ -74,20 +73,6 @@ export const FormElement = ({
         );
       case "Combobox":
         return (
-          // <Combobox
-          //   id={inputId}
-          //   placeholder={`Select ${label}`}
-          //   style={{  maxWidth: '200px',
-          //   minWidth: '180px' }}
-          //   onChange={(e) => onChange(e, { name: name, value: e.target.value })}
-          // >
-          //   {options.map(option => (
-          //     <Option key={option}>
-          //       {option}
-          //     </Option>
-          //   ))}
-          // </Combobox>
-
           <ComboBoxCustom
             inputId={inputId}
             name={name}
@@ -162,16 +147,20 @@ const ComboBoxCustom = (props) => {
   };
 
   const onOptionSelect = (event, data) => {
+
     const matchingOption = data.optionText && options.includes(data.optionText);
     if (matchingOption) {
+
       setCustomSearch(undefined);
     } else {
       setCustomSearch(data.optionText);
       handleChange(event, { name: name, value: data.optionText });
     }
   };
-
+  const defVal = [props.value]
+  
   return (
+
     <Combobox
       aria-labelledby={inputId}
       style={{ maxWidth: "200px", minWidth: "180px" }}
@@ -189,5 +178,6 @@ const ComboBoxCustom = (props) => {
         <Option key={option}>{option}</Option>
       ))}
     </Combobox>
+
   );
 };

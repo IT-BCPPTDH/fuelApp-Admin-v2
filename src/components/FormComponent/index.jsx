@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { FormElement } from './elements';
 
 const FormComponent = ({ handleChange, components }) => {
