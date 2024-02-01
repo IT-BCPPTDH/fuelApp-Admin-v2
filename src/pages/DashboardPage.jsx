@@ -214,6 +214,11 @@ const dataFiles = [
     name: 'Time Sheet Mines/Protes',
     desc: 'Template Time Entry model Mines',
     link: '/time-sheet-mines'
+  },
+  {
+    name: 'Distance Data Entry',
+    desc: 'Template Data Entry for Distance',
+    link: '/distance-data-entry'
   }
 ]
 

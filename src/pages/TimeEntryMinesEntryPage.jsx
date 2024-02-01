@@ -2,12 +2,12 @@ import { useRef, useEffect, useState } from 'react'
 import jspreadsheet from 'jspreadsheet-ce'
 import { HeaderPageForm } from '../components/FormComponent/HeaderPageForm'
 import FormComponent from '../components/FormComponent'
-import { InfoLabel } from '@fluentui/react-components'
 import { calculateTotalTimeFromArray } from '../helpers/timeHelper'
 import { FooterPageForm } from '../components/FormComponent/FooterPageForm'
 import { DynamicTablistMenu } from '../components/Tablist'
 import DataJson from '../data/test-data.json'
 import { tabsRekapTimeEntry } from '../helpers/tabArrayHelper'
+import { colHelperTimesheetMines } from '../helpers/columnHelper'
 
 export const TimeEntryMinesEntryPage = () => {
   const jRef = useRef(null)
@@ -58,53 +58,17 @@ export const TimeEntryMinesEntryPage = () => {
       data: DataJson,
       lazyLoading:true,
       loadingSpin:true,
-      columns: [
-        { type: 'text', width: '100', title: 'Unit No' },
-        { type: 'text', width: '200', title: 'Product Model' },
-        { type: 'text', width: '150', title: 'Description' },
-        { type: 'text', width: '100', title: 'Owner' },
-        { type: 'text', width: '150', title: 'Production Date' },
-        { type: 'text', width: '75', title: 'Shift' },
-        { type: 'text', width: '120', title: 'Operator ID' },
-        { type: 'text', width: '200', title: 'Operator Name' },
-        { type: 'text', width: '100', title: 'SMU Start' },
-        { type: 'text', width: '100', title: 'SMU Finish' },
-        { type: 'text', width: '80', title: 'HM' },
-        { type: 'text', width: '250', title: 'Activity' },
-        { type: 'text', width: '100', title: 'Start Time' },
-        { type: 'text', width: '100', title: 'End Time' },
-        { type: 'text', width: '100', title: 'Duration' },
-        { type: 'text', width: '150', title: 'Convert Duration' },
-        { type: 'text', width: '100', title: 'BD Number' },
-        { type: 'text', width: '150', title: 'From Equipment' },
-        { type: 'text', width: '150', title: 'Material' },
-        { type: 'text', width: '100', title: 'Mat Group' },
-        { type: 'text', width: '100', title: 'Distance' },
-        { type: 'text', width: '150', title: 'Loading Location' },
-        { type: 'text', width: '150', title: 'Dumping Location' },
-        { type: 'text', width: '100', title: 'Trip' },
-        { type: 'text', width: '100', title: 'BCM' },
-        { type: 'text', width: '200', title: 'Notes' },
-        { type: 'text', width: '120', title: 'Cutoff Status' },
-        { type: 'text', width: '100', title: 'LOC' }
-      ],
-
+      columns: colHelperTimesheetMines.columnHeader,
       minDimensions: [5, 15],
       tableHeight: '500px',
       tableWidth: `${(width * 87) / 100}px`,
-      tableOverflow: true,
-      updateTable: function (instance, cell, col, row, val, label, cellName) {
-        // isChange()
-      }
+      tableOverflow: true
     }
 
     if (!jRef.current.jspreadsheet) {
       jspreadsheet(jRef.current, options)
     }
 
-    // return () => {
-    //   jspreadsheet.destroy(jRef)
-    // }
   }, [])
 
   useEffect(() => {
@@ -153,10 +117,10 @@ export const TimeEntryMinesEntryPage = () => {
             )}
           </div>
         </div> */}
-        <FooterPageForm
+        {/* <FooterPageForm
           handleSubmit={handleSubmit}
           buttonDisabled={buttonDisabled}
-        />
+        /> */}
       </div>
     </>
   )
