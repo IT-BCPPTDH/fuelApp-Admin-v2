@@ -245,9 +245,8 @@ const DashboardPage = () => {
         op.push(v.jde)
       })
       toLocalStorage('timeEntry-activity',act)
-      toLocalStorage('timeEntry-master',dataMaster.data)
       toLocalStorage('timeEntry-operator',op)
-      toLocalStorage('timeEntry-masterOP',dataMasterOp.data)
+      
     }catch(err){
       console.log(err)
     }
