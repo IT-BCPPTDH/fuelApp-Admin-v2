@@ -1,7 +1,5 @@
 import { useRef, useEffect, useCallback, useState } from 'react'
 import jspreadsheet from 'jspreadsheet-ce'
-// import 'jspreadsheet-ce/dist/jspreadsheet.css'
-// import Title from '../components/Title'
 import {
   // CompoundButton,
   useId,
@@ -134,16 +132,8 @@ export default function TimeSheetPage () {
 
   const onchange = useCallback(
     (val) => {
-      // console.log(val)
-      // console.log(transformData(val))
-      // if (newValue !== '') {
-        
-        // const data = jRef.current.jspreadsheet.getData()
-        // console.log(data)
-        // console.log(transformData(data))
         let dt = transformData(val)
         setFormValue(dt)
-      // }
     },
     [jRef, transformData]
   )

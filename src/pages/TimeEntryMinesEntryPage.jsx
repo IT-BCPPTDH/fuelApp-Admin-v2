@@ -127,7 +127,7 @@ export const TimeEntryMinesEntryPage = () => {
         </div>
         <FormComponent handleChange={handleChange} components={components} />
         <div ref={jRef} className='mt1em' />
-        <div className='row'>
+        {/* <div className='row'>
           <div className='col-6'></div>
           <div className='col-6 flex-row'>
             <InfoLabel
@@ -136,13 +136,13 @@ export const TimeEntryMinesEntryPage = () => {
             >
               Total Duration: {totalDuration}
             </InfoLabel>
-            {/* <InfoLabel
+            <InfoLabel
               size='large'
               info="Jika nilai total < 12 atau > 12, status form menjadi 'INVALIDATED'"
               style={{ marginLeft: '20px' }}
             >
               Total Convert Duration: {totalConvertDuration}
-            </InfoLabel> */}
+            </InfoLabel> 
             {parseFloat(totalDuration) > 12 ||
             parseFloat(totalDuration) < 12 ? (
               <div className='status-element status-invalidated'>
@@ -152,7 +152,7 @@ export const TimeEntryMinesEntryPage = () => {
               <div className='status-element status-validated'>VALIDATED</div>
             )}
           </div>
-        </div>
+        </div> */}
         <FooterPageForm
           handleSubmit={handleSubmit}
           buttonDisabled={buttonDisabled}

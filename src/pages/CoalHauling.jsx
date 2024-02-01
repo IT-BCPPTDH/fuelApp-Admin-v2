@@ -9,8 +9,6 @@ import CardDataHauling from "../components/Hauling/CardDataHauling";
 import TableHauling from "../components/Hauling/TableHauling";
 import { Selectable } from "../components/Hauling/Test";
 
-
-
 const useStyles = makeStyles({
   card: {
     width: "auto",
@@ -29,57 +27,23 @@ const DataNoUnit = [
   },
 ];
 
-const DataHauling = [
-  {
-    id: 1,
-    Tgl: "12/01/2024",
-    Shift: "Day",
-    NoUnit: "",
-    Operator: "",
-    Loader: "",
-    Tonnace: 1627,
-    Seam: "A",
-    DummpingPoint: "",
-    Rom: 0,
-    InRom: "12.00",
-    OutRom: "13.00",
-  },
-  {
-    id: 2,
-    Tgl: "12/01/2024",
-    Shift: "Day",
-    NoUnit: "",
-    Operator: "",
-    Loader: "",
-    Tonnace: 1627,
-    Seam: "A",
-    DummpingPoint: "",
-    Rom: 0,
-    InRom: "12.00",
-    OutRom: "13.00",
-  },
-];
-
 export default function CoalHauling() {
   const styles = useStyles();
   const selectId = useId();
   return (
     <>
       <Title title="Entry Data Hauling" />
-      
         <div className="row">
           <div className="col-7">
             <InputHauling />
           </div>
           <div className="col-5">
             <CardDataHauling />
-            {/* <Selectable/> */}
           </div>
           <div className="col-12">
             <TableHauling />
           </div>
         </div>
-      
     </>
   );
 }
