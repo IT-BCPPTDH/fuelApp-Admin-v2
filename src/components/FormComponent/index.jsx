@@ -8,7 +8,6 @@ const FormComponent = ({ handleChange, components }) => {
         <div key={key} className={val.grid}>
           <FormElement 
             key={key} 
-            inputId={val.inputId}
             name={val.name}
             label={val.label}
             type={val.type}

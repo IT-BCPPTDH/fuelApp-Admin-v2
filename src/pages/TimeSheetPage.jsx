@@ -1,15 +1,8 @@
-import { useRef, useEffect, useCallback, useState } from 'react'
+import { useRef, useEffect, useCallback, useState, useMemo } from 'react'
 import jspreadsheet from 'jspreadsheet-ce'
 import {
-  // CompoundButton,
-  useId,
-  // Button,
   InfoLabel
 } from '@fluentui/react-components'
-// import {
-//   SaveArrowRight24Regular,
-//   ArrowCircleLeft24Regular
-// } from '@fluentui/react-icons'
 import { DynamicTablistMenu } from '../components/Tablist'
 import FormComponent from '../components/FormComponent';
 import Cookies from 'js-cookie'
@@ -28,20 +21,16 @@ const shiftOptions = ['Day', 'Night']
 const unitOptions = ['DT11223', 'DT11224', 'DT11225', 'DT11226']
 // const jdeOptions = ['112233', '223344', '334455', '445566', '556677']
 
+
 export default function TimeSheetPage () {
   const jRef = useRef(null)
   const currentDate = new Date()
   const [totalDuration, setTotalDuration] = useState()
   const [buttonDisabled, setButtonDisabled] = useState(true)
   const [master, setMaster] = useState()
-  const [jdeOptions, setJdeOptions] = useState(()=>{
-    let op = getLocalStorage('timeEntry-operator')
-    return op
-  })
-  const [masterOP, setMasterOP] = useState(()=>{
-    let op = getLocalStorage('timeEntry-masterOP')
-    return op
-  })
+
+  const [jdeOptions, setJdeOptions] = useState(() => getLocalStorage('timeEntry-operator'));
+  const [masterOP, setMasterOP] = useState(() => getLocalStorage('timeEntry-masterOP'));
   
   const [formData, setFormData] = useState({
     formID: 'Time Entry Support',
@@ -135,7 +124,7 @@ export default function TimeSheetPage () {
         let dt = transformData(val)
         setFormValue(dt)
     },
-    [jRef, transformData]
+    [ transformData]
   )
 
   useEffect(() => {
@@ -144,7 +133,6 @@ export default function TimeSheetPage () {
     let arrayTime = []
     let validateResult = false
     let delAct = null
-    let arrData = []
     let arrTemp=[
       ['','','','','','','','',''],
       ['','','','','','','','',''],
@@ -194,7 +182,6 @@ export default function TimeSheetPage () {
       minDimensions: [9, 14],
       tableHeight: '375px',
       tableOverflow: true,
-      // onchange: onchange,
       updateTable: function (instance, cell, col, row, val, label, cellName) {
         
         if(col==0){
@@ -208,7 +195,7 @@ export default function TimeSheetPage () {
             cell.innerHTML = delAct
             val = delAct
           }
-          // console.log(cell.innerText)
+
         }
 
 
@@ -253,21 +240,8 @@ export default function TimeSheetPage () {
           const resVal = calculateTotalTimeFromArray(arrayTime)
           setTotalDuration(resVal)
         }
-
-        
-        // arrTemp[col] = val
-        // console.log(1,arrTemp)
-        // if(row>arrTemp[row].length-1){
-        //   arrTemp.push(['','','','','','','','',''],)
-        // }
         arrTemp[row][col] = val
-        // console.log(col,row,val)
-        // arrData[row]={
-      
-        // }
         onchange(arrTemp)
-
-        // console.log(arrTemp)
 
       }
       
@@ -280,7 +254,7 @@ export default function TimeSheetPage () {
     }
   }, [onchange, calculateTotalTime, formatTime])
 
-  const handleSubmit = async(type) => {
+  const handleSubmit = async() => {
     let act = JSON.stringify(formValue)
     let data ={
       ...formData,
@@ -341,9 +315,9 @@ export default function TimeSheetPage () {
     }
   }
 
-  const components = [
+  const components = useMemo(() =>   [
     {
-      inputId: useId('formID'),
+      name: 'formID',
       grid: 'col-2',
       label: 'Form ID',
       value: formData.formID,
@@ -351,7 +325,7 @@ export default function TimeSheetPage () {
     },
 
     {
-      inputId: useId('site'),
+      name: 'site',
       grid: 'col-2',
       label: 'Site',
       value: formData.site,
@@ -360,7 +334,7 @@ export default function TimeSheetPage () {
       type: 'Input'
     },
     {
-      inputId: useId('stafEntry'),
+      name: 'stafEntry',
       grid: 'col-2',
       label: 'Staf Entry',
       value: formData.stafEntry,
@@ -369,7 +343,6 @@ export default function TimeSheetPage () {
       type: 'Input'
     },
     {
-      inputId: useId('tanggal'),
       name: 'tanggal',
       grid: 'col-2',
       label: 'Tanggal',
@@ -379,7 +352,7 @@ export default function TimeSheetPage () {
       type: 'DatePicker'
     },
     {
-      inputId: useId('shift'),
+      
       name: 'shift',
       grid: 'col-2',
       label: 'Shift',
@@ -391,7 +364,7 @@ export default function TimeSheetPage () {
     },
 
     {
-      inputId: useId('unitNo'),
+      
       name: 'unitNo',
       grid: 'col-2',
       label: 'Unit No',
@@ -402,14 +375,13 @@ export default function TimeSheetPage () {
       options: unitOptions
     },
     {
-      inputId: useId('lastUpdate'),
+      name: 'lastUpdate',
       grid: 'col-2',
       label: 'Last Update',
       value: formData.lastUpdate,
       type: 'StaticInfo'
     },
     {
-      inputId: useId('jdeOperator'),
       name: 'jdeOperator',
       grid: 'col-2',
       label: 'JDE Operator',
@@ -420,7 +392,7 @@ export default function TimeSheetPage () {
       options: jdeOptions
     },
     {
-      inputId: useId('nameOperator'),
+      
       name: 'nameOperator',
       grid: 'col-2',
       label: 'Nama Operator',
@@ -430,7 +402,7 @@ export default function TimeSheetPage () {
       type: 'Input'
     },
     {
-      inputId: useId('hmAwal'),
+      
       name: 'hmAwal',
       grid: 'col-2',
       label: 'HM Awal',
@@ -440,7 +412,7 @@ export default function TimeSheetPage () {
       type: 'Input'
     },
     {
-      inputId: useId('hmAkhir'),
+      
       name: 'hmAkhir',
       grid: 'col-2',
       label: 'HM Akhir',
@@ -450,7 +422,7 @@ export default function TimeSheetPage () {
       type: 'Input'
     },
     {
-      inputId: useId('hm'),
+      
       name: 'hm',
       grid: 'col-2',
       label: 'HM',
@@ -459,31 +431,30 @@ export default function TimeSheetPage () {
       disabled: true,
       type: 'Input'
     }
-  ]
+  ], [formData, jdeOptions]) 
 
-  const getDataFirst = () =>{
-    let user = Cookies.get('user')
-    user = JSON.parse(user)
+
+  const getDataFirst = useCallback(() => {
+    let user = Cookies.get('user');
+    user = JSON.parse(user);
 
     const now = new Date();
     const currentHour = now.getHours();
-    let shift = null
-    if(currentHour >= 6 && currentHour < 18){
-      shift = 'Day'
-    }else{
-      shift = 'Night'
+    let shift = null;
+    if (currentHour >= 6 && currentHour < 18) {
+      shift = 'Day';
+    } else {
+      shift = 'Night';
     }
 
-
-
-    let dt = formData
+    let dt = formData;
     dt = {
       ...dt,
       shift: shift,
-      stafEntry: user.fullname
-    }
-    setFormData(dt)
-  }
+      stafEntry: user.fullname,
+    };
+    setFormData(dt);
+  }, [formData, setFormData]);
 
   useEffect(() => {
     const disabled =
@@ -493,7 +464,7 @@ export default function TimeSheetPage () {
     setButtonDisabled(disabled)
 
     getDataFirst()
-  }, [totalDuration]);
+  }, [totalDuration, getDataFirst]);
 
 
   return (

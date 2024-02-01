@@ -7,6 +7,7 @@ import { ProductionEntryPage } from './pages/ProductionEntryPage'
 import { MineplanEntryPage } from './pages/MineplanEntryPage'
 import { TimeEntryMinesEntryPage } from './pages/TimeEntryMinesEntryPage'
 import { RekapTimeEntryPage } from './pages/RekapTimeEntryPage'
+import DistanceEntryPage from './pages/DistanceEntryPage';
 
 const RouteApp = () => {
   return (
@@ -19,6 +20,7 @@ const RouteApp = () => {
       <Route path='/mineplan' element={<MineplanEntryPage />}></Route>
       <Route path='/time-sheet-mines' element={<TimeEntryMinesEntryPage />}></Route>
       <Route path='/time-entry-production' element={<RekapTimeEntryPage />}></Route>
+      <Route path='/distance-data-entry' element={<DistanceEntryPage />}></Route>
     </Routes>
 
   )
