@@ -57,8 +57,7 @@ const InputHauling = () => {
       grid: "col-4",
       label: "Operator",
       value: "",
-      type: "Combobox",
-      options: ["AT5166 - Maulana Putra", "AB4426 - Setiyo Baskoro"],
+      type: "Input",
     },
     {
       inputId: useId("loader"),

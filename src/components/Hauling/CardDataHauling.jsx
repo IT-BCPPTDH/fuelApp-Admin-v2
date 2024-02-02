@@ -82,7 +82,7 @@ const CardDataHauling = () => {
           <div className="row">
             <div className="col-6">
               <Card className="card-data">
-                <span className={styles.card}>Total Hauling</span>
+                <span className={styles.card}>Hauling To Hopper</span>
                 <p className={styles.caption}>
                   <b>
                     747 <small>Ton</small>
@@ -92,7 +92,7 @@ const CardDataHauling = () => {
             </div>
             <div className="col-6">
               <Card className="card-data">
-                <span className={styles.card}>Total Hauling</span>
+                <span className={styles.card}>Hauling To OverFlow</span>
                 <p className={styles.caption}>
                   <b>
                     747 <small>Ton</small>
@@ -102,7 +102,7 @@ const CardDataHauling = () => {
             </div>
             <div className="col-6">
               <Card className="card-data">
-                <span className={styles.card}>Total Hauling</span>
+                <span className={styles.card}>Hauling To ECF</span>
                 <p className={styles.caption}>
                   <b>
                     747 <small>Ton</small>
@@ -112,7 +112,7 @@ const CardDataHauling = () => {
             </div>
             <div className="col-6">
               <Card className="card-data">
-                <span className={styles.card}>Total Hauling</span>
+                <span className={styles.card}>Hauling To MiddleStock</span>
                 <p className={styles.caption}>
                   <b>
                     747 <small>Ton</small>
@@ -122,7 +122,7 @@ const CardDataHauling = () => {
             </div>
             <div className="col-6">
               <Card className="card-data">
-                <span className={styles.card}>Total Hauling</span>
+                <span className={styles.card}>Hauling To Sekurau</span>
                 <p className={styles.caption}>
                   <b>
                     747 <small>Ton</small>
