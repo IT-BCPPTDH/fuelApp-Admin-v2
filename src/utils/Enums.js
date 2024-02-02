@@ -4,5 +4,6 @@ export const URL_ENUMS ={
     Login : link+'/auth/login',
     masterTimeEntry : link+'/master/timeentry',
     masterTimeEntryOperator : link+'/master/timeentry/operator',
+    masterTimeEntryUnit : link+'/master/timeentry/unit',
     postTimeEntrySupport : link+'/timeentry/timeentry-support'
 }

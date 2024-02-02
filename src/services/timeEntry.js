@@ -22,6 +22,10 @@ const getMasterTimeEntry = async () => {
     const response = await api.get(URL_ENUMS.masterTimeEntryOperator);
     return response.data
   }; 
+  const getMasterTimeEntryUnit = async () => {
+    const response = await api.get(URL_ENUMS.masterTimeEntryUnit);
+    return response.data
+  };
 
   const postTimeEntrySupport = async (data) => {
     const response = await api.post(URL_ENUMS.postTimeEntrySupport,data);
@@ -32,7 +36,8 @@ const getMasterTimeEntry = async () => {
 const Services = {
     getMasterTimeEntry,
     getMasterTimeEntryOperator,
-    postTimeEntrySupport
+    postTimeEntrySupport,
+    getMasterTimeEntryUnit
 }
 
 export default Services
