@@ -18,6 +18,8 @@ import { getLocalStorage } from '../helpers/toLocalStorage'
 import { HeaderPageForm } from '../components/FormComponent/HeaderPageForm'
 import {calculateTotalTimeFromArray} from '../helpers/timeHelper'
 import { FooterPageForm } from '../components/FormComponent/FooterPageForm'
+import { useLiveQuery } from 'dexie-react-hooks';
+import { db } from '../../models/db';
 
 const tabs = [
   { label: 'Time Entry Support', value: 'time-entry/support/' },
@@ -25,7 +27,7 @@ const tabs = [
   { label: 'Time Entry Hauler', value: 'time-entry-hauler' }
 ]
 const shiftOptions = ['Day', 'Night']
-const unitOptions = ['DT11223', 'DT11224', 'DT11225', 'DT11226']
+// const unitOptions = ['DT11223', 'DT11224', 'DT11225', 'DT11226']
 // const jdeOptions = ['112233', '223344', '334455', '445566', '556677']
 
 export default function TimeSheetPage () {
@@ -33,9 +35,15 @@ export default function TimeSheetPage () {
   const currentDate = new Date()
   const [totalDuration, setTotalDuration] = useState()
   const [buttonDisabled, setButtonDisabled] = useState(true)
-  const [master, setMaster] = useState()
+  
+  const master = useLiveQuery(() => db.activity.toArray());
+
   const [jdeOptions, setJdeOptions] = useState(()=>{
     let op = getLocalStorage('timeEntry-operator')
+    return op
+  })
+  const [unitOptions, setUnitOption] = useState(()=>{
+    let op = getLocalStorage('timeEntry-unit')
     return op
   })
   const [masterOP, setMasterOP] = useState(()=>{
@@ -144,7 +152,6 @@ export default function TimeSheetPage () {
     let arrayTime = []
     let validateResult = false
     let delAct = null
-    let arrData = []
     let arrTemp=[
       ['','','','','','','','',''],
       ['','','','','','','','',''],
@@ -163,8 +170,8 @@ export default function TimeSheetPage () {
     ]
     
     let act = getLocalStorage('timeEntry-activity')
-    let mastr = getLocalStorage('timeEntry-master')
-    setMaster(mastr)
+    let mastr = getLocalStorage('timeEntry-masterAct')
+    
 
     const options = {
       data: [],
@@ -208,7 +215,6 @@ export default function TimeSheetPage () {
             cell.innerHTML = delAct
             val = delAct
           }
-          // console.log(cell.innerText)
         }
 
 
@@ -255,11 +261,10 @@ export default function TimeSheetPage () {
         }
 
         
-        // arrTemp[col] = val
-        // console.log(1,arrTemp)
-        // if(row>arrTemp[row].length-1){
-        //   arrTemp.push(['','','','','','','','',''],)
-        // }
+
+        if(row>arrTemp[row].length-1){
+          arrTemp.push(['','','','','','','','',''],)
+        }
         arrTemp[row][col] = val
         // console.log(col,row,val)
         // arrData[row]={

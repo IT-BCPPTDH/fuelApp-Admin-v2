@@ -32,6 +32,9 @@ import { forSocket } from '../helpers/convertDate'
 import { useNavigate } from 'react-router-dom'
 import Services from '../services/timeEntry'
 import { toLocalStorage } from '../helpers/toLocalStorage'
+import { db } from '../../models/db'
+import { useLiveQuery } from "dexie-react-hooks";
+import { insertActivity, insertOperator, insertUnit } from '../helpers/indexedDB/insert'
 
 const resolveAsset = asset => {
   const ASSET_URL =
@@ -230,6 +233,9 @@ const DashboardPage = () => {
   const { findFirstFocusable } = useFocusFinders()
   const triggerRef = useRef(null)
   const dialogRef = useRef(null)
+  const activity = useLiveQuery(() => db.activity.toArray());
+  const operator = useLiveQuery(() => db.operator.toArray());
+  const unit = useLiveQuery(() => db.unit.toArray());
 
   const getData = async () => {
     let response = await axios.get(
@@ -237,35 +243,55 @@ const DashboardPage = () => {
     )
     setDataFile(response.data.data)
   }
-  const getDataMaster = async () =>{
+  const getDataMaster = async (activity,operator,unit) =>{
     try{
       let dataMaster = await Services.getMasterTimeEntry()
       let dataMasterOp = await Services.getMasterTimeEntryOperator()
+      let dataMasterUnit = await Services.getMasterTimeEntryUnit()
+
+      if(unit?.length !== undefined && dataMasterUnit.totalRow !== unit?.length){
+        db.activity.clear()
+        insertUnit(dataMasterUnit.data)
+      }
+      
+      if(activity?.length !== undefined && dataMaster.totalRow !== activity?.length){
+        db.activity.clear()
+        insertActivity(dataMaster.data)
+      }
+      if(operator?.length !== undefined && dataMasterOp.totalRow !== operator?.length){
+        db.operator.clear()
+        insertOperator(dataMasterOp.data)
+      }
       let act =[]
       let op = []
+      let unt =[]
       dataMaster?.data?.map(v=>{
         act.push(v.activityname)
       })
       dataMasterOp?.data?.map(v=>{
         op.push(v.jde)
       })
+      dataMasterUnit?.data?.map(v=>{
+        unt.push(v.unitno)
+      })
+      toLocalStorage('timeEntry-unit',unt)
       toLocalStorage('timeEntry-activity',act)
-      toLocalStorage('timeEntry-master',dataMaster.data)
+      toLocalStorage('timeEntry-masterAct',dataMaster.data)
       toLocalStorage('timeEntry-operator',op)
-      toLocalStorage('timeEntry-masterOP',dataMasterOp.data)
+      
     }catch(err){
       console.log(err)
     }
   }
 
   useEffect(() => {
-    getDataMaster()
+    getDataMaster(activity,operator,unit)
     document.title = 'Homepage MED/MOD Data Entry App - PTDH'
     getData()
     if (open && dialogRef.current) {
       findFirstFocusable(dialogRef.current)?.focus()
     }
-  }, [open, findFirstFocusable])
+  }, [open, findFirstFocusable, activity, operator,unit])
 
   const onClickTrigger = () => {
     setOpen(true)
