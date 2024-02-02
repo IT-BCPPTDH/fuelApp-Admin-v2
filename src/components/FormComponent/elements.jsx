@@ -10,6 +10,7 @@ import {
   Option,
   RadioGroup,
   Radio,
+  useId,
 } from "@fluentui/react-components";
 import "./element.css";
 
@@ -38,7 +39,6 @@ const useStyles = makeStyles({
   },
 });
 export const FormElement = ({
-  inputId,
   name,
   label,
   type,
@@ -59,6 +59,7 @@ export const FormElement = ({
     }
     return "";
   };
+  const inputId = useId(name)
   const renderInput = () => {
     switch (type) {
       case "DatePicker":
@@ -113,7 +114,7 @@ export const FormElement = ({
         );
      
       case "StaticInfo":
-        return <h5 id={inputId}className={styles.formName}>{value}</h5>;
+        return <h5 id={inputId} className={styles.formName}>{value}</h5>;
       default:
         return null;
     }
