@@ -4,7 +4,10 @@ import {
   makeStyles,
   useId,
   Button,
-  CardHeader,
+  Toaster,
+  useToastController,
+  ToastTitle,
+  Toast,
 } from "@fluentui/react-components";
 import FormComponent from "../FormComponent";
 
@@ -116,17 +119,41 @@ const InputHauling = () => {
   const styles = useStyles();
   const selectId = useId();
 
+  const toasterId = useId("toaster");
+  const toastId = useId("example");
+  const [unmounted, setUnmounted] = React.useState(true);
+  const { dispatchToast, dismissToast } = useToastController(toasterId);
+
+  const notify = () => {
+    dispatchToast(
+      <Toast>
+        <ToastTitle>Data Berhasil Disimpan</ToastTitle>
+      </Toast>,
+      {
+        toastId,
+        intent: "success",
+        onStatusChange: (e, { status }) => setUnmounted(status === "unmounted"),
+      }
+    );
+    setUnmounted(false);
+  };
+  const dismiss = () => dismissToast(toastId);
+
   return (
     <>
-      <div className="form-wrapper wrapper" style={{marginBottom: '0', paddingTop: '3em'}}>
+      <div
+        className="form-wrapper wrapper"
+        style={{ marginBottom: "0", paddingTop: "3em" }}
+      >
         <div className="input-base">
           <FormComponent components={comp} className={styles.control} />
         </div>
         <div className="btn-wrapper">
-          <Button className="btn-simpan">Simpan</Button>
-          <Button className="btn-simpan">
-            Reset
+          <Button onClick={unmounted ? notify : dismiss}>
+            {unmounted ? "Simpan" : "Simpan"}
           </Button>
+          <Button className="btn-simpan">Reset</Button>
+          <Toaster toasterId={toasterId} />
         </div>
       </div>
     </>
