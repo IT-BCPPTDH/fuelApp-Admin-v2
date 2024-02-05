@@ -33,4 +33,5 @@
     display: flex;
     justify-content: flex-end;
     margin-bottom: 10px;
+    gap: 6px;
   }
