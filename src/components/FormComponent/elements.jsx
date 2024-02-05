@@ -68,6 +68,7 @@ export const FormElement = ({
             id={inputId}
             placeholder={`Select ${label}...`}
             value={value}
+            name={name}
             formatDate={formatDate}
             onChange={(e) => onChange(e, { name: name, value: e.target.value })}
           />
@@ -87,6 +88,7 @@ export const FormElement = ({
           <Input
             value={value}
             id={inputId}
+            name={name}
             readOnly={readOnly}
             disabled={disabled}
             onChange={(e) => onChange(e, { name: name, value: e.target.value })}
@@ -97,6 +99,7 @@ export const FormElement = ({
           <RadioGroup
             id={inputId}
             layout="horizontal"
+            name={name}
             onChange={(e) => onChange(e, { name: name, value: e.target.value })}
           >
             {options.map((option,key) => (
@@ -105,7 +108,7 @@ export const FormElement = ({
           </RadioGroup>
         );
       case "TimePicker":
-        return <TimePicker id={inputId} startHour={8} endHour={20} />;
+        return <TimePicker id={inputId} name={name} startHour={8} endHour={20}  onChange={(e) => onChange(e, { name: name, value: e.target.value })}/>;
       case "TextDataView":
         return (
           <>
