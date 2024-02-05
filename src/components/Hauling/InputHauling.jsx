@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from 'react';
 import "./CoalHauling.css";
 import {
   makeStyles,
@@ -23,20 +23,35 @@ const useStyles = makeStyles({
   },
 });
 
+const [formData, setFormData] = useState({
+  tanggal: '',
+  shift: '',
+  unitNo: '',
+  operator: '',
+  loader: '',
+  tonnace: '',
+  seam: '',
+  dummpingpoint: '',
+  rom:'',
+  inrom:'',
+  outrom:'',
+})
+
+
 const InputHauling = () => {
   const comp = [
     {
       name: "tanggal",
       grid: "col-4",
       label: "Tanggal",
-      value: "",
+      value: formData.tanggal,
       type: "DatePicker",
     },
     {
       name: "shift",
       grid: "col-4",
       label: "Shift",
-      value: "",
+      value: formData.shift,
       type: "RadioButton",
       options: ["Day", "Night"],
     },
@@ -51,7 +66,7 @@ const InputHauling = () => {
       name: "nounit",
       grid: "col-4",
       label: "No Unit",
-      value: "",
+      value: formData.unitNo,
       type: "Combobox",
       options: ["HMP6618", "HMP1182"],
     },
@@ -59,29 +74,29 @@ const InputHauling = () => {
       name: "operator",
       grid: "col-4",
       label: "Operator",
-      value: "",
+      value: formData.operator,
       type: "Input",
     },
     {
       name: "loader",
       grid: "col-4",
       label: "Loader",
-      value: "",
+      value: formData.loader,
       type: "Combobox",
       options: ["EXA1772", "EXA1167"],
     },
     {
-      name:"tonnace",
+      name: "tonnace",
       grid: "col-4",
       label: "Tonnace",
-      value: "",
+      value: formData.tonnace,
       type: "Input",
     },
     {
       name: "seam",
       grid: "col-4",
       label: "Seam",
-      value: "",
+      value: formData.seam,
       type: "Combobox",
       options: ["A", "B", "BC"],
     },
@@ -89,7 +104,7 @@ const InputHauling = () => {
       name: "dummpingpoint",
       grid: "col-4",
       label: "Dummping Point",
-      value: "",
+      value: formData.dummpingpoint,
       type: "Combobox",
       options: ["A", "B", "BC"],
     },
@@ -97,28 +112,27 @@ const InputHauling = () => {
       name: "rom",
       grid: "col-4",
       label: "Rom",
-      value: "",
+      value: formData.rom,
       type: "Input",
     },
     {
       name: "inrom",
       grid: "col-4",
       label: "In Rom",
-      value: "",
+      value: formData.inrom,
       type: "Input",
     },
     {
       name: "outrom",
       grid: "col-4",
       label: "Out Rom",
-      value: "",
+      value: formData.outrom,
       type: "Input",
     },
   ];
 
   const styles = useStyles();
   const selectId = useId();
-
   const toasterId = useId("toaster");
   const toastId = useId("example");
   const [unmounted, setUnmounted] = React.useState(true);
@@ -139,6 +153,11 @@ const InputHauling = () => {
   };
   const dismiss = () => dismissToast(toastId);
 
+  const handleChange = (e, v) => {
+    const { name, value } = v;
+    console.log(e.target.value);
+  };
+
   return (
     <>
       <div
@@ -146,7 +165,11 @@ const InputHauling = () => {
         style={{ marginBottom: "0", paddingTop: "3em" }}
       >
         <div className="input-base">
-          <FormComponent components={comp} className={styles.control} />
+          <FormComponent
+            components={comp}
+            handleChange={handleChange}
+            className={styles.control}
+          />
         </div>
         <div className="btn-wrapper">
           <Button onClick={unmounted ? notify : dismiss}>
