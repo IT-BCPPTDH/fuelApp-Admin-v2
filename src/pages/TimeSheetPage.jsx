@@ -1,16 +1,16 @@
 import { useRef, useEffect, useCallback, useState, useMemo } from 'react'
 import jspreadsheet from 'jspreadsheet-ce'
-import {
-  InfoLabel
-} from '@fluentui/react-components'
+import { InfoLabel } from '@fluentui/react-components'
 import { DynamicTablistMenu } from '../components/Tablist'
-import FormComponent from '../components/FormComponent';
+import FormComponent from '../components/FormComponent'
 import Cookies from 'js-cookie'
 import Services from '../services/timeEntry'
 import { getLocalStorage } from '../helpers/toLocalStorage'
 import { HeaderPageForm } from '../components/FormComponent/HeaderPageForm'
-import {calculateTotalTimeFromArray} from '../helpers/timeHelper'
+import { calculateTotalTimeFromArray } from '../helpers/timeHelper'
 import { FooterPageForm } from '../components/FormComponent/FooterPageForm'
+import { useLiveQuery } from 'dexie-react-hooks'
+import { db } from '../../models/db'
 
 const tabs = [
   { label: 'Time Entry Support', value: 'time-entry/support/' },
@@ -19,20 +19,32 @@ const tabs = [
 ]
 const active = '/timesheet-dataentry/'; 
 const shiftOptions = ['Day', 'Night']
+
 const unitOptions = ['DT11223', 'DT11224', 'DT11225', 'DT11226']
-// const jdeOptions = ['112233', '223344', '334455', '445566', '556677']
 
 const activeTab = 'time-entry/support/';
+
 export default function TimeSheetPage () {
   const jRef = useRef(null)
   const currentDate = new Date()
   const [totalDuration, setTotalDuration] = useState()
   const [buttonDisabled, setButtonDisabled] = useState(true)
-  const [master, setMaster] = useState()
 
-  const [jdeOptions, setJdeOptions] = useState(() => getLocalStorage('timeEntry-operator'));
-  const [masterOP, setMasterOP] = useState(() => getLocalStorage('timeEntry-masterOP'));
-  
+  const master = useLiveQuery(() => db.activity.toArray())
+
+  const [jdeOptions, setJdeOptions] = useState(() => {
+    let op = getLocalStorage('timeEntry-operator')
+    return op
+  })
+  const [unitOptions, setUnitOption] = useState(() => {
+    let op = getLocalStorage('timeEntry-unit')
+    return op
+  })
+  const [masterOP, setMasterOP] = useState(() => {
+    let op = getLocalStorage('timeEntry-masterOP')
+    return op
+  })
+
   const [formData, setFormData] = useState({
     formID: 'Time Entry Support',
     site: 'BCP',
@@ -93,7 +105,7 @@ export default function TimeSheetPage () {
 
       for (let i = 0; i < inputData.length; i++) {
         const currentData = inputData[i]
-        
+
         const start_time = formatTime(currentData[2])
         const end_time = formatTime(currentData[3])
         const duration = calculateTotalTime(start_time, end_time)
@@ -121,11 +133,11 @@ export default function TimeSheetPage () {
   )
 
   const onchange = useCallback(
-    (val) => {
-        let dt = transformData(val)
-        setFormValue(dt)
+    val => {
+      let dt = transformData(val)
+      setFormValue(dt)
     },
-    [ transformData]
+    [transformData]
   )
 
   useEffect(() => {
@@ -134,26 +146,25 @@ export default function TimeSheetPage () {
     let arrayTime = []
     let validateResult = false
     let delAct = null
-    let arrTemp=[
-      ['','','','','','','','',''],
-      ['','','','','','','','',''],
-      ['','','','','','','','',''],
-      ['','','','','','','','',''],
-      ['','','','','','','','',''],
-      ['','','','','','','','',''],
-      ['','','','','','','','',''],
-      ['','','','','','','','',''],
-      ['','','','','','','','',''],
-      ['','','','','','','','',''],
-      ['','','','','','','','',''],
-      ['','','','','','','','',''],
-      ['','','','','','','','',''],
-      ['','','','','','','','',''],
+    let arrTemp = [
+      ['', '', '', '', '', '', '', '', ''],
+      ['', '', '', '', '', '', '', '', ''],
+      ['', '', '', '', '', '', '', '', ''],
+      ['', '', '', '', '', '', '', '', ''],
+      ['', '', '', '', '', '', '', '', ''],
+      ['', '', '', '', '', '', '', '', ''],
+      ['', '', '', '', '', '', '', '', ''],
+      ['', '', '', '', '', '', '', '', ''],
+      ['', '', '', '', '', '', '', '', ''],
+      ['', '', '', '', '', '', '', '', ''],
+      ['', '', '', '', '', '', '', '', ''],
+      ['', '', '', '', '', '', '', '', ''],
+      ['', '', '', '', '', '', '', '', ''],
+      ['', '', '', '', '', '', '', '', '']
     ]
-    
+
     let act = getLocalStorage('timeEntry-activity')
-    let mastr = getLocalStorage('timeEntry-master')
-    setMaster(mastr)
+    let mastr = getLocalStorage('timeEntry-masterAct')
 
     const options = {
       data: [],
@@ -169,7 +180,7 @@ export default function TimeSheetPage () {
         { type: 'text', width: '100', title: 'Start' },
         { type: 'text', width: '100', title: 'End' },
         { type: 'text', width: '100', title: 'Duration' },
-        
+
         {
           type: 'dropdown',
           width: '130',
@@ -184,21 +195,18 @@ export default function TimeSheetPage () {
       tableHeight: '375px',
       tableOverflow: true,
       updateTable: function (instance, cell, col, row, val, label, cellName) {
-        
-        if(col==0){
+        if (col == 0) {
           let v = cell.innerText
-          let a = mastr?.find(obj => obj.activityname === v);
+          let a = mastr?.find(obj => obj.activityname === v)
           delAct = a?.delaydescription
         }
 
-        if(col==1){
-          if(delAct!=null){
+        if (col == 1) {
+          if (delAct != null) {
             cell.innerHTML = delAct
             val = delAct
           }
-
         }
-
 
         if (col == 2 || col == 3) {
           let val = cell.innerText
@@ -241,11 +249,13 @@ export default function TimeSheetPage () {
           const resVal = calculateTotalTimeFromArray(arrayTime)
           setTotalDuration(resVal)
         }
+
+        if (row > arrTemp[row].length - 1) {
+          arrTemp.push(['', '', '', '', '', '', '', '', ''])
+        }
         arrTemp[row][col] = val
         onchange(arrTemp)
-
       }
-      
     }
     if (!jRef.current.jspreadsheet) {
       jspreadsheet(jRef.current, options)
@@ -255,13 +265,13 @@ export default function TimeSheetPage () {
     }
   }, [onchange, calculateTotalTime, formatTime])
 
-  const handleSubmit = async() => {
+  const handleSubmit = async () => {
     let act = JSON.stringify(formValue)
-    let data ={
+    let data = {
       ...formData,
       activity: act
     }
-    
+
     let dt = await Services.postTimeEntrySupport(data)
     console.log(dt)
   }
@@ -306,7 +316,7 @@ export default function TimeSheetPage () {
       setFormData(prevFormData => ({ ...prevFormData, [name]: value }))
     }
 
-    if(name === 'jdeOperator'){
+    if (name === 'jdeOperator') {
       let mo = masterOP?.find(v => v.jde === value)
       setFormData({
         ...formData,
@@ -316,146 +326,142 @@ export default function TimeSheetPage () {
     }
   }
 
-  const components = useMemo(() =>   [
-    {
-      name: 'formID',
-      grid: 'col-2',
-      label: 'Form ID',
-      value: formData.formID,
-      type: 'StaticInfo'
-    },
+  const components = useMemo(
+    () => [
+      {
+        name: 'formID',
+        grid: 'col-2',
+        label: 'Form ID',
+        value: formData.formID,
+        type: 'StaticInfo'
+      },
 
-    {
-      name: 'site',
-      grid: 'col-2',
-      label: 'Site',
-      value: formData.site,
-      readOnly: true,
-      disabled: true,
-      type: 'Input'
-    },
-    {
-      name: 'stafEntry',
-      grid: 'col-2',
-      label: 'Staf Entry',
-      value: formData.stafEntry,
-      readOnly: true,
-      disabled: true,
-      type: 'Input'
-    },
-    {
-      name: 'tanggal',
-      grid: 'col-2',
-      label: 'Tanggal',
-      value: formData.tanggal,
-      readOnly: false,
-      disabled: false,
-      type: 'DatePicker'
-    },
-    {
-      
-      name: 'shift',
-      grid: 'col-2',
-      label: 'Shift',
-      value: formData.shift,
-      readOnly: false,
-      disabled: false,
-      type: 'Combobox',
-      options: shiftOptions
-    },
+      {
+        name: 'site',
+        grid: 'col-2',
+        label: 'Site',
+        value: formData.site,
+        readOnly: true,
+        disabled: true,
+        type: 'Input'
+      },
+      {
+        name: 'stafEntry',
+        grid: 'col-2',
+        label: 'Staf Entry',
+        value: formData.stafEntry,
+        readOnly: true,
+        disabled: true,
+        type: 'Input'
+      },
+      {
+        name: 'tanggal',
+        grid: 'col-2',
+        label: 'Tanggal',
+        value: formData.tanggal,
+        readOnly: false,
+        disabled: false,
+        type: 'DatePicker'
+      },
+      {
+        name: 'shift',
+        grid: 'col-2',
+        label: 'Shift',
+        value: formData.shift,
+        readOnly: false,
+        disabled: false,
+        type: 'Combobox',
+        options: shiftOptions
+      },
 
-    {
-      
-      name: 'unitNo',
-      grid: 'col-2',
-      label: 'Unit No',
-      value: formData.unitNo,
-      readOnly: false,
-      disabled: false,
-      type: 'Combobox',
-      options: unitOptions
-    },
-    {
-      name: 'lastUpdate',
-      grid: 'col-2',
-      label: 'Last Update',
-      value: formData.lastUpdate,
-      type: 'StaticInfo'
-    },
-    {
-      name: 'jdeOperator',
-      grid: 'col-2',
-      label: 'JDE Operator',
-      value: formData.jdeOperator,
-      readOnly: false,
-      disabled: false,
-      type: 'Combobox',
-      options: jdeOptions
-    },
-    {
-      
-      name: 'nameOperator',
-      grid: 'col-2',
-      label: 'Nama Operator',
-      value: formData.nameOperator,
-      readOnly: false,
-      disabled: true,
-      type: 'Input'
-    },
-    {
-      
-      name: 'hmAwal',
-      grid: 'col-2',
-      label: 'HM Awal',
-      value: formData.hmAwal,
-      readOnly: false,
-      disabled: false,
-      type: 'Input'
-    },
-    {
-      
-      name: 'hmAkhir',
-      grid: 'col-2',
-      label: 'HM Akhir',
-      value: formData.hmAkhir,
-      readOnly: false,
-      disabled: false,
-      type: 'Input'
-    },
-    {
-      
-      name: 'hm',
-      grid: 'col-2',
-      label: 'HM',
-      value: formData.hm,
-      readOnly: true,
-      disabled: true,
-      type: 'Input'
-    }
-  ], [formData, jdeOptions]) 
-
+      {
+        name: 'unitNo',
+        grid: 'col-2',
+        label: 'Unit No',
+        value: formData.unitNo,
+        readOnly: false,
+        disabled: false,
+        type: 'Combobox',
+        options: unitOptions
+      },
+      {
+        name: 'lastUpdate',
+        grid: 'col-2',
+        label: 'Last Update',
+        value: formData.lastUpdate,
+        type: 'StaticInfo'
+      },
+      {
+        name: 'jdeOperator',
+        grid: 'col-2',
+        label: 'JDE Operator',
+        value: formData.jdeOperator,
+        readOnly: false,
+        disabled: false,
+        type: 'Combobox',
+        options: jdeOptions
+      },
+      {
+        name: 'nameOperator',
+        grid: 'col-2',
+        label: 'Nama Operator',
+        value: formData.nameOperator,
+        readOnly: false,
+        disabled: true,
+        type: 'Input'
+      },
+      {
+        name: 'hmAwal',
+        grid: 'col-2',
+        label: 'HM Awal',
+        value: formData.hmAwal,
+        readOnly: false,
+        disabled: false,
+        type: 'Input'
+      },
+      {
+        name: 'hmAkhir',
+        grid: 'col-2',
+        label: 'HM Akhir',
+        value: formData.hmAkhir,
+        readOnly: false,
+        disabled: false,
+        type: 'Input'
+      },
+      {
+        name: 'hm',
+        grid: 'col-2',
+        label: 'HM',
+        value: formData.hm,
+        readOnly: true,
+        disabled: true,
+        type: 'Input'
+      }
+    ],
+    [formData, jdeOptions]
+  )
 
   const getDataFirst = useCallback(() => {
-    let user = Cookies.get('user');
-    user = JSON.parse(user);
+    let user = Cookies.get('user')
+    user = JSON.parse(user)
 
-    const now = new Date();
-    const currentHour = now.getHours();
-    let shift = null;
+    const now = new Date()
+    const currentHour = now.getHours()
+    let shift = null
     if (currentHour >= 6 && currentHour < 18) {
-      shift = 'Day';
+      shift = 'Day'
     } else {
-      shift = 'Night';
+      shift = 'Night'
     }
 
-    let dt = formData;
+    let dt = formData
     dt = {
       ...dt,
       shift: shift,
-      stafEntry: user.fullname,
-    };
-    setFormData(dt);
-  }, [formData, setFormData]);
+      stafEntry: user.fullname
+    }
+    setFormData(dt)
+  }, [formData, setFormData])
 
   useEffect(() => {
     const disabled =
@@ -465,12 +471,14 @@ export default function TimeSheetPage () {
     setButtonDisabled(disabled)
 
     getDataFirst()
+
   }, [totalDuration, getDataFirst]);
 
   const handleTabChange = (value) => {
     console.log(`Navigating to: /${value}`);
     navigate(`/${value}`);
   };
+
   return (
     <>
       <HeaderPageForm title={`Form Operator Activity Timesheet - Data Entry`} />
@@ -500,8 +508,10 @@ export default function TimeSheetPage () {
           </div>
         </div>
 
-        <FooterPageForm handleSubmit={handleSubmit} buttonDisabled={buttonDisabled} /> 
-
+        <FooterPageForm
+          handleSubmit={handleSubmit}
+          buttonDisabled={buttonDisabled}
+        />
       </div>
 
       {/* <button onClick={getData}>Get Data</button> */}

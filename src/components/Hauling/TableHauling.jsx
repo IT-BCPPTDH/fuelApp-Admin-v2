@@ -21,16 +21,18 @@ import {
   MenuTrigger,
   Button,
   Field,
+  Dialog,
+  DialogTrigger,
+  DialogSurface,
+  DialogTitle,
+  DialogBody,
+  DialogActions,
+  DialogContent,
 } from "@fluentui/react-components";
 import {
-  DocumentPdfRegular,
-  DocumentRegular,
   EditRegular,
-  FolderRegular,
-  OpenRegular,
-  PeopleRegular,
-  VideoRegular,
   DeleteRegular,
+  ArrowDownload24Regular,
 } from "@fluentui/react-icons";
 
 const columnsDef = [
@@ -202,116 +204,152 @@ const TableHauling = () => {
 
   return (
     <>
-      <div className="form-wrapper" style={{marginTop: '10px'}}>
-      <div className="search-box">
-        <SearchBox placeholder="Search" />
-      </div>
-      <div style={{ overflowX: "auto" }}>
-        <Table
-          sortable
-          aria-label="Table with sort"
-          ref={tableRef}
-          {...columnSizing_unstable.getTableProps()}
-        >
-          <TableHeader>
-            <TableRow>
-              {columns.map((column) => (
-                <Menu openOnContext key={column.columnId}>
-                  <MenuTrigger>
-                    <TableHeaderCell
-                      key={column.columnId}
-                      {...columnSizing_unstable.getTableHeaderCellProps(
-                        column.columnId
-                      )}
-                    >
-                      {column.renderHeaderCell()}
-                    </TableHeaderCell>
-                  </MenuTrigger>
-                  <MenuPopover>
-                    <MenuList>
-                      <MenuItem
-                        onClick={columnSizing_unstable.enableKeyboardMode(
+      <div className="form-wrapper" style={{ marginTop: "10px" }}>
+        <div className="search-box">
+          <Button icon={<ArrowDownload24Regular />}>Download</Button>
+          <SearchBox placeholder="Search" />
+        </div>
+        <div style={{ overflowX: "auto" }}>
+          <Table
+            sortable
+            aria-label="Table with sort"
+            ref={tableRef}
+            {...columnSizing_unstable.getTableProps()}
+          >
+            <TableHeader>
+              <TableRow>
+                {columns.map((column) => (
+                  <Menu openOnContext key={column.columnId}>
+                    <MenuTrigger>
+                      <TableHeaderCell
+                        key={column.columnId}
+                        {...columnSizing_unstable.getTableHeaderCellProps(
                           column.columnId
                         )}
                       >
-                        Keyboard Column Resizing
-                      </MenuItem>
-                    </MenuList>
-                  </MenuPopover>
-                </Menu>
-              ))}
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {rows.map(({ item }) => (
-              <TableRow key={item.id.label}>
-                <TableCell {...columnSizing_unstable.getTableCellProps("id")}>
-                  <TableCellLayout>{item.id.label}</TableCellLayout>
-                </TableCell>
-                <TableCell
-                  {...columnSizing_unstable.getTableCellProps("tanggal")}
-                >
-                  <TableCellLayout>{item.tanggal.label}</TableCellLayout>
-                </TableCell>
-                <TableCell
-                  {...columnSizing_unstable.getTableCellProps("shift")}
-                >
-                  <TableCellLayout truncate>{item.shift.label}</TableCellLayout>
-                </TableCell>
-                <TableCell {...columnSizing_unstable.getTableCellProps("unit")}>
-                  <TableCellLayout>{item.unit.label}</TableCellLayout>
-                </TableCell>
-                <TableCell
-                  {...columnSizing_unstable.getTableCellProps("operator")}
-                >
-                  <TableCellLayout>{item.operator.label}</TableCellLayout>
-                </TableCell>
-                <TableCell
-                  {...columnSizing_unstable.getTableCellProps("tonnace")}
-                >
-                  <TableCellLayout>{item.tonnace.label}</TableCellLayout>
-                </TableCell>
-                <TableCell
-                  {...columnSizing_unstable.getTableCellProps("loader")}
-                >
-                  <TableCellLayout>{item.loader.label}</TableCellLayout>
-                </TableCell>
-                <TableCell {...columnSizing_unstable.getTableCellProps("pit")}>
-                  <TableCellLayout>{item.pit.label}</TableCellLayout>
-                </TableCell>
-                <TableCell {...columnSizing_unstable.getTableCellProps("seam")}>
-                  <TableCellLayout>{item.seam.label}</TableCellLayout>
-                </TableCell>
-                <TableCell
-                  {...columnSizing_unstable.getTableCellProps("dumpingpoint")}
-                >
-                  <TableCellLayout>{item.dumpingpoint.label}</TableCellLayout>
-                </TableCell>
-                <TableCell
-                  {...columnSizing_unstable.getTableCellProps("inrom")}
-                >
-                  <TableCellLayout>{item.inrom.label}</TableCellLayout>
-                </TableCell>
-                <TableCell
-                  {...columnSizing_unstable.getTableCellProps("outrom")}
-                >
-                  <TableCellLayout>{item.outrom.label}</TableCellLayout>
-                </TableCell>
-                <TableCell
-                  {...columnSizing_unstable.getTableCellProps("action")}
-                >
-                  <TableCellLayout>
-                    <Button icon={<EditRegular />} aria-label="Edit" />
-                    <Button icon={<DeleteRegular />} aria-label="Delete" />
-                  </TableCellLayout>
-                </TableCell>
+                        {column.renderHeaderCell()}
+                      </TableHeaderCell>
+                    </MenuTrigger>
+                    <MenuPopover>
+                      <MenuList>
+                        <MenuItem
+                          onClick={columnSizing_unstable.enableKeyboardMode(
+                            column.columnId
+                          )}
+                        >
+                          Keyboard Column Resizing
+                        </MenuItem>
+                      </MenuList>
+                    </MenuPopover>
+                  </Menu>
+                ))}
               </TableRow>
-            ))}
-          </TableBody>
-        </Table>
+            </TableHeader>
+            <TableBody>
+              {rows.map(({ item }) => (
+                <TableRow key={item.id.label}>
+                  <TableCell {...columnSizing_unstable.getTableCellProps("id")}>
+                    <TableCellLayout>{item.id.label}</TableCellLayout>
+                  </TableCell>
+                  <TableCell
+                    {...columnSizing_unstable.getTableCellProps("tanggal")}
+                  >
+                    <TableCellLayout>{item.tanggal.label}</TableCellLayout>
+                  </TableCell>
+                  <TableCell
+                    {...columnSizing_unstable.getTableCellProps("shift")}
+                  >
+                    <TableCellLayout truncate>
+                      {item.shift.label}
+                    </TableCellLayout>
+                  </TableCell>
+                  <TableCell
+                    {...columnSizing_unstable.getTableCellProps("unit")}
+                  >
+                    <TableCellLayout>{item.unit.label}</TableCellLayout>
+                  </TableCell>
+                  <TableCell
+                    {...columnSizing_unstable.getTableCellProps("operator")}
+                  >
+                    <TableCellLayout>{item.operator.label}</TableCellLayout>
+                  </TableCell>
+                  <TableCell
+                    {...columnSizing_unstable.getTableCellProps("tonnace")}
+                  >
+                    <TableCellLayout>{item.tonnace.label}</TableCellLayout>
+                  </TableCell>
+                  <TableCell
+                    {...columnSizing_unstable.getTableCellProps("loader")}
+                  >
+                    <TableCellLayout>{item.loader.label}</TableCellLayout>
+                  </TableCell>
+                  <TableCell
+                    {...columnSizing_unstable.getTableCellProps("pit")}
+                  >
+                    <TableCellLayout>{item.pit.label}</TableCellLayout>
+                  </TableCell>
+                  <TableCell
+                    {...columnSizing_unstable.getTableCellProps("seam")}
+                  >
+                    <TableCellLayout>{item.seam.label}</TableCellLayout>
+                  </TableCell>
+                  <TableCell
+                    {...columnSizing_unstable.getTableCellProps("dumpingpoint")}
+                  >
+                    <TableCellLayout>{item.dumpingpoint.label}</TableCellLayout>
+                  </TableCell>
+                  <TableCell
+                    {...columnSizing_unstable.getTableCellProps("inrom")}
+                  >
+                    <TableCellLayout>{item.inrom.label}</TableCellLayout>
+                  </TableCell>
+                  <TableCell
+                    {...columnSizing_unstable.getTableCellProps("outrom")}
+                  >
+                    <TableCellLayout>{item.outrom.label}</TableCellLayout>
+                  </TableCell>
+                  <TableCell
+                    {...columnSizing_unstable.getTableCellProps("action")}
+                  >
+                    <TableCellLayout>
+                      <Button
+                        icon={<EditRegular />}
+                        aria-label="Edit"
+                        onClick={(e) => handleEdit(e)}
+                      />
+                      {/* <Button icon={<DeleteRegular />} aria-label="Delete" /> */}
+                      <Dialog modalType="alert">
+                        <DialogTrigger disableButtonEnhancement>
+                          <Button
+                            icon={<DeleteRegular />}
+                            aria-label="Delete"
+                          />
+                        </DialogTrigger>
+                        <DialogSurface>
+                          <DialogBody>
+                            <DialogTitle>Hapus Data Ini?</DialogTitle>
+                            <DialogContent>
+                              Data ini akan di hapus dan tidak dapat di pulihkan
+                            </DialogContent>
+                            <DialogActions>
+                              <DialogTrigger disableButtonEnhancement>
+                                <Button appearance="secondary">Batalkan</Button>
+                              </DialogTrigger>
+                              <Button appearance="secondary">
+                                Hapus
+                              </Button>
+                            </DialogActions>
+                          </DialogBody>
+                        </DialogSurface>
+                      </Dialog>
+                    </TableCellLayout>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </div>
       </div>
-      </div>
-     
     </>
   );
 };

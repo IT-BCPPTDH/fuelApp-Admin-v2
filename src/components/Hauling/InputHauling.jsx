@@ -1,10 +1,13 @@
-import React from "react";
+import React, { useState, useEffect } from 'react';
 import "./CoalHauling.css";
 import {
   makeStyles,
   useId,
   Button,
-  CardHeader,
+  Toaster,
+  useToastController,
+  ToastTitle,
+  Toast,
 } from "@fluentui/react-components";
 import FormComponent from "../FormComponent";
 
@@ -20,114 +23,168 @@ const useStyles = makeStyles({
   },
 });
 
+
+
+const shiftOptions = ['Day', 'Night']
+const unitOptions = ['EXA526', 'EXA726']
+const loaderOptions = ['EXA526', 'EXA726']
+const seamOptions = ['A', 'B', 'C']
+const dummpingpointOptions = ['A', 'AB', 'C']
+
 const InputHauling = () => {
+  
+
+  const [formData, setFormData] = useState({
+    tanggal: '',
+    shift: '',
+    unitNo: '',
+    operator: '',
+    loader: '',
+    tonnace: '',
+    seam: '',
+    dummpingpoint: '',
+    rom:'',
+    inrom:'',
+    outrom:'',
+  })
   const comp = [
     {
-      inputId: useId("dateform"),
+      name: "tanggal",
       grid: "col-4",
       label: "Tanggal",
-      value: "",
+      value: formData.tanggal,
       type: "DatePicker",
     },
     {
-      inputId: useId("shift"),
+      name: "shift",
       grid: "col-4",
       label: "Shift",
-      value: "",
+      value: formData.shift,
       type: "RadioButton",
-      options: ["Day", "Night"],
+      options: shiftOptions,
     },
     {
-      inputId: useId(""),
+      name: "",
       grid: "col-4",
       label: "",
       value: "",
       type: "",
     },
     {
-      inputId: useId("nounit"),
+      name: "nounit",
       grid: "col-4",
       label: "No Unit",
-      value: "",
+      value: formData.unitNo,
       type: "Combobox",
-      options: ["HMP6618", "HMP1182"],
+      options: unitOptions,
     },
     {
-      inputId: useId("operator"),
+      name: "operator",
       grid: "col-4",
       label: "Operator",
-      value: "",
-      type: "Combobox",
-      options: ["AT5166 - Maulana Putra", "AB4426 - Setiyo Baskoro"],
+      // value: "",
+      type: "Input",
     },
     {
-      inputId: useId("loader"),
+      name: "loader",
       grid: "col-4",
       label: "Loader",
-      value: "",
+      value: formData.loader,
       type: "Combobox",
-      options: ["EXA1772", "EXA1167"],
+      options: loaderOptions,
     },
     {
-      inputId: useId("tonnace"),
+      name: "tonnace",
       grid: "col-4",
       label: "Tonnace",
-      value: "",
+      // value: formData.tonnace,
       type: "Input",
     },
     {
-      inputId: useId("seam"),
+      name: "seam",
       grid: "col-4",
       label: "Seam",
-      value: "",
+      value: formData.seam,
       type: "Combobox",
-      options: ["A", "B", "BC"],
+      options: seamOptions,
     },
     {
-      inputId: useId("dummpingpoint"),
+      name: "dummpingpoint",
       grid: "col-4",
       label: "Dummping Point",
-      value: "",
+      value: formData.dummpingpoint,
       type: "Combobox",
-      options: ["A", "B", "BC"],
+      options: dummpingpointOptions,
     },
     {
-      inputId: useId("rom"),
+      name: "rom",
       grid: "col-4",
       label: "Rom",
-      value: "",
+      // value: formData.rom,
       type: "Input",
     },
     {
-      inputId: useId("inrom"),
+      name: "inrom",
       grid: "col-4",
       label: "In Rom",
-      value: "",
+      // value: formData.inrom,
       type: "Input",
     },
     {
-      inputId: useId("outrom"),
+      name: "outrom",
       grid: "col-4",
       label: "Out Rom",
-      value: "",
+      // value: formData.outrom,
       type: "Input",
     },
   ];
 
   const styles = useStyles();
-  const selectId = useId();
+  // const selectId = useId();
+  const toasterId = useId("toaster");
+  const toastId = useId("example");
+  const [unmounted, setUnmounted] = React.useState(true);
+  const { dispatchToast, dismissToast } = useToastController(toasterId);
+
+  const notify = () => {
+    dispatchToast(
+      <Toast>
+        <ToastTitle>Data Berhasil Disimpan</ToastTitle>
+      </Toast>,
+      {
+        toastId,
+        intent: "success",
+        onStatusChange: (e, { status }) => setUnmounted(status === "unmounted"),
+      }
+    );
+    setUnmounted(false);
+  };
+  const dismiss = () => dismissToast(toastId);
+
+  const handleChange = (e, v) => {
+    const { name, value } = v;
+    console.log(e.target.value);
+  };
 
   return (
     <>
-      <div className="form-wrapper wrapper" style={{marginBottom: '0', paddingTop: '3em'}}>
+      <div
+        className="form-wrapper wrapper"
+        style={{ marginBottom: "0", paddingTop: "3em" }}
+      >
         <div className="input-base">
-          <FormComponent components={comp} className={styles.control} />
+          <FormComponent
+            components={comp}
+            handleChange={handleChange}
+            className={styles.control}
+          />
         </div>
         <div className="btn-wrapper">
-          <Button className="btn-simpan">Simpan</Button>
-          <Button className="btn-simpan">
-            Reset
+          <Button onClick={unmounted ? notify : dismiss}>
+            {unmounted ? "Simpan" : "Simpan"}
           </Button>
+          <Button className="btn-simpan">Reset</Button>
+          <Toaster toasterId={toasterId} />
         </div>
       </div>
     </>
