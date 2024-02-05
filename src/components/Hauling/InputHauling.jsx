@@ -26,14 +26,14 @@ const useStyles = makeStyles({
 const InputHauling = () => {
   const comp = [
     {
-      inputId: useId("dateform"),
+      name: "tanggal",
       grid: "col-4",
       label: "Tanggal",
       value: "",
       type: "DatePicker",
     },
     {
-      inputId: useId("shift"),
+      name: "shift",
       grid: "col-4",
       label: "Shift",
       value: "",
@@ -41,14 +41,14 @@ const InputHauling = () => {
       options: ["Day", "Night"],
     },
     {
-      inputId: useId(""),
+      name: useId(""),
       grid: "col-4",
       label: "",
       value: "",
       type: "",
     },
     {
-      inputId: useId("nounit"),
+      name: "nounit",
       grid: "col-4",
       label: "No Unit",
       value: "",
@@ -56,14 +56,14 @@ const InputHauling = () => {
       options: ["HMP6618", "HMP1182"],
     },
     {
-      inputId: useId("operator"),
+      name: "operator",
       grid: "col-4",
       label: "Operator",
       value: "",
       type: "Input",
     },
     {
-      inputId: useId("loader"),
+      name: "loader",
       grid: "col-4",
       label: "Loader",
       value: "",
@@ -71,14 +71,14 @@ const InputHauling = () => {
       options: ["EXA1772", "EXA1167"],
     },
     {
-      inputId: useId("tonnace"),
+      name:"tonnace",
       grid: "col-4",
       label: "Tonnace",
       value: "",
       type: "Input",
     },
     {
-      inputId: useId("seam"),
+      name: "seam",
       grid: "col-4",
       label: "Seam",
       value: "",
@@ -86,7 +86,7 @@ const InputHauling = () => {
       options: ["A", "B", "BC"],
     },
     {
-      inputId: useId("dummpingpoint"),
+      name: "dummpingpoint",
       grid: "col-4",
       label: "Dummping Point",
       value: "",
@@ -94,21 +94,21 @@ const InputHauling = () => {
       options: ["A", "B", "BC"],
     },
     {
-      inputId: useId("rom"),
+      name: "rom",
       grid: "col-4",
       label: "Rom",
       value: "",
       type: "Input",
     },
     {
-      inputId: useId("inrom"),
+      name: "inrom",
       grid: "col-4",
       label: "In Rom",
       value: "",
       type: "Input",
     },
     {
-      inputId: useId("outrom"),
+      name: "outrom",
       grid: "col-4",
       label: "Out Rom",
       value: "",
