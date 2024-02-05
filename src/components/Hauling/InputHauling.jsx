@@ -23,22 +23,30 @@ const useStyles = makeStyles({
   },
 });
 
-const [formData, setFormData] = useState({
-  tanggal: '',
-  shift: '',
-  unitNo: '',
-  operator: '',
-  loader: '',
-  tonnace: '',
-  seam: '',
-  dummpingpoint: '',
-  rom:'',
-  inrom:'',
-  outrom:'',
-})
 
+
+const shiftOptions = ['Day', 'Night']
+const unitOptions = ['EXA526', 'EXA726']
+const loaderOptions = ['EXA526', 'EXA726']
+const seamOptions = ['A', 'B', 'C']
+const dummpingpointOptions = ['A', 'AB', 'C']
 
 const InputHauling = () => {
+  
+
+  const [formData, setFormData] = useState({
+    tanggal: '',
+    shift: '',
+    unitNo: '',
+    operator: '',
+    loader: '',
+    tonnace: '',
+    seam: '',
+    dummpingpoint: '',
+    rom:'',
+    inrom:'',
+    outrom:'',
+  })
   const comp = [
     {
       name: "tanggal",
@@ -53,10 +61,10 @@ const InputHauling = () => {
       label: "Shift",
       value: formData.shift,
       type: "RadioButton",
-      options: ["Day", "Night"],
+      options: shiftOptions,
     },
     {
-      name: useId(""),
+      name: "",
       grid: "col-4",
       label: "",
       value: "",
@@ -68,13 +76,13 @@ const InputHauling = () => {
       label: "No Unit",
       value: formData.unitNo,
       type: "Combobox",
-      options: ["HMP6618", "HMP1182"],
+      options: unitOptions,
     },
     {
       name: "operator",
       grid: "col-4",
       label: "Operator",
-      value: formData.operator,
+      // value: "",
       type: "Input",
     },
     {
@@ -83,13 +91,13 @@ const InputHauling = () => {
       label: "Loader",
       value: formData.loader,
       type: "Combobox",
-      options: ["EXA1772", "EXA1167"],
+      options: loaderOptions,
     },
     {
       name: "tonnace",
       grid: "col-4",
       label: "Tonnace",
-      value: formData.tonnace,
+      // value: formData.tonnace,
       type: "Input",
     },
     {
@@ -98,7 +106,7 @@ const InputHauling = () => {
       label: "Seam",
       value: formData.seam,
       type: "Combobox",
-      options: ["A", "B", "BC"],
+      options: seamOptions,
     },
     {
       name: "dummpingpoint",
@@ -106,33 +114,33 @@ const InputHauling = () => {
       label: "Dummping Point",
       value: formData.dummpingpoint,
       type: "Combobox",
-      options: ["A", "B", "BC"],
+      options: dummpingpointOptions,
     },
     {
       name: "rom",
       grid: "col-4",
       label: "Rom",
-      value: formData.rom,
+      // value: formData.rom,
       type: "Input",
     },
     {
       name: "inrom",
       grid: "col-4",
       label: "In Rom",
-      value: formData.inrom,
+      // value: formData.inrom,
       type: "Input",
     },
     {
       name: "outrom",
       grid: "col-4",
       label: "Out Rom",
-      value: formData.outrom,
+      // value: formData.outrom,
       type: "Input",
     },
   ];
 
   const styles = useStyles();
-  const selectId = useId();
+  // const selectId = useId();
   const toasterId = useId("toaster");
   const toastId = useId("example");
   const [unmounted, setUnmounted] = React.useState(true);
