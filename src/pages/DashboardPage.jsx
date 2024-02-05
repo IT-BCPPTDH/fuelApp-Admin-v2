@@ -198,7 +198,7 @@ const dataFiles = [
   {
     name: 'Operator Timesheet Data Entry',
     desc: 'Data Collector for Activity Time Entry',
-    link: '/timesheet-dataentry'
+    link: '/time-entry/support'
   },
   {
     name: 'Production',

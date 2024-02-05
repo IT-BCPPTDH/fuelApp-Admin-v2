@@ -27,7 +27,7 @@ export const DynamicTablistMenu = ({ tabs, active }) => {
       </Tab>
     ));
   };
-
+     
   return (
     <div className={styles.root}>
       <TabList defaultSelectedValue={active} size="small">

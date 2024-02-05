@@ -15,15 +15,15 @@ import { FooterPageForm } from '../components/FormComponent/FooterPageForm'
 const tabs = [
   { label: 'Time Entry Support', value: 'time-entry/support/' },
   { label: 'Time Entry Digger', value: 'time-entry/digger/' },
-  { label: 'Time Entry Hauler', value: 'time-entry-hauler' }
+  { label: 'Time Entry Hauler', value: 'time-entry-hauler/' }
 ]
-const active = '/timesheet-dataentry/'; 
+
 const shiftOptions = ['Day', 'Night']
 const unitOptions = ['DT11223', 'DT11224', 'DT11225', 'DT11226']
-// const jdeOptions = ['112233', '223344', '334455', '445566', '556677']
 
-const activeTab = 'time-entry/support/';
-export default function TimeSheetPage () {
+
+const activeTab = 'time-entry-hauler/';
+export default function ProductionHaulerPage () {
   const jRef = useRef(null)
   const currentDate = new Date()
   const [totalDuration, setTotalDuration] = useState()
@@ -34,7 +34,7 @@ export default function TimeSheetPage () {
   const [masterOP, setMasterOP] = useState(() => getLocalStorage('timeEntry-masterOP'));
   
   const [formData, setFormData] = useState({
-    formID: 'Time Entry Support',
+    formID: 'Time Entry Hauler',
     site: 'BCP',
     stafEntry: 'Nama Lengkap',
     tanggal: currentDate,
@@ -156,6 +156,9 @@ export default function TimeSheetPage () {
     setMaster(mastr)
 
     const options = {
+      defaultColWidth: 100,
+        tableOverflow: true,
+        tableWidth: "1240px",
       data: [],
       columns: [
         {
@@ -176,11 +179,12 @@ export default function TimeSheetPage () {
           title: 'Material',
           source: ['OB', 'Coal', 'TS', 'Mud']
         },
+        { type: 'text', width: '100', title: 'Ritase' },
         { type: 'text', width: '100', title: 'Cut Status' },
         { type: 'text', width: '100', title: 'Digger' },
         { type: 'text', width: '100', title: 'Lokasi' }
       ],
-      minDimensions: [9, 14],
+      minDimensions: [10, 14],
       tableHeight: '375px',
       tableOverflow: true,
       updateTable: function (instance, cell, col, row, val, label, cellName) {
@@ -473,7 +477,7 @@ export default function TimeSheetPage () {
   };
   return (
     <>
-      <HeaderPageForm title={`Form Operator Activity Timesheet - Data Entry`} />
+      <HeaderPageForm title={`Form Operator Activity Timesheet - Data Entry Hauler`} />
       <div className='form-wrapper'>
         <FormComponent handleChange={handleChange} components={components} />
         <div ref={jRef} className='mt1em' />
