@@ -8,6 +8,8 @@ import { MineplanEntryPage } from './pages/MineplanEntryPage'
 import { TimeEntryMinesEntryPage } from './pages/TimeEntryMinesEntryPage'
 import { RekapTimeEntryPage } from './pages/RekapTimeEntryPage'
 import DistanceEntryPage from './pages/DistanceEntryPage';
+import AdminCoalHauling from './pages/AdminCoalHauling';
+
 
 const RouteApp = () => {
   return (
@@ -16,6 +18,7 @@ const RouteApp = () => {
       <Route path='/collector/:id' element={<HomePage />} />
       <Route path='/timesheet-dataentry' element={<TimeSheetPage />}></Route>
       <Route path='/coalhauling-dataentry' element={<CoalHauling />}></Route>
+      <Route path='/coalhauling-admin' element={<AdminCoalHauling />}></Route>
       <Route path='/production' element={<ProductionEntryPage />}></Route>
       <Route path='/mineplan' element={<MineplanEntryPage />}></Route>
       <Route path='/time-sheet-mines' element={<TimeEntryMinesEntryPage />}></Route>

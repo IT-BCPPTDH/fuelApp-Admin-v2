@@ -199,6 +199,11 @@ const dataFiles = [
     link: '/coalhauling-dataentry'
   },
   {
+    name: 'Coal Hauling Admin',
+    desc: 'Data Collector for Coal Hauling Entry Admin',
+    link: '/coalhauling-admin'
+  },
+  {
     name: 'Operator Timesheet Data Entry',
     desc: 'Data Collector for Activity Time Entry',
     link: '/timesheet-dataentry'
