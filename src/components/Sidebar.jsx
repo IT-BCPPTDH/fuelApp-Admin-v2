@@ -43,6 +43,7 @@ const Sidebar = () => {
 
   const handleLogout = () => {
     deleteAllCookies()
+    navigate("/")
     window.location.reload()
   }
 
