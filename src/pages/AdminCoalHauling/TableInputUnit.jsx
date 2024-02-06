@@ -85,16 +85,16 @@ const TableInputUnit = () => {
       idealWidth: 40,
       minWidth: 50,
     },
-    nounit: {
-      minWidth: 60,
-      defaultWidth: 80,
-    },
+    // nounit: {
+    //   minWidth: 60,
+    //   defaultWidth: 80,
+    // },
     model: {
-      idealWidth: 200,
+      idealWidth: 400,
       minWidth: 150,
     },
-    action: {
-      idealWidth: 140,
+    tonnage: {
+      idealWidth: 500,
       minWidth: 150,
     },
   });

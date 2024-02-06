@@ -11,6 +11,8 @@ import DistanceEntryPage from './pages/DistanceEntryPage';
 import AdminCoalHauling from './pages/AdminCoalHauling';
 import ProductionDiggerPage from './pages/TimeEntryDigger';
 import ProductionHaulerPage from './pages/TimeEntryHauler';
+import InputUnit from './pages/AdminCoalHauling/InputUnit';
+import InputOperator from './pages/AdminCoalHauling/InputOperator';
 
 const RouteApp = () => {
   return (
@@ -20,6 +22,8 @@ const RouteApp = () => {
       <Route path='/time-entry/support' element={<TimeSheetPage />}></Route>
       <Route path='/coalhauling-dataentry' element={<CoalHauling />}></Route>
       <Route path='/coalhauling-admin' element={<AdminCoalHauling />}></Route>
+      <Route path='/coalhaulig-admin/nounit/' element={<InputUnit />}></Route>
+      <Route path='/coalhaulig-admin/operator/' element={<InputOperator />}></Route>
       <Route path='/production' element={<ProductionEntryPage />}></Route>
       <Route path='/mineplan' element={<MineplanEntryPage />}></Route>
       <Route path='/time-sheet-mines' element={<TimeEntryMinesEntryPage />}></Route>
