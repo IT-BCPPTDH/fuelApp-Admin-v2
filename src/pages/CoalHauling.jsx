@@ -8,6 +8,7 @@ import CardDataHauling from "../components/Hauling/CardDataHauling";
 import TableHauling from "../components/Hauling/TableHauling";
 
 
+
 const useStyles = makeStyles({
   card: {
     width: "auto",

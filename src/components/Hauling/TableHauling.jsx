@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { SearchBox } from "@fluentui/react-search-preview";
+import Transaksi from "../../services/inputCoalHauling";
 import {
   Table,
   TableBody,
@@ -202,6 +203,20 @@ const TableHauling = () => {
 
   const inputId = useId("column-width");
 
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const dts = await Transaksi.getAllTransaction();
+        console.log(dts);
+        // setDatas(dts.data)
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+
+    fetchData(); // Invoke the async function immediately
+  }, []);
+
   return (
     <>
       <div className="form-wrapper" style={{ marginTop: "10px" }}>
@@ -335,9 +350,7 @@ const TableHauling = () => {
                               <DialogTrigger disableButtonEnhancement>
                                 <Button appearance="secondary">Batalkan</Button>
                               </DialogTrigger>
-                              <Button appearance="secondary">
-                                Hapus
-                              </Button>
+                              <Button appearance="secondary">Hapus</Button>
                             </DialogActions>
                           </DialogBody>
                         </DialogSurface>
