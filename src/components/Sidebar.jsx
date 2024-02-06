@@ -81,7 +81,7 @@ const Sidebar = () => {
             <small>Home</small>
           </div>
         </Tab>
-        <Tab
+        {/* <Tab
           value='tab2'
           style={{ marginBottom: '10px' }}
           onClick={() => handleTabClick('/report')}
@@ -90,7 +90,19 @@ const Sidebar = () => {
             <Feed24Regular />
             <small>Report</small>
           </div>
+        </Tab> */}
+
+          <Tab
+          value='tab2'
+          style={{ marginBottom: '10px' }}
+          onClick={() => handleTabClick('/data-master')}
+        >
+          <div className={styles.tabStyle}>
+            <Feed24Regular />
+            <small>Report</small>
+          </div>
         </Tab>
+        
         <Tab
           value='tab3'
           style={{ marginBottom: '10px' }}

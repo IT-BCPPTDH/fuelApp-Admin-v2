@@ -8,6 +8,7 @@ import { MineplanEntryPage } from './pages/MineplanEntryPage'
 import { TimeEntryMinesEntryPage } from './pages/TimeEntryMinesEntryPage'
 import { RekapTimeEntryPage } from './pages/RekapTimeEntryPage'
 import DistanceEntryPage from './pages/DistanceEntryPage';
+import AdminCoalHauling from './pages/AdminCoalHauling';
 import ProductionDiggerPage from './pages/TimeEntryDigger';
 import ProductionHaulerPage from './pages/TimeEntryHauler';
 
@@ -18,6 +19,7 @@ const RouteApp = () => {
       <Route path='/collector/:id' element={<HomePage />} />
       <Route path='/time-entry/support' element={<TimeSheetPage />}></Route>
       <Route path='/coalhauling-dataentry' element={<CoalHauling />}></Route>
+      <Route path='/coalhauling-admin' element={<AdminCoalHauling />}></Route>
       <Route path='/production' element={<ProductionEntryPage />}></Route>
       <Route path='/mineplan' element={<MineplanEntryPage />}></Route>
       <Route path='/time-sheet-mines' element={<TimeEntryMinesEntryPage />}></Route>

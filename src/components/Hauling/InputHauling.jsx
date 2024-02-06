@@ -27,7 +27,7 @@ const useStyles = makeStyles({
 
 const shiftOptions = ['Day', 'Night']
 const unitOptions = ['EXA526', 'EXA726']
-const loaderOptions = ['EXA526', 'EXA726']
+const loaderOptions = ['HWL1038', 'HWL1040']
 const seamOptions = ['A', 'B', 'C']
 const dummpingpointOptions = ['A', 'AB', 'C']
 
