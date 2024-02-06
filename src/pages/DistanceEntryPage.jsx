@@ -120,6 +120,7 @@ const DistanceEntryPage = () => {
     // Handle form data changes
   };
 
+  console.log('hi',formData);
   return (
     <>
       <HeaderPageForm title={`Distance Data Entry - ${currentDate.toDateString()}`} />

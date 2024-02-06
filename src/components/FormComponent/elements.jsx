@@ -71,6 +71,7 @@ export const FormElement = ({
             name={name}
             formatDate={formatDate}
             onChange={(e) => onChange(e, { name: name, value: e.target.value })}
+            // onBlur={(e) => onChange(e, { name: name, value: e.target.value })}
           />
         );
       case "Combobox":

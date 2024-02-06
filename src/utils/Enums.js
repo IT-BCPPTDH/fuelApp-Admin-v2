@@ -5,5 +5,6 @@ export const URL_ENUMS ={
     masterTimeEntry : link+'/master/timeentry',
     masterTimeEntryOperator : link+'/master/timeentry/operator',
     masterTimeEntryUnit : link+'/master/timeentry/unit',
-    postTimeEntrySupport : link+'/timeentry/timeentry-support'
+    postTimeEntrySupport : link+'/timeentry/timeentry-support',
+    transactionHoul : link+'/transaction/'
 }

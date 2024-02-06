@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from "react";
 import "./CoalHauling.css";
 import {
   makeStyles,
@@ -23,36 +23,47 @@ const useStyles = makeStyles({
   },
 });
 
-
-
-const shiftOptions = ['Day', 'Night']
-const unitOptions = ['EXA526', 'EXA726']
-const loaderOptions = ['HWL1038', 'HWL1040']
-const seamOptions = ['A', 'B', 'C']
-const dummpingpointOptions = ['A', 'AB', 'C']
+const shiftOptions = ["Day", "Night"];
+// const unitOptions = [
+//   {
+//     key: 'option1', text: 'Option 1'
+//   }
+// ]
+const unitOptions = ["EXA526", "EXA726"];
+const loaderOptions = ["HWL1038", "HWL1040"];
+const seamOptions = ["A", "B", "C"];
+const dummpingpointOptions = ["A", "AB", "C"];
 
 const InputHauling = () => {
-  
-
+  const currentDate = new Date();
   const [formData, setFormData] = useState({
-    tanggal: '',
-    shift: '',
-    unitNo: '',
-    operator: '',
-    loader: '',
-    tonnace: '',
-    seam: '',
-    dummpingpoint: '',
-    rom:'',
-    inrom:'',
-    outrom:'',
-  })
-  const comp = [
+    tanggal: currentDate,
+    shift: "",
+    unitNo: "",
+    operator: "",
+    loader: "",
+    tonnage: "",
+    seam: "",
+    dummpingpoint: "",
+    rom: "",
+    inrom: "",
+    outrom: "",
+  });
+
+  // const [unitOptions, setUnitOption] = useState(() => {
+  //   let op = ['EXA526', 'EXA726']
+  //   console.log(op);
+  //   return op
+  // })
+
+  const comp = useMemo (() => [
     {
       name: "tanggal",
       grid: "col-4",
       label: "Tanggal",
       value: formData.tanggal,
+      readOnly: false,
+      disabled: false,
       type: "DatePicker",
     },
     {
@@ -64,17 +75,17 @@ const InputHauling = () => {
       options: shiftOptions,
     },
     {
-      name: "",
+      
       grid: "col-4",
-      label: "",
-      value: "",
-      type: "",
+     
     },
     {
-      name: "nounit",
+      name: "unitNo",
       grid: "col-4",
       label: "No Unit",
       value: formData.unitNo,
+      readOnly: false,
+      disabled: false,
       type: "Combobox",
       options: unitOptions,
     },
@@ -82,7 +93,9 @@ const InputHauling = () => {
       name: "operator",
       grid: "col-4",
       label: "Operator",
-      // value: "",
+      readOnly: false,
+      disabled: false,
+      value: formData.operator,
       type: "Input",
     },
     {
@@ -90,20 +103,26 @@ const InputHauling = () => {
       grid: "col-4",
       label: "Loader",
       value: formData.loader,
+      readOnly: false,
+      disabled: false,
       type: "Combobox",
       options: loaderOptions,
     },
     {
-      name: "tonnace",
+      name: "tonnage",
       grid: "col-4",
-      label: "Tonnace",
-      // value: formData.tonnace,
+      label: "Tonnage",
+      readOnly: false,
+      disabled: false,
+      value: formData.tonnage,
       type: "Input",
     },
     {
       name: "seam",
       grid: "col-4",
       label: "Seam",
+      readOnly: false,
+      disabled: false,
       value: formData.seam,
       type: "Combobox",
       options: seamOptions,
@@ -112,6 +131,8 @@ const InputHauling = () => {
       name: "dummpingpoint",
       grid: "col-4",
       label: "Dummping Point",
+      readOnly: false,
+      disabled: false,
       value: formData.dummpingpoint,
       type: "Combobox",
       options: dummpingpointOptions,
@@ -120,24 +141,33 @@ const InputHauling = () => {
       name: "rom",
       grid: "col-4",
       label: "Rom",
-      // value: formData.rom,
+      readOnly: false,
+      disabled: false,
+      value: formData.rom,
       type: "Input",
     },
     {
       name: "inrom",
       grid: "col-4",
       label: "In Rom",
-      // value: formData.inrom,
+      readOnly: false,
+      disabled: false,
+      value: formData.inrom,
       type: "Input",
     },
     {
       name: "outrom",
       grid: "col-4",
       label: "Out Rom",
-      // value: formData.outrom,
+      readOnly: false,
+      disabled: false,
+      value: formData.outrom,
       type: "Input",
     },
-  ];
+  ], [formData]);
+
+ 
+  console.log(formData.unitNo);
 
   const styles = useStyles();
   // const selectId = useId();
@@ -162,9 +192,18 @@ const InputHauling = () => {
   const dismiss = () => dismissToast(toastId);
 
   const handleChange = (e, v) => {
-    const { name, value } = v;
-    console.log(e.target.value);
+    // const { name, value } = v;
+    // console.log(v);
+    // setFormData((prevFormData) => ({ ...prevFormData, [name]: value }));
+    // console.log(formData.unitNo); 
+    // console.log(value); 
   };
+  console.log(1, formData); 
+  
+  // useEffect(() => {
+  //   console.log(formData); 
+  // }, [formData.unitNo]);
+  
 
   return (
     <>
@@ -176,7 +215,7 @@ const InputHauling = () => {
           <FormComponent
             components={comp}
             handleChange={handleChange}
-            className={styles.control}
+            // className={styles.control}
           />
         </div>
         <div className="btn-wrapper">
