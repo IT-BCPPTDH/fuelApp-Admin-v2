@@ -11,7 +11,7 @@ const Login = () => {
             background-size: cover;
             posision:absolute;x
             margin: 0; 
-            height: 42vh; 
+            height: 50vh; 
             overflow: hidden; 
           }
         `}

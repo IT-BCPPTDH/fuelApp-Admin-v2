@@ -9,14 +9,15 @@ import { TimeEntryMinesEntryPage } from './pages/TimeEntryMinesEntryPage'
 import { RekapTimeEntryPage } from './pages/RekapTimeEntryPage'
 import DistanceEntryPage from './pages/DistanceEntryPage';
 import AdminCoalHauling from './pages/AdminCoalHauling';
-
+import ProductionDiggerPage from './pages/TimeEntryDigger';
+import ProductionHaulerPage from './pages/TimeEntryHauler';
 
 const RouteApp = () => {
   return (
     <Routes>
       <Route path='/' element={<DashboardPage />} />
       <Route path='/collector/:id' element={<HomePage />} />
-      <Route path='/timesheet-dataentry' element={<TimeSheetPage />}></Route>
+      <Route path='/time-entry/support' element={<TimeSheetPage />}></Route>
       <Route path='/coalhauling-dataentry' element={<CoalHauling />}></Route>
       <Route path='/coalhauling-admin' element={<AdminCoalHauling />}></Route>
       <Route path='/production' element={<ProductionEntryPage />}></Route>
@@ -24,6 +25,9 @@ const RouteApp = () => {
       <Route path='/time-sheet-mines' element={<TimeEntryMinesEntryPage />}></Route>
       <Route path='/time-entry-production' element={<RekapTimeEntryPage />}></Route>
       <Route path='/distance-data-entry' element={<DistanceEntryPage />}></Route>
+      <Route path='/time-entry/digger' element={<ProductionDiggerPage />} />
+      <Route path='/time-entry-hauler' element={<ProductionHaulerPage />} />
+
     </Routes>
 
   )
