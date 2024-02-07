@@ -50,7 +50,7 @@ const columnsDef = [
     renderHeaderCell: () => <>Shift</>,
   }),
   createTableColumn({
-    columnId: "unit",
+    columnId: "unitNo",
     renderHeaderCell: () => <>Unit</>,
   }),
   createTableColumn({
@@ -58,8 +58,8 @@ const columnsDef = [
     renderHeaderCell: () => <>Operator</>,
   }),
   createTableColumn({
-    columnId: "tonnace",
-    renderHeaderCell: () => <>Tonnace</>,
+    columnId: "tonnage",
+    renderHeaderCell: () => <>Tonnage</>,
   }),
   createTableColumn({
     columnId: "loader",
@@ -96,13 +96,13 @@ const items = [
     id: { label: 1 },
     tanggal: { label: "18/1/2024" },
     shift: { label: "Day" },
-    unit: {
+    unitNo: {
       label: "HMP7322",
     },
     operator: {
       label: "Rahmansyah Kurniawan",
     },
-    tonnace: {
+    tonnage: {
       label: 126,
     },
     loader: {
@@ -131,13 +131,13 @@ const items = [
     id: { label: 2 },
     tanggal: { label: "18/1/2024" },
     shift: { label: "Day" },
-    unit: {
+    unitNo: {
       label: "HMP7322",
     },
     operator: {
       label: "Audra Diaz",
     },
-    tonnace: {
+    tonnage: {
       label: 126,
     },
     loader: {
@@ -166,6 +166,7 @@ const items = [
 
 const TableHauling = () => {
   const [columns] = useState(columnsDef);
+ 
   const [columnSizingOptions] = useState({
     id: {
       idealWidth: 40,
@@ -189,7 +190,10 @@ const TableHauling = () => {
     },
   });
 
-  const { getRows, columnSizing_unstable, tableRef } = useTableFeatures(
+  
+  const [items, setItems] = useState([]);
+
+  const { getRows, columnSizing_unstable, tableRef} = useTableFeatures(
     {
       columns,
       items,
@@ -208,7 +212,8 @@ const TableHauling = () => {
       try {
         const dts = await Transaksi.getAllTransaction();
         console.log(dts);
-        // setDatas(dts.data)
+        // Gunakan setItems untuk mengganti data statis dengan data dari database
+        setItems(dts.data);
       } catch (error) {
         console.error("Error fetching data:", error);
       }
@@ -278,20 +283,20 @@ const TableHauling = () => {
                       {item.shift.label}
                     </TableCellLayout>
                   </TableCell>
-                  <TableCell
-                    {...columnSizing_unstable.getTableCellProps("unit")}
+                  {/* <TableCell
+                    {...columnSizing_unstable.getTableCellProps("unitNo")}
                   >
-                    <TableCellLayout>{item.unit.label}</TableCellLayout>
-                  </TableCell>
+                    <TableCellLayout>{item.unitNo.label}</TableCellLayout>
+                  </TableCell> */}
                   <TableCell
                     {...columnSizing_unstable.getTableCellProps("operator")}
                   >
                     <TableCellLayout>{item.operator.label}</TableCellLayout>
                   </TableCell>
                   <TableCell
-                    {...columnSizing_unstable.getTableCellProps("tonnace")}
+                    {...columnSizing_unstable.getTableCellProps("tonnage")}
                   >
-                    <TableCellLayout>{item.tonnace.label}</TableCellLayout>
+                    <TableCellLayout>{item.tonnage.label}</TableCellLayout>
                   </TableCell>
                   <TableCell
                     {...columnSizing_unstable.getTableCellProps("loader")}
