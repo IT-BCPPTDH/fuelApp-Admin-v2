@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState, useCallback } from 'react'
 import {
   makeStyles,
   shorthands,
@@ -7,22 +7,17 @@ import {
   Body1,
   Subtitle1,
   Text,
-  Divider,
   tokens,
   Title2,
   useModalAttributes,
   useFocusFinders
-  // mergeClasses
 } from '@fluentui/react-components'
 import {
-  MoreHorizontal20Regular
-  // Open16Regular,
-  // Share16Regular
+  // MoreHorizontal20Regular
 } from '@fluentui/react-icons'
 import {
   Card,
-  CardHeader
-  // CardFooter,
+  CardHeader,
   // CardPreview
 } from '@fluentui/react-components'
 import Title from '../components/Title'
@@ -35,12 +30,14 @@ import { toLocalStorage } from '../helpers/toLocalStorage'
 import { db } from '../../models/db'
 import { useLiveQuery } from "dexie-react-hooks";
 import { insertActivity, insertOperator, insertUnit } from '../helpers/indexedDB/insert'
+// import { decode } from "@msgpack/msgpack";
+import msgpack from 'msgpack-lite';
 
-const resolveAsset = asset => {
-  const ASSET_URL =
-    'https://raw.githubusercontent.com/microsoft/fluentui/master/packages/react-components/react-card/stories/assets/'
-  return `${ASSET_URL}${asset}`
-}
+// const resolveAsset = asset => {x
+//   const ASSET_URL =
+//     'https://raw.githubusercontent.com/microsoft/fluentui/master/packages/react-components/react-card/stories/assets/'
+//   return `${ASSET_URL}${asset}`
+// }
 
 const useStyles = makeStyles({
   main: {
@@ -80,7 +77,6 @@ const useStyles = makeStyles({
     alignItems: 'center',
     justifyItems: 'center',
     minHeight: '20px'
-    // backgroundColor: tokens.colorNeutralBackground1,
   },
   dialog: {
     position: 'fixed',
@@ -109,7 +105,6 @@ const useStyles = makeStyles({
 })
 const Header = ({ title, description }) => {
   const styles = useStyles()
-
   return (
     <>
       {title && (
@@ -164,24 +159,24 @@ const CardExample = props => {
       </CardPreview> */}
 
       <CardHeader
-        image={
-          <img
-            className={styles.horizontalCardImage}
-            src={resolveAsset('xlsx.png')}
-            alt={props.name}
-          />
-        }
+        // image={
+        //   <img
+        //     className={styles.horizontalCardImage}
+        //     src={resolveAsset('xlsx.png')}
+        //     alt={props.name}
+        //   />
+        // }
         header={<Text weight='semibold'>{props.name}</Text>}
         description={
           <Caption1 className={styles.caption}>{props.desc}</Caption1>
         }
-        action={
-          <Button
-            appearance='transparent'
-            icon={<MoreHorizontal20Regular />}
-            aria-label='More options'
-          />
-        }
+        // action={
+        //   <Button
+        //     appearance='transparent'
+        //     icon={<MoreHorizontal20Regular />}
+        //     aria-label='More options'
+        //   />
+        // }
       />
       <p className={styles.text} style={{ marginLeft: '62px' }}>
         <Caption1 className={styles.caption}>
@@ -233,79 +228,93 @@ const dataFiles = [
 const DashboardPage = () => {
   const styles = useStyles()
   const navigate = useNavigate()
-
   const [dateFile, setDateFile] = useState()
   const [dataFile, setDataFile] = useState([])
   const [open, setOpen] = useState(false)
-  const { triggerAttributes, modalAttributes } = useModalAttributes({
-    trapFocus: true
-  })
   const { findFirstFocusable } = useFocusFinders()
   const triggerRef = useRef(null)
   const dialogRef = useRef(null)
+
+  const { triggerAttributes, modalAttributes } = useModalAttributes({
+    trapFocus: true
+  })
+
   const activity = useLiveQuery(() => db.activity.toArray());
   const operator = useLiveQuery(() => db.operator.toArray());
   const unit = useLiveQuery(() => db.unit.toArray());
 
-  const getData = async () => {
+  const getData = useCallback(async () => {
     let response = await axios.get(
       `${import.meta.env.VITE_LINK_BACKEND}/v1/getallfile`
     )
     setDataFile(response.data.data)
-  }
-  const getDataMaster = async (activity,operator,unit) =>{
-    try{
-      let dataMaster = await Services.getMasterTimeEntry()
-      let dataMasterOp = await Services.getMasterTimeEntryOperator()
-      let dataMasterUnit = await Services.getMasterTimeEntryUnit()
+  }, [setDataFile])
 
-      if(unit?.length !== undefined && dataMasterUnit.totalRow !== unit?.length){
-        db.activity.clear()
-        insertUnit(dataMasterUnit.data)
+
+  const getDataMaster = useCallback(async (activity, operator, unit) => {
+    try {
+      const [dataMasterActivity, dataMasterOp, dataMasterUnit] = await Promise.all([
+        Services.getMasterActivity(),
+        Services.getMasterTimeEntryOperator(),
+        Services.getMasterTimeEntryUnit(),
+      ]);
+
+      const decodedDataActivity = msgpack.decode(dataMasterActivity);
+      const decodeDataOperator = msgpack.decode(dataMasterOp)
+      const decodeDataUnit = msgpack.decode(dataMasterUnit)
+
+      // console.log(decodedDataActivity);
+
+      if (
+        unit?.length !== undefined &&
+        decodeDataUnit.totalRow !== unit?.length
+      ) {
+        db.activity.clear();
+        insertUnit(decodeDataUnit.data);
       }
-      
-      if(activity?.length !== undefined && dataMaster.totalRow !== activity?.length){
-        db.activity.clear()
-        insertActivity(dataMaster.data)
+
+      if (
+        activity?.length !== undefined &&
+        decodedDataActivity.totalRow !== activity?.length
+      ) {
+        db.activity.clear();
+        insertActivity(decodedDataActivity.data);
       }
-      if(operator?.length !== undefined && dataMasterOp.totalRow !== operator?.length){
-        db.operator.clear()
-        insertOperator(dataMasterOp.data)
+
+      if (
+        operator?.length !== undefined &&
+        decodeDataOperator.totalRow !== operator?.length
+      ) {
+        db.operator.clear();
+        insertOperator(decodeDataOperator.data);
       }
-      let act =[]
-      let op = []
-      let unt =[]
-      dataMaster?.data?.map(v=>{
-        act.push(v.activityname)
-      })
-      dataMasterOp?.data?.map(v=>{
-        op.push(v.jde)
-      })
-      dataMasterUnit?.data?.map(v=>{
-        unt.push(v.unitno)
-      })
-      toLocalStorage('timeEntry-unit',unt)
-      toLocalStorage('timeEntry-activity',act)
-      toLocalStorage('timeEntry-masterAct',dataMaster.data)
-      toLocalStorage('timeEntry-operator',op)
-      
-    }catch(err){
-      console.log(err)
+
+      const act = decodedDataActivity?.data?.map((v) => v.activityname);
+      const op = decodeDataOperator?.data?.map((v) => v.jde);
+      const unt = decodeDataUnit?.data?.map((v) => v.unitno);
+
+      toLocalStorage('timeEntry-unit', unt);
+      toLocalStorage('timeEntry-activity', act);
+      toLocalStorage('timeEntry-masterAct', decodedDataActivity.data);
+      toLocalStorage('timeEntry-operator', op);
+    } catch (err) {
+      console.log(err);
     }
-  }
+  }, []);
 
   useEffect(() => {
-    getDataMaster(activity,operator,unit)
     document.title = 'Homepage MED/MOD Data Entry App - PTDH'
+
+    getDataMaster(activity,operator,unit)
     getData()
     if (open && dialogRef.current) {
       findFirstFocusable(dialogRef.current)?.focus()
     }
-  }, [open, findFirstFocusable, activity, operator,unit])
+  }, [open, findFirstFocusable,getDataMaster, getData])
 
-  const onClickTrigger = () => {
-    setOpen(true)
-  }
+  // const onClickTrigger = () => {
+  //   setOpen(true)
+  // }
 
   const onClickClose = () => {
     setOpen(false)

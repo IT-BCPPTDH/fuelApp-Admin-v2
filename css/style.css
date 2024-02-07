@@ -27,11 +27,7 @@ button:hover {
    border-color: red !important;
 }
 
-.container {
-   min-height: calc(92vh);
-   padding: 30px 32px;
-   max-width: 1365px;
-}
+
 
 .x-spreadsheet-toolbar {
    width: 1295px !important;
