@@ -19,15 +19,30 @@ const getAllTransaction = async () => {
     return response.data
 }
 
-const getCreateTransaction = async () => {
+const getEditTransaction = async () => {
     const response = await api.get(URL_ENUMS.transactionHoul)
     console.log(1,response);
     return response.data
 }
 
+const getDeteleTransaction = async () => {
+    const response = await api.get(URL_ENUMS.transactionHoul)
+    console.log(1,response);
+    return response.data
+}
+
+const postCreateTransaction = async data => {
+    const response = await api.post(URL_ENUMS.postCreateTransaction, data)
+    console.log(response);
+    return response.data
+    // console.log(data);
+  }
+
 const Transaksi = {
   getAllTransaction,
-  getCreateTransaction
+  getEditTransaction,
+  getDeteleTransaction,
+  postCreateTransaction
   }
 
 export default Transaksi

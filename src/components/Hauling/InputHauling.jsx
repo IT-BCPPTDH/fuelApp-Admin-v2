@@ -9,15 +9,17 @@ import {
   Toast,
 } from "@fluentui/react-components";
 import FormComponent from "../FormComponent";
+import Transaksi from "../../services/inputCoalHauling";
 
 
 const shiftOptions = ["Day", "Night"];
 const unitOptions = ["EXA526", "EXA726"];
 const loaderOptions = ["HWL1038", "HWL1040"];
-const seamOptions = ["A", "B", "C"];
-const dummpingpointOptions = ["A", "AB", "C"];
+const seamOptions = ["B Hs", "C2", "BB"];
+const dumppingpointOptions = ["A", "AB", "C"];
 
 const InputHauling = () => {
+  const [isFormValid, setIsFormValid] = useState(false);
   const currentDate = new Date();
   const [formData, setFormData] = useState({
     tanggal: currentDate,
@@ -27,11 +29,12 @@ const InputHauling = () => {
     loader: "",
     tonnage: "",
     seam: "",
-    dummpingpoint: "",
+    dumppoint: "",
     rom: "",
     inrom: "",
     outrom: "",
   });
+  
 
   const comp = useMemo (() => [
     {
@@ -105,14 +108,14 @@ const InputHauling = () => {
       options: seamOptions,
     },
     {
-      name: "dummpingpoint",
+      name: "dumppoint",
       grid: "col-4",
-      label: "Dummping Point",
+      label: "Dump Point",
       readOnly: false,
       disabled: false,
-      value: formData.dummpingpoint,
+      value: formData.dumppoint,
       type: "Combobox",
-      options: dummpingpointOptions,
+      options: dumppingpointOptions,
     },
     {
       name: "rom",
@@ -130,7 +133,7 @@ const InputHauling = () => {
       readOnly: false,
       disabled: false,
       value: formData.inrom,
-      type: "Input",
+      type: "TimePicker",
     },
     {
       name: "outrom",
@@ -139,7 +142,7 @@ const InputHauling = () => {
       readOnly: false,
       disabled: false,
       value: formData.outrom,
-      type: "Input",
+      type: "TimePicker",
     },
   ], [formData]);
 
@@ -166,12 +169,34 @@ const InputHauling = () => {
 
   const handleChange = (e, v) => {
     const { name, value } = v;
-    setFormData((prevFormData) => ({ ...prevFormData, [name]: value }));
-    console.log(name, value);
+    if (name === 'inrom' || name === 'outrom') {
+      setFormData((prevFormData) => ({ ...prevFormData, [name]: e.target.innerText }));
+    }else{
+      setFormData((prevFormData) => ({ ...prevFormData, [name]: value }));
+    }
     
-    
-  
+    const isValid = Object.values(formData).every((val) => val !== "");
+    setIsFormValid(isValid);
+    console.log(formData);
+
   };
+
+  const handleSubmit = async() => {
+    // console.log(formData);
+    // if (isFormValid) {
+    //   console.log(formData);
+    // } else {
+    //   console.log("Form is not valid. Please fill in all fields.");
+    // }
+    let data ={
+      ...formData,
+    }
+    
+    let datainsert = await Transaksi.postCreateTransaction(data)
+    console.log(datainsert)
+  }
+
+
 
   return (
     <>
@@ -186,9 +211,10 @@ const InputHauling = () => {
           />
         </div>
         <div className="btn-wrapper">
-          <Button onClick={unmounted ? notify : dismiss}>
+          {/* <Button onClick={unmounted ? notify : dismiss}  handleSubmit={handleSubmit} >
             {unmounted ? "Simpan" : "Simpan"}
-          </Button>
+          </Button> */}
+          <Button className="btn-simpan" onClick={handleSubmit} >Simpan</Button>
           <Button className="btn-simpan">Reset</Button>
           <Toaster toasterId={toasterId} />
         </div>

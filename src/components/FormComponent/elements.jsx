@@ -108,7 +108,9 @@ export const FormElement = ({
           </RadioGroup>
         );
       case "TimePicker":
-        return <TimePicker id={inputId} name={name} startHour={8} endHour={20}  onChange={(e) => handleChange(e, { name: name, value: e.target.value })}/>;
+        return (
+          <TimePicker id={inputId} name={name} startHour={8} endHour={20} onTimeChange={(e, data) => handleChange(e, { name: name, value: data})}/>
+        );
       case "TextDataView":
         return (
           <>
