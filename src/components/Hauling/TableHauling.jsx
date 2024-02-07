@@ -214,7 +214,7 @@ const TableHauling = () => {
       }
     };
 
-    fetchData(); // Invoke the async function immediately
+    fetchData(); 
   }, []);
 
   return (
