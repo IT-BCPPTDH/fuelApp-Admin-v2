@@ -1,7 +1,6 @@
 import axios from 'axios'
 import { URL_ENUMS } from '../utils/Enums'
 
-
 const api = axios.create({
     maxBodyLength: Infinity
 })
@@ -15,13 +14,13 @@ const api = axios.create({
 
 const getAllTransaction = async () => {
     const response = await api.get(URL_ENUMS.transactionHoul)
-    console.log(1,response);
+    console.log(1, response);
     return response.data
 }
 
 const getEditTransaction = async () => {
     const response = await api.get(URL_ENUMS.transactionHoul)
-    console.log(1,response);
+    console.log(1, response);
     return response.data
 }
 
@@ -42,7 +41,9 @@ const Transaksi = {
   getAllTransaction,
   getEditTransaction,
   getDeteleTransaction,
-  postCreateTransaction
-  }
+    getAllTransaction,
+    getCreateTransaction
+}
+
 
 export default Transaksi

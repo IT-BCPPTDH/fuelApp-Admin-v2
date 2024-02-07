@@ -166,6 +166,12 @@
   input:disabled{
     color: #3f4144;
   }
+
+  .container {
+    min-height: calc(92vh);
+    padding: 30px 32px;
+    max-width: 1365px;
+ }
   .row {
     display: -webkit-box;
     display: -ms-flexbox;
@@ -453,6 +459,11 @@
     }
   }
 
+  @media screen and (min-width: 1500px) {
+    .container{
+      min-width: 1500px;
+    }
+  }
   ::-webkit-input-placeholder {
     color: #bdbfc4;
   }
