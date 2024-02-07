@@ -13,8 +13,8 @@ api.interceptors.request.use(config => {
   return config
 })
 
-const getMasterTimeEntry = async () => {
-  const response = await api.get(URL_ENUMS.masterTimeEntry)
+const getMasterActivity = async () => {
+  const response = await api.get(URL_ENUMS.masterActivity)
   return response.data
 }
 
@@ -33,9 +33,8 @@ const postTimeEntrySupport = async data => {
   return response.data
 }
 
-
 const Services = {
-  getMasterTimeEntry,
+  getMasterActivity,
   getMasterTimeEntryOperator,
   postTimeEntrySupport,
   getMasterTimeEntryUnit
