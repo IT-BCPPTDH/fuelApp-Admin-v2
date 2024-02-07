@@ -44,10 +44,9 @@ export const FormElement = ({
   type,
   options,
   value,
-  onChange,
+  handleChange,
   disabled,
-  readOnly,
-  columns
+  readOnly
 }) => {
   const styles = useStyles();
   const formatDate = (date) => {
@@ -70,8 +69,8 @@ export const FormElement = ({
             value={value}
             name={name}
             formatDate={formatDate}
-            onChange={(e) => onChange(e, { name: name, value: e.target.value })}
-            // onBlur={(e) => onChange(e, { name: name, value: e.target.value })}
+            onSelectDate={(e) => handleChange(e, { name: name, value: e })}
+            // onSelectDate={(e) => console.log(e)}
           />
         );
       case "Combobox":
@@ -81,7 +80,7 @@ export const FormElement = ({
             name={name}
             label={label}
             options={options}
-            handleChange={onChange}
+            handleChange={handleChange}
           />
         );
       case "Input":
@@ -92,7 +91,7 @@ export const FormElement = ({
             name={name}
             readOnly={readOnly}
             disabled={disabled}
-            onChange={(e) => onChange(e, { name: name, value: e.target.value })}
+            onChange={(e) => handleChange(e, { name: name, value: e.target.value })}
           />
         );
       case "RadioButton":
@@ -101,7 +100,7 @@ export const FormElement = ({
             id={inputId}
             layout="horizontal"
             name={name}
-            onChange={(e) => onChange(e, { name: name, value: e.target.value })}
+            onChange={(e) => handleChange(e, { name: name, value: e.target.value })}
           >
             {options.map((option,key) => (
               <Radio key={key} value={option} label={option} />
@@ -109,7 +108,7 @@ export const FormElement = ({
           </RadioGroup>
         );
       case "TimePicker":
-        return <TimePicker id={inputId} name={name} startHour={8} endHour={20}  onChange={(e) => onChange(e, { name: name, value: e.target.value })}/>;
+        return <TimePicker id={inputId} name={name} startHour={8} endHour={20}  onChange={(e) => handleChange(e, { name: name, value: e.target.value })}/>;
       case "TextDataView":
         return (
           <>
@@ -155,11 +154,11 @@ const ComboBoxCustom = (props) => {
 
     const matchingOption = data.optionText && options.includes(data.optionText);
     if (matchingOption) {
-
-      setCustomSearch(undefined);
-    } else {
       setCustomSearch(data.optionText);
       handleChange(event, { name: name, value: data.optionText });
+    
+    } else {
+      setCustomSearch(undefined);
     }
   };
   const defVal = [props.value]

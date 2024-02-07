@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+// import { useEffect } from 'react';
 import { FormElement } from './elements';
 
 const FormComponent = ({ handleChange, components }) => {
@@ -13,10 +13,9 @@ const FormComponent = ({ handleChange, components }) => {
             type={val.type}
             options={val.options}
             value={val.value}
-            onChange={handleChange}
+            handleChange={handleChange}
             disabled={val.disabled}
             readOnly={val.readOnly}
-            columns={val.columns}
           />
         </div>
       ))}

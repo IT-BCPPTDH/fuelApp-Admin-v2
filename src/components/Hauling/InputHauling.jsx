@@ -1,7 +1,6 @@
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useMemo } from "react";
 import "./CoalHauling.css";
 import {
-  makeStyles,
   useId,
   Button,
   Toaster,
@@ -11,24 +10,8 @@ import {
 } from "@fluentui/react-components";
 import FormComponent from "../FormComponent";
 
-const useStyles = makeStyles({
-  card: {
-    width: "930px",
-    maxWidth: "100%",
-    height: "485px",
-  },
-  control: {
-    marginTop: "200px",
-    backgroundColor: "#f5f5f5",
-  },
-});
 
 const shiftOptions = ["Day", "Night"];
-// const unitOptions = [
-//   {
-//     key: 'option1', text: 'Option 1'
-//   }
-// ]
 const unitOptions = ["EXA526", "EXA726"];
 const loaderOptions = ["HWL1038", "HWL1040"];
 const seamOptions = ["A", "B", "C"];
@@ -49,12 +32,6 @@ const InputHauling = () => {
     inrom: "",
     outrom: "",
   });
-
-  // const [unitOptions, setUnitOption] = useState(() => {
-  //   let op = ['EXA526', 'EXA726']
-  //   console.log(op);
-  //   return op
-  // })
 
   const comp = useMemo (() => [
     {
@@ -166,11 +143,7 @@ const InputHauling = () => {
     },
   ], [formData]);
 
- 
-  console.log(formData.unitNo);
 
-  const styles = useStyles();
-  // const selectId = useId();
   const toasterId = useId("toaster");
   const toastId = useId("example");
   const [unmounted, setUnmounted] = React.useState(true);
@@ -192,18 +165,13 @@ const InputHauling = () => {
   const dismiss = () => dismissToast(toastId);
 
   const handleChange = (e, v) => {
-    // const { name, value } = v;
-    // console.log(v);
-    // setFormData((prevFormData) => ({ ...prevFormData, [name]: value }));
-    // console.log(formData.unitNo); 
-    // console.log(value); 
+    const { name, value } = v;
+    setFormData((prevFormData) => ({ ...prevFormData, [name]: value }));
+    console.log(name, value);
+    
+    
+  
   };
-  console.log(1, formData); 
-  
-  // useEffect(() => {
-  //   console.log(formData); 
-  // }, [formData.unitNo]);
-  
 
   return (
     <>
@@ -215,7 +183,6 @@ const InputHauling = () => {
           <FormComponent
             components={comp}
             handleChange={handleChange}
-            // className={styles.control}
           />
         </div>
         <div className="btn-wrapper">
