@@ -81,6 +81,7 @@ export const FormElement = ({
             label={label}
             options={options}
             handleChange={handleChange}
+            value={value}
           />
         );
       case "Input":
@@ -134,8 +135,8 @@ export const FormElement = ({
 };
 
 const ComboBoxCustom = (props) => {
-  const { inputId, name, label, options, handleChange } = props;
-
+  const { inputId, name, label, options, handleChange, value } = props;
+  console.log(value);
   const [matchingOptions, setMatchingOptions] = useState([...options]);
   const [customSearch, setCustomSearch] = useState();
 
@@ -175,6 +176,7 @@ const ComboBoxCustom = (props) => {
       placeholder={`Select ${label}`}
       onChange={onChange}
       onOptionSelect={onOptionSelect}
+      selectedKey = {value}
     >
       {customSearch ? (
         <Option key="freeform" text={customSearch}>

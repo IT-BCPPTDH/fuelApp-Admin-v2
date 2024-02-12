@@ -1,10 +1,11 @@
-import React from "react";
+import React, {useState, useEffect } from "react";
 import "./CoalHauling.css";
 import {
   useId,
   makeStyles,
   Card,
 } from "@fluentui/react-components";
+import Transaksi from "../../services/inputCoalHauling";
 
 
 const useStyles = makeStyles({
@@ -67,6 +68,23 @@ const CardDataHauling = () => {
   ];
   const styles = useStyles();
 
+  const [totalData, setTotalData] = useState({});
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const dts = await Transaksi.getDataTotal();
+        console.log(dts);
+     
+        // setTotalData(data);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    };
+  
+    fetchData();
+  }, []);
+  
+
   return (
     <>
       <div className="form-wrapper" style={{marginBottom: '0'}}>
@@ -75,7 +93,7 @@ const CardDataHauling = () => {
             <span className={styles.card}>Total Hauling</span>
             <p className={styles.caption}>
               <b>
-                747 <small>Ton</small>
+                {/* {totalData} <small>Ton</small> */}
               </b>
             </p>
           </Card>

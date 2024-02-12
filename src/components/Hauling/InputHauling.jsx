@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import "./CoalHauling.css";
 import {
   useId,
@@ -22,7 +22,7 @@ const dumpingpointOptions = [
   "MIDLE STOCK PILE", "SEKURAU"];
 const pitOptions = ["A", "C", "D"];
 
-const InputHauling = () => {
+const InputHauling = ({dataEdit}) => {
   const [isFormValid, setIsFormValid] = useState(false);
   const currentDate = new Date();
   const [formData, setFormData] = useState({
@@ -225,6 +225,28 @@ const InputHauling = () => {
     let datainsert = await Transaksi.postCreateTransaction(data);
     console.log(datainsert);
   };
+
+  useEffect(() => {
+    
+  setFormData(
+    {
+      tanggal: dataEdit?.tanggal,
+      shift: dataEdit?.shift,
+      unitNo: dataEdit?.unitNo,
+      operator: dataEdit?.operator,
+      loader: dataEdit?.loader,
+      tonnage: dataEdit?.tonnage,
+      seam: dataEdit?.seam,
+      dumpingpoint: dataEdit?.dumpingpoint,
+      rom: dataEdit?.rom,
+      inrom: dataEdit?.inrom,
+      outrom: dataEdit?.outrom,
+      pit: dataEdit?.pit,
+    }
+  )
+    
+  }, [dataEdit])
+  
 
   return (
     <>
