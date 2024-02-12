@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import "./CoalHauling.css";
 import {
   useId,
@@ -55,9 +55,7 @@ const InputHauling = () => {
       options: shiftOptions,
     },
     {
-      
       grid: "col-4",
-     
     },
     {
       name: "unitNo",
@@ -169,7 +167,9 @@ const InputHauling = () => {
 
   const handleChange = (e, v) => {
     const { name, value } = v;
+
     if (name === 'inrom' || name === 'outrom') {
+      console.log(e.target.innerText)
       setFormData((prevFormData) => ({ ...prevFormData, [name]: e.target.innerText }));
     }else{
       setFormData((prevFormData) => ({ ...prevFormData, [name]: value }));
@@ -177,7 +177,7 @@ const InputHauling = () => {
     
     const isValid = Object.values(formData).every((val) => val !== "");
     setIsFormValid(isValid);
-    console.log(formData);
+   
 
   };
 
@@ -195,6 +195,10 @@ const InputHauling = () => {
     let datainsert = await Transaksi.postCreateTransaction(data)
     console.log(datainsert)
   }
+
+  useEffect(() => {
+    console.log(formData);
+  }, [formData]);
 
 
 

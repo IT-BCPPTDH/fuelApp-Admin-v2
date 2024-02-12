@@ -26,7 +26,7 @@ const getEditTransaction = async () => {
 
 const getDeteleTransaction = async () => {
     const response = await api.get(URL_ENUMS.transactionHoul)
-    console.log(1,response);
+    console.log(1, response);
     return response.data
 }
 
@@ -35,14 +35,13 @@ const postCreateTransaction = async data => {
     console.log(response);
     return response.data
     // console.log(data);
-  }
+}
 
 const Transaksi = {
-  getAllTransaction,
-  getEditTransaction,
-  getDeteleTransaction,
     getAllTransaction,
-    getCreateTransaction
+    getEditTransaction,
+    getDeteleTransaction,
+    postCreateTransaction
 }
 
 
