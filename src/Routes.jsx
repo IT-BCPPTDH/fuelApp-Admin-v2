@@ -20,7 +20,8 @@ const RouteApp = () => {
       <Route path='/' element={<DashboardPage />} />
       <Route path='/collector/:id' element={<HomePage />} />
       <Route path='/time-entry/support' element={<TimeSheetPage />}></Route>
-      <Route path='/coalhauling-dataentry' element={<CoalHauling />}></Route>
+      <Route path='/coalhauling' element={<CoalHauling />}></Route>
+      <Route path='/coalhauling-dataentry' element={<CoalHaulingDataEntry />}></Route>
       <Route path='/coalhauling-admin' element={<AdminCoalHauling />}></Route>
       <Route path='/coalhaulig-admin/nounit/' element={<InputUnit />}></Route>
       <Route path='/coalhaulig-admin/operator/' element={<InputOperator />}></Route>

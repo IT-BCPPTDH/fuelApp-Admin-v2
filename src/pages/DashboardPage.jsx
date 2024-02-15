@@ -189,15 +189,15 @@ const CardExample = props => {
 
 const dataFiles = [
   {
-    name: 'Coal Hauling Data Entry',
+    name: 'Coal Hauling',
     desc: 'Data Collector for Coal Hauling Entry',
-    link: '/coalhauling-dataentry'
+    link: '/coalhauling'
   },
-  {
-    name: 'Coal Hauling Admin',
-    desc: 'Data Collector for Coal Hauling Entry Admin',
-    link: '/coalhauling-admin'
-  },
+  // {
+  //   name: 'Coal Hauling Admin',
+  //   desc: 'Data Collector for Coal Hauling Entry Admin',
+  //   link: '/coalhauling-admin'
+  // },
   {
     name: 'Operator Timesheet Data Entry',
     desc: 'Data Collector for Activity Time Entry',
