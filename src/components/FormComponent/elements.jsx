@@ -141,7 +141,7 @@ export const FormElement = ({
 
 const ComboBoxCustom = (props) => {
   const { inputId, name, label, options, handleChange, value } = props;
-  console.log(value);
+  // console.log(value);
   const [matchingOptions, setMatchingOptions] = useState([...options]);
   const [customSearch, setCustomSearch] = useState();
 

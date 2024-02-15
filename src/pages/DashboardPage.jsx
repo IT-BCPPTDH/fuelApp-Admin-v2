@@ -293,6 +293,8 @@ const DashboardPage = () => {
       const op = decodeDataOperator?.data?.map((v) => v.jde);
       const unt = decodeDataUnit?.data?.map((v) => v.unitno);
 
+      
+
       toLocalStorage('timeEntry-unit', unt);
       toLocalStorage('timeEntry-activity', act);
       toLocalStorage('timeEntry-masterAct', decodedDataActivity.data);
