@@ -22,7 +22,7 @@ const dumpingpointOptions = [
   "MIDLE STOCK PILE", "SEKURAU"];
 const pitOptions = ["A", "C", "D"];
 
-const InputHauling = () => {
+const InputHauling = ({dataEdit}) => {
   const [isFormValid, setIsFormValid] = useState(false);
   const currentDate = new Date();
   const [formData, setFormData] = useState({
@@ -155,7 +155,7 @@ const InputHauling = () => {
         type: "TimePicker",
       },
     ],
-    [formData]
+    [formData, shiftOptions, pitOptions, unitOptions, loaderOptions, seamOptions, dumpingpointOptions]
   );
 
   const toasterId = useId("toaster");
@@ -225,6 +225,30 @@ const InputHauling = () => {
     let datainsert = await Transaksi.postCreateTransaction(data);
     console.log(datainsert);
   };
+
+  useEffect(() => {
+    console.log("dataEdit:", dataEdit);
+
+    
+  setFormData(
+    {
+      tanggal: dataEdit?.tanggal,
+      shift: dataEdit?.shift,
+      unitNo: dataEdit?.unitNo,
+      operator: dataEdit?.operator,
+      loader: dataEdit?.loader,
+      tonnage: dataEdit?.tonnage,
+      seam: dataEdit?.seam,
+      dumpingpoint: dataEdit?.dumpingpoint,
+      rom: dataEdit?.rom,
+      inrom: dataEdit?.inrom,
+      outrom: dataEdit?.outrom,
+      pit: dataEdit?.pit,
+    }
+  )
+    
+  }, [dataEdit])
+  
 
   return (
     <>
