@@ -155,7 +155,7 @@ const InputHauling = ({dataEdit}) => {
         type: "TimePicker",
       },
     ],
-    [formData]
+    [formData, shiftOptions, pitOptions, unitOptions, loaderOptions, seamOptions, dumpingpointOptions]
   );
 
   const toasterId = useId("toaster");
@@ -227,6 +227,8 @@ const InputHauling = ({dataEdit}) => {
   };
 
   useEffect(() => {
+    console.log("dataEdit:", dataEdit);
+
     
   setFormData(
     {

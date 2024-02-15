@@ -169,12 +169,12 @@ const TableHauling = ({ handleEdit }) => {
 
   const [columnSizingOptions] = useState({
     id: {
-      idealWidth: 40,
-      minWidth: 50,
+      idealWidth: 20,
+      minWidth: 20,
     },
     operator: {
-      minWidth: 200,
-      defaultWidth: 150,
+      minWidth: 190,
+      defaultWidth: 100,
     },
     shift: {
       idealWidth: 40,
@@ -184,10 +184,7 @@ const TableHauling = ({ handleEdit }) => {
       idealWidth: 40,
       minWidth: 50,
     },
-    dumpingpoint: {
-      minWidth: 120,
-      defaultWidth: 150,
-    },
+   
   });
 
   const [items, setItems] = useState([]);
@@ -205,6 +202,12 @@ const TableHauling = ({ handleEdit }) => {
   const rows = getRows();
 
   const inputId = useId("column-width");
+  const formatDate = (dateString) => {
+    const options = {
+      day:  '2-digit', month: '2-digit', year:'numeric'
+    };
+    return new Date(dateString).toLocaleDateString('en-GB', options);
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -291,7 +294,7 @@ const TableHauling = ({ handleEdit }) => {
                   <TableCell
                     {...columnSizing_unstable.getTableCellProps("tanggal")}
                   >
-                    <TableCellLayout>{item.tanggal.label}</TableCellLayout>
+                    <TableCellLayout>{formatDate(item.tanggal.label)}</TableCellLayout>
                   </TableCell>
                   <TableCell
                     {...columnSizing_unstable.getTableCellProps("shift")}

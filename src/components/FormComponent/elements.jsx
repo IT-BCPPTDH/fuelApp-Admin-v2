@@ -13,6 +13,7 @@ import {
   useId,
 } from "@fluentui/react-components";
 import "./element.css";
+import { styled } from "@fluentui/react";
 
 const useStyles = makeStyles({
   root: {
@@ -36,6 +37,10 @@ const useStyles = makeStyles({
   control: {
     maxWidth: "200px",
     minWidth: "180px",
+  },
+  timepicker: {
+    maxWidth: "200px",
+    minWidth: "90px",
   },
 });
 export const FormElement = ({
@@ -110,7 +115,7 @@ export const FormElement = ({
         );
       case "TimePicker":
         return (
-          <TimePicker id={inputId} name={name} startHour={8} endHour={20} onTimeChange={(e, data) => handleChange(e, { name: name, value: data})}/>
+          <TimePicker id={inputId} name={name} startHour={8} endHour={20} onTimeChange={(e, data) => handleChange(e, { name: name, value: data})} className={styles.timepicker}/>
         );
       case "TextDataView":
         return (
@@ -176,7 +181,9 @@ const ComboBoxCustom = (props) => {
       placeholder={`Select ${label}`}
       onChange={onChange}
       onOptionSelect={onOptionSelect}
-      selectedKey = {value}
+      // selectedKey = {value}
+      // defaultValue={value}
+      defaultSelectedOptions={[value]}
     >
       {customSearch ? (
         <Option key="freeform" text={customSearch}>
