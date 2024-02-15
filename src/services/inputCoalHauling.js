@@ -58,4 +58,5 @@ const Transaksi = {
   getEditData
 };
 
+
 export default Transaksi;
