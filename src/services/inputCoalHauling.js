@@ -14,7 +14,7 @@ const api = axios.create({
 
 const getAllTransaction = async () => {
   const response = await api.get(URL_ENUMS.transactionHoul);
-  console.log(1, response);
+  // console.log(1, response);
   return response.data;
 };
 
@@ -37,10 +37,11 @@ const postCreateTransaction = async (data) => {
   // console.log(data);
 };
 
+// Still Error
 const getDataTotal = async () => {
-  const response = await api.get(URL_ENUMS.cardDataTotal);
-  console.log(1, response);
-  return response.data;
+  // const response = await api.get(URL_ENUMS.cardDataTotal);
+  // console.log(1, response);
+  // return response.data;
 };
 
 const getEditData = async (id) => {

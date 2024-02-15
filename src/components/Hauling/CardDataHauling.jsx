@@ -73,7 +73,7 @@ const CardDataHauling = () => {
     const fetchData = async () => {
       try {
         const dts = await Transaksi.getDataTotal();
-        console.log(dts);
+        // console.log(dts);
      
         // setTotalData(data);
       } catch (error) {

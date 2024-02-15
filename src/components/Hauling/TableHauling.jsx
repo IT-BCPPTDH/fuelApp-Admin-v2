@@ -91,78 +91,6 @@ const columnsDef = [
   }),
 ];
 
-// const items = [
-//   {
-//     id: { label: 1 },
-//     tanggal: { label: "18/1/2024" },
-//     shift: { label: "Day" },
-//     unitNo: {
-//       label: "HMP7322",
-//     },
-//     operator: {
-//       label: "Rahmansyah Kurniawan",
-//     },
-//     tonnage: {
-//       label: 126,
-//     },
-//     loader: {
-//       label: "EXA624",
-//     },
-//     pit: {
-//       label: "A",
-//     },
-//     seam: {
-//       label: "A",
-//     },
-//     dumpingpoint: {
-//       label: 1,
-//     },
-//     inrom: {
-//       label: "12.00",
-//     },
-//     outrom: {
-//       label: "13.00",
-//     },
-//     action: {
-//       label: "13.00",
-//     },
-//   },
-//   {
-//     id: { label: 2 },
-//     tanggal: { label: "18/1/2024" },
-//     shift: { label: "Day" },
-//     unitNo: {
-//       label: "HMP7322",
-//     },
-//     operator: {
-//       label: "Audra Diaz",
-//     },
-//     tonnage: {
-//       label: 126,
-//     },
-//     loader: {
-//       label: "EXA624",
-//     },
-//     pit: {
-//       label: "A",
-//     },
-//     seam: {
-//       label: "A",
-//     },
-//     dumpingpoint: {
-//       label: 1,
-//     },
-//     inrom: {
-//       label: "12.00",
-//     },
-//     outrom: {
-//       label: "13.00",
-//     },
-//     action: {
-//       label: "13.00",
-//     },
-//   },
-// ];
 
 const TableHauling = ({ handleEdit }) => {
   const [columns] = useState(columnsDef);
@@ -197,11 +125,8 @@ const TableHauling = ({ handleEdit }) => {
     [useTableColumnSizing_unstable({ columnSizingOptions })]
   );
 
-  // const [inputValue, setInputValue] = useState("300");
-
   const rows = getRows();
 
-  const inputId = useId("column-width");
   const formatDate = (dateString) => {
     const options = {
       day:  '2-digit', month: '2-digit', year:'numeric'
@@ -213,7 +138,7 @@ const TableHauling = ({ handleEdit }) => {
     const fetchData = async () => {
       try {
         const dts = await Transaksi.getAllTransaction();
-        console.log(dts);
+        // console.log(dts);
 
         // Mengganti label pada setiap objek dengan nilai dari database
         const updatedItems = dts.data.map((itemFromDB) => ({
@@ -286,8 +211,8 @@ const TableHauling = ({ handleEdit }) => {
             </TableHeader>
 
             <TableBody>
-              {rows.map(({ item, key }) => (
-                <TableRow key={key}>
+              {rows.map(({ item }) => (
+                <TableRow key={item.id.label}>
                   <TableCell {...columnSizing_unstable.getTableCellProps("id")}>
                     {/* <TableCellLayout>{item.id.label}</TableCellLayout> */}
                   </TableCell>

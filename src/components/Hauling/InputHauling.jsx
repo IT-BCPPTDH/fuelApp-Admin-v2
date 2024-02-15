@@ -227,7 +227,7 @@ const InputHauling = ({dataEdit}) => {
   };
 
   useEffect(() => {
-    console.log("dataEdit:", dataEdit);
+    // console.log("dataEdit:", dataEdit);
 
     
   setFormData(
