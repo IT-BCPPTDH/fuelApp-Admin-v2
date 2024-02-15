@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import Title from "../components/Title";
+import { HeaderPageForm } from "../components/FormComponent/HeaderPageForm";
 import InputHauling from "../components/Hauling/InputHauling";
 import CardDataHauling from "../components/Hauling/CardDataHauling";
 import TableHauling from "../components/Hauling/TableHauling";
@@ -21,7 +22,7 @@ export default function CoalHauling() {
 
   return (
     <>
-      <Title title="Entry Data Hauling" />
+      <HeaderPageForm title={`Form Coal Hauling - Data Entry`} />
         <div className="row">
           <div className="col-7">
             <InputHauling dataEdit={dataEdit} />

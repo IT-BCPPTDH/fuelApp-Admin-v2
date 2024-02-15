@@ -12,9 +12,9 @@ import {
   useModalAttributes,
   useFocusFinders
 } from '@fluentui/react-components'
-import {
-  // MoreHorizontal20Regular
-} from '@fluentui/react-icons'
+// import {
+//   MoreHorizontal20Regular
+// } from '@fluentui/react-icons'
 import {
   Card,
   CardHeader,
@@ -170,13 +170,13 @@ const CardExample = props => {
         description={
           <Caption1 className={styles.caption}>{props.desc}</Caption1>
         }
-        // action={
-        //   <Button
-        //     appearance='transparent'
-        //     icon={<MoreHorizontal20Regular />}
-        //     aria-label='More options'
-        //   />
-        // }
+      // action={
+      //   <Button
+      //     appearance='transparent'
+      //     icon={<MoreHorizontal20Regular />}
+      //     aria-label='More options'
+      //   />
+      // }
       />
       <p className={styles.text} style={{ marginLeft: '62px' }}>
         <Caption1 className={styles.caption}>
@@ -193,11 +193,11 @@ const dataFiles = [
     desc: 'Data Collector for Coal Hauling Entry',
     link: '/coalhauling-dataentry'
   },
-  {
-    name: 'Coal Hauling Admin',
-    desc: 'Data Collector for Coal Hauling Entry Admin',
-    link: '/coalhauling-admin'
-  },
+  // {
+  //   name: 'Coal Hauling Admin',
+  //   desc: 'Data Collector for Coal Hauling Entry Admin',
+  //   link: '/coalhauling-admin'
+  // },
   {
     name: 'Operator Timesheet Data Entry',
     desc: 'Data Collector for Activity Time Entry',
@@ -263,7 +263,6 @@ const DashboardPage = () => {
       const decodeDataOperator = msgpack.decode(dataMasterOp)
       const decodeDataUnit = msgpack.decode(dataMasterUnit)
 
-      // console.log(decodedDataActivity);
 
       if (
         unit?.length !== undefined &&
@@ -293,7 +292,6 @@ const DashboardPage = () => {
       const op = decodeDataOperator?.data?.map((v) => v.jde);
       const unt = decodeDataUnit?.data?.map((v) => v.unitno);
 
-      
 
       toLocalStorage('timeEntry-unit', unt);
       toLocalStorage('timeEntry-activity', act);
@@ -307,16 +305,12 @@ const DashboardPage = () => {
   useEffect(() => {
     document.title = 'Homepage MED/MOD Data Entry App - PTDH'
 
-    getDataMaster(activity,operator,unit)
+    getDataMaster(activity, operator, unit)
     getData()
     if (open && dialogRef.current) {
       findFirstFocusable(dialogRef.current)?.focus()
     }
-  }, [open, findFirstFocusable,getDataMaster, getData])
-
-  // const onClickTrigger = () => {
-  //   setOpen(true)
-  // }
+  }, [open, findFirstFocusable, getDataMaster, getData])
 
   const onClickClose = () => {
     setOpen(false)
@@ -350,66 +344,9 @@ const DashboardPage = () => {
         }}
       >
         <Title title='Homepage' />
-        {/* <Button
-          ref={triggerRef}
-          {...triggerAttributes}
-          onClick={onClickTrigger}
-          style={{
-            width: '70px',
-            maxWidth: '100%',
-            height: '35px',
-            fontSize: '26px',
-            fontWeight: '300'
-          }}
-          className={styles.signInButton}
-        >
-          +
-        </Button> */}
+
       </div>
-      {/* <section>
-        <Header
-          title='Last Data Stored'
-          description='Latest form has been updated by you,'
-        />
-        <div
-          style={{
-            display: 'flex',
-            alignContent: 'center',
-            gap: '20px',
-            flexFlow: 'wrap'
-          }}
-        >
-          {dataFile ? (
-            <>
-              {dataFile?.map((v, i) => (
-                <CardExample
-                  key={i}
-                  name={v.key}
-                  link={`/collector/${v.key}`}
-                  desc={`last updated by ${v.updated_by}`}
-                  navigate={navigate}
-                  time={v.updated_at}
-                />
-              ))}
-            </>
-          ) : (
-            <>
-              <Button
-                ref={triggerRef}
-                {...triggerAttributes}
-                onClick={onClickTrigger}
-                style={{ width: '100px', maxWidth: '100%', height: '55px' }}
-                className={styles.signInButton}
-              >
-                +
-              </Button>
-            </>
-          )}
-        </div>
-      </section>
-      <div className={styles.divider}>
-        <Divider inset />
-      </div> */}
+
       <section>
         <Header
           title='Entry Data by Template'
@@ -425,7 +362,7 @@ const DashboardPage = () => {
           }}
         >
           {dataFiles.map((v, i) => (
-            <CardExample key={i} name={v.name} desc={v.desc} link={v.link} navigate={navigate}/>
+            <CardExample key={i} name={v.name} desc={v.desc} link={v.link} navigate={navigate} />
           ))}
           {open && (
             <div

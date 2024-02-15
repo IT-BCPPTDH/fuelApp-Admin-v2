@@ -10,6 +10,7 @@ import {
 } from "@fluentui/react-components";
 import FormComponent from "../FormComponent";
 import Transaksi from "../../services/inputCoalHauling";
+import {Save24Regular, ArrowReset24Regular} from "@fluentui/react-icons"
 
 const shiftOptions = ["Day", "Night"];
 const unitOptions = ["EXA526", "EXA726"];
@@ -260,13 +261,10 @@ const InputHauling = ({dataEdit}) => {
           <FormComponent components={comp} handleChange={handleChange} />
         </div>
         <div className="btn-wrapper">
-          {/* <Button onClick={unmounted ? notify : dismiss}  handleSubmit={handleSubmit} >
-            {unmounted ? "Simpan" : "Simpan"}
-          </Button> */}
-          <Button className="btn-simpan" onClick={handleSubmit}>
+          <Button onClick={handleSubmit} icon={<Save24Regular />} iconPosition="after" style={{ backgroundColor: '#6aa146', color: '#ffffff' }}>
             Simpan
           </Button>
-          <Button className="btn-simpan">Reset</Button>
+          <Button icon={<ArrowReset24Regular />} iconPosition="after" style={{ backgroundColor: '#ff5722', color: '#ffffff' }}>Reset</Button>
           <Toaster toasterId={toasterId} />
         </div>
       </div>
