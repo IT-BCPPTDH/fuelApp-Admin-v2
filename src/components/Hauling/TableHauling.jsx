@@ -266,8 +266,8 @@ const TableHauling = () => {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {rows.map(({ item }) => (
-                <TableRow key={item.id.label}>
+              {rows.map(({ item, key }) => (
+                <TableRow key={key}>
                   <TableCell {...columnSizing_unstable.getTableCellProps("id")}>
                     <TableCellLayout>{item.id.label}</TableCellLayout>
                   </TableCell>
