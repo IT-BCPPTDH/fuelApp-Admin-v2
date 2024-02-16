@@ -13,6 +13,7 @@ import ProductionDiggerPage from './pages/TimeEntryDigger';
 import ProductionHaulerPage from './pages/TimeEntryHauler';
 import InputUnit from './pages/AdminCoalHauling/InputUnit';
 import InputOperator from './pages/AdminCoalHauling/InputOperator';
+import CoalHaulingDataEntry from './pages/CoalHaulingDataEntry';
 
 const RouteApp = () => {
   return (
