@@ -1,4 +1,4 @@
-import { useRef, useEffect, useState } from 'react'
+import { useRef, useEffect, useState, useCallback } from 'react'
 import jspreadsheet from 'jspreadsheet-ce'
 import { HeaderPageForm } from '../components/FormComponent/HeaderPageForm'
 import FormComponent from '../components/FormComponent'
@@ -8,12 +8,16 @@ import { DynamicTablistMenu } from '../components/Tablist'
 import DataJson from '../data/test-data.json'
 import { tabsRekapTimeEntry } from '../helpers/tabArrayHelper'
 import { colHelperTimesheetMines } from '../helpers/columnHelper'
+import Services from '../services/timeEntry'
+import { useLocation } from 'react-router-dom'
 
 export const TimeEntryMinesEntryPage = () => {
   const jRef = useRef(null)
   const [totalDuration, setTotalDuration] = useState(0)
   const [buttonDisabled, setButtonDisabled] = useState(true)
-
+  // const [secName, setSecName] = useState(null)
+  const location = useLocation();
+  const secName = location.pathname.includes('mines') ? 'mines' : 'fms';
   const handleChange = (ev, data) => {
     const { name, value } = data
   }
@@ -51,25 +55,72 @@ export const TimeEntryMinesEntryPage = () => {
     // }
   ]
 
+  const [dataJson, setDataJson] = useState(null);
+
+  // const contentExcel = useCallback(data =>{
+  //   if (data) {
+  //     jRef.current = null
+  //     const width = screen.width;
+  //     const options = {
+  //       // data: data,
+  //       lazyLoading: true,
+  //       loadingSpin: true,
+  //       columns: colHelperTimesheetMines.columnHeader,
+  //       minDimensions: [5, 15],
+  //       tableHeight: '500px',
+  //       tableWidth: `${(width * 87) / 100}px`,
+  //       tableOverflow: true
+  //     };
+
+  //    if (!jRef.current.jspreadsheet) {
+  //       jspreadsheet(jRef.current, options);
+  //    }
+  //   }
+  // },[]) 
+
   useEffect(() => {
-    let width = screen.width
+    let getFrom = location.pathname.split('-')
+    console.log(1,getFrom)
+    const fetchData = async () => {
+      try {
+        let json = null
+        console.log(111,getFrom[2])
+        if(getFrom[2] === 'fms'){
+          json = await Services.getDataFMS();
+        }else{
+          json = await Services.getDataMines();
+        }
+        console.log(123,json.data.length)
+        setDataJson(json.data);
+        jRef.current.jspreadsheet.setData(json.data)
+        // contentExcel(json.data)
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    };
 
-    const options = {
-      data: DataJson,
-      lazyLoading:true,
-      loadingSpin:true,
-      columns: colHelperTimesheetMines.columnHeader,
-      minDimensions: [5, 15],
-      tableHeight: '500px',
-      tableWidth: `${(width * 87) / 100}px`,
-      tableOverflow: true
-    }
+    fetchData();
+  }, [location]);
 
-    if (!jRef.current.jspreadsheet) {
-      jspreadsheet(jRef.current, options)
-    }
+  useEffect(() => {
+      const width = screen.width;
+      const options = {
+        lazyLoading: true,
+        loadingSpin: true,
+        columns: colHelperTimesheetMines.columnHeader,
+        minDimensions: [5, 15],
+        tableHeight: '500px',
+        tableWidth: `${(width * 87) / 100}px`,
+        tableOverflow: true
+      };
 
-  }, [])
+     if (!jRef.current.jspreadsheet) {
+        jspreadsheet(jRef.current, options);
+     }
+    // }
+  }, []);
+
+ 
 
   useEffect(() => {
     const disabled =
@@ -79,6 +130,7 @@ export const TimeEntryMinesEntryPage = () => {
     setButtonDisabled(disabled)
   }, [totalDuration])
 
+  // console.log(jRef)
   return (
     <>
       <HeaderPageForm title={`Time Entry BCP - 11 Januari 2024`} />
@@ -86,11 +138,13 @@ export const TimeEntryMinesEntryPage = () => {
       <div className='form-wrapper'>
         <div className='row'>
           <div className='col-6'>
-            <DynamicTablistMenu tabs={tabsRekapTimeEntry} active="time-sheet-mines"/>
+            <DynamicTablistMenu tabs={tabsRekapTimeEntry} active={secName === 'mines'?`time-sheet-mines`:`time-sheet-fms`}/>
           </div>
         </div>
         <FormComponent handleChange={handleChange} components={components} />
-        <div ref={jRef} className='mt1em' />
+        
+          <div ref={jRef} className='mt1em' />
+        
         {/* <div className='row'>
           <div className='col-6'></div>
           <div className='col-6 flex-row'>
