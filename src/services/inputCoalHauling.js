@@ -41,8 +41,7 @@ const Transaksi = {
   getAllTransaction,
   getEditTransaction,
   getDeteleTransaction,
-    getAllTransaction,
-    getCreateTransaction
+  postCreateTransaction
 }
 
 
