@@ -11,6 +11,7 @@ import { calculateTotalTimeFromArray } from '../helpers/timeHelper'
 import { FooterPageForm } from '../components/FormComponent/FooterPageForm'
 import { useLiveQuery } from 'dexie-react-hooks'
 import { db } from '../../models/db'
+import { getActivity } from '../helpers/indexedDB/getData'
 
 const tabs = [
   { label: 'Time Entry Support', value: 'time-entry/support/' },
@@ -32,8 +33,8 @@ export default function TimeSheetPage () {
 
   const [jdeOptions, setJdeOptions] = useState(() => getLocalStorage('timeEntry-operator'));
   const [unitOptions, setUnitOption] = useState(() => getLocalStorage('timeEntry-unit'));
-  const [masterOP, setMasterOP] = useState(() => getLocalStorage('timeEntry-masterOP'));
-
+  // const [masterOP, setMasterOP] = useState(() => getLocalStorage('timeEntry-masterOP'));
+  const masterOP = useLiveQuery(() => db.operator.toArray());
 
   const [formData, setFormData] = useState({
     formID: 'Time Entry Support',
@@ -131,7 +132,7 @@ export default function TimeSheetPage () {
     [transformData]
   )
 
-  useEffect(() => {
+  useEffect( () => {
 
     let lastEndTimeVal = null
     let lastStartTimeVal = null
@@ -157,6 +158,8 @@ export default function TimeSheetPage () {
 
     let act = getLocalStorage('timeEntry-activity')
     let mastr = getLocalStorage('timeEntry-masterAct')
+    // let mastr = getActivity()
+    // console.log(mastr)
 
     const options = {
       data: [],
@@ -308,14 +311,15 @@ export default function TimeSheetPage () {
       setFormData(prevFormData => ({ ...prevFormData, [name]: value }))
     }
 
-    // if (name === 'jdeOperator') {
-    //   let mo = masterOP?.find(v => v.jde === value)
-    //   setFormData({
-    //     ...formData,
-    //     nameOperator: mo.fullname,
-    //     jdeOperator: value
-    //   })
-    // }
+    if (name === 'jdeOperator' && value.length >= 6) {
+      // console.log(masterOP)
+      let mo = masterOP?.find(v => v.jde === value)
+      setFormData({
+        ...formData,
+        nameOperator: mo.fullname,
+        jdeOperator: value
+      })
+    }
   }
 
   const components = useMemo(

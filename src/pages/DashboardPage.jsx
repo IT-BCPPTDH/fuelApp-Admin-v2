@@ -216,7 +216,7 @@ const dataFiles = [
   {
     name: 'Time Sheet Mines/Protes',
     desc: 'Template Time Entry model Mines',
-    link: '/time-sheet-mines'
+    link: '/time-sheet-fms'
   },
   {
     name: 'Distance Data Entry',
@@ -247,6 +247,7 @@ const DashboardPage = () => {
     let response = await axios.get(
       `${import.meta.env.VITE_LINK_BACKEND}/v1/getallfile`
     )
+    console.log(response.data.data)
     setDataFile(response.data.data)
   }, [setDataFile])
 
@@ -297,6 +298,7 @@ const DashboardPage = () => {
       toLocalStorage('timeEntry-activity', act);
       toLocalStorage('timeEntry-masterAct', decodedDataActivity.data);
       toLocalStorage('timeEntry-operator', op);
+
     } catch (err) {
       console.log(err);
     }
@@ -304,13 +306,14 @@ const DashboardPage = () => {
 
   useEffect(() => {
     document.title = 'Homepage MED/MOD Data Entry App - PTDH'
-
-    getDataMaster(activity, operator, unit)
+    if(activity && operator && unit){
+      getDataMaster(activity, operator, unit)
+    }
     getData()
     if (open && dialogRef.current) {
       findFirstFocusable(dialogRef.current)?.focus()
     }
-  }, [open, findFirstFocusable, getDataMaster, getData])
+  }, [open, findFirstFocusable, getDataMaster, getData,activity, operator, unit])
 
   const onClickClose = () => {
     setOpen(false)
