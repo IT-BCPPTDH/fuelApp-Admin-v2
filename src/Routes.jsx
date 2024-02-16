@@ -29,6 +29,7 @@ const RouteApp = () => {
       <Route path='/production' element={<ProductionEntryPage />}></Route>
       <Route path='/mineplan' element={<MineplanEntryPage />}></Route>
       <Route path='/time-sheet-mines' element={<TimeEntryMinesEntryPage />}></Route>
+      <Route path='/time-sheet-fms' element={<TimeEntryMinesEntryPage />}></Route>
       <Route path='/time-entry-production' element={<RekapTimeEntryPage />}></Route>
       <Route path='/distance-data-entry' element={<DistanceEntryPage />}></Route>
       <Route path='/time-entry/digger' element={<ProductionDiggerPage />} />

@@ -33,11 +33,22 @@ const postTimeEntrySupport = async data => {
   return response.data
 }
 
+const getDataFMS = async () => {
+  const response = await api.get(URL_ENUMS.getDataFMS)
+  return response.data
+}
+const getDataMines = async () => {
+  const response = await api.get(URL_ENUMS.getDataMines)
+  return response.data
+}
+
 const Services = {
   getMasterActivity,
   getMasterTimeEntryOperator,
   postTimeEntrySupport,
-  getMasterTimeEntryUnit
+  getMasterTimeEntryUnit,
+  getDataFMS,
+  getDataMines,
 }
 
 

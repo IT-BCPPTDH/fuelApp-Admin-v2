@@ -16,4 +16,5 @@ export const URL_ENUMS ={
     cardDataECF : link+'/transaction/ecf',
     cardDataMiddleStcok : link+'/transaction/midlestock',
     cardDataSekurau : link+'/transaction/sekurau'
+
 }

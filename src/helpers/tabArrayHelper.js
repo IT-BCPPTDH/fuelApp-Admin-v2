@@ -1,5 +1,6 @@
 export const tabsRekapTimeEntry = [
   { label: 'Time Sheet Mines', value: 'time-sheet-mines' },
+  { label: 'Time Sheet FMS', value: 'time-sheet-fms' },
   { label: 'Time Entry Production Unit', value: 'time-entry-production' },
   // { label: 'Time Entry Support Unit', value: 'time-entry-support' }
 
