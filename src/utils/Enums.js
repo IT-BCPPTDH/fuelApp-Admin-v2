@@ -10,5 +10,6 @@ export const URL_ENUMS ={
     postCreateTransaction: link+'/transaction/insertTrx',
     getDataMines : link+'/timeentrymines/',
     getDataFMS : link+'/timeentryfms/',
-
+    cardDataTotal : link+'transaction/total/',
+    getEditData : link+'/transaction/getOne/'
 }

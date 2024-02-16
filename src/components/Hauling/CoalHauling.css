@@ -26,7 +26,7 @@
     display: flex;
     justify-content: flex-end;
     margin-top: 10px;
-    margin-right: 20px;
+    margin-right: 150px;
     gap: 3px
   }
 .search-box {
@@ -35,3 +35,4 @@
     margin-bottom: 10px;
     gap: 6px;
   }
+
