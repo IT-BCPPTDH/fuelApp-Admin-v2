@@ -19,9 +19,7 @@ const tabs = [
 ]
 const active = '/timesheet-dataentry/'; 
 const shiftOptions = ['Day', 'Night']
-
 const unitOptions = ['DT11223', 'DT11224', 'DT11225', 'DT11226']
-
 const activeTab = 'time-entry/support/';
 
 export default function TimeSheetPage () {
@@ -32,18 +30,10 @@ export default function TimeSheetPage () {
 
   const master = useLiveQuery(() => db.activity.toArray())
 
-  const [jdeOptions, setJdeOptions] = useState(() => {
-    let op = getLocalStorage('timeEntry-operator')
-    return op
-  })
-  const [unitOptions, setUnitOption] = useState(() => {
-    let op = getLocalStorage('timeEntry-unit')
-    return op
-  })
-  const [masterOP, setMasterOP] = useState(() => {
-    let op = getLocalStorage('timeEntry-masterOP')
-    return op
-  })
+  const [jdeOptions, setJdeOptions] = useState(() => getLocalStorage('timeEntry-operator'));
+  const [unitOptions, setUnitOption] = useState(() => getLocalStorage('timeEntry-unit'));
+  const [masterOP, setMasterOP] = useState(() => getLocalStorage('timeEntry-masterOP'));
+
 
   const [formData, setFormData] = useState({
     formID: 'Time Entry Support',
@@ -142,6 +132,7 @@ export default function TimeSheetPage () {
   )
 
   useEffect(() => {
+
     let lastEndTimeVal = null
     let lastStartTimeVal = null
     let arrayTime = []
@@ -264,7 +255,7 @@ export default function TimeSheetPage () {
     return () => {
       jspreadsheet.destroy(jRef)
     }
-  }, [onchange, calculateTotalTime, formatTime])
+  }, [])
 
   const handleSubmit = async () => {
     let act = JSON.stringify(formValue)
@@ -317,14 +308,14 @@ export default function TimeSheetPage () {
       setFormData(prevFormData => ({ ...prevFormData, [name]: value }))
     }
 
-    if (name === 'jdeOperator') {
-      let mo = masterOP?.find(v => v.jde === value)
-      setFormData({
-        ...formData,
-        nameOperator: mo.fullname,
-        jdeOperator: value
-      })
-    }
+    // if (name === 'jdeOperator') {
+    //   let mo = masterOP?.find(v => v.jde === value)
+    //   setFormData({
+    //     ...formData,
+    //     nameOperator: mo.fullname,
+    //     jdeOperator: value
+    //   })
+    // }
   }
 
   const components = useMemo(
@@ -473,7 +464,7 @@ export default function TimeSheetPage () {
 
     getDataFirst()
 
-  }, [totalDuration, getDataFirst]);
+  }, [totalDuration]);
 
   const handleTabChange = (value) => {
     console.log(`Navigating to: /${value}`);

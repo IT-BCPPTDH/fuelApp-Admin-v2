@@ -21,11 +21,11 @@
     "dexie-react-hooks": "^1.1.7",
     "js-cookie": "^3.0.5",
     "jspreadsheet-ce": "^4.13.4",
+    "million": "latest",
     "msgpack-lite": "^0.1.26",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.21.0",
-    "signaldb": "^0.8.1",
     "socket.io-client": "^4.7.2"
   },
   "devDependencies": {

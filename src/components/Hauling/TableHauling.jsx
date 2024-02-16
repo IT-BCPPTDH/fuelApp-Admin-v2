@@ -170,7 +170,7 @@ const TableHauling = ({ handleEdit }) => {
     <>
       <div className="form-wrapper" style={{ marginTop: "10px" }}>
         <div className="search-box">
-          <Button icon={<ArrowDownload24Regular />}>Download</Button>
+          <Button icon={<ArrowDownload24Regular />} iconPosition="after" style={{ backgroundColor: '#28499c', color: '#ffffff' }}>Download</Button>
           <SearchBox placeholder="Search" />
         </div>
         <div style={{ overflowX: "auto" }}>
