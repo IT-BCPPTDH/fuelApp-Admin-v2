@@ -10,7 +10,7 @@ import {
 } from "@fluentui/react-components";
 import FormComponent from "../FormComponent";
 import Transaksi from "../../services/inputCoalHauling";
-import {Save24Regular, ArrowReset24Regular} from "@fluentui/react-icons"
+import { Save24Regular, ArrowReset24Regular } from "@fluentui/react-icons";
 
 const shiftOptions = ["Day", "Night"];
 const unitOptions = ["EXA526", "EXA726"];
@@ -20,10 +20,12 @@ const dumpingpointOptions = [
   "MAIN COAL FACILITY ( HOPPER)",
   "STOCK PILE / OVERFLOW ( ROM MF)",
   "STOCK PILE / EARLY COAL FACILITY (ROM ECF)",
-  "MIDLE STOCK PILE", "SEKURAU"];
+  "MIDLE STOCK PILE",
+  "SEKURAU",
+];
 const pitOptions = ["A", "C", "D"];
 
-const InputHauling = ({dataEdit}) => {
+const InputHauling = ({ dataEdit }) => {
   const [isFormValid, setIsFormValid] = useState(false);
   const currentDate = new Date();
   const [formData, setFormData] = useState({
@@ -156,7 +158,15 @@ const InputHauling = ({dataEdit}) => {
         type: "TimePicker",
       },
     ],
-    [formData, shiftOptions, pitOptions, unitOptions, loaderOptions, seamOptions, dumpingpointOptions]
+    [
+      formData,
+      shiftOptions,
+      pitOptions,
+      unitOptions,
+      loaderOptions,
+      seamOptions,
+      dumpingpointOptions,
+    ]
   );
 
   const toasterId = useId("toaster");
@@ -225,14 +235,13 @@ const InputHauling = ({dataEdit}) => {
 
     let datainsert = await Transaksi.postCreateTransaction(data);
     console.log(datainsert);
+    window.location.reload();
   };
 
   useEffect(() => {
     // console.log("dataEdit:", dataEdit);
 
-    
-  setFormData(
-    {
+    setFormData({
       tanggal: dataEdit?.tanggal,
       shift: dataEdit?.shift,
       unitNo: dataEdit?.unitNo,
@@ -245,26 +254,31 @@ const InputHauling = ({dataEdit}) => {
       inrom: dataEdit?.inrom,
       outrom: dataEdit?.outrom,
       pit: dataEdit?.pit,
-    }
-  )
-    
-  }, [dataEdit])
-  
+    });
+  }, [dataEdit]);
 
   return (
     <>
       <div
         className="form-wrapper wrapper"
-        style={{ marginBottom: "0", paddingTop: "3em" }}
-      >
+        style={{ marginBottom: "0", paddingTop: "3em" }}>
         <div className="input-base">
           <FormComponent components={comp} handleChange={handleChange} />
         </div>
         <div className="btn-wrapper">
-          <Button onClick={handleSubmit} icon={<Save24Regular />} iconPosition="after" style={{ backgroundColor: '#6aa146', color: '#ffffff' }}>
+          <Button
+            onClick={handleSubmit}
+            icon={<Save24Regular />}
+            iconPosition="after"
+            style={{ backgroundColor: "#6aa146", color: "#ffffff" }}>
             Simpan
           </Button>
-          <Button icon={<ArrowReset24Regular />} iconPosition="after" style={{ backgroundColor: '#ff5722', color: '#ffffff' }}>Reset</Button>
+          <Button
+            icon={<ArrowReset24Regular />}
+            iconPosition="after"
+            style={{ backgroundColor: "#ff5722", color: "#ffffff" }}>
+            Reset
+          </Button>
           <Toaster toasterId={toasterId} />
         </div>
       </div>
