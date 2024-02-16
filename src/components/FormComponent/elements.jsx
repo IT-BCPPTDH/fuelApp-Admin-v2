@@ -10,7 +10,7 @@ import {
   Option,
   RadioGroup,
   Radio,
-  useId
+  useId,
 } from "@fluentui/react-components";
 import "./element.css";
 import {
@@ -18,7 +18,7 @@ import {
   useStaticVirtualizerMeasure,
 } from "@fluentui/react-components/unstable";
 
-import Select from 'react-select'
+// import Select from 'react-select'
 
 const useStyles = makeStyles({
   root: {
@@ -62,7 +62,7 @@ export const FormElement = ({
   value,
   handleChange,
   disabled,
-  readOnly
+  readOnly,
 }) => {
   const styles = useStyles();
 
@@ -70,13 +70,13 @@ export const FormElement = ({
     return !date
       ? ""
       : date.getDate().toString().padStart(2, "0") +
-      "-" +
-      (date.getMonth() + 1).toString().padStart(2, "0") +
-      "-" +
-      date.getFullYear();
+          "-" +
+          (date.getMonth() + 1).toString().padStart(2, "0") +
+          "-" +
+          date.getFullYear();
   };
 
-  const inputId = useId(name)
+  const inputId = useId(name);
   const renderInput = () => {
     switch (type) {
       case "DatePicker":
@@ -100,36 +100,38 @@ export const FormElement = ({
             handleChange={handleChange}
             value={value}
           />
-        //   <ComboSelect
-        //   inputId={inputId}
-        //   name={name}
-        //   label={label}
-        //   options={options}
-        //   handleChange={handleChange}
-        //   value={value}
-        // />
+          //   <ComboSelect
+          //   inputId={inputId}
+          //   name={name}
+          //   label={label}
+          //   options={options}
+          //   handleChange={handleChange}
+          //   value={value}
+          // />
         );
       case "Input":
         return (
           <Input
-            value={value ?? ''}
+            value={value ?? ""}
             id={inputId}
             name={name}
             readOnly={readOnly}
             disabled={disabled}
-            onChange={(e) => handleChange(e, { name: name, value: e.target.value })}
+            onChange={(e) =>
+              handleChange(e, { name: name, value: e.target.value })
+            }
           />
         );
       case "RadioButton":
-
         return (
           <RadioGroup
             id={inputId}
             layout="horizontal"
             name={name}
-            value={value ?? 'Day'}
-            onChange={(e) => handleChange(e, { name: name, value: e.target.value })}
-          >
+            value={value ?? "Day"}
+            onChange={(e) =>
+              handleChange(e, { name: name, value: e.target.value })
+            }>
             {options.map((option, key) => (
               <Radio key={key} value={option} label={option} />
             ))}
@@ -142,19 +144,28 @@ export const FormElement = ({
             name={name}
             startHour={8}
             endHour={20}
-            value={value ?? ''}
-            onTimeChange={(e, data) => handleChange(e, { name: name, value: data })}
-            className={styles.timepicker} />
+            value={value ?? ""}
+            onTimeChange={(e, data) =>
+              handleChange(e, { name: name, value: data })
+            }
+            className={styles.timepicker}
+          />
         );
       case "TextDataView":
         return (
           <>
-            <div id={inputId} className="data-value">{value}</div>
+            <div id={inputId} className="data-value">
+              {value}
+            </div>
           </>
         );
 
       case "StaticInfo":
-        return <h5 id={inputId} className={styles.formName}>{value}</h5>;
+        return (
+          <h5 id={inputId} className={styles.formName}>
+            {value}
+          </h5>
+        );
       default:
         return null;
     }
@@ -168,40 +179,37 @@ export const FormElement = ({
   );
 };
 
+// const ComboSelect = (props) => {
+//   const { inputId, name, label, options, handleChange, value } = props;
 
-const ComboSelect = (props) => {
-  const { inputId, name, label, options, handleChange, value } = props;
+//   const [isClearable, setIsClearable] = useState(true);
+//   const [isSearchable, setIsSearchable] = useState(true);
+//   const [isDisabled, setIsDisabled] = useState(false);
+//   const [isLoading, setIsLoading] = useState(false);
+//   const [isRtl, setIsRtl] = useState(false);
 
-  const [isClearable, setIsClearable] = useState(true);
-  const [isSearchable, setIsSearchable] = useState(true);
-  const [isDisabled, setIsDisabled] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-  const [isRtl, setIsRtl] = useState(false);
-
-  return <Select
-    className="basic-single"
-    classNamePrefix="select"
-    defaultValue={value}
-    isDisabled={isDisabled}
-    isLoading={isLoading}
-    isClearable={isClearable}
-    isRtl={isRtl}
-    isSearchable={isSearchable}
-    name={name}
-    options={options}
-    onChange={handleChange}
-  />
-}
-
+//   return <Select
+//     className="basic-single"
+//     classNamePrefix="select"
+//     defaultValue={value}
+//     isDisabled={isDisabled}
+//     isLoading={isLoading}
+//     isClearable={isClearable}
+//     isRtl={isRtl}
+//     isSearchable={isSearchable}
+//     name={name}
+//     options={options}
+//     onChange={handleChange}
+//   />
+// }
 
 const ComboBoxCustom = (props) => {
   const { inputId, name, label, options, handleChange, value } = props;
   const [matchingOptions, setMatchingOptions] = useState([...options]);
-  const [customSearch, setCustomSearch] = useState('');
+  const [customSearch, setCustomSearch] = useState("");
   const styles = useStyles();
 
   const onChange = (event) => {
-    
     const value = event.target.value.trim();
     handleChange(event, { name: name, value: value });
 
@@ -235,7 +243,6 @@ const ComboBoxCustom = (props) => {
       direction: "vertical",
     });
 
-
   return (
     <Combobox
       id={inputId}
@@ -247,17 +254,13 @@ const ComboBoxCustom = (props) => {
       onChange={onChange}
       onOptionSelect={onOptionSelect}
       defaultSelectedOptions={value ? [value] : []}
-      value={value ?? ''}
-    >
-
+      value={value ?? ""}>
       <Virtualizer
         numItems={numberOfItems}
         virtualizerLength={virtualizerLength}
         bufferItems={bufferItems}
         bufferSize={bufferSize}
-        itemSize={itemHeight}
-      >
-
+        itemSize={itemHeight}>
         {(index) => {
           const option = matchingOptions[index];
           return (
@@ -267,11 +270,9 @@ const ComboBoxCustom = (props) => {
               aria-setsize={numberOfItems}>
               {option}
             </Option>
-
           );
         }}
       </Virtualizer>
-
     </Combobox>
   );
 };
