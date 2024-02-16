@@ -18,8 +18,6 @@ import {
   useStaticVirtualizerMeasure,
 } from "@fluentui/react-components/unstable";
 
-import Select from 'react-select'
-
 const useStyles = makeStyles({
   root: {
     display: "flex",
@@ -100,14 +98,6 @@ export const FormElement = ({
             handleChange={handleChange}
             value={value}
           />
-        //   <ComboSelect
-        //   inputId={inputId}
-        //   name={name}
-        //   label={label}
-        //   options={options}
-        //   handleChange={handleChange}
-        //   value={value}
-        // />
         );
       case "Input":
         return (
@@ -169,31 +159,6 @@ export const FormElement = ({
 };
 
 
-const ComboSelect = (props) => {
-  const { inputId, name, label, options, handleChange, value } = props;
-
-  const [isClearable, setIsClearable] = useState(true);
-  const [isSearchable, setIsSearchable] = useState(true);
-  const [isDisabled, setIsDisabled] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-  const [isRtl, setIsRtl] = useState(false);
-
-  return <Select
-    className="basic-single"
-    classNamePrefix="select"
-    defaultValue={value}
-    isDisabled={isDisabled}
-    isLoading={isLoading}
-    isClearable={isClearable}
-    isRtl={isRtl}
-    isSearchable={isSearchable}
-    name={name}
-    options={options}
-    onChange={handleChange}
-  />
-}
-
-
 const ComboBoxCustom = (props) => {
   const { inputId, name, label, options, handleChange, value } = props;
   const [matchingOptions, setMatchingOptions] = useState([...options]);
@@ -234,7 +199,6 @@ const ComboBoxCustom = (props) => {
       defaultItemSize: itemHeight,
       direction: "vertical",
     });
-
 
   return (
     <Combobox

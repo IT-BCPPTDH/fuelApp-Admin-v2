@@ -15,7 +15,6 @@ export const forSocket = (date) => {
     
     const dateObject = new Date(year, month, day);
   
-    
     const options = { day: 'numeric', month: 'long', year: 'numeric' };
     const formattedDate = dateObject.toLocaleDateString('id-ID', options);
   
