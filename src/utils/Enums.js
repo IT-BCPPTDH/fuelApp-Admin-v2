@@ -8,6 +8,8 @@ export const URL_ENUMS ={
     postTimeEntrySupport : link+'/timeentry/timeentry-support',
     transactionHoul : link+'/transaction/',
     postCreateTransaction: link+'/transaction/insertTrx',
+    getDataMines : link+'/timeentrymines/',
+    getDataFMS : link+'/timeentryfms/',
     cardDataTotal : link+'transaction/total/',
     getEditData : link+'/transaction/getOne/'
 }
