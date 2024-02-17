@@ -3,14 +3,24 @@ import "./CoalHauling.css";
 import {
   useId,
   Button,
-  Toaster,
-  useToastController,
-  ToastTitle,
-  Toast,
+  MessageBar,
+  MessageBarTitle,
+  MessageBarBody,
+  Link,
+  makeStyles,
 } from "@fluentui/react-components";
 import FormComponent from "../FormComponent";
 import Transaksi from "../../services/inputCoalHauling";
 import { Save24Regular, ArrowReset24Regular } from "@fluentui/react-icons";
+
+const useStyles = makeStyles({
+  messageContainer: {
+    position: "fixed",
+    bottom: "20px",
+    right: "20px",
+    zIndex: 1000,
+  },
+});
 
 const shiftOptions = ["Day", "Night"];
 const unitOptions = ["EXA526", "EXA726"];
@@ -26,6 +36,8 @@ const dumpingpointOptions = [
 const pitOptions = ["A", "C", "D"];
 
 const InputHauling = ({ dataEdit }) => {
+  const classes = useStyles();
+  const [message, setMessage] = React.useState(null);
   const [isFormValid, setIsFormValid] = useState(false);
   const currentDate = new Date();
   const [formData, setFormData] = useState({
@@ -169,26 +181,6 @@ const InputHauling = ({ dataEdit }) => {
     ]
   );
 
-  const toasterId = useId("toaster");
-  const toastId = useId("example");
-  const [unmounted, setUnmounted] = React.useState(true);
-  const { dispatchToast, dismissToast } = useToastController(toasterId);
-
-  const notify = () => {
-    dispatchToast(
-      <Toast>
-        <ToastTitle>Data Berhasil Disimpan</ToastTitle>
-      </Toast>,
-      {
-        toastId,
-        intent: "success",
-        onStatusChange: (e, { status }) => setUnmounted(status === "unmounted"),
-      }
-    );
-    setUnmounted(false);
-  };
-  const dismiss = () => dismissToast(toastId);
-
   const handleChange = (e, v) => {
     const { name, value } = v;
     if (name === "inrom" || name === "outrom") {
@@ -221,21 +213,44 @@ const InputHauling = ({ dataEdit }) => {
     console.log(1, name, value);
   };
 
-  const handleSubmit = async () => {
-    // console.log(formData);
-    // if (isFormValid) {
-    //   console.log(formData);
-    // } else {
-    //   console.log("Form is not valid. Please fill in all fields.");
-    // }
-    let data = {
-      ...formData,
-    };
-    console.log(data);
+  // const handleSubmit = async () => {
+  //   let data = {
+  //     ...formData,
+  //   };
+  //   console.log(data);
 
-    let datainsert = await Transaksi.postCreateTransaction(data);
-    console.log(datainsert);
-    window.location.reload();
+  //   let datainsert = await Transaksi.postCreateTransaction(data);
+  //   console.log(datainsert);
+  //   window.location.reload();
+  // };
+
+  const handleSubmit = async () => {
+    try {
+      let data = {
+        ...formData,
+      };
+
+      let datainsert = await Transaksi.postCreateTransaction(data);
+
+      // Display success toast
+      setMessage({
+        type: "success",
+        content: "Data berhasil di input",
+      });
+
+      // Optionally, you can reload the window after a delay (e.g., 2 seconds)
+      setTimeout(() => {
+        window.location.reload();
+      }, 2000);
+    } catch (error) {
+      console.error("Error inserting data:", error);
+
+      // Display error toast
+      setMessage({
+        type: "error",
+        content: "Gagal menginput data. Silahkan coba kembali!",
+      });
+    }
   };
 
   useEffect(() => {
@@ -279,8 +294,19 @@ const InputHauling = ({ dataEdit }) => {
             style={{ backgroundColor: "#ff5722", color: "#ffffff" }}>
             Reset
           </Button>
-          <Toaster toasterId={toasterId} />
         </div>
+      </div>
+      <div className={classes.messageContainer}>
+        {message && (
+          <MessageBar intent={message.type}>
+            <MessageBarBody>
+              <MessageBarTitle>{message.content}</MessageBarTitle>
+              {message.type === "error" && (
+                <Link onClick={() => setMessage(null)}>Dismiss</Link>
+              )}
+            </MessageBarBody>
+          </MessageBar>
+        )}
       </div>
     </>
   );
