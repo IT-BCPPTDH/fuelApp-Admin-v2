@@ -29,12 +29,26 @@ import {
   DialogBody,
   DialogActions,
   DialogContent,
+  MessageBar,
+  MessageBarBody,
+  MessageBarTitle,
+  Link,
+  makeStyles,
 } from "@fluentui/react-components";
 import {
   EditRegular,
   DeleteRegular,
   ArrowDownload24Regular,
 } from "@fluentui/react-icons";
+
+const useStyles = makeStyles({
+  messageContainer: {
+    position: "fixed",
+    bottom: "20px",
+    right: "20px",
+    zIndex: 1000, // Adjust the z-index as needed
+  },
+});
 
 const columnsDef = [
   createTableColumn({
@@ -92,7 +106,9 @@ const columnsDef = [
 ];
 
 const TableHauling = ({ handleEdit }) => {
+  const classes = useStyles();
   const [columns] = useState(columnsDef);
+  const [message, setMessage] = useState(null);
 
   const [columnSizingOptions] = useState({
     id: {
@@ -164,13 +180,35 @@ const TableHauling = ({ handleEdit }) => {
     fetchData();
   }, []);
 
+  // const handleDelete = async (id) => {
+  //   console.log(id.label);
+  //   try {
+  //     const updatedData = await Transaksi.getDeteleTransaction(id.label);
+  //     console.log(updatedData);
+  //     window.location.reload();
+  //   } catch (error) {
+  //     console.error("Error deleting data:", error);
+  //   }
+  // };
+
   const handleDelete = async (id) => {
     console.log(id.label);
     try {
       const updatedData = await Transaksi.getDeteleTransaction(id.label);
       console.log(updatedData);
+      setMessage({
+        type: "success",
+        content: "Data derhasil dihapus",
+      });
+      setTimeout(() => {
+        window.location.reload();
+      }, 1000);
     } catch (error) {
       console.error("Error deleting data:", error);
+      setMessage({
+        type: "error",
+        content: "Gagal menghapus data. Silahkan coba kembali",
+      });
     }
   };
 
@@ -286,6 +324,7 @@ const TableHauling = ({ handleEdit }) => {
                         onClick={() => handleEdit(item.id)}
                       />
                       {/* <Button icon={<DeleteRegular />} aria-label="Delete" /> */}
+
                       <Dialog modalType="alert">
                         <DialogTrigger disableButtonEnhancement>
                           <Button
@@ -319,6 +358,18 @@ const TableHauling = ({ handleEdit }) => {
             </TableBody>
           </Table>
         </div>
+      </div>
+      <div className={classes.messageContainer}>
+        {message && (
+          <MessageBar intent={message.type}>
+            <MessageBarBody>
+              <MessageBarTitle>{message.content}</MessageBarTitle>
+              {message.type === "error" && (
+                <Link onClick={() => setMessage(null)}>Dismiss</Link>
+              )}
+            </MessageBarBody>
+          </MessageBar>
+        )}
       </div>
     </>
   );
