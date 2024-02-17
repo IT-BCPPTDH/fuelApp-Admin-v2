@@ -11,7 +11,7 @@
   },
   "dependencies": {
     "@fluentui/react": "^8.115.1",
-    "@fluentui/react-components": "^9.46.0",
+    "@fluentui/react-components": "^9.46.4",
     "@fluentui/react-datepicker-compat": "^0.4.10",
     "@fluentui/react-search-preview": "^0.1.43",
     "@fluentui/react-timepicker-compat": "^0.1.5",
