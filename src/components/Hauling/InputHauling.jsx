@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect } from "react";
+import React, { useState, useMemo, useEffect, useCallback } from "react";
 import "./CoalHauling.css";
 import {
   useId,
@@ -122,35 +122,109 @@ const InputHauling = ({ dataEdit }) => {
   const classes = useStyles();
   const [message, setMessage] = React.useState(null);
   const [isFormValid, setIsFormValid] = useState(false);
-  const currentDate = new Date();
-  const [pitOptions, setPitOptions] = useState();
-  const [seamOptions, setSeamOptions] = useState(seamOptionsData['PIT A NORTH 1']);
-  const [formData, setFormData] = useState({
-    tanggal: currentDate,
-    shift: "",
-    unitNo: "",
-    operator: "",
-    loader: "",
-    tonnage: "",
-    seam: "",
-    dumpingpoint: "",
-    rom: "",
-    inrom: "",
-    outrom: "",
-    pit: "",
-  });
+  const [seamOptions, setSeamOptions] = useState([]);
+  const [formData, setFormData] = useState({});
 
-console.log(seamOptionsData['PIT A NORTH 1'])
+  useEffect(() => {
 
-  // const seamOptionsArray = Object.entries(seamOptions).map(
-  //   ([label, value]) => ({ label, value })
-  // );
-  // console.log(seamOptionsArray);
+    setFormData({
+      tanggal: dataEdit?.tanggal ?? new Date(),
+      shift: dataEdit?.shift ?? 'Day',
+      unitNo: dataEdit?.unitNo ?? '',
+      operator: dataEdit?.operator ?? '',
+      loader: dataEdit?.loader ?? '',
+      tonnage: dataEdit?.tonnage ?? '',
+      seam: dataEdit?.seam ?? '',
+      dumpingpoint: dataEdit?.dumpingpoint ?? '',
+      rom: dataEdit?.rom ?? '',
+      inrom: dataEdit?.inrom ?? '',
+      outrom: dataEdit?.outrom ?? '',
+      pit: dataEdit?.pit ?? '',
+    });
+    
+  }, [dataEdit]);
 
-  // const determineSeam = (pitValue) => {
-  //   console.log(1234, seamOptions[pitValue]);
-  //   return seamOptions[pitValue] || [];
-  // };
+  const handleChange = useCallback((e, v) => {
+    const { name, value } = v;
+
+    if (name === "inrom" || name === "outrom") {
+      const hours = value.selectedTime.getHours();
+      const minutes = value.selectedTime.getMinutes();
+      const second = value.selectedTime.getSeconds();
+
+      const addLeadingZero = (num) => (num < 10 ? `0${num}` : num);
+
+      const formattedTime = `${addLeadingZero(hours)}:${addLeadingZero(minutes)}:${addLeadingZero(second)}`;
+
+      console.log(formattedTime);
+      console.log(hours, minutes, second);
+
+      if (name === "inrom" && formattedTime > formData.outrom) {
+        alert("inrom tidak boleh lebih besar dari outrom");
+      } else if (name === "outrom" && formData.inrom > formattedTime) {
+        alert("outrom tidak boleh lebih kecil dari inrom");
+      }
+
+      setFormData((prevFormData) => ({
+        ...prevFormData,
+        [name]: formattedTime,
+      }));
+
+
+    } else {
+
+      if (name === "pit") {
+        let a = pitOptions?.find((v) => v === value);
+        setSeamOptions(seamOptionsData[a]);
+      }
+      
+      setFormData((prevFormData) => ({ ...prevFormData, [name]: value }));
+    }
+  
+    const isValid = Object.values(formData).every((val) => val !== "");
+    setIsFormValid(isValid);
+
+  }, [formData, setIsFormValid, setFormData, setSeamOptions]);
+
+  const handleSubmit = async () => {
+    try {
+      let data = {
+        ...formData,
+      };
+
+      let datainsert = await Transaksi.postCreateTransaction(data);
+
+      // Display success toast
+      setMessage({
+        type: "success",
+        content: "Data berhasil di input",
+      });
+
+      // Optionally, you can reload the window after a delay (e.g., 2 seconds)
+      setTimeout(() => {
+        window.location.reload();
+      }, 2000);
+    } catch (error) {
+      console.error("Error inserting data:", error);
+
+      // Display error toast
+      setMessage({
+        type: "error",
+        content: "Gagal menginput data. Silahkan coba kembali!",
+      });
+    }
+  };
+
+  const handleReset = () => {
+    setFormData({
+      inrom: "",
+      outrom: "",
+      tonnage: "",
+      dumpingpoint: "",
+    });
+    setMessage(null);
+    setIsFormValid(false);
+  };
 
   const comp = useMemo(
     () => [
@@ -228,8 +302,6 @@ console.log(seamOptionsData['PIT A NORTH 1'])
         value: formData.seam,
         type: "Combobox",
         options: seamOptions,
-        //options: determineSeam(formData.pit) ? determineSeam(formData.pit) : [],
-        // options: Object.entries(seamOptions).map(([key, value]) => ({ label: key, value })),
       },
       {
         name: "dumpingpoint",
@@ -269,131 +341,8 @@ console.log(seamOptionsData['PIT A NORTH 1'])
         type: "TimePicker",
       },
     ],
-    [
-      formData,
-      shiftOptions,
-      pitOptions,
-      unitOptions,
-      loaderOptions,
-      seamOptions,
-      dumpingpointOptions,
-      seamOptionsData
-    ]
+    [formData, seamOptions]
   );
-
-  const handleChange = (e, v) => {
-    const { name, value } = v;
-
-    if (name === "inrom" || name === "outrom") {
-      const hours = value.selectedTime.getHours();
-      const minutes = value.selectedTime.getMinutes();
-      const second = value.selectedTime.getSeconds();
-
-      const addLeadingZero = (num) => (num < 10 ? `0${num}` : num);
-
-      // Format waktu menjadi string "HH:mm:ss"
-      const formattedTime = `${addLeadingZero(hours)}:${addLeadingZero(
-        minutes
-      )}:${addLeadingZero(second)}`;
-
-      console.log(formattedTime); // Output: "09:00:00"
-      console.log(hours, minutes, second);
-
-      setFormData((prevFormData) => ({
-        ...prevFormData,
-        [name]: formattedTime,
-      }));
-
-      // Validasi inrom lebih besar dari outrom
-      if (name === "inrom" && formattedTime > formData.outrom) {
-        // Tampilkan alert atau lakukan tindakan yang sesuai
-        alert("inrom tidak boleh lebih besar dari outrom");
-      } else if (name === "outrom" && formData.inrom > formattedTime) {
-        // Tampilkan alert atau lakukan tindakan yang sesuai
-        alert("outrom tidak boleh lebih kecil dari inrom");
-      }
-    } else if (name === "tonnage" || name === "dumpingpoint") {
-      // const converted = Number(value);
-      setFormData((prevFormData) => ({ ...prevFormData, [name]: value }));
-    } else {
-      setFormData((prevFormData) => ({ ...prevFormData, [name]: value }));
-    }
-    if (name === "PIT A NORTH 1") {
-      console.log(pitOptions,value)
-      let a = pitOptions?.find((v) => v.pit === value);
-      console.log(a.seam);
-      if (a) {
-        setSeamOptions(a.seam);
-      } else {
-        setSeamOptions([]);
-      }
-    }
-
-    const isValid = Object.values(formData).every((val) => val !== "");
-    setIsFormValid(isValid);
-    console.log(1, name, value);
-  };
-
-  const handleSubmit = async () => {
-    try {
-      let data = {
-        ...formData,
-      };
-
-      let datainsert = await Transaksi.postCreateTransaction(data);
-
-      // Display success toast
-      setMessage({
-        type: "success",
-        content: "Data berhasil di input",
-      });
-
-      // Optionally, you can reload the window after a delay (e.g., 2 seconds)
-      setTimeout(() => {
-        window.location.reload();
-      }, 2000);
-    } catch (error) {
-      console.error("Error inserting data:", error);
-
-      // Display error toast
-      setMessage({
-        type: "error",
-        content: "Gagal menginput data. Silahkan coba kembali!",
-      });
-    }
-  };
-
-  const handleReset = () => {
-    setFormData({
-      inrom: "",
-      outrom: "",
-      tonnage: "",
-      dumpingpoint: "",
-    });
-    setMessage(null);
-    setIsFormValid(false);
-  };
-
-  useEffect(() => {
-    console.log(111,'tes')
-
-    setSeamOptions(seamOptionsData["PIT A NORTH 1"]);
-
-    setFormData({
-      tanggal: dataEdit?.tanggal,
-      shift: dataEdit?.shift,
-      unitNo: dataEdit?.unitNo,
-      operator: dataEdit?.operator,
-      loader: dataEdit?.loader,
-      tonnage: dataEdit?.tonnage,
-      seam: dataEdit?.seam,
-      dumpingpoint: dataEdit?.dumpingpoint,
-      rom: dataEdit?.rom,
-      inrom: dataEdit?.inrom,
-      outrom: dataEdit?.outrom,
-      pit: dataEdit?.pit,
-    });
-  }, [dataEdit, seamOptionsData]);
 
   return (
     <>
