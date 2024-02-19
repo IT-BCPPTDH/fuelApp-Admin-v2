@@ -10,17 +10,17 @@ import { HeaderPageForm } from '../components/FormComponent/HeaderPageForm'
 import { calculateTotalTimeFromArray } from '../helpers/timeHelper'
 import { FooterPageForm } from '../components/FormComponent/FooterPageForm'
 import { useLiveQuery } from 'dexie-react-hooks'
-import { db } from '../../models/db'
-import { getActivity } from '../helpers/indexedDB/getData'
+import { db } from '../models/db'
+// import { getActivity } from '../helpers/indexedDB/getData'
 
 const tabs = [
   { label: 'Time Entry Support', value: 'time-entry/support/' },
   { label: 'Time Entry Digger', value: 'time-entry/digger/' },
   { label: 'Time Entry Hauler', value: 'time-entry-hauler' }
 ]
-const active = '/timesheet-dataentry/'; 
+// const active = '/timesheet-dataentry/'; 
 const shiftOptions = ['Day', 'Night']
-const unitOptions = ['DT11223', 'DT11224', 'DT11225', 'DT11226']
+// const unitOptions = ['DT11223', 'DT11224', 'DT11225', 'DT11226']
 const activeTab = 'time-entry/support/';
 
 export default function TimeSheetPage () {

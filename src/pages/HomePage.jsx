@@ -2,9 +2,8 @@ import { useState, useEffect } from 'react'
 import { makeStyles, tokens, Spinner } from '@fluentui/react-components'
 import Title from '../components/Title'
 import ExcelLike from '../components/ExcelLike'
-// import { DatePicker } from '@fluentui/react-datepicker-compat'
 import { socket } from '../socket'
-import { dateToString, forSocket } from '../helpers/convertDate'
+import { dateToString } from '../helpers/convertDate'
 import { useParams } from 'react-router-dom'
 
 const useStyles = makeStyles({
@@ -78,15 +77,6 @@ export const HomePage = () => {
         }}
       >
         <Title title={`Time Entry ${dateToString(id)}, Site: BCP`} />
-        {/* <Field label='Select a date'>
-          <DatePicker
-            className={styles.control}
-            placeholder='Select a date...'
-            // {...props}
-            value={date}
-            onSelectDate={handleDate}
-          />
-        </Field> */}
       </div>
 
       <div className={styles.example}>{/* <Divider /> */}</div>

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import "./CoalHauling.css";
 import { useId, makeStyles, Card } from "@fluentui/react-components";
 import Transaksi from "../../services/inputCoalHauling";

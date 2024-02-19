@@ -22,7 +22,7 @@ export const TimeEntryMinesEntryPage = () => {
     const { name, value } = data
   }
 
-  const handleSubmit = () => {}
+  // const handleSubmit = () => {}
 
 
   const isChange = () => {

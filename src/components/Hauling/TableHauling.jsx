@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { SearchBox } from "@fluentui/react-search-preview";
 import Transaksi from "../../services/inputCoalHauling";
 import {
@@ -12,16 +12,12 @@ import {
   createTableColumn,
   useTableColumnSizing_unstable,
   useTableFeatures,
-  Avatar,
-  Input,
-  useId,
   Menu,
   MenuItem,
   MenuList,
   MenuPopover,
   MenuTrigger,
   Button,
-  Field,
   Dialog,
   DialogTrigger,
   DialogSurface,

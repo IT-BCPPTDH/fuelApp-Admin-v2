@@ -6,7 +6,7 @@ import { DynamicTablistMenu } from '../components/Tablist'
 import { colHelperTimesheet, colArrayHelper } from '../helpers/columnHelper'
 import { getTimeSheetData } from '../helpers/arrayGroupHelper'
 import { tabsRekapTimeEntry } from '../helpers/tabArrayHelper'
-import '../../css/rekap.css'
+import '../css/rekap.css'
 
 export const RekapTimeEntryPage = () => {
   const jRef = useRef(null)

@@ -27,7 +27,7 @@ import { forSocket } from '../helpers/convertDate'
 import { useNavigate } from 'react-router-dom'
 import Services from '../services/timeEntry'
 import { toLocalStorage } from '../helpers/toLocalStorage'
-import { db } from '../../models/db'
+import { db } from '../models/db'
 import { useLiveQuery } from "dexie-react-hooks";
 import { insertActivity, insertOperator, insertUnit } from '../helpers/indexedDB/insert'
 // import { decode } from "@msgpack/msgpack";
