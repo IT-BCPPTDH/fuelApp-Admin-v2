@@ -76,6 +76,8 @@ export const FormElement = ({
           date.getFullYear();
   };
 
+ 
+  
   const inputId = useId(name);
   const renderInput = () => {
     switch (type) {
@@ -175,6 +177,10 @@ export const FormElement = ({
         return null;
     }
   };
+
+  useEffect(() => {
+
+  }, [options,renderInput])
 
   return (
     <div className={styles.root}>
