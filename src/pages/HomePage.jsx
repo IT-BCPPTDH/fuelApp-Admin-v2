@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react'
-import { makeStyles, tokens, Field, Spinner } from '@fluentui/react-components'
+import { makeStyles, tokens, Spinner } from '@fluentui/react-components'
 import Title from '../components/Title'
 import ExcelLike from '../components/ExcelLike'
-import { DatePicker } from '@fluentui/react-datepicker-compat'
+// import { DatePicker } from '@fluentui/react-datepicker-compat'
 import { socket } from '../socket'
 import { dateToString, forSocket } from '../helpers/convertDate'
 import { useParams } from 'react-router-dom'
@@ -32,7 +32,6 @@ export const HomePage = () => {
   const styles = useStyles()
 
   const [isConnected, setIsConnected] = useState(socket.connected)
-  
 
   const [dataXls, setDataXls] = useState()
   const { id } = useParams();
@@ -68,8 +67,6 @@ export const HomePage = () => {
     })
   }, [])
 
-
-  
   return (
     <>
       <div

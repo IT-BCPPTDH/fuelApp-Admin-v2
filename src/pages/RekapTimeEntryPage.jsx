@@ -3,10 +3,10 @@ import jspreadsheet from 'jspreadsheet-ce'
 import { HeaderPageForm } from '../components/FormComponent/HeaderPageForm'
 import { FooterPageForm } from '../components/FormComponent/FooterPageForm'
 import { DynamicTablistMenu } from '../components/Tablist'
-import '../../css/rekap.css'
 import { colHelperTimesheet, colArrayHelper } from '../helpers/columnHelper'
 import { getTimeSheetData } from '../helpers/arrayGroupHelper'
 import { tabsRekapTimeEntry } from '../helpers/tabArrayHelper'
+import '../../css/rekap.css'
 
 export const RekapTimeEntryPage = () => {
   const jRef = useRef(null)
