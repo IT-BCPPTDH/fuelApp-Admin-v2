@@ -36,7 +36,7 @@ export default function CoalHauling() {
         <div className="col-12">
           <div className={styles.wrapper}>
             <Link to="/coalhauling-dataentry">
-              <Button icon={<Add24Filled />}>New Create</Button>
+              <Button icon={<Add24Filled />}>Create New</Button>
             </Link>
             <FormComponent components={tgl} />
           </div>
