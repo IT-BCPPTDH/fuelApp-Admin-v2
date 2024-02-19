@@ -26,5 +26,4 @@ bun.lockb
 *.sln
 *.sw?
 
-bun.lockb
 .env
