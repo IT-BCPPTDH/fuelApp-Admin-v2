@@ -46,9 +46,9 @@ export default function TimeSheetPage () {
     lastUpdate: '-',
     jdeOperator: '',
     nameOperator: '',
-    hmAwal: '10005.10',
-    hmAkhir: '10023.10',
-    hm: '18'
+    hmAwal: '',
+    hmAkhir: '',
+    hm: ''
   })
 
   const [formValue, setFormValue] = useState()
