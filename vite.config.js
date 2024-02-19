@@ -19,6 +19,9 @@ export default defineConfig({
         short_name: 'DH Data Collector',
         description: 'Aplikasi Data Collector for MED & MOD',
         theme_color: '#ffffff',
+        start_url: "/",
+        display: "standalone",
+        id: "/",
         icons: [
           {
             src: 'assets/pwa-192x192.png',
@@ -29,6 +32,18 @@ export default defineConfig({
             src: 'assets/pwa-512x512.png',
             sizes: '512x512',
             type: 'image/png'
+          },
+          {
+            src: 'assets/pwa-maskable-192x192.png',
+            sizes: "192x192",
+            type: "image/png",
+            purpose: "maskable"
+          },
+          {
+            src: 'assets/pwa-maskable-512x512.png',
+            sizes: "512x512",
+            type: "image/png",
+            purpose: "maskable"
           }
         ]
       }
