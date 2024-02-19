@@ -11,6 +11,7 @@ yarn.lock
 node_modules
 dist
 dist-ssr
+dev-dist
 *.local
 bun.lockb
 
@@ -25,5 +26,4 @@ bun.lockb
 *.sln
 *.sw?
 
-bun.lockb
 .env

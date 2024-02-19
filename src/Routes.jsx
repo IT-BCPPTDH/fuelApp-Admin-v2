@@ -1,5 +1,7 @@
+import React from 'react';
 import { Route, Routes } from 'react-router-dom'
-import { HomePage } from './pages/HomePage'
+
+// import { HomePage } from './pages/HomePage'
 import DashboardPage from './pages/DashboardPage'
 import CoalHauling from './pages/CoalHauling';
 import TimeSheetPage from './pages/TimeSheetPage'
@@ -19,7 +21,7 @@ const RouteApp = () => {
   return (
     <Routes>
       <Route path='/' element={<DashboardPage />} />
-      <Route path='/collector/:id' element={<HomePage />} />
+      {/* <Route path='/collector/:id' element={<HomePage />} /> */}
       <Route path='/time-entry/support' element={<TimeSheetPage />}></Route>
       <Route path='/coalhauling' element={<CoalHauling />}></Route>
       <Route path='/coalhauling-dataentry' element={<CoalHaulingDataEntry />}></Route>
