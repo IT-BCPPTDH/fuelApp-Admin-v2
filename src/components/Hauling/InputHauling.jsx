@@ -25,7 +25,7 @@ const useStyles = makeStyles({
 const shiftOptions = ["Day", "Night"];
 const unitOptions = ["EXA526", "EXA726"];
 const loaderOptions = ["HWL1038", "HWL1040"];
-const seamOptions = ["B Hs", "C2", "BB"];
+const seamOptions = ["C2", "A", "BB"];
 const dumpingpointOptions = [
   "MAIN COAL FACILITY ( HOPPER)",
   "STOCK PILE / OVERFLOW ( ROM MF)",
@@ -33,7 +33,12 @@ const dumpingpointOptions = [
   "MIDLE STOCK PILE",
   "SEKURAU",
 ];
-const pitOptions = ["A", "C", "D"];
+const pitOptions = [
+  "PIT A NORTH 1 ",
+  "PIT A NORTH 2",
+  "PIT A SOUTH 1",
+  "PIT A SOUTH 2",
+];
 
 const InputHauling = ({ dataEdit }) => {
   const classes = useStyles();
@@ -183,6 +188,7 @@ const InputHauling = ({ dataEdit }) => {
 
   const handleChange = (e, v) => {
     const { name, value } = v;
+
     if (name === "inrom" || name === "outrom") {
       const hours = value.selectedTime.getHours();
       const minutes = value.selectedTime.getMinutes();
@@ -197,11 +203,21 @@ const InputHauling = ({ dataEdit }) => {
 
       console.log(formattedTime); // Output: "09:00:00"
       console.log(hours, minutes, second);
+
       setFormData((prevFormData) => ({
         ...prevFormData,
         [name]: formattedTime,
       }));
-    } else if (name == "tonnage" || name == "dumpingpoint") {
+
+      // Validasi inrom lebih besar dari outrom
+      if (name === "inrom" && formattedTime > formData.outrom) {
+        // Tampilkan alert atau lakukan tindakan yang sesuai
+        alert("inrom tidak boleh lebih besar dari outrom");
+      } else if (name === "outrom" && formData.inrom > formattedTime) {
+        // Tampilkan alert atau lakukan tindakan yang sesuai
+        alert("outrom tidak boleh lebih kecil dari inrom");
+      }
+    } else if (name === "tonnage" || name === "dumpingpoint") {
       // const converted = Number(value);
       setFormData((prevFormData) => ({ ...prevFormData, [name]: value }));
     } else {
@@ -212,17 +228,6 @@ const InputHauling = ({ dataEdit }) => {
     setIsFormValid(isValid);
     console.log(1, name, value);
   };
-
-  // const handleSubmit = async () => {
-  //   let data = {
-  //     ...formData,
-  //   };
-  //   console.log(data);
-
-  //   let datainsert = await Transaksi.postCreateTransaction(data);
-  //   console.log(datainsert);
-  //   window.location.reload();
-  // };
 
   const handleSubmit = async () => {
     try {
@@ -251,6 +256,17 @@ const InputHauling = ({ dataEdit }) => {
         content: "Gagal menginput data. Silahkan coba kembali!",
       });
     }
+  };
+
+  const handleReset = () => {
+    setFormData({
+      inrom: "",
+      outrom: "",
+      tonnage: "",
+      dumpingpoint: "",
+    });
+    setMessage(null);
+    setIsFormValid(false);
   };
 
   useEffect(() => {
@@ -291,7 +307,8 @@ const InputHauling = ({ dataEdit }) => {
           <Button
             icon={<ArrowReset24Regular />}
             iconPosition="after"
-            style={{ backgroundColor: "#ff5722", color: "#ffffff" }}>
+            style={{ backgroundColor: "#ff5722", color: "#ffffff" }}
+            onClick={handleReset}>
             Reset
           </Button>
         </div>
