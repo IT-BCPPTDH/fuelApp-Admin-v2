@@ -75,6 +75,8 @@ export const FormElement = ({
           date.getFullYear();
   };
 
+ 
+  
   const inputId = useId(name);
   const renderInput = () => {
     switch (type) {
@@ -133,12 +135,17 @@ export const FormElement = ({
           <TimePicker
             id={inputId}
             name={name}
-            startHour={8}
-            endHour={20}
             value={value ?? ""}
+            freeform
             onTimeChange={(e, data) =>
               handleChange(e, { name: name, value: data })
             }
+            formatOptions={{
+              hour12: false,
+              hour: "numeric",
+              minute: "numeric",
+            }}
+            locale="id-ID"
             className={styles.timepicker}
           />
         );
@@ -161,6 +168,10 @@ export const FormElement = ({
         return null;
     }
   };
+
+  useEffect(() => {
+
+  }, [options,renderInput])
 
   return (
     <div className={styles.root}>

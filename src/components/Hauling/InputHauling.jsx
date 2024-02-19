@@ -12,6 +12,7 @@ import {
 import FormComponent from "../FormComponent";
 import Transaksi from "../../services/inputCoalHauling";
 import { Save24Regular, ArrowReset24Regular } from "@fluentui/react-icons";
+// import pitOption from "../../data/datapit.json";
 
 const useStyles = makeStyles({
   messageContainer: {
@@ -24,8 +25,20 @@ const useStyles = makeStyles({
 
 const shiftOptions = ["Day", "Night"];
 const unitOptions = ["EXA526", "EXA726"];
-const loaderOptions = ["HWL1038", "HWL1040"];
-const seamOptions = ["B Hs", "C2", "BB"];
+const loaderOptions = [
+  "HWL1038",
+  "HWL1039",
+  "HWL1040",
+  "HWL5043",
+  "HEX1472",
+  "HEX1312",
+  "HEX1473",
+  "HEX1248",
+  "HEX1320",
+  "HEX1473",
+  "HWL5041",
+];
+// const seamOptions = ["C2", "A", "BB"];
 const dumpingpointOptions = [
   "MAIN COAL FACILITY ( HOPPER)",
   "STOCK PILE / OVERFLOW ( ROM MF)",
@@ -33,13 +46,85 @@ const dumpingpointOptions = [
   "MIDLE STOCK PILE",
   "SEKURAU",
 ];
-const pitOptions = ["A", "C", "D"];
+const pitOptions = [
+  "PIT A NORTH 1",
+  "PIT A NORTH 2",
+  "PIT A SOUTH 1",
+  "PIT A SOUTH 2",
+  "PIT B01",
+  "PIT B02",
+];
+
+const seamOptionsData = {
+  "PIT A NORTH 1": ["C2", "B Hs", "BB", "ARB", "D", "A", "C"],
+  "PIT A NORTH 2": ["C2", "B Hs", "BB", "ARB", "D", "A", "C"],
+  "PIT A SOUTH 1": [
+    "ARB",
+    "B Hs",
+    "B AMM",
+    "D",
+    "C",
+    "FF",
+    "C2",
+    "CC",
+    "D MTN",
+  ],
+  "PIT A SOUTH 2": [
+    "ARB",
+    "B Hs",
+    "B AMM",
+    "D",
+    "C",
+    "FF",
+    "C2",
+    "CC",
+    "D MTN",
+  ],
+  "PIT B01": [
+    "A PAMA",
+    "C PAMA",
+    "D",
+    "BM PAMA",
+    "AHS PAMA",
+    "B AAM",
+    "DE AAM",
+    "E1",
+    "A2",
+    "C DH",
+    "D AMM",
+    "A AMM",
+    "B SEAM",
+    "E 1 MTN",
+    "DE1 AMM",
+    "D MTN",
+  ],
+  "PIT B02": [
+    "A PAMA",
+    "C PAMA",
+    "D",
+    "BM PAMA",
+    "AHS PAMA",
+    "B AAM",
+    "DE AAM",
+    "E1",
+    "A2",
+    "C DH",
+    "D AMM",
+    "A AMM",
+    "B SEAM",
+    "E 1 MTN",
+    "DE1 AMM",
+    "D MTN",
+  ],
+};
 
 const InputHauling = ({ dataEdit }) => {
   const classes = useStyles();
   const [message, setMessage] = React.useState(null);
   const [isFormValid, setIsFormValid] = useState(false);
   const currentDate = new Date();
+  const [pitOptions, setPitOptions] = useState();
+  const [seamOptions, setSeamOptions] = useState(seamOptionsData['PIT A NORTH 1']);
   const [formData, setFormData] = useState({
     tanggal: currentDate,
     shift: "",
@@ -54,6 +139,18 @@ const InputHauling = ({ dataEdit }) => {
     outrom: "",
     pit: "",
   });
+
+console.log(seamOptionsData['PIT A NORTH 1'])
+
+  // const seamOptionsArray = Object.entries(seamOptions).map(
+  //   ([label, value]) => ({ label, value })
+  // );
+  // console.log(seamOptionsArray);
+
+  // const determineSeam = (pitValue) => {
+  //   console.log(1234, seamOptions[pitValue]);
+  //   return seamOptions[pitValue] || [];
+  // };
 
   const comp = useMemo(
     () => [
@@ -131,6 +228,8 @@ const InputHauling = ({ dataEdit }) => {
         value: formData.seam,
         type: "Combobox",
         options: seamOptions,
+        //options: determineSeam(formData.pit) ? determineSeam(formData.pit) : [],
+        // options: Object.entries(seamOptions).map(([key, value]) => ({ label: key, value })),
       },
       {
         name: "dumpingpoint",
@@ -178,11 +277,13 @@ const InputHauling = ({ dataEdit }) => {
       loaderOptions,
       seamOptions,
       dumpingpointOptions,
+      seamOptionsData
     ]
   );
 
   const handleChange = (e, v) => {
     const { name, value } = v;
+
     if (name === "inrom" || name === "outrom") {
       const hours = value.selectedTime.getHours();
       const minutes = value.selectedTime.getMinutes();
@@ -197,32 +298,41 @@ const InputHauling = ({ dataEdit }) => {
 
       console.log(formattedTime); // Output: "09:00:00"
       console.log(hours, minutes, second);
+
       setFormData((prevFormData) => ({
         ...prevFormData,
         [name]: formattedTime,
       }));
-    } else if (name == "tonnage" || name == "dumpingpoint") {
+
+      // Validasi inrom lebih besar dari outrom
+      if (name === "inrom" && formattedTime > formData.outrom) {
+        // Tampilkan alert atau lakukan tindakan yang sesuai
+        alert("inrom tidak boleh lebih besar dari outrom");
+      } else if (name === "outrom" && formData.inrom > formattedTime) {
+        // Tampilkan alert atau lakukan tindakan yang sesuai
+        alert("outrom tidak boleh lebih kecil dari inrom");
+      }
+    } else if (name === "tonnage" || name === "dumpingpoint") {
       // const converted = Number(value);
       setFormData((prevFormData) => ({ ...prevFormData, [name]: value }));
     } else {
       setFormData((prevFormData) => ({ ...prevFormData, [name]: value }));
+    }
+    if (name === "PIT A NORTH 1") {
+      console.log(pitOptions,value)
+      let a = pitOptions?.find((v) => v.pit === value);
+      console.log(a.seam);
+      if (a) {
+        setSeamOptions(a.seam);
+      } else {
+        setSeamOptions([]);
+      }
     }
 
     const isValid = Object.values(formData).every((val) => val !== "");
     setIsFormValid(isValid);
     console.log(1, name, value);
   };
-
-  // const handleSubmit = async () => {
-  //   let data = {
-  //     ...formData,
-  //   };
-  //   console.log(data);
-
-  //   let datainsert = await Transaksi.postCreateTransaction(data);
-  //   console.log(datainsert);
-  //   window.location.reload();
-  // };
 
   const handleSubmit = async () => {
     try {
@@ -253,8 +363,21 @@ const InputHauling = ({ dataEdit }) => {
     }
   };
 
+  const handleReset = () => {
+    setFormData({
+      inrom: "",
+      outrom: "",
+      tonnage: "",
+      dumpingpoint: "",
+    });
+    setMessage(null);
+    setIsFormValid(false);
+  };
+
   useEffect(() => {
-    // console.log("dataEdit:", dataEdit);
+    console.log(111,'tes')
+
+    setSeamOptions(seamOptionsData["PIT A NORTH 1"]);
 
     setFormData({
       tanggal: dataEdit?.tanggal,
@@ -270,7 +393,7 @@ const InputHauling = ({ dataEdit }) => {
       outrom: dataEdit?.outrom,
       pit: dataEdit?.pit,
     });
-  }, [dataEdit]);
+  }, [dataEdit, seamOptionsData]);
 
   return (
     <>
@@ -291,7 +414,8 @@ const InputHauling = ({ dataEdit }) => {
           <Button
             icon={<ArrowReset24Regular />}
             iconPosition="after"
-            style={{ backgroundColor: "#ff5722", color: "#ffffff" }}>
+            style={{ backgroundColor: "#ff5722", color: "#ffffff" }}
+            onClick={handleReset}>
             Reset
           </Button>
         </div>
