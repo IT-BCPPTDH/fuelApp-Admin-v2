@@ -1,12 +1,7 @@
-import React, {useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import "./CoalHauling.css";
-import {
-  useId,
-  makeStyles,
-  Card,
-} from "@fluentui/react-components";
+import { useId, makeStyles, Card } from "@fluentui/react-components";
 import Transaksi from "../../services/inputCoalHauling";
-
 
 const useStyles = makeStyles({
   caption: {
@@ -68,32 +63,57 @@ const CardDataHauling = () => {
   ];
   const styles = useStyles();
 
-  const [totalData, setTotalData] = useState({});
+  const [totalData, setTotalData] = useState();
+  const [dataHopper, setDataHopper] = useState();
+  const [dataOverflow, setDataOverflow] = useState();
+  const [dataECF, setDataECF] = useState();
+  const [dataMiddleStock, setDataMiddleStock] = useState();
+  const [dataSekurau, setDataSekurau] = useState();
+
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const dts = await Transaksi.getDataTotal();
-        // console.log(dts);
-     
-        // setTotalData(data);
+        const dataCard = await Transaksi.getDataTotal();
+        console.log(dataCard.result[0].total);
+
+        const dataHopper = await Transaksi.getDataHopper();
+        console.log(dataHopper);
+
+        const dataOverflow = await Transaksi.getDataOverflow();
+        console.log(dataOverflow);
+
+        const dataECF = await Transaksi.getDataECF();
+        console.log(dataECF);
+
+        const dataMiddleStock = await Transaksi.getDataMiddleStock();
+        console.log(dataMiddleStock);
+
+        const dataSekurau = await Transaksi.getDataSekurau();
+        console.log(dataSekurau);
+
+        setTotalData(dataCard.result[0].total);
+        setDataHopper(dataCard.result[0].total);
+        setDataOverflow(dataCard.result[0].total);
+        setDataECF(dataCard.result[0].total);
+        setDataMiddleStock(dataCard.result[0].total);
+        setDataSekurau(dataCard.result[0].total);
       } catch (error) {
-        console.error('Error fetching data:', error);
+        console.error("Error fetching data:", error);
       }
     };
-  
+
     fetchData();
   }, []);
-  
 
   return (
     <>
-      <div className="form-wrapper" style={{marginBottom: '0'}}>
+      <div className="form-wrapper" style={{ marginBottom: "0" }}>
         <div className="card-base">
           <Card style={{ marginBottom: "10px" }} className="card-data-full">
             <span className={styles.card}>Total Hauling</span>
             <p className={styles.caption}>
               <b>
-                {/* {totalData} <small>Ton</small> */}
+                {totalData} <small>Ton</small>
               </b>
             </p>
           </Card>
@@ -103,7 +123,7 @@ const CardDataHauling = () => {
                 <span className={styles.card}>Hauling To Hopper</span>
                 <p className={styles.caption}>
                   <b>
-                    747 <small>Ton</small>
+                    {dataHopper} <small>Ton</small>
                   </b>
                 </p>
               </Card>
@@ -113,7 +133,7 @@ const CardDataHauling = () => {
                 <span className={styles.card}>Hauling To OverFlow</span>
                 <p className={styles.caption}>
                   <b>
-                    747 <small>Ton</small>
+                    {dataOverflow} <small>Ton</small>
                   </b>
                 </p>
               </Card>
@@ -123,7 +143,7 @@ const CardDataHauling = () => {
                 <span className={styles.card}>Hauling To ECF</span>
                 <p className={styles.caption}>
                   <b>
-                    747 <small>Ton</small>
+                    {dataECF} <small>Ton</small>
                   </b>
                 </p>
               </Card>
@@ -133,7 +153,7 @@ const CardDataHauling = () => {
                 <span className={styles.card}>Hauling To MiddleStock</span>
                 <p className={styles.caption}>
                   <b>
-                    747 <small>Ton</small>
+                    {dataMiddleStock} <small>Ton</small>
                   </b>
                 </p>
               </Card>
@@ -143,7 +163,7 @@ const CardDataHauling = () => {
                 <span className={styles.card}>Hauling To Sekurau</span>
                 <p className={styles.caption}>
                   <b>
-                    747 <small>Ton</small>
+                    {dataSekurau} <small>Ton</small>
                   </b>
                 </p>
               </Card>

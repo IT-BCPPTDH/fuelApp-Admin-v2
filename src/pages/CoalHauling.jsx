@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 import { makeStyles, Button } from "@fluentui/react-components";
 import { Add24Filled } from "@fluentui/react-icons";
 import Title from "../components/Title";
@@ -20,7 +21,9 @@ export default function CoalHauling() {
       <div className="row">
         <div className="col-12">
           <div className={styles.wrapper}>
-            <Button icon={<Add24Filled />}>Tambah</Button>
+            <Link to="/coalhauling-dataentry">
+              <Button icon={<Add24Filled />}>New Create</Button>
+            </Link>
           </div>
         </div>
         <div className="col-12">

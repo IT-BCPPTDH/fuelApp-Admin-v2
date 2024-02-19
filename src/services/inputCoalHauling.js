@@ -24,8 +24,8 @@ const getEditTransaction = async () => {
   return response.data;
 };
 
-const getDeteleTransaction = async () => {
-  const response = await api.get(URL_ENUMS.transactionHoul);
+const getDeteleTransaction = async (id) => {
+  const response = await api.patch(URL_ENUMS.getDeteleData+id);
   console.log(1, response);
   return response.data;
 };
@@ -37,15 +37,44 @@ const postCreateTransaction = async (data) => {
   // console.log(data);
 };
 
-// Still Error
-const getDataTotal = async () => {
-  // const response = await api.get(URL_ENUMS.cardDataTotal);
-  // console.log(1, response);
-  // return response.data;
-};
-
 const getEditData = async (id) => {
   const response = await api.get(URL_ENUMS.getEditData+id);
+  console.log(1, response);
+  return response.data;
+};
+
+const getDataTotal = async () => {
+  const response = await api.get(URL_ENUMS.cardDataTotal);
+  console.log(1, response);
+  return response.data;
+};
+
+const getDataHopper = async () => {
+  const response = await api.get(URL_ENUMS.cardDataHopper);
+  console.log(1, response);
+  return response.data;
+};
+
+const getDataOverflow = async () => {
+  const response = await api.get(URL_ENUMS.cardDataOverflow);
+  console.log(1, response);
+  return response.data;
+};
+
+const getDataECF = async () => {
+  const response = await api.get(URL_ENUMS.cardDataECF);
+  console.log(1, response);
+  return response.data;
+};
+
+const getDataMiddleStock = async () => {
+  const response = await api.get(URL_ENUMS.cardDataMiddleStcok);
+  console.log(1, response);
+  return response.data;
+};
+
+const getDataSekurau = async () => {
+  const response = await api.get(URL_ENUMS.cardDataSekurau);
   console.log(1, response);
   return response.data;
 };
@@ -56,7 +85,12 @@ const Transaksi = {
   getDeteleTransaction,
   postCreateTransaction,
   getDataTotal,
-  getEditData
+  getEditData,
+  getDataHopper,
+  getDataOverflow,
+  getDataECF,
+  getDataMiddleStock,
+  getDataSekurau,
 };
 
 

@@ -34,9 +34,7 @@ const RouteApp = () => {
       <Route path='/distance-data-entry' element={<DistanceEntryPage />}></Route>
       <Route path='/time-entry/digger' element={<ProductionDiggerPage />} />
       <Route path='/time-entry-hauler' element={<ProductionHaulerPage />} />
-
     </Routes>
-
   )
 }
 

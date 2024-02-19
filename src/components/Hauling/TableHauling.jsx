@@ -29,12 +29,26 @@ import {
   DialogBody,
   DialogActions,
   DialogContent,
+  MessageBar,
+  MessageBarBody,
+  MessageBarTitle,
+  Link,
+  makeStyles,
 } from "@fluentui/react-components";
 import {
   EditRegular,
   DeleteRegular,
   ArrowDownload24Regular,
 } from "@fluentui/react-icons";
+
+const useStyles = makeStyles({
+  messageContainer: {
+    position: "fixed",
+    bottom: "20px",
+    right: "20px",
+    zIndex: 1000, // Adjust the z-index as needed
+  },
+});
 
 const columnsDef = [
   createTableColumn({
@@ -91,9 +105,10 @@ const columnsDef = [
   }),
 ];
 
-
 const TableHauling = ({ handleEdit }) => {
+  const classes = useStyles();
   const [columns] = useState(columnsDef);
+  const [message, setMessage] = useState(null);
 
   const [columnSizingOptions] = useState({
     id: {
@@ -105,14 +120,13 @@ const TableHauling = ({ handleEdit }) => {
       defaultWidth: 100,
     },
     shift: {
-      idealWidth: 40,
+      idealWidth: 90,
       minWidth: 50,
     },
     pit: {
       idealWidth: 40,
       minWidth: 50,
     },
-   
   });
 
   const [items, setItems] = useState([]);
@@ -129,18 +143,18 @@ const TableHauling = ({ handleEdit }) => {
 
   const formatDate = (dateString) => {
     const options = {
-      day:  '2-digit', month: '2-digit', year:'numeric'
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
     };
-    return new Date(dateString).toLocaleDateString('en-GB', options);
+    return new Date(dateString).toLocaleDateString("en-GB", options);
   };
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const dts = await Transaksi.getAllTransaction();
-        // console.log(dts);
 
-        // Mengganti label pada setiap objek dengan nilai dari database
         const updatedItems = dts.data.map((itemFromDB) => ({
           id: { label: itemFromDB.id },
           tanggal: { label: itemFromDB.tanggal },
@@ -166,11 +180,48 @@ const TableHauling = ({ handleEdit }) => {
     fetchData();
   }, []);
 
+  // const handleDelete = async (id) => {
+  //   console.log(id.label);
+  //   try {
+  //     const updatedData = await Transaksi.getDeteleTransaction(id.label);
+  //     console.log(updatedData);
+  //     window.location.reload();
+  //   } catch (error) {
+  //     console.error("Error deleting data:", error);
+  //   }
+  // };
+
+  const handleDelete = async (id) => {
+    console.log(id.label);
+    try {
+      const updatedData = await Transaksi.getDeteleTransaction(id.label);
+      console.log(updatedData);
+      setMessage({
+        type: "success",
+        content: "Data derhasil dihapus",
+      });
+      setTimeout(() => {
+        window.location.reload();
+      }, 1000);
+    } catch (error) {
+      console.error("Error deleting data:", error);
+      setMessage({
+        type: "error",
+        content: "Gagal menghapus data. Silahkan coba kembali",
+      });
+    }
+  };
+
   return (
     <>
       <div className="form-wrapper" style={{ marginTop: "10px" }}>
         <div className="search-box">
-          <Button icon={<ArrowDownload24Regular />} iconPosition="after" style={{ backgroundColor: '#28499c', color: '#ffffff' }}>Download</Button>
+          <Button
+            icon={<ArrowDownload24Regular />}
+            iconPosition="after"
+            style={{ backgroundColor: "#28499c", color: "#ffffff" }}>
+            Download
+          </Button>
           <SearchBox placeholder="Search" />
         </div>
         <div style={{ overflowX: "auto" }}>
@@ -178,8 +229,7 @@ const TableHauling = ({ handleEdit }) => {
             sortable
             aria-label="Table with sort"
             ref={tableRef}
-            {...columnSizing_unstable.getTableProps()}
-          >
+            {...columnSizing_unstable.getTableProps()}>
             <TableHeader>
               <TableRow>
                 {columns.map((column) => (
@@ -189,8 +239,7 @@ const TableHauling = ({ handleEdit }) => {
                         key={column.columnId}
                         {...columnSizing_unstable.getTableHeaderCellProps(
                           column.columnId
-                        )}
-                      >
+                        )}>
                         {column.renderHeaderCell()}
                       </TableHeaderCell>
                     </MenuTrigger>
@@ -199,8 +248,7 @@ const TableHauling = ({ handleEdit }) => {
                         <MenuItem
                           onClick={columnSizing_unstable.enableKeyboardMode(
                             column.columnId
-                          )}
-                        >
+                          )}>
                           Keyboard Column Resizing
                         </MenuItem>
                       </MenuList>
@@ -217,65 +265,57 @@ const TableHauling = ({ handleEdit }) => {
                     {/* <TableCellLayout>{item.id.label}</TableCellLayout> */}
                   </TableCell>
                   <TableCell
-                    {...columnSizing_unstable.getTableCellProps("tanggal")}
-                  >
-                    <TableCellLayout>{formatDate(item.tanggal.label)}</TableCellLayout>
+                    {...columnSizing_unstable.getTableCellProps("tanggal")}>
+                    <TableCellLayout>
+                      {formatDate(item.tanggal.label)}
+                    </TableCellLayout>
                   </TableCell>
                   <TableCell
-                    {...columnSizing_unstable.getTableCellProps("shift")}
-                  >
+                    {...columnSizing_unstable.getTableCellProps("shift")}>
                     <TableCellLayout truncate>
                       {item.shift.label}
                     </TableCellLayout>
                   </TableCell>
                   <TableCell
-                    {...columnSizing_unstable.getTableCellProps("unitNo")}
-                  >
+                    {...columnSizing_unstable.getTableCellProps("unitNo")}>
                     <TableCellLayout>{item.unitNo.label}</TableCellLayout>
                   </TableCell>
                   <TableCell
-                    {...columnSizing_unstable.getTableCellProps("operator")}
-                  >
+                    {...columnSizing_unstable.getTableCellProps("operator")}>
                     <TableCellLayout>{item.operator.label}</TableCellLayout>
                   </TableCell>
                   <TableCell
-                    {...columnSizing_unstable.getTableCellProps("tonnage")}
-                  >
+                    {...columnSizing_unstable.getTableCellProps("tonnage")}>
                     <TableCellLayout>{item.tonnage.label}</TableCellLayout>
                   </TableCell>
                   <TableCell
-                    {...columnSizing_unstable.getTableCellProps("loader")}
-                  >
+                    {...columnSizing_unstable.getTableCellProps("loader")}>
                     <TableCellLayout>{item.loader.label}</TableCellLayout>
                   </TableCell>
                   <TableCell
-                    {...columnSizing_unstable.getTableCellProps("pit")}
-                  >
+                    {...columnSizing_unstable.getTableCellProps("pit")}>
                     <TableCellLayout>{item.pit.label}</TableCellLayout>
                   </TableCell>
                   <TableCell
-                    {...columnSizing_unstable.getTableCellProps("seam")}
-                  >
+                    {...columnSizing_unstable.getTableCellProps("seam")}>
                     <TableCellLayout>{item.seam.label}</TableCellLayout>
                   </TableCell>
                   <TableCell
-                    {...columnSizing_unstable.getTableCellProps("dumpingpoint")}
-                  >
+                    {...columnSizing_unstable.getTableCellProps(
+                      "dumpingpoint"
+                    )}>
                     <TableCellLayout>{item.dumpingpoint.label}</TableCellLayout>
                   </TableCell>
                   <TableCell
-                    {...columnSizing_unstable.getTableCellProps("inrom")}
-                  >
+                    {...columnSizing_unstable.getTableCellProps("inrom")}>
                     <TableCellLayout>{item.inrom.label}</TableCellLayout>
                   </TableCell>
                   <TableCell
-                    {...columnSizing_unstable.getTableCellProps("outrom")}
-                  >
+                    {...columnSizing_unstable.getTableCellProps("outrom")}>
                     <TableCellLayout>{item.outrom.label}</TableCellLayout>
                   </TableCell>
                   <TableCell
-                    {...columnSizing_unstable.getTableCellProps("action")}
-                  >
+                    {...columnSizing_unstable.getTableCellProps("action")}>
                     <TableCellLayout>
                       <Button
                         // value={item.id}
@@ -284,6 +324,7 @@ const TableHauling = ({ handleEdit }) => {
                         onClick={() => handleEdit(item.id)}
                       />
                       {/* <Button icon={<DeleteRegular />} aria-label="Delete" /> */}
+
                       <Dialog modalType="alert">
                         <DialogTrigger disableButtonEnhancement>
                           <Button
@@ -301,7 +342,11 @@ const TableHauling = ({ handleEdit }) => {
                               <DialogTrigger disableButtonEnhancement>
                                 <Button appearance="secondary">Batalkan</Button>
                               </DialogTrigger>
-                              <Button appearance="secondary">Hapus</Button>
+                              <Button
+                                appearance="secondary"
+                                onClick={() => handleDelete(item.id)}>
+                                Hapus
+                              </Button>
                             </DialogActions>
                           </DialogBody>
                         </DialogSurface>
@@ -313,6 +358,18 @@ const TableHauling = ({ handleEdit }) => {
             </TableBody>
           </Table>
         </div>
+      </div>
+      <div className={classes.messageContainer}>
+        {message && (
+          <MessageBar intent={message.type}>
+            <MessageBarBody>
+              <MessageBarTitle>{message.content}</MessageBarTitle>
+              {message.type === "error" && (
+                <Link onClick={() => setMessage(null)}>Dismiss</Link>
+              )}
+            </MessageBarBody>
+          </MessageBar>
+        )}
       </div>
     </>
   );
