@@ -1,4 +1,4 @@
-import { useState, useRef, useCallback, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { DatePicker } from "@fluentui/react-datepicker-compat";
 import { TimePicker } from "@fluentui/react-timepicker-compat";
 import {
@@ -133,12 +133,17 @@ export const FormElement = ({
           <TimePicker
             id={inputId}
             name={name}
-            startHour={8}
-            endHour={20}
             value={value ?? ""}
+            freeform
             onTimeChange={(e, data) =>
               handleChange(e, { name: name, value: data })
             }
+            formatOptions={{
+              hour12: false,
+              hour: "numeric",
+              minute: "numeric",
+            }}
+            locale="id-ID"
             className={styles.timepicker}
           />
         );
@@ -173,7 +178,7 @@ export const FormElement = ({
 
 const ComboBoxCustom = (props) => {
   const { inputId, name, label, options, handleChange, value } = props;
-  const [matchingOptions, setMatchingOptions] = useState([...options]);
+  const [matchingOptions, setMatchingOptions] = useState([]);
   const [customSearch, setCustomSearch] = useState("");
   const styles = useStyles();
 
@@ -193,14 +198,18 @@ const ComboBoxCustom = (props) => {
   };
 
   const onOptionSelect = (event, data) => {
-    const matchingOption = data.optionText && options.includes(data.optionText);
-    if (matchingOption) {
+    const matchingOptions = data.optionText && options.includes(data.optionText);
+    if (matchingOptions) {
       setCustomSearch(data.optionText);
       handleChange(event, { name: name, value: data.optionText });
     } else {
       setCustomSearch(undefined);
     }
   };
+
+  useEffect(() => {
+    setMatchingOptions([...options])
+  }, [options]);
 
   const itemHeight = 10;
   const numberOfItems = options.length;

@@ -180,17 +180,6 @@ const TableHauling = ({ handleEdit }) => {
     fetchData();
   }, []);
 
-  // const handleDelete = async (id) => {
-  //   console.log(id.label);
-  //   try {
-  //     const updatedData = await Transaksi.getDeteleTransaction(id.label);
-  //     console.log(updatedData);
-  //     window.location.reload();
-  //   } catch (error) {
-  //     console.error("Error deleting data:", error);
-  //   }
-  // };
-
   const handleDelete = async (id) => {
     console.log(id.label);
     try {

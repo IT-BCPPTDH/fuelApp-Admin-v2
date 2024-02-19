@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect } from "react";
+import React, { useState, useMemo, useEffect, useCallback } from "react";
 import "./CoalHauling.css";
 import {
   useId,
@@ -12,6 +12,7 @@ import {
 import FormComponent from "../FormComponent";
 import Transaksi from "../../services/inputCoalHauling";
 import { Save24Regular, ArrowReset24Regular } from "@fluentui/react-icons";
+// import pitOption from "../../data/datapit.json";
 
 const useStyles = makeStyles({
   messageContainer: {
@@ -24,8 +25,20 @@ const useStyles = makeStyles({
 
 const shiftOptions = ["Day", "Night"];
 const unitOptions = ["EXA526", "EXA726"];
-const loaderOptions = ["HWL1038", "HWL1040"];
-const seamOptions = ["B Hs", "C2", "BB"];
+const loaderOptions = [
+  "HWL1038",
+  "HWL1039",
+  "HWL1040",
+  "HWL5043",
+  "HEX1472",
+  "HEX1312",
+  "HEX1473",
+  "HEX1248",
+  "HEX1320",
+  "HEX1473",
+  "HWL5041",
+];
+// const seamOptions = ["C2", "A", "BB"];
 const dumpingpointOptions = [
   "MAIN COAL FACILITY ( HOPPER)",
   "STOCK PILE / OVERFLOW ( ROM MF)",
@@ -33,27 +46,185 @@ const dumpingpointOptions = [
   "MIDLE STOCK PILE",
   "SEKURAU",
 ];
-const pitOptions = ["A", "C", "D"];
+const pitOptions = [
+  "PIT A NORTH 1",
+  "PIT A NORTH 2",
+  "PIT A SOUTH 1",
+  "PIT A SOUTH 2",
+  "PIT B01",
+  "PIT B02",
+];
+
+const seamOptionsData = {
+  "PIT A NORTH 1": ["C2", "B Hs", "BB", "ARB", "D", "A", "C"],
+  "PIT A NORTH 2": ["C2", "B Hs", "BB", "ARB", "D", "A", "C"],
+  "PIT A SOUTH 1": [
+    "ARB",
+    "B Hs",
+    "B AMM",
+    "D",
+    "C",
+    "FF",
+    "C2",
+    "CC",
+    "D MTN",
+  ],
+  "PIT A SOUTH 2": [
+    "ARB",
+    "B Hs",
+    "B AMM",
+    "D",
+    "C",
+    "FF",
+    "C2",
+    "CC",
+    "D MTN",
+  ],
+  "PIT B01": [
+    "A PAMA",
+    "C PAMA",
+    "D",
+    "BM PAMA",
+    "AHS PAMA",
+    "B AAM",
+    "DE AAM",
+    "E1",
+    "A2",
+    "C DH",
+    "D AMM",
+    "A AMM",
+    "B SEAM",
+    "E 1 MTN",
+    "DE1 AMM",
+    "D MTN",
+  ],
+  "PIT B02": [
+    "A PAMA",
+    "C PAMA",
+    "D",
+    "BM PAMA",
+    "AHS PAMA",
+    "B AAM",
+    "DE AAM",
+    "E1",
+    "A2",
+    "C DH",
+    "D AMM",
+    "A AMM",
+    "B SEAM",
+    "E 1 MTN",
+    "DE1 AMM",
+    "D MTN",
+  ],
+};
 
 const InputHauling = ({ dataEdit }) => {
   const classes = useStyles();
   const [message, setMessage] = React.useState(null);
   const [isFormValid, setIsFormValid] = useState(false);
-  const currentDate = new Date();
-  const [formData, setFormData] = useState({
-    tanggal: currentDate,
-    shift: "",
-    unitNo: "",
-    operator: "",
-    loader: "",
-    tonnage: "",
-    seam: "",
-    dumpingpoint: "",
-    rom: "",
-    inrom: "",
-    outrom: "",
-    pit: "",
-  });
+  const [seamOptions, setSeamOptions] = useState([]);
+  const [formData, setFormData] = useState({});
+
+  useEffect(() => {
+
+    setFormData({
+      tanggal: dataEdit?.tanggal ?? new Date(),
+      shift: dataEdit?.shift ?? 'Day',
+      unitNo: dataEdit?.unitNo ?? '',
+      operator: dataEdit?.operator ?? '',
+      loader: dataEdit?.loader ?? '',
+      tonnage: dataEdit?.tonnage ?? '',
+      seam: dataEdit?.seam ?? '',
+      dumpingpoint: dataEdit?.dumpingpoint ?? '',
+      rom: dataEdit?.rom ?? '',
+      inrom: dataEdit?.inrom ?? '',
+      outrom: dataEdit?.outrom ?? '',
+      pit: dataEdit?.pit ?? '',
+    });
+    
+  }, [dataEdit]);
+
+  const handleChange = useCallback((e, v) => {
+    const { name, value } = v;
+
+    if (name === "inrom" || name === "outrom") {
+      const hours = value.selectedTime.getHours();
+      const minutes = value.selectedTime.getMinutes();
+      const second = value.selectedTime.getSeconds();
+
+      const addLeadingZero = (num) => (num < 10 ? `0${num}` : num);
+
+      const formattedTime = `${addLeadingZero(hours)}:${addLeadingZero(minutes)}:${addLeadingZero(second)}`;
+
+      console.log(formattedTime);
+      console.log(hours, minutes, second);
+
+      if (name === "inrom" && formattedTime > formData.outrom) {
+        alert("inrom tidak boleh lebih besar dari outrom");
+      } else if (name === "outrom" && formData.inrom > formattedTime) {
+        alert("outrom tidak boleh lebih kecil dari inrom");
+      }
+
+      setFormData((prevFormData) => ({
+        ...prevFormData,
+        [name]: formattedTime,
+      }));
+
+
+    } else {
+
+      if (name === "pit") {
+        let a = pitOptions?.find((v) => v === value);
+        setSeamOptions(seamOptionsData[a]);
+      }
+      
+      setFormData((prevFormData) => ({ ...prevFormData, [name]: value }));
+    }
+  
+    const isValid = Object.values(formData).every((val) => val !== "");
+    setIsFormValid(isValid);
+
+  }, [formData, setIsFormValid, setFormData, setSeamOptions]);
+
+  const handleSubmit = async () => {
+    try {
+      let data = {
+        ...formData,
+      };
+
+      let datainsert = await Transaksi.postCreateTransaction(data);
+
+      // Display success toast
+      setMessage({
+        type: "success",
+        content: "Data berhasil di input",
+      });
+
+      // Optionally, you can reload the window after a delay (e.g., 2 seconds)
+      setTimeout(() => {
+        window.location.reload();
+      }, 2000);
+    } catch (error) {
+      console.error("Error inserting data:", error);
+
+      // Display error toast
+      setMessage({
+        type: "error",
+        content: "Gagal menginput data. Silahkan coba kembali!",
+      });
+    }
+  };
+
+  const handleReset = () => {
+    setFormData({
+      inrom: "",
+      outrom: "",
+      tonnage: "",
+      dumpingpoint: "",
+    });
+    setMessage(null);
+    setIsFormValid(false);
+  };
 
   const comp = useMemo(
     () => [
@@ -170,107 +341,8 @@ const InputHauling = ({ dataEdit }) => {
         type: "TimePicker",
       },
     ],
-    [
-      formData,
-      shiftOptions,
-      pitOptions,
-      unitOptions,
-      loaderOptions,
-      seamOptions,
-      dumpingpointOptions,
-    ]
+    [formData, seamOptions]
   );
-
-  const handleChange = (e, v) => {
-    const { name, value } = v;
-    if (name === "inrom" || name === "outrom") {
-      const hours = value.selectedTime.getHours();
-      const minutes = value.selectedTime.getMinutes();
-      const second = value.selectedTime.getSeconds();
-
-      const addLeadingZero = (num) => (num < 10 ? `0${num}` : num);
-
-      // Format waktu menjadi string "HH:mm:ss"
-      const formattedTime = `${addLeadingZero(hours)}:${addLeadingZero(
-        minutes
-      )}:${addLeadingZero(second)}`;
-
-      console.log(formattedTime); // Output: "09:00:00"
-      console.log(hours, minutes, second);
-      setFormData((prevFormData) => ({
-        ...prevFormData,
-        [name]: formattedTime,
-      }));
-    } else if (name == "tonnage" || name == "dumpingpoint") {
-      // const converted = Number(value);
-      setFormData((prevFormData) => ({ ...prevFormData, [name]: value }));
-    } else {
-      setFormData((prevFormData) => ({ ...prevFormData, [name]: value }));
-    }
-
-    const isValid = Object.values(formData).every((val) => val !== "");
-    setIsFormValid(isValid);
-    console.log(1, name, value);
-  };
-
-  // const handleSubmit = async () => {
-  //   let data = {
-  //     ...formData,
-  //   };
-  //   console.log(data);
-
-  //   let datainsert = await Transaksi.postCreateTransaction(data);
-  //   console.log(datainsert);
-  //   window.location.reload();
-  // };
-
-  const handleSubmit = async () => {
-    try {
-      let data = {
-        ...formData,
-      };
-
-      let datainsert = await Transaksi.postCreateTransaction(data);
-
-      // Display success toast
-      setMessage({
-        type: "success",
-        content: "Data berhasil di input",
-      });
-
-      // Optionally, you can reload the window after a delay (e.g., 2 seconds)
-      setTimeout(() => {
-        window.location.reload();
-      }, 2000);
-    } catch (error) {
-      console.error("Error inserting data:", error);
-
-      // Display error toast
-      setMessage({
-        type: "error",
-        content: "Gagal menginput data. Silahkan coba kembali!",
-      });
-    }
-  };
-
-  useEffect(() => {
-    // console.log("dataEdit:", dataEdit);
-
-    setFormData({
-      tanggal: dataEdit?.tanggal,
-      shift: dataEdit?.shift,
-      unitNo: dataEdit?.unitNo,
-      operator: dataEdit?.operator,
-      loader: dataEdit?.loader,
-      tonnage: dataEdit?.tonnage,
-      seam: dataEdit?.seam,
-      dumpingpoint: dataEdit?.dumpingpoint,
-      rom: dataEdit?.rom,
-      inrom: dataEdit?.inrom,
-      outrom: dataEdit?.outrom,
-      pit: dataEdit?.pit,
-    });
-  }, [dataEdit]);
 
   return (
     <>
@@ -291,7 +363,8 @@ const InputHauling = ({ dataEdit }) => {
           <Button
             icon={<ArrowReset24Regular />}
             iconPosition="after"
-            style={{ backgroundColor: "#ff5722", color: "#ffffff" }}>
+            style={{ backgroundColor: "#ff5722", color: "#ffffff" }}
+            onClick={handleReset}>
             Reset
           </Button>
         </div>
