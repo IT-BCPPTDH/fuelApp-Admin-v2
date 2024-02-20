@@ -112,15 +112,19 @@ const TableHauling = ({ handleEdit }) => {
       minWidth: 20,
     },
     operator: {
-      minWidth: 190,
-      defaultWidth: 100,
+      minWidth: 100,
+      defaultWidth: 50,
     },
     shift: {
       idealWidth: 90,
       minWidth: 50,
     },
+    seam: {
+      idealWidth: 90,
+      minWidth: 50,
+    },
     pit: {
-      idealWidth: 40,
+      idealWidth: 100,
       minWidth: 50,
     },
   });
@@ -151,8 +155,9 @@ const TableHauling = ({ handleEdit }) => {
       try {
         const dts = await Transaksi.getAllTransaction();
 
-        const updatedItems = dts.data.map((itemFromDB) => ({
-          id: { label: itemFromDB.id },
+        const updatedItems = dts.data.map((itemFromDB, index) => ({
+          // id: { label: itemFromDB.id},
+          id: { label: ( index + 1).toString() },
           tanggal: { label: itemFromDB.tanggal },
           shift: { label: itemFromDB.shift },
           unitNo: { label: itemFromDB.unitno },
@@ -248,6 +253,7 @@ const TableHauling = ({ handleEdit }) => {
                 <TableRow key={item.id.label}>
                   <TableCell {...columnSizing_unstable.getTableCellProps("id")}>
                     {/* <TableCellLayout>{item.id.label}</TableCellLayout> */}
+                    <TableCellLayout>{item.id.label || (index + 1).toString()}</TableCellLayout>
                   </TableCell>
                   <TableCell
                     {...columnSizing_unstable.getTableCellProps("tanggal")}>

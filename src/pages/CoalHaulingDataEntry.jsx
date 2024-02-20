@@ -7,12 +7,15 @@ import Transaksi from "../services/inputCoalHauling";
 
 export default function CoalHaulingDataEntry() {
   const [dataEdit, setDataEdit] = useState();
+  const [postData, setPostData] = useState(true);
+  const [tid, setTid] = useState()
 
   const handleEdit = async (id) => {
-    // console.log(id.label);
+    setTid(id.label);
     let data = await Transaksi.getEditData(id.label);
     console.log(data.data);
     setDataEdit(data.data[0]);
+    setPostData(false);
   };
 
   return (
@@ -20,7 +23,12 @@ export default function CoalHaulingDataEntry() {
       <Title title="Entry Data Hauling" />
       <div className="row">
         <div className="col-7">
-          <InputHauling dataEdit={dataEdit} />
+          <InputHauling
+           tid = {tid}
+            dataEdit={dataEdit}
+            postData={postData}
+            setPostData={setPostData}
+          />
         </div>
         <div className="col-5">
           <CardDataHauling />
