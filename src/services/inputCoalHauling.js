@@ -24,6 +24,15 @@ const getEditTransaction = async () => {
   return response.data;
 };
 
+const patchEditTransaction = async (id,data) => {
+  console.log(id)
+  console.log(URL_ENUMS.patchEditData+id)
+  const response = await api.patch(URL_ENUMS.patchEditData+id,data);
+  console.log(1, response);
+  return response.data;
+};
+
+
 const getDeteleTransaction = async (id) => {
   const response = await api.patch(URL_ENUMS.getDeteleData+id);
   console.log(1, response);
@@ -86,6 +95,7 @@ const Transaksi = {
   postCreateTransaction,
   getDataTotal,
   getEditData,
+  patchEditTransaction,
   getDataHopper,
   getDataOverflow,
   getDataECF,

@@ -12,7 +12,6 @@ import {
 import FormComponent from "../FormComponent";
 import Transaksi from "../../services/inputCoalHauling";
 import { Save24Regular, ArrowReset24Regular } from "@fluentui/react-icons";
-// import pitOption from "../../data/datapit.json";
 
 const useStyles = makeStyles({
   messageContainer: {
@@ -25,6 +24,7 @@ const useStyles = makeStyles({
 
 const shiftOptions = ["Day", "Night"];
 const unitOptions = ["EXA526", "EXA726"];
+// const tonnageOptions = [68, 110, 140, 160, 135,];
 const loaderOptions = [
   "HWL1038",
   "HWL1039",
@@ -38,7 +38,7 @@ const loaderOptions = [
   "HEX1473",
   "HWL5041",
 ];
-// const seamOptions = ["C2", "A", "BB"];
+
 const dumpingpointOptions = [
   "MAIN COAL FACILITY ( HOPPER)",
   "STOCK PILE / OVERFLOW ( ROM MF)",
@@ -118,18 +118,31 @@ const seamOptionsData = {
   ],
 };
 
-const InputHauling = ({ dataEdit }) => {
+const InputHauling = ({ dataEdit , postData, setPostData, tid}) => {
   const classes = useStyles();
   const [message, setMessage] = React.useState(null);
   const [isFormValid, setIsFormValid] = useState(false);
   const [seamOptions, setSeamOptions] = useState([]);
   const [formData, setFormData] = useState({});
+  // const [shift, setShift] = useState([]);
+  
+
+  
+  const determineShift = () => {
+    const currentHour = new Date().getHours();
+  
+    // Menentukan shift berdasarkan jam
+    const shift = currentHour >= 6 && currentHour < 18 ? 'Day' : 'Night';
+  
+    return shift;
+  };
 
   useEffect(() => {
 
     setFormData({
+      // id:dataEdit?.id?dataEdit?.id:'',
       tanggal: dataEdit?.tanggal ?? new Date(),
-      shift: dataEdit?.shift ?? 'Day',
+      shift: dataEdit?.shift ?? determineShift(),
       unitNo: dataEdit?.unitNo ?? '',
       operator: dataEdit?.operator ?? '',
       loader: dataEdit?.loader ?? '',
@@ -186,27 +199,42 @@ const InputHauling = ({ dataEdit }) => {
 
   }, [formData, setIsFormValid, setFormData, setSeamOptions]);
 
+
   const handleSubmit = async () => {
     try {
+      const requiredFields = ["tanggal", "shift", "unitNo", "operator", "loader", "tonnage", "seam", "dumpingpoint", "rom", "inrom", "outrom", "pit"];
+      
+      const isAnyFieldEmpty = requiredFields.some(field => !formData[field]);
+  
+      if (isAnyFieldEmpty) {
+        alert("Mohon isi semua data yang diperlukan.");
+        return;
+      }
+  
       let data = {
         ...formData,
       };
+      if(postData){
+        let datainsert = await Transaksi.postCreateTransaction(data);
+        setPostData(true)
+      }else{
+        let dataUpdate = await Transaksi.patchEditTransaction(tid,data);
+        setPostData(true)
+      }
+  
 
-      let datainsert = await Transaksi.postCreateTransaction(data);
-
-      // Display success toast
       setMessage({
         type: "success",
         content: "Data berhasil di input",
       });
-
+  
       // Optionally, you can reload the window after a delay (e.g., 2 seconds)
       setTimeout(() => {
         window.location.reload();
       }, 2000);
     } catch (error) {
-      console.error("Error inserting data:", error);
-
+      console.error("Error inserting  :", error);
+  
       // Display error toast
       setMessage({
         type: "error",
@@ -214,6 +242,7 @@ const InputHauling = ({ dataEdit }) => {
       });
     }
   };
+  
 
   const handleReset = () => {
     setFormData({
@@ -224,6 +253,7 @@ const InputHauling = ({ dataEdit }) => {
     });
     setMessage(null);
     setIsFormValid(false);
+    setPostData(true)
   };
 
   const comp = useMemo(
@@ -343,7 +373,7 @@ const InputHauling = ({ dataEdit }) => {
     ],
     [formData, seamOptions]
   );
-
+// console.log(11111,formData)
   return (
     <>
       <div
