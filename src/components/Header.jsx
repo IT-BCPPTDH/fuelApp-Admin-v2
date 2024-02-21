@@ -23,7 +23,7 @@ const Header = () => {
         <Subtitle2
           style={{ position: 'relative', right: '50px', color: '#555' }}
         >
-          MED/MOD Data Entry App
+          Production Data Collector 
         </Subtitle2>
       </div>
 

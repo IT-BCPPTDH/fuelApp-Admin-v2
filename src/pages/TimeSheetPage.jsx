@@ -11,6 +11,7 @@ import { calculateTotalTimeFromArray } from '../helpers/timeHelper'
 import { FooterPageForm } from '../components/FormComponent/FooterPageForm'
 import { useLiveQuery } from 'dexie-react-hooks'
 import { db } from '../models/db'
+import { useNavigate } from 'react-router-dom'
 // import { getActivity } from '../helpers/indexedDB/getData'
 
 const tabs = [
@@ -28,7 +29,8 @@ export default function TimeSheetPage () {
   const currentDate = new Date()
   const [totalDuration, setTotalDuration] = useState()
   const [buttonDisabled, setButtonDisabled] = useState(true)
-
+  const navigate = useNavigate()
+  
   const master = useLiveQuery(() => db.activity.toArray())
 
   const [jdeOptions, setJdeOptions] = useState(() => getLocalStorage('timeEntry-operator'));
@@ -287,10 +289,9 @@ export default function TimeSheetPage () {
           const hmAwalValue = parseFloat(formData.hmAwal) || 0
           const hmAkhirValue = parseFloat(formattedValue) || 0
           const totalHmValue = (hmAkhirValue - hmAwalValue).toFixed(2)
-          // console.log(hmAwalValue, hmAkhirValue)
 
           if (hmAkhirValue < hmAwalValue) {
-            // console.error("'hmAkhir' should not be less than 'hmAwal'");
+            
             setFormData(prevFormData => ({ ...prevFormData, hm: 'ERROR' }))
             ev.target.parentElement.classList.add('border-input-error')
           } else {
@@ -301,8 +302,6 @@ export default function TimeSheetPage () {
               ev.target.parentElement.classList.remove('border-input-error')
             }
           }
-
-          // console.log(totalHmValue)
         }
       } else {
         console.error('Invalid input for HM values')
@@ -312,7 +311,6 @@ export default function TimeSheetPage () {
     }
 
     if (name === 'jdeOperator' && value.length >= 6) {
-      // console.log(masterOP)
       let mo = masterOP?.find(v => v.jde === value)
       setFormData({
         ...formData,
