@@ -12,6 +12,7 @@ import {
 import FormComponent from "../FormComponent";
 import Transaksi from "../../services/inputCoalHauling";
 import { Save24Regular, ArrowReset24Regular } from "@fluentui/react-icons";
+import { insertFormDataHauling } from "../../helpers/indexedDB/insert";
 
 const useStyles = makeStyles({
   messageContainer: {
@@ -23,7 +24,14 @@ const useStyles = makeStyles({
 });
 
 const shiftOptions = ["Day", "Night"];
-const unitOptions = ["EXA526", "EXA726"];
+const unitOptions = [
+  "HPM9040",
+  "HPM9041",
+  "HPM9042",
+  "HPM9043",
+  "HPM9044",
+  "HPM9045",
+];
 // const tonnageOptions = [68, 110, 140, 160, 135,];
 const loaderOptions = [
   "HWL1038",
@@ -118,123 +126,130 @@ const seamOptionsData = {
   ],
 };
 
-const InputHauling = ({ dataEdit , postData, setPostData, tid}) => {
+const InputHauling = ({ dataEdit, postData, setPostData, tid }) => {
   const classes = useStyles();
   const [message, setMessage] = React.useState(null);
   const [isFormValid, setIsFormValid] = useState(false);
   const [seamOptions, setSeamOptions] = useState([]);
   const [formData, setFormData] = useState({});
-  // const [shift, setShift] = useState([]);
-  
 
-  
   const determineShift = () => {
     const currentHour = new Date().getHours();
-  
+
     // Menentukan shift berdasarkan jam
-    const shift = currentHour >= 6 && currentHour < 18 ? 'Day' : 'Night';
-  
+    const shift = currentHour >= 6 && currentHour < 18 ? "Day" : "Night";
+
     return shift;
   };
 
   useEffect(() => {
-
     setFormData({
       // id:dataEdit?.id?dataEdit?.id:'',
       tanggal: dataEdit?.tanggal ?? new Date(),
       shift: dataEdit?.shift ?? determineShift(),
-      unitNo: dataEdit?.unitNo ?? '',
-      operator: dataEdit?.operator ?? '',
-      loader: dataEdit?.loader ?? '',
-      tonnage: dataEdit?.tonnage ?? '',
-      seam: dataEdit?.seam ?? '',
-      dumpingpoint: dataEdit?.dumpingpoint ?? '',
-      rom: dataEdit?.rom ?? '',
-      inrom: dataEdit?.inrom ?? '',
-      outrom: dataEdit?.outrom ?? '',
-      pit: dataEdit?.pit ?? '',
+      unitNo: dataEdit?.unitNo ?? "",
+      operator: dataEdit?.operator ?? "",
+      loader: dataEdit?.loader ?? "",
+      tonnage: dataEdit?.tonnage ?? "",
+      seam: dataEdit?.seam ?? "",
+      dumpingpoint: dataEdit?.dumpingpoint ?? "",
+      rom: dataEdit?.rom ?? "",
+      inrom: dataEdit?.inrom ?? "",
+      outrom: dataEdit?.outrom ?? "",
+      pit: dataEdit?.pit ?? "",
     });
-    
   }, [dataEdit]);
 
-  const handleChange = useCallback((e, v) => {
-    const { name, value } = v;
+  const handleChange = useCallback(
+    (e, v) => {
+      const { name, value } = v;
 
-    if (name === "inrom" || name === "outrom") {
-      const hours = value.selectedTime.getHours();
-      const minutes = value.selectedTime.getMinutes();
-      const second = value.selectedTime.getSeconds();
+      if (name === "inrom" || name === "outrom") {
+        const hours = value.selectedTime.getHours();
+        const minutes = value.selectedTime.getMinutes();
+        const second = value.selectedTime.getSeconds();
 
-      const addLeadingZero = (num) => (num < 10 ? `0${num}` : num);
+        const addLeadingZero = (num) => (num < 10 ? `0${num}` : num);
 
-      const formattedTime = `${addLeadingZero(hours)}:${addLeadingZero(minutes)}:${addLeadingZero(second)}`;
+        const formattedTime = `${addLeadingZero(hours)}:${addLeadingZero(
+          minutes
+        )}:${addLeadingZero(second)}`;
 
-      console.log(formattedTime);
-      console.log(hours, minutes, second);
+        console.log(formattedTime);
+        console.log(hours, minutes, second);
 
-      if (name === "inrom" && formattedTime > formData.outrom) {
-        alert("inrom tidak boleh lebih besar dari outrom");
-      } else if (name === "outrom" && formData.inrom > formattedTime) {
-        alert("outrom tidak boleh lebih kecil dari inrom");
+        if (name === "inrom" && formattedTime > formData.outrom) {
+          alert("inrom tidak boleh lebih besar dari outrom");
+        } else if (name === "outrom" && formData.inrom > formattedTime) {
+          alert("outrom tidak boleh lebih kecil dari inrom");
+        }
+
+        setFormData((prevFormData) => ({
+          ...prevFormData,
+          [name]: formattedTime,
+        }));
+      } else {
+        if (name === "pit") {
+          let a = pitOptions?.find((v) => v === value);
+          setSeamOptions(seamOptionsData[a]);
+        }
+
+        setFormData((prevFormData) => ({ ...prevFormData, [name]: value }));
       }
 
-      setFormData((prevFormData) => ({
-        ...prevFormData,
-        [name]: formattedTime,
-      }));
-
-
-    } else {
-
-      if (name === "pit") {
-        let a = pitOptions?.find((v) => v === value);
-        setSeamOptions(seamOptionsData[a]);
-      }
-      
-      setFormData((prevFormData) => ({ ...prevFormData, [name]: value }));
-    }
-  
-    const isValid = Object.values(formData).every((val) => val !== "");
-    setIsFormValid(isValid);
-
-  }, [formData, setIsFormValid, setFormData, setSeamOptions]);
-
+      const isValid = Object.values(formData).every((val) => val !== "");
+      setIsFormValid(isValid);
+    },
+    [formData, setIsFormValid, setFormData, setSeamOptions]
+  );
 
   const handleSubmit = async () => {
     try {
-      const requiredFields = ["tanggal", "shift", "unitNo", "operator", "loader", "tonnage", "seam", "dumpingpoint", "rom", "inrom", "outrom", "pit"];
-      
-      const isAnyFieldEmpty = requiredFields.some(field => !formData[field]);
-  
+      const requiredFields = [
+        "tanggal",
+        "shift",
+        "unitNo",
+        "operator",
+        "loader",
+        "tonnage",
+        "seam",
+        "dumpingpoint",
+        "rom",
+        "inrom",
+        "outrom",
+        "pit",
+      ];
+
+      const isAnyFieldEmpty = requiredFields.some((field) => !formData[field]);
+
       if (isAnyFieldEmpty) {
         alert("Mohon isi semua data yang diperlukan.");
         return;
       }
-  
+
       let data = {
         ...formData,
       };
-      if(postData){
-        let datainsert = await Transaksi.postCreateTransaction(data);
-        setPostData(true)
-      }else{
-        let dataUpdate = await Transaksi.patchEditTransaction(tid,data);
-        setPostData(true)
+      if (postData) {
+        let datainsert = await insertFormDataHauling(data);
+        setPostData(true);
+      } else {
+        let dataUpdate = await Transaksi.patchEditTransaction(tid, data);
+        setPostData(true);
       }
-  
 
       setMessage({
         type: "success",
         content: "Data berhasil di input",
       });
-  
+
       // Optionally, you can reload the window after a delay (e.g., 2 seconds)
-      setTimeout(() => {
-        window.location.reload();
-      }, 2000);
+      // setTimeout(() => {
+      //   window.location.reload();
+      // }, 2000);
     } catch (error) {
       console.error("Error inserting  :", error);
-  
+
       // Display error toast
       setMessage({
         type: "error",
@@ -242,7 +257,6 @@ const InputHauling = ({ dataEdit , postData, setPostData, tid}) => {
       });
     }
   };
-  
 
   const handleReset = () => {
     setFormData({
@@ -253,7 +267,7 @@ const InputHauling = ({ dataEdit , postData, setPostData, tid}) => {
     });
     setMessage(null);
     setIsFormValid(false);
-    setPostData(true)
+    setPostData(true);
   };
 
   const comp = useMemo(
@@ -289,9 +303,9 @@ const InputHauling = ({ dataEdit , postData, setPostData, tid}) => {
         name: "unitNo",
         grid: "col-4",
         label: "No Unit",
-        value: formData.unitNo,
         readOnly: false,
         disabled: false,
+        value: formData.unitNo,
         type: "Combobox",
         options: unitOptions,
       },
@@ -373,7 +387,7 @@ const InputHauling = ({ dataEdit , postData, setPostData, tid}) => {
     ],
     [formData, seamOptions]
   );
-// console.log(11111,formData)
+
   return (
     <>
       <div

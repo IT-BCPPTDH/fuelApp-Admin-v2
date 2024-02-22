@@ -23,3 +23,13 @@ export const insertUnit = async (data) =>{
     console.error(error);
   }
 }
+
+export const insertFormDataHauling = async (data) =>{
+console.log(data);
+  try {
+   let a = await db.formdatahauling.add(data);
+   console.log(a);
+  } catch (error) {
+    console.log(error);
+  }
+}

@@ -32,6 +32,11 @@ const patchEditTransaction = async (id,data) => {
   return response.data;
 };
 
+const getDownload = async () => {
+  const response = await api.get(URL_ENUMS.getDownload);
+  console.log(1, response);
+  return response.data;
+};
 
 const getDeteleTransaction = async (id) => {
   const response = await api.patch(URL_ENUMS.getDeteleData+id);
@@ -101,6 +106,7 @@ const Transaksi = {
   getDataECF,
   getDataMiddleStock,
   getDataSekurau,
+  getDownload,
 };
 
 

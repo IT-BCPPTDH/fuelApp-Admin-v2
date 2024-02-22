@@ -1,8 +1,8 @@
+import React, { useMemo } from "react";
 import { SearchBox } from "@fluentui/react-search-preview";
+import FormComponent from "../FormComponent";
 
-import {
-  ArrowDownload24Regular,
-} from "@fluentui/react-icons";
+import { ArrowDownload24Regular } from "@fluentui/react-icons";
 import {
   TableBody,
   TableCell,
@@ -15,11 +15,11 @@ import {
   Avatar,
 } from "@fluentui/react-components";
 
+
 const items = [
   {
     tanggal: { label: "12/01/2024" },
     author: { label: "Rahmansyah Kurniawan" },
-    shift: { label: "Day" },
     total: { label: 177 },
   },
 ];
@@ -27,22 +27,33 @@ const items = [
 const columns = [
   { columnKey: "tanggal", label: "Tanggal" },
   { columnKey: "author", label: "Author" },
-  { columnKey: "shift", label: "Shift" },
   { columnKey: "total", label: "Total Hauling" },
+  { columnKey: "action", label: "Action" },
 ];
 
 const TableCoalHauling = () => {
+  const selectTgl = useMemo(() => [
+    {
+      name: "tanggal",
+      grid: "col-12",
+      value: "",
+      readOnly: false,
+      disabled: false,
+      type: "DatePicker",
+    },
+  ]);
   return (
     <>
       <div className="form-wrapper">
         <div className="search-box">
-          <Button
+          {/* <Button
             icon={<ArrowDownload24Regular />}
             iconPosition="after"
             style={{ backgroundColor: "#28499c", color: "#ffffff" }}>
             Download
           </Button>
-          <SearchBox placeholder="Search" />
+          <SearchBox placeholder="Search" /> */}
+          <FormComponent components={selectTgl} />
         </div>
         <Table aria-label="Default table">
           <TableHeader>
@@ -54,6 +65,7 @@ const TableCoalHauling = () => {
               ))}
             </TableRow>
           </TableHeader>
+
           <TableBody>
             {items.map((item) => (
               <TableRow key={item.tanggal.label}>
@@ -77,10 +89,10 @@ const TableCoalHauling = () => {
                   </TableCellLayout>
                 </TableCell>
                 <TableCell>
-                  <TableCellLayout>{item.shift.label}</TableCellLayout>
+                  <TableCellLayout>{item.total.label}</TableCellLayout>
                 </TableCell>
                 <TableCell>
-                  <TableCellLayout>{item.total.label}</TableCellLayout>
+                  test
                 </TableCell>
               </TableRow>
             ))}
