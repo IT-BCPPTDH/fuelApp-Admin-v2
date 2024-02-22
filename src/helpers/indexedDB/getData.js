@@ -17,3 +17,12 @@ export const getOperator = async () =>{
         console.error(error);
       }
 }
+
+// export const getDataTableHauling = async () =>{
+//   try {
+//       const formdatahauling = await db.formdatahauling.toArray();
+//       return formdatahauling
+//     } catch (error) {
+//       console.error(error);
+//     }
+// }

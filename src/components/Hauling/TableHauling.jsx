@@ -112,11 +112,11 @@ const TableHauling = ({ handleEdit }) => {
       minWidth: 20,
     },
     operator: {
-      minWidth: 100,
+      minWidth: 80,
       defaultWidth: 50,
     },
     shift: {
-      idealWidth: 90,
+      idealWidth: 80,
       minWidth: 50,
     },
     seam: {
@@ -156,11 +156,11 @@ const TableHauling = ({ handleEdit }) => {
         const dts = await Transaksi.getAllTransaction();
 
         const updatedItems = dts.data.map((itemFromDB, index) => ({
-          // id: { label: itemFromDB.id},
-          id: { label: ( index + 1).toString() },
+          id: { label: itemFromDB.id},
+          // id: { label: ( index + 1).toString() },
           tanggal: { label: itemFromDB.tanggal },
           shift: { label: itemFromDB.shift },
-          unitNo: { label: itemFromDB.unitno },
+          unitNo: { label: itemFromDB.unitNo },
           operator: { label: itemFromDB.operator },
           tonnage: { label: itemFromDB.tonnage },
           loader: { label: itemFromDB.loader },
@@ -202,6 +202,16 @@ const TableHauling = ({ handleEdit }) => {
     }
   };
 
+  const handleDownload = async () => {
+    try {
+      const downloadData = await Transaksi.getDownload();
+      console.log(downloadData);
+      // const link = document.createElement('a');
+    }catch (error) {
+      console.error('Error downloading data:', error);
+    }
+  };
+
   return (
     <>
       <div className="form-wrapper" style={{ marginTop: "10px" }}>
@@ -209,10 +219,12 @@ const TableHauling = ({ handleEdit }) => {
           <Button
             icon={<ArrowDownload24Regular />}
             iconPosition="after"
+            onClick={() => handleDownload()}
             style={{ backgroundColor: "#28499c", color: "#ffffff" }}>
             Download
+          
           </Button>
-          <SearchBox placeholder="Search" />
+          {/* <SearchBox placeholder="Search" /> */}
         </div>
         <div style={{ overflowX: "auto" }}>
           <Table
@@ -250,10 +262,10 @@ const TableHauling = ({ handleEdit }) => {
 
             <TableBody>
               {rows.map(({ item }) => (
-                <TableRow key={item.id.label}>
+                <TableRow key={item}>
                   <TableCell {...columnSizing_unstable.getTableCellProps("id")}>
                     {/* <TableCellLayout>{item.id.label}</TableCellLayout> */}
-                    <TableCellLayout>{item.id.label || (index + 1).toString()}</TableCellLayout>
+                    {/* <TableCellLayout>{item.id.label || (index + 1).toString()}</TableCellLayout> */}
                   </TableCell>
                   <TableCell
                     {...columnSizing_unstable.getTableCellProps("tanggal")}>

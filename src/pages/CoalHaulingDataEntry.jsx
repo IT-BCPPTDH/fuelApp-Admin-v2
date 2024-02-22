@@ -4,6 +4,7 @@ import InputHauling from "../components/Hauling/InputHauling";
 import CardDataHauling from "../components/Hauling/CardDataHauling";
 import TableHauling from "../components/Hauling/TableHauling";
 import Transaksi from "../services/inputCoalHauling";
+import { HeaderPageForm } from "../components/FormComponent/HeaderPageForm";
 
 export default function CoalHaulingDataEntry() {
   const [dataEdit, setDataEdit] = useState();
@@ -20,7 +21,8 @@ export default function CoalHaulingDataEntry() {
 
   return (
     <>
-      <Title title="Entry Data Hauling" />
+      {/* <Title title="Entry Data Hauling" /> */}
+      <HeaderPageForm title={`Data Entry Coal Hauling`} />
       <div className="row">
         <div className="col-7">
           <InputHauling
