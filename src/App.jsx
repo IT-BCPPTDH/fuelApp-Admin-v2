@@ -32,7 +32,6 @@ const dh = {
       fontFamily: '"Segoe UI", sans-serif',
     },
   }
-  
 };
 
 const lightTheme = {

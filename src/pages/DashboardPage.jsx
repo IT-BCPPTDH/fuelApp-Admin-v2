@@ -199,6 +199,11 @@ const dataFiles = [
   //   link: '/coalhauling-admin'
   // },
   {
+    name: 'Time Entry',
+    desc: 'List Time Entry All Date',
+    link: '/time-entry-collector'
+  },
+  {
     name: 'Operator Timesheet Data Entry',
     desc: 'Data Collector for Activity Time Entry',
     link: '/time-entry/support'
@@ -306,14 +311,14 @@ const DashboardPage = () => {
 
   useEffect(() => {
     document.title = 'Homepage MED/MOD Data Entry App - PTDH'
-    if(activity && operator && unit){
+    if (activity && operator && unit) {
       getDataMaster(activity, operator, unit)
     }
     getData()
     if (open && dialogRef.current) {
       findFirstFocusable(dialogRef.current)?.focus()
     }
-  }, [open, findFirstFocusable, getDataMaster, getData,activity, operator, unit])
+  }, [open, findFirstFocusable, getDataMaster, getData, activity, operator, unit])
 
   const onClickClose = () => {
     setOpen(false)

@@ -10,15 +10,26 @@ export const HeaderPageForm = ({ title }) => {
     }
   return (
     <div className='flex-space-between'>
+      
+      <Button
+        icon={<ArrowCircleLeft24Regular />}
+        iconPosition='before'
+        style={{ backgroundColor: '#69797e', color: '#ffffff' }}
+        onClick={handleClick}
+      >
+        Back
+      </Button>
       <Title title={title} />
       <Button
         icon={<ArrowCircleLeft24Regular />}
         iconPosition='before'
-        style={{ backgroundColor: '#607d8b', color: '#ffffff' }}
+        style={{ backgroundColor: '#107c10', color: '#ffffff' }}
         onClick={handleClick}
       >
-        Cancel Entry
+        New Data Entry
       </Button>
+
+      
     </div>
   )
 }
