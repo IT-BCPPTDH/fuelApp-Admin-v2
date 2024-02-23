@@ -475,7 +475,7 @@ export default function TimeSheetPage () {
 
   return (
     <>
-      <HeaderPageForm title={`Form Operator Activity Timesheet - Data Entry`} />
+      <HeaderPageForm title={`Form Operator Activity Timesheet - Data Entry Support`} />
       <div className='form-wrapper'>
         <FormComponent handleChange={handleChange} components={components} />
         <div ref={jRef} className='mt1em' />

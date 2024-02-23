@@ -10,15 +10,13 @@ import {
   createTableColumn,
   useTableColumnSizing_unstable,
   useTableFeatures,
-  Input,
-  useId,
+  Avatar,
   Menu,
   MenuItem,
   MenuList,
   MenuPopover,
   MenuTrigger,
 } from "@fluentui/react-components";
-
 import {
   DocumentPdfRegular,
   DocumentRegular,
@@ -29,30 +27,78 @@ import {
   VideoRegular,
 } from "@fluentui/react-icons";
 
+import { HeaderPageForm } from "../components/FormComponent/HeaderPageForm";
+import { DynamicTablistMenu } from "../components/Tablist"; 
+import { tabsTimeEntry } from "../helpers/tabArrayHelper";
+
 const columnsDef = [
   createTableColumn({
-    columnId: "file",
-    renderHeaderCell: () => <>File</>,
+    columnId: "id",
+    renderHeaderCell: () => <>ID</>,
   }),
   createTableColumn({
-    columnId: "author",
-    renderHeaderCell: () => <>Author</>,
+    columnId: "entryDate",
+    renderHeaderCell: () => <>Entry Date</>,
   }),
   createTableColumn({
-    columnId: "lastUpdated",
-    renderHeaderCell: () => <>Last updated</>,
+    columnId: "unitType",
+    renderHeaderCell: () => <>Unit Type</>,
   }),
   createTableColumn({
-    columnId: "lastUpdate",
-    renderHeaderCell: () => <>Last update</>,
+    columnId: "totalUnit",
+    renderHeaderCell: () => <>Total Unit</>,
+  }),
+  createTableColumn({
+    columnId: "entryBy",
+    renderHeaderCell: () => <>Entry By</>,
   }),
 ];
 
-const ResizableColumnsUncontrolled = () => {
+const items = [
+  {
+    file: { label: "Meeting notes", icon: <DocumentRegular /> },
+    author: { label: "Max Mustermann", status: "available" },
+    lastUpdated: { label: "7h ago", timestamp: 3 },
+    lastUpdate: {
+      label: "You edited this",
+      icon: <EditRegular />,
+    },
+  },
+  {
+    file: { label: "Thursday presentation", icon: <FolderRegular /> },
+    author: { label: "Erika Mustermann", status: "busy" },
+    lastUpdated: { label: "Yesterday at 1:45 PM", timestamp: 2 },
+    lastUpdate: {
+      label: "You recently opened this",
+      icon: <OpenRegular />,
+    },
+  },
+  {
+    file: { label: "Training recording", icon: <VideoRegular /> },
+    author: { label: "John Doe", status: "away" },
+    lastUpdated: { label: "Yesterday at 1:45 PM", timestamp: 2 },
+    lastUpdate: {
+      label: "You recently opened this",
+      icon: <OpenRegular />,
+    },
+  },
+  {
+    file: { label: "Purchase order", icon: <DocumentPdfRegular /> },
+    author: { label: "Jane Doe", status: "offline" },
+    lastUpdated: { label: "Tue at 9:30 AM", timestamp: 1 },
+    lastUpdate: {
+      label: "You shared this in a Teams chat",
+      icon: <PeopleRegular />,
+    },
+  },
+];
+
+
+const TimeEntryAll = () => {
   const [columns] = useState(columnsDef);
   const [columnSizingOptions] = useState({
     file: {
-      idealWidth: 300,
+      idealWidth: 200,
       minWidth: 150,
     },
     author: {
@@ -72,36 +118,26 @@ const ResizableColumnsUncontrolled = () => {
     [useTableColumnSizing_unstable({ columnSizingOptions })]
   );
 
-  const [inputValue, setInputValue] = useState("300");
-
-  const onWidthChange = (e) => {
-    setInputValue(e.target.value);
-    const numeric = parseInt(e.target.value, 10);
-    if (!Number.isNaN(numeric)) {
-      columnSizing_unstable.setColumnWidth("file", numeric);
-    }
-  };
-
   const rows = getRows();
-  const inputId = useId("column-width");
 
   return (
     <>
-      <p>
-        <label htmlFor={inputId}>First column width: </label>
-        <Input
-          type="number"
-          id={inputId}
-          onChange={onWidthChange}
-          value={inputValue ? inputValue.toString() : ""}
-        />
-      </p>
-      <div style={{ overflowX: "auto" }}>
+    <HeaderPageForm title={`Time Entry From Data Collector`} />
+      <div className="form-wrapper">
+      <div className='row'>
+          <div className='col-6'>
+            <DynamicTablistMenu
+              tabs={tabsTimeEntry}
+              active='time-entry-collector'
+            />
+          </div>
+        </div>
         <Table
           sortable
           aria-label="Table with sort"
           ref={tableRef}
           {...columnSizing_unstable.getTableProps()}
+          style={{marginTop: '10px'}}
         >
           <TableHeader>
             <TableRow>
@@ -145,6 +181,14 @@ const ResizableColumnsUncontrolled = () => {
                 >
                   <TableCellLayout
                     truncate
+                    media={
+                      <Avatar
+                        name={item.author.label}
+                        badge={{
+                          status: item.author.status,
+                        }}
+                      />
+                    }
                   >
                     {item.author.label}
                   </TableCellLayout>
@@ -172,4 +216,4 @@ const ResizableColumnsUncontrolled = () => {
   );
 };
 
-export default ResizableColumnsUncontrolled;
+export default TimeEntryAll;

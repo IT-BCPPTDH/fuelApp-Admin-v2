@@ -1,6 +1,6 @@
 import { Route, Routes } from 'react-router-dom'
 
-// import { HomePage } from './pages/HomePage'
+import { HomePage } from './pages/HomePage'
 import DashboardPage from './pages/DashboardPage'
 import CoalHauling from './pages/CoalHauling';
 import TimeSheetPage from './pages/TimeSheetPage'
@@ -16,11 +16,13 @@ import InputUnit from './pages/AdminCoalHauling/InputUnit';
 import InputOperator from './pages/AdminCoalHauling/InputOperator';
 import CoalHaulingDataEntry from './pages/CoalHaulingDataEntry';
 
+import TimeEntryAll from './pages/TimeEntryAll';
+
 const RouteApp = () => {
   return (
     <Routes>
       <Route path='/' element={<DashboardPage />} />
-      {/* <Route path='/collector/:id' element={<HomePage />} /> */}
+      <Route path='/collector/:id' element={<HomePage />} />
       <Route path='/time-entry/support' element={<TimeSheetPage />}></Route>
       <Route path='/coalhauling' element={<CoalHauling />}></Route>
       <Route path='/coalhauling-dataentry' element={<CoalHaulingDataEntry />}></Route>
@@ -35,6 +37,7 @@ const RouteApp = () => {
       <Route path='/distance-data-entry' element={<DistanceEntryPage />}></Route>
       <Route path='/time-entry/digger' element={<ProductionDiggerPage />} />
       <Route path='/time-entry-hauler' element={<ProductionHaulerPage />} />
+      <Route path='/time-entry-collector' element={<TimeEntryAll />} />
     </Routes>
   )
 }

@@ -3,9 +3,13 @@ export const tabsRekapTimeEntry = [
   { label: 'Time Sheet Mines', value: 'time-sheet-mines' },
   { label: 'Time Entry Production Unit', value: 'time-entry-production' },
   // { label: 'Time Entry Support Unit', value: 'time-entry-support' }
-
   // { label: 'Summary Load DS', value: 'summary-load-ds' },
   // { label: 'Summary Load NS', value: 'summary-load-ns' },
   // { label: 'SMU Hours', value: 'smu-hours' },
   // { label: 'Distance', value: 'distance' }
+]
+
+export const tabsTimeEntry = [
+  { label: 'Time Entry From Data Collector', value: 'time-entry-from-data-collector' },
+  { label: 'Time Entry From FMS', value: 'time-entry-from-fms' },
 ]
