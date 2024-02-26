@@ -18,11 +18,11 @@ export const getOperator = async () =>{
       }
 }
 
-// export const getDataTableHauling = async () =>{
-//   try {
-//       const formdatahauling = await db.formdatahauling.toArray();
-//       return formdatahauling
-//     } catch (error) {
-//       console.error(error);
-//     }
-// }
+export const getDataTableHauling = async () =>{
+  try {
+      const formdatahaulings = await db.formdatahauling.toArray();
+      return formdatahaulings
+    } catch (error) {
+      console.error(error);
+    }
+}

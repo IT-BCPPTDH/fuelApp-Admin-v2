@@ -95,13 +95,9 @@ const columnsDef = [
     columnId: "outrom",
     renderHeaderCell: () => <>Out Rom</>,
   }),
-  createTableColumn({
-    columnId: "action",
-    renderHeaderCell: () => <>Action</>,
-  }),
 ];
 
-const TableHauling = ({ handleEdit }) => {
+const TableDetailHauling = () => {
   const classes = useStyles();
   const [columns] = useState(columnsDef);
   const [message, setMessage] = useState(null);
@@ -157,7 +153,7 @@ const TableHauling = ({ handleEdit }) => {
 
         const updatedItems = dts.data.map((itemFromDB, index) => ({
           id: { label: itemFromDB.id},
-          // id: { label: ( index + 1).toString() },
+          id: { label: ( index + 1).toString() },
           tanggal: { label: itemFromDB.tanggal },
           shift: { label: itemFromDB.shift },
           unitno: { label: itemFromDB.unitno },
@@ -169,7 +165,6 @@ const TableHauling = ({ handleEdit }) => {
           dumpingpoint: { label: itemFromDB.dumpingpoint },
           inrom: { label: itemFromDB.inrom },
           outrom: { label: itemFromDB.outrom },
-          action: { label: itemFromDB.action },
         }));
 
         setItems(updatedItems);
@@ -180,27 +175,6 @@ const TableHauling = ({ handleEdit }) => {
 
     fetchData();
   }, []);
-
-  const handleDelete = async (id) => {
-    console.log(id.label);
-    try {
-      const updatedData = await Transaksi.getDeteleTransaction(id.label);
-      console.log(updatedData);
-      setMessage({
-        type: "success",
-        content: "Data derhasil dihapus",
-      });
-      setTimeout(() => {
-        window.location.reload();
-      }, 1000);
-    } catch (error) {
-      console.error("Error deleting data:", error);
-      setMessage({
-        type: "error",
-        content: "Gagal menghapus data. Silahkan coba kembali",
-      });
-    }
-  };
 
   const handleDownload = async () => {
     try {
@@ -264,7 +238,7 @@ const TableHauling = ({ handleEdit }) => {
               {rows.map(({ item }) => (
                 <TableRow key={item}>
                   <TableCell {...columnSizing_unstable.getTableCellProps("id")}>
-                    {/* <TableCellLayout>{item.id.label}</TableCellLayout> */}
+                    <TableCellLayout>{item.id.label}</TableCellLayout>
                     {/* <TableCellLayout>{item.id.label || (index + 1).toString()}</TableCellLayout> */}
                   </TableCell>
                   <TableCell
@@ -317,45 +291,7 @@ const TableHauling = ({ handleEdit }) => {
                     {...columnSizing_unstable.getTableCellProps("outrom")}>
                     <TableCellLayout>{item.outrom.label}</TableCellLayout>
                   </TableCell>
-                  <TableCell
-                    {...columnSizing_unstable.getTableCellProps("action")}>
-                    <TableCellLayout>
-                      <Button
-                        // value={item.id}
-                        icon={<EditRegular />}
-                        aria-label="Edit"
-                        onClick={() => handleEdit(item.id)}
-                      />
-                      {/* <Button icon={<DeleteRegular />} aria-label="Delete" /> */}
-
-                      <Dialog modalType="alert">
-                        <DialogTrigger disableButtonEnhancement>
-                          <Button
-                            icon={<DeleteRegular />}
-                            aria-label="Delete"
-                          />
-                        </DialogTrigger>
-                        <DialogSurface>
-                          <DialogBody>
-                            <DialogTitle>Hapus Data Ini?</DialogTitle>
-                            <DialogContent>
-                              Data ini akan di hapus dan tidak dapat di pulihkan
-                            </DialogContent>
-                            <DialogActions>
-                              <DialogTrigger disableButtonEnhancement>
-                                <Button appearance="secondary">Batalkan</Button>
-                              </DialogTrigger>
-                              <Button
-                                appearance="secondary"
-                                onClick={() => handleDelete(item.id)}>
-                                Hapus
-                              </Button>
-                            </DialogActions>
-                          </DialogBody>
-                        </DialogSurface>
-                      </Dialog>
-                    </TableCellLayout>
-                  </TableCell>
+                 
                 </TableRow>
               ))}
             </TableBody>
@@ -378,4 +314,4 @@ const TableHauling = ({ handleEdit }) => {
   );
 };
 
-export default TableHauling;
+export default TableDetailHauling;
