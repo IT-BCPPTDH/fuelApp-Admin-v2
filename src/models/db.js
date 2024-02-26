@@ -6,5 +6,5 @@ db.version(4).stores({
   activity:'++id,activityname,delaydescription,kode',
   operator:'++id,jde,fullname,position',
   unit:'++id,unitno,type,merk,category,owner,usage',
-  formdatahauling:'++id,tanggal,shift,unitNo,operator,loader,tonnage,seam,dumpingpoint,rom,inrom,outrom,pit'
+  formdatahauling:'++id,tanggal,shift,unitno,operator,loader,tonnage,seam,dumpingpoint,rom,inrom,outrom,pit'
 });

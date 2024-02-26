@@ -1,8 +1,8 @@
 import React, { useMemo } from "react";
 import { SearchBox } from "@fluentui/react-search-preview";
 import FormComponent from "../FormComponent";
-
-import { ArrowDownload24Regular } from "@fluentui/react-icons";
+import { Link } from "react-router-dom";
+import { ArrowSquareUpRight24Regular } from "@fluentui/react-icons";
 import {
   TableBody,
   TableCell,
@@ -15,12 +15,16 @@ import {
   Avatar,
 } from "@fluentui/react-components";
 
-
 const items = [
   {
     tanggal: { label: "12/01/2024" },
     author: { label: "Rahmansyah Kurniawan" },
     total: { label: 177 },
+  },
+  {
+    tanggal: { label: "13/01/2024" },
+    author: { label: "Walyadin" },
+    total: { label: 478 },
   },
 ];
 
@@ -42,6 +46,8 @@ const TableCoalHauling = () => {
       type: "DatePicker",
     },
   ]);
+
+
   return (
     <>
       <div className="form-wrapper">
@@ -65,7 +71,6 @@ const TableCoalHauling = () => {
               ))}
             </TableRow>
           </TableHeader>
-
           <TableBody>
             {items.map((item) => (
               <TableRow key={item.tanggal.label}>
@@ -92,7 +97,13 @@ const TableCoalHauling = () => {
                   <TableCellLayout>{item.total.label}</TableCellLayout>
                 </TableCell>
                 <TableCell>
-                  test
+                  <Link to="/coalhauling-dataentry/detail/">
+                    <Button
+                      icon={<ArrowSquareUpRight24Regular />}
+                      iconPosition="after">
+                      Detail
+                    </Button>
+                  </Link>
                 </TableCell>
               </TableRow>
             ))}

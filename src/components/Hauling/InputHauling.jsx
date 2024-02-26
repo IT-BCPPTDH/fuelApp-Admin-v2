@@ -147,7 +147,7 @@ const InputHauling = ({ dataEdit, postData, setPostData, tid }) => {
       // id:dataEdit?.id?dataEdit?.id:'',
       tanggal: dataEdit?.tanggal ?? new Date(),
       shift: dataEdit?.shift ?? determineShift(),
-      unitNo: dataEdit?.unitNo ?? "",
+      unitno: dataEdit?.unitno ?? "",
       operator: dataEdit?.operator ?? "",
       loader: dataEdit?.loader ?? "",
       tonnage: dataEdit?.tonnage ?? "",
@@ -208,7 +208,7 @@ const InputHauling = ({ dataEdit, postData, setPostData, tid }) => {
       const requiredFields = [
         "tanggal",
         "shift",
-        "unitNo",
+        "unitno",
         "operator",
         "loader",
         "tonnage",
@@ -244,9 +244,9 @@ const InputHauling = ({ dataEdit, postData, setPostData, tid }) => {
       });
 
       // Optionally, you can reload the window after a delay (e.g., 2 seconds)
-      // setTimeout(() => {
-      //   window.location.reload();
-      // }, 2000);
+      setTimeout(() => {
+        window.location.reload();
+      }, 2000);
     } catch (error) {
       console.error("Error inserting  :", error);
 
@@ -300,12 +300,12 @@ const InputHauling = ({ dataEdit, postData, setPostData, tid }) => {
         options: pitOptions,
       },
       {
-        name: "unitNo",
+        name: "unitno",
         grid: "col-4",
         label: "No Unit",
         readOnly: false,
         disabled: false,
-        value: formData.unitNo,
+        value: formData.unitno,
         type: "Combobox",
         options: unitOptions,
       },
