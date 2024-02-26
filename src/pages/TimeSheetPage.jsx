@@ -12,46 +12,50 @@ import { FooterPageForm } from '../components/FormComponent/FooterPageForm'
 import { useLiveQuery } from 'dexie-react-hooks'
 import { db } from '../models/db'
 import { useNavigate } from 'react-router-dom'
+import { NavigateUrl } from '../utils/Navigation'
+
 // import { getActivity } from '../helpers/indexedDB/getData'
 
 const tabs = [
-  { label: 'Time Entry Support', value: 'time-entry/support/' },
-  { label: 'Time Entry Digger', value: 'time-entry/digger/' },
-  { label: 'Time Entry Hauler', value: 'time-entry-hauler' }
+  { label: 'Time Entry Support', value: 'time-entry-support-form' },
+  { label: 'Time Entry Digger', value: 'time-entry-digger-form' },
+  { label: 'Time Entry Hauler', value: 'time-entry-hauler-form' }
 ]
-// const active = '/timesheet-dataentry/'; 
+
 const shiftOptions = ['Day', 'Night']
-// const unitOptions = ['DT11223', 'DT11224', 'DT11225', 'DT11226']
-const activeTab = 'time-entry/support/';
+const activeTab = 'time-entry-support-form';
 
 export default function TimeSheetPage () {
+
   const jRef = useRef(null)
-  const currentDate = new Date()
   const [totalDuration, setTotalDuration] = useState()
   const [buttonDisabled, setButtonDisabled] = useState(true)
   const navigate = useNavigate()
   
-  const master = useLiveQuery(() => db.activity.toArray())
+  useLiveQuery(() => db.activity.toArray())
 
-  const [jdeOptions, setJdeOptions] = useState(() => getLocalStorage('timeEntry-operator'));
-  const [unitOptions, setUnitOption] = useState(() => getLocalStorage('timeEntry-unit'));
+  const [jdeOptions] = useState(() => getLocalStorage('timeEntry-operator'));
+  const [unitOptions] = useState(() => getLocalStorage('timeEntry-unit'));
   // const [masterOP, setMasterOP] = useState(() => getLocalStorage('timeEntry-masterOP'));
   const masterOP = useLiveQuery(() => db.operator.toArray());
+  const [formData, setFormData] = useState({});
 
-  const [formData, setFormData] = useState({
-    formID: 'Time Entry Support',
-    site: 'BCP',
-    stafEntry: 'Nama Lengkap',
-    tanggal: currentDate,
-    shift: '',
-    unitNo: '',
-    lastUpdate: '-',
-    jdeOperator: '',
-    nameOperator: '',
-    hmAwal: '',
-    hmAkhir: '',
-    hm: ''
-  })
+  useEffect(() => {
+    setFormData({
+      formID: 'Time Entry Support',
+      site: 'BCP',
+      stafEntry: 'Nama Lengkap',
+      tanggal: new Date(),
+      shift: '',
+      unitNo: '',
+      lastUpdate: '-',
+      jdeOperator: '',
+      nameOperator: '',
+      hmAwal: '',
+      hmAkhir: '',
+      hm: ''
+    })
+  }, []);
 
   const [formValue, setFormValue] = useState()
 
@@ -260,7 +264,7 @@ export default function TimeSheetPage () {
     return () => {
       jspreadsheet.destroy(jRef)
     }
-  }, [])
+  }, [calculateTotalTime, formatTime, onchange])
 
   const handleSubmit = async () => {
     let act = JSON.stringify(formValue)
@@ -466,16 +470,20 @@ export default function TimeSheetPage () {
 
     getDataFirst()
 
-  }, [totalDuration]);
+  }, [totalDuration, getDataFirst]);
 
   const handleTabChange = (value) => {
-    console.log(`Navigating to: /${value}`);
+    // console.log(`Navigating to: /${value}`);
     navigate(`/${value}`);
   };
 
   return (
     <>
-      <HeaderPageForm title={`Form Operator Activity Timesheet - Data Entry Support`} />
+      <HeaderPageForm 
+        title={`Time Entry Form - Unit Support`} 
+        urlCreate={''}
+        urlBack={NavigateUrl.TIME_ENTRY_MAIN_TABLE}
+      />
       <div className='form-wrapper'>
         <FormComponent handleChange={handleChange} components={components} />
         <div ref={jRef} className='mt1em' />
@@ -506,9 +514,7 @@ export default function TimeSheetPage () {
           handleSubmit={handleSubmit}
           buttonDisabled={buttonDisabled}
         />
-      </div>
-
-      {/* <button onClick={getData}>Get Data</button> */}
+      </div> 
     </>
   )
 }

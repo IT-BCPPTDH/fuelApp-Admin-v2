@@ -254,7 +254,11 @@ export const RekapTimeEntryPage = () => {
 
   return (
     <>
-      <HeaderPageForm title={`Time Entry BCP - 11 Januari 2024`} />
+      <HeaderPageForm 
+        title={`Time Entry BCP - 11 Januari 2024`}
+        urlCreate={''}
+        urlBack={'/'}
+       />
       <div className='form-wrapper'>
         <div className='row'>
           <div className='col-6'>

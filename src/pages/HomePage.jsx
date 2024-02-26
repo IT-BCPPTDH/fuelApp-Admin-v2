@@ -60,10 +60,13 @@ export const HomePage = () => {
   }, [dataXls])
 
   useEffect(() => {
-    socket.emit('getData', `${id}`, e => {
-      console.log(e)
-    })
-  }, [])
+    if(isConnected){
+      socket.emit('getData', `${id}`, e => {
+        console.log(e)
+      })
+    }
+  
+  }, [id, isConnected])
 
   return (
     <>

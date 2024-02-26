@@ -1,5 +1,5 @@
-import React, { useMemo } from "react";
-import { SearchBox } from "@fluentui/react-search-preview";
+import { useMemo } from "react";
+// import { SearchBox } from "@fluentui/react-search-preview";
 import FormComponent from "../FormComponent";
 import { Link } from "react-router-dom";
 import { ArrowSquareUpRight24Regular } from "@fluentui/react-icons";
@@ -45,7 +45,7 @@ const TableCoalHauling = () => {
       disabled: false,
       type: "DatePicker",
     },
-  ]);
+  ],[]);
 
 
   return (
@@ -97,7 +97,7 @@ const TableCoalHauling = () => {
                   <TableCellLayout>{item.total.label}</TableCellLayout>
                 </TableCell>
                 <TableCell>
-                  <Link to="/coalhauling-dataentry/detail/">
+                  <Link to="/coalhauling-dataentry-detail">
                     <Button
                       icon={<ArrowSquareUpRight24Regular />}
                       iconPosition="after">

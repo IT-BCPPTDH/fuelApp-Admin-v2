@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from "react";
-import Title from "../components/Title";
+import { useState } from "react";
 import InputHauling from "../components/Hauling/InputHauling";
 import CardDataHauling from "../components/Hauling/CardDataHauling";
 import TableHauling from "../components/Hauling/TableHauling";
 import Transaksi from "../services/inputCoalHauling";
 import { HeaderPageForm } from "../components/FormComponent/HeaderPageForm";
+import { NavigateUrl } from "../utils/Navigation";
 
 export default function CoalHaulingDataEntry() {
   const [dataEdit, setDataEdit] = useState();
@@ -14,19 +14,22 @@ export default function CoalHaulingDataEntry() {
   const handleEdit = async (id) => {
     setTid(id.label);
     let data = await Transaksi.getEditData(id.label);
-    console.log(data.data);
+    // console.log(data.data);
     setDataEdit(data.data[0]);
     setPostData(false);
   };
 
   return (
     <>
-      {/* <Title title="Entry Data Hauling" /> */}
-      <HeaderPageForm title={`Data Entry Coal Hauling`} />
+      <HeaderPageForm 
+        title={`Data Entry Coal Hauling`} 
+        urlCreate={''} 
+        urlBack={NavigateUrl.COAL_HAULING_MAIN_TABLE}
+      />
       <div className="row">
         <div className="col-7">
           <InputHauling
-           tid = {tid}
+            tid = {tid}
             dataEdit={dataEdit}
             postData={postData}
             setPostData={setPostData}
@@ -37,7 +40,6 @@ export default function CoalHaulingDataEntry() {
         </div>
         <div className="col-12">
           <TableHauling handleEdit={handleEdit} />
-          {/* <Test/> */}
         </div>
       </div>
     </>

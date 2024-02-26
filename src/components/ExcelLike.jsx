@@ -1,7 +1,7 @@
-import { useState, useCallback, useEffect } from 'react'
+import { useState, useCallback } from 'react'
 import { Workbook } from '@fortune-sheet/react'
 import { socket } from '../socket'
-import { makeStyles, shorthands, Spinner } from "@fluentui/react-components";
+// import { makeStyles, shorthands, Spinner } from "@fluentui/react-components";
 import Cookies from 'js-cookie';
 
 const ExcelLike = ({dataXls, setDataXls, id }) => {
@@ -75,7 +75,7 @@ const ExcelLike = ({dataXls, setDataXls, id }) => {
   )
 
   const onOp = useCallback(e => {
-    // console.log(e)
+    console.log(e)
   }, [])
 
   return (

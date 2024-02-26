@@ -1,5 +1,7 @@
 import { CompoundButton } from '@fluentui/react-components'
 import { SaveArrowRight24Regular } from '@fluentui/react-icons'
+import PropTypes from 'prop-types';
+
 export const FooterPageForm = ({ handleSubmit, buttonDisabled }) => {
     return (
       <div className='row mt1em'>
@@ -40,4 +42,9 @@ export const FooterPageForm = ({ handleSubmit, buttonDisabled }) => {
         </div>
       </div>
     )
-  }
+}
+
+FooterPageForm.propTypes = {
+  handleSubmit: PropTypes.any,
+  buttonDisabled: PropTypes.bool
+}

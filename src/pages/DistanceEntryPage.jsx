@@ -4,7 +4,7 @@ import { HeaderPageForm } from '../components/FormComponent/HeaderPageForm';
 import { colHeaderDistance } from '../helpers/columnHelper';
 import { dataDigger } from '../data/digger';
 import FormComponent from '../components/FormComponent';
-
+import PropTypes from 'prop-types'
 
 const shiftOptions = ['Day', 'Night'];
 
@@ -38,18 +38,13 @@ const JSpreadsheet = ({ data }) => {
   return <div ref={jRef} className='mt1em' />;
 };
 
+JSpreadsheet.propTypes = {
+  data: PropTypes.array
+}
+
 const DistanceEntryPage = () => {
   const currentDate = new Date();
-
-  const [formData, setFormData] = useState({
-    formID: 'Form Entry Data Distance',
-    site: 'BCP',
-    stafEntry: 'Nama Lengkap',
-    tanggal: currentDate,
-    shift: '',
-    timeStart: '',
-    timeEnd: '',
-  });
+  const [formData, setFormData] = useState({});
 
   const components = useMemo(() => [
     {
@@ -120,7 +115,17 @@ const DistanceEntryPage = () => {
     // Handle form data changes
   };
 
-  console.log('hi',formData);
+  useEffect(() => {
+    setFormData({
+      formID: 'Form Entry Data Distance',
+      site: 'BCP',
+      stafEntry: 'Nama Lengkap',
+      tanggal: new Date(),
+      shift: '',
+      timeStart: '',
+      timeEnd: '',
+    })
+  }, []);
   return (
     <>
       <HeaderPageForm title={`Distance Data Entry - ${currentDate.toDateString()}`} />

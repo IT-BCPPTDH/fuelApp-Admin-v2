@@ -1,16 +1,11 @@
 import { useEffect, useState } from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import {
-  FluentProvider,
-  createLightTheme,
-} from '@fluentui/react-components';
+import { FluentProvider, createLightTheme } from '@fluentui/react-components';
 import Login from './pages/Login';
 import Sidebar from './components/Sidebar';
 import Header from './components/Header';
 import RouteApp from './Routes';
 import Cookies from 'js-cookie';
-import './css/jspreadsheet.css';
-import './css/style.css';
 
 const dh = {
   palette: {

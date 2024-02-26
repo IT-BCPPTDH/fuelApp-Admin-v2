@@ -9,15 +9,16 @@ import { colHelperTimesheetMines } from '../helpers/columnHelper'
 import Services from '../services/timeEntry'
 import { useLocation } from 'react-router-dom'
 
-export const TimeEntryMinesEntryPage = () => {
+const TimeEntryMinesEntryPage = () => {
   const jRef = useRef(null)
   const [totalDuration, setTotalDuration] = useState(0)
   const [buttonDisabled, setButtonDisabled] = useState(true)
   // const [secName, setSecName] = useState(null)
   const location = useLocation();
   const secName = location.pathname.includes('mines') ? 'mines' : 'fms';
+
   const handleChange = (ev, data) => {
-    const { name, value } = data
+    // const { name, value } = data
   }
 
   // const handleSubmit = () => {}
@@ -125,7 +126,11 @@ export const TimeEntryMinesEntryPage = () => {
 
   return (
     <>
-      <HeaderPageForm title={`Time Entry BCP`} />
+      <HeaderPageForm 
+        title={`Time Entry BCP`} 
+        urlCreate={''}
+        urlBack={'/'}
+      />
 
       <div className='form-wrapper'>
         <div className='row'>
@@ -171,3 +176,5 @@ export const TimeEntryMinesEntryPage = () => {
     </>
   )
 }
+
+export default TimeEntryMinesEntryPage

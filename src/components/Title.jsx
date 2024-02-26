@@ -1,4 +1,5 @@
 import {Title3} from '@fluentui/react-components'
+import PropTypes from 'prop-types'
 const Title = (props) => {
     const {title} = props
     return (
@@ -7,3 +8,7 @@ const Title = (props) => {
 }
 
 export default Title
+
+Title.propTypes = {
+    title: PropTypes.string
+}

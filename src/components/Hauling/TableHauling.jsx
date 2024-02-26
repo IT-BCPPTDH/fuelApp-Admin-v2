@@ -214,7 +214,7 @@ const TableHauling = ({ handleEdit }) => {
 
   return (
     <>
-      <div className="form-wrapper" style={{ marginTop: "10px" }}>
+      <div className="form-wrapper">
         <div className="search-box">
           <Button
             icon={<ArrowDownload24Regular />}
