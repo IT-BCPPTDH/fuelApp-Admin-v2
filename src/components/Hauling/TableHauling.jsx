@@ -28,13 +28,14 @@ import {
   MessageBar,
   MessageBarBody,
   MessageBarTitle,
+  MessageBarActions,
   Link,
   makeStyles,
 } from "@fluentui/react-components";
 import {
   EditRegular,
   DeleteRegular,
-  // ArrowDownload24Regular,
+  DismissRegular
 } from "@fluentui/react-icons";
 import { getDataTableHauling } from "../../helpers/indexedDB/getData";
 import {deleteFormDataHauling} from "../../helpers/indexedDB/deteleData";
@@ -42,6 +43,7 @@ import PropTypes from 'prop-types'
 
 const useStyles = makeStyles({
   messageContainer: {
+    width: "300px",
     position: "fixed",
     bottom: "20px",
     right: "20px",
@@ -237,9 +239,37 @@ const TableHauling = ({ handleEdit, dataUpdated, setDataupdated}) => {
     handleEdit(dataEdit)
   }
 
+  const dismissMessage = () =>{
+    setMessage(null)
+  }
+
   return (
     <>
       <div className="form-wrapper">
+      <div className={classes.messageContainer}>
+        {message && (
+          <MessageBar intent={message.type}>
+            <MessageBarBody>
+              <MessageBarTitle>{message.content}</MessageBarTitle>
+              {message.type === "error" && (
+                <Link onClick={() => setMessage(null)}>Dismiss</Link>
+              )}
+            </MessageBarBody>
+            <MessageBarActions
+              containerAction={
+                <Button
+                onClick={dismissMessage}
+                  aria-label="dismiss"
+                  appearance="transparent"
+                  icon={<DismissRegular />}
+                />
+              }
+            >
+ 
+            </MessageBarActions>
+          </MessageBar>
+        )}
+      </div>
         <div className="search-box">
           {/* <Button
             icon={<ArrowDownload24Regular />}
@@ -386,18 +416,6 @@ const TableHauling = ({ handleEdit, dataUpdated, setDataupdated}) => {
             </TableBody>
           </Table>
         </div>
-      </div>
-      <div className={classes.messageContainer}>
-        {message && (
-          <MessageBar intent={message.type}>
-            <MessageBarBody>
-              <MessageBarTitle>{message.content}</MessageBarTitle>
-              {message.type === "error" && (
-                <Link onClick={() => setMessage(null)}>Dismiss</Link>
-              )}
-            </MessageBarBody>
-          </MessageBar>
-        )}
       </div>
     </>
   );
