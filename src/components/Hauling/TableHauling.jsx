@@ -245,7 +245,7 @@ const TableHauling = ({ handleEdit, dataUpdated, setDataupdated}) => {
 
   return (
     <>
-      <div className="form-wrapper">
+      <div className="form-wrapper" style={{marginTop: '0'}}>
       <div className={classes.messageContainer}>
         {message && (
           <MessageBar intent={message.type}>
