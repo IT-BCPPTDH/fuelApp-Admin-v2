@@ -1,7 +1,8 @@
+import React, { useEffect, useState } from "react";
 import { useMemo } from "react";
 // import { SearchBox } from "@fluentui/react-search-preview";
 import FormComponent from "../FormComponent";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { ArrowSquareUpRight24Regular } from "@fluentui/react-icons";
 import {
   TableBody,
@@ -14,39 +15,85 @@ import {
   Button,
   Avatar,
 } from "@fluentui/react-components";
+import Transaksi from "../../services/inputCoalHauling";
+import DetailHauling from "../../pages/DetailHauling";
 
-const items = [
-  {
-    tanggal: { label: "12/01/2024" },
-    author: { label: "Rahmansyah Kurniawan" },
-    total: { label: 177 },
-  },
-  {
-    tanggal: { label: "13/01/2024" },
-    author: { label: "Walyadin" },
-    total: { label: 478 },
-  },
-];
+// const items = [
+//   {
+//     tanggal: { label: "12/01/2024" },
+//     author: { label: "Rahmansyah Kurniawan" },
+//     total: { label: 177 },
+//   },
+//   {
+//     tanggal: { label: "13/01/2024" },
+//     author: { label: "Walyadin" },
+//     total: { label: 478 },
+//   },
+// ];
 
 const columns = [
   { columnKey: "tanggal", label: "Tanggal" },
-  { columnKey: "author", label: "Author" },
+  // { columnKey: "author", label: "Author" },
   { columnKey: "total", label: "Total Hauling" },
   { columnKey: "action", label: "Action" },
 ];
 
 const TableCoalHauling = () => {
-  const selectTgl = useMemo(() => [
-    {
-      name: "tanggal",
-      grid: "col-12",
-      value: "",
-      readOnly: false,
-      disabled: false,
-      type: "DatePicker",
-    },
-  ],[]);
+  const selectTgl = useMemo(
+    () => [
+      {
+        name: "tanggal",
+        grid: "col-12",
+        value: "",
+        readOnly: false,
+        disabled: false,
+        type: "DatePicker",
+      },
+    ],
+    []
+  );
+  const [dates, setDates] = useState("");
+  const [items, setItems] = useState([]);
+  const Navigate = useNavigate();
 
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    const year = date.getFullYear();
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    const day = date.getDate().toString().padStart(2, '0');
+  
+    return `${year}-${month}-${day}`;
+  };
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const datamain = await Transaksi.getDataMain();
+        console.log("Data fetched: ", datamain);
+        const updatedItems = datamain.data.map((itemFromDB, index) => ({
+          // id: { label: itemFromDB.id },
+          tanggal: { label: itemFromDB.tanggal },
+          totaltonnage: { label: itemFromDB.totaltonnage },
+        }));
+
+        setItems(updatedItems);
+      } catch (error) {
+        console.error("Error fetching data: ", error);
+      }
+    };
+    fetchData();
+  }, []);
+
+  const handleDetail = async (tanggal) => {
+    try {
+      console.log(1, tanggal);
+      setDates(tanggal);
+      Navigate(`/coalhauling-dataentry-detail/${tanggal}`);
+
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
 
   return (
     <>
@@ -73,13 +120,13 @@ const TableCoalHauling = () => {
           </TableHeader>
           <TableBody>
             {items.map((item) => (
-              <TableRow key={item.tanggal.label}>
+              <TableRow key={item.id}>
                 <TableCell>
-                  <TableCellLayout media={item.tanggal.icon}>
-                    {item.tanggal.label}
+                  <TableCellLayout>
+                    {formatDate(item.tanggal.label)}
                   </TableCellLayout>
                 </TableCell>
-                <TableCell>
+                {/* <TableCell>
                   <TableCellLayout
                     media={
                       <Avatar
@@ -92,18 +139,25 @@ const TableCoalHauling = () => {
                     }>
                     {item.author.label}
                   </TableCellLayout>
+                </TableCell> */}
+                <TableCell>
+                  <TableCellLayout>{item.totaltonnage.label}</TableCellLayout>
                 </TableCell>
                 <TableCell>
-                  <TableCellLayout>{item.total.label}</TableCellLayout>
-                </TableCell>
-                <TableCell>
-                  <Link to="/coalhauling-dataentry-detail">
-                    <Button
-                      icon={<ArrowSquareUpRight24Regular />}
-                      iconPosition="after">
-                      Detail
-                    </Button>
-                  </Link>
+                  {/* <Link to="/coalhauling-dataentry-detail">
+                      <Button
+                        icon={<ArrowSquareUpRight24Regular />}
+                        iconPosition="after"
+                        onClick={handleDetail(formatDate(item.tanggal.label))}>
+                        Detail
+                      </Button>
+                    </Link> */}
+                  <Button
+                    icon={<ArrowSquareUpRight24Regular />}
+                    iconPosition="after"
+                    onClick={() => handleDetail(formatDate(item.tanggal.label))}>
+                    Detail
+                  </Button>
                 </TableCell>
               </TableRow>
             ))}
