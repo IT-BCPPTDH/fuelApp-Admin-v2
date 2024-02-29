@@ -1,21 +1,13 @@
 import { useState, useMemo, useEffect, useCallback } from "react";
-import "./CoalHauling.css";
-import {
-  Button,
-  MessageBar,
-  MessageBarTitle,
-  MessageBarBody,
-  Link,
-  makeStyles,
-} from "@fluentui/react-components";
+import PropTypes from 'prop-types'
+import { Button, MessageBar, MessageBarTitle, MessageBarBody, Link, makeStyles} from "@fluentui/react-components";
 import FormComponent from "../FormComponent";
-import Transaksi from "../../services/inputCoalHauling";
 import { Save24Regular, ArrowReset24Regular } from "@fluentui/react-icons";
 import { insertFormDataHauling } from "../../helpers/indexedDB/insert";
 import { updateFormDataHauling } from "../../helpers/indexedDB/editData";
-import PropTypes from 'prop-types'
 import { unitOptionsData, shiftOptionsData, loaderOptionsData, dumpingpointOptionsData, pitOptionsData, seamOptionsData } from "../../helpers/optionHelper";
-
+import "./CoalHauling.css";
+// import Transaksi from "../../services/inputCoalHauling";
 
 const useStyles = makeStyles({
   messageContainer: {
@@ -26,12 +18,14 @@ const useStyles = makeStyles({
   },
 });
 
-const InputHauling = ({ dataEdit, postData, setPostData, tid }) => {
+const InputHauling = ({ dataEdit, postData, setPostData, dataId, setDataupdated }) => {
+
   const classes = useStyles();
   const [message, setMessage] = useState(null);
   const [isFormValid, setIsFormValid] = useState(false);
   const [seamOptions, setSeamOptions] = useState([]);
   const [formData, setFormData] = useState({});
+
   const [seamDataOptions] = useState(seamOptionsData);
   const [unitOptions] = useState(unitOptionsData)
   const [shiftOptions] = useState(shiftOptionsData)
@@ -39,19 +33,13 @@ const InputHauling = ({ dataEdit, postData, setPostData, tid }) => {
   const [dumpingpointOptions] = useState(dumpingpointOptionsData)
   const [pitOptions] = useState(pitOptionsData)
 
-
   const determineShift = () => {
     const currentHour = new Date().getHours();
-
-    // Menentukan shift berdasarkan jam
-    const shift = currentHour >= 6 && currentHour < 18 ? "Day" : "Night";
-
-    return shift;
+    return currentHour >= 6 && currentHour < 18 ? "Day" : "Night";
   };
 
   useEffect(() => {
     setFormData({
-      // id:dataEdit?.id?dataEdit?.id:'',
       tanggal: dataEdit?.tanggal ?? new Date(),
       shift: dataEdit?.shift ?? determineShift(),
       unitno: dataEdit?.unitno ?? "",
@@ -65,6 +53,7 @@ const InputHauling = ({ dataEdit, postData, setPostData, tid }) => {
       outrom: dataEdit?.outrom ?? "",
       pit: dataEdit?.pit ?? "",
     });
+
     setSeamOptions(seamDataOptions['PIT A NORTH 1']);
 
   }, [dataEdit, seamDataOptions]);
@@ -74,27 +63,29 @@ const InputHauling = ({ dataEdit, postData, setPostData, tid }) => {
       const { name, value } = v;
 
       if (name === "inrom" || name === "outrom") {
-        const hours = value.selectedTime.getHours();
-        const minutes = value.selectedTime.getMinutes();
-        const second = value.selectedTime.getSeconds();
 
-        const addLeadingZero = (num) => (num < 10 ? `0${num}` : num);
+        if(value.selectedTime){
 
-        const formattedTime = `${addLeadingZero(hours)}:${addLeadingZero(
-          minutes
-        )}:${addLeadingZero(second)}`;
-
-        if (name === "inrom" && formattedTime > formData.outrom) {
-          alert("inrom tidak boleh lebih besar dari outrom");
-        } else if (name === "outrom" && formData.inrom > formattedTime) {
-          alert("outrom tidak boleh lebih kecil dari inrom");
+          const hours = value.selectedTime.getHours();
+          const minutes = value.selectedTime.getMinutes();
+          const second = value.selectedTime.getSeconds();
+  
+          const addLeadingZero = (num) => (num < 10 ? `0${num}` : num);
+  
+          const formattedTime = `${addLeadingZero(hours)}:${addLeadingZero(
+            minutes
+          )}:${addLeadingZero(second)}`;
+  
+          if (name === "outrom" && formData.inrom > formattedTime) {
+            alert("outrom tidak boleh lebih kecil dari inrom");
+          } else {
+            setFormData((prevFormData) => ({
+              ...prevFormData,
+              [name]: formattedTime,
+            }));
+          }
         }
-
-        setFormData((prevFormData) => ({
-          ...prevFormData,
-          [name]: formattedTime,
-        }));
-
+      
       } else {
         if (name === "pit") {
           let a = pitOptions?.find((v) => v === value);
@@ -114,6 +105,8 @@ const InputHauling = ({ dataEdit, postData, setPostData, tid }) => {
 
   const handleSubmit = useCallback(async () => {
     try {
+
+      let dbInserted = false
       const requiredFields = [
         "tanggal",
         "shift",
@@ -139,15 +132,25 @@ const InputHauling = ({ dataEdit, postData, setPostData, tid }) => {
       let data = {
         ...formData,
       };
+
       if (postData) {
-        await insertFormDataHauling(data);
-        setPostData(true);
+        const inserted = await insertFormDataHauling(data);
+        if(inserted){
+          dbInserted = true
+        }
+    
       } else {
-
         // let dataUpdate = await Transaksi.patchEditTransaction(tid, data);
-        let dataUpdate = await updateFormDataHauling(data);
+        const updated = await updateFormDataHauling(dataId, data);
+        if(updated){
+          dbInserted = true
+        }
+      }
 
-        setPostData(true);
+      if(dbInserted){
+        handleReset()
+        setDataupdated(true)
+        dbInserted = false
       }
 
       setMessage({
@@ -155,20 +158,15 @@ const InputHauling = ({ dataEdit, postData, setPostData, tid }) => {
         content: "Data berhasil di input",
       });
 
-      // Optionally, you can reload the window after a delay (e.g., 2 seconds)
-      // setTimeout(() => {
-      //   window.location.reload();
-      // }, 2000);
     } catch (error) {
       console.error("Error inserting  :", error);
 
-      // Display error toast
       setMessage({
         type: "error",
         content: "Gagal menginput data. Silahkan coba kembali!",
       });
     }
-  }, [formData, postData, setPostData, tid]);
+  }, [formData, postData, dataId, setDataupdated]);
 
   const handleReset = useCallback(() => {
     setFormData({
@@ -177,9 +175,10 @@ const InputHauling = ({ dataEdit, postData, setPostData, tid }) => {
       tonnage: "",
       dumpingpoint: "",
     });
-    setMessage(null);
+    setMessage(false);
     setIsFormValid(false);
     setPostData(true);
+
   }, [setPostData]);
 
   const comp = useMemo(
@@ -302,15 +301,13 @@ const InputHauling = ({ dataEdit, postData, setPostData, tid }) => {
 
   return (
     <>
-      <div
-        className="form-wrapper wrapper"
-        style={{ marginBottom: "0", paddingTop: "3em" }}>
+      <div className="form-wrapper wrapper" style={{ marginBottom: "0", paddingTop: "3em" }}>
         <div className="input-base">
           <FormComponent components={comp} handleChange={handleChange} />
         </div>
         <div className="btn-wrapper">
           <Button
-            disabled={!isFormValid}
+            // disabled={!isFormValid}
             onClick={handleSubmit}
             icon={<Save24Regular />}
             iconPosition="after"
@@ -348,5 +345,6 @@ InputHauling.propTypes = {
   dataEdit: PropTypes.any,
   postData: PropTypes.any,
   setPostData: PropTypes.any,
-  tid: PropTypes.any
+  dataId: PropTypes.any,
+  setDataupdated: PropTypes.any
 }

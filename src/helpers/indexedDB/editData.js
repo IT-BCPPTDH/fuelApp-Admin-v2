@@ -1,12 +1,12 @@
 import { db } from "../../models/db";
 
-export const updateFormDataHauling = async (data) => {
+export const updateFormDataHauling = async (dataId, data) => {
     try {
-      // Open a transaction and get the object store
-      const transaction = db.formdatahauling.update(data.id, data);
-      console.log(transaction)
- 
+
+      return await db.formdatahauling.update(dataId, data)
+
     } catch (error) {
       console.log(error);
+      return false
     }
   };

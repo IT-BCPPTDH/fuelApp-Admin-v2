@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 // import { SearchBox } from "@fluentui/react-search-preview";
-import Transaksi from "../../services/inputCoalHauling";
+// import Transaksi from "../../services/inputCoalHauling";
 import {
   Table,
   TableBody,
@@ -37,6 +37,7 @@ import {
   // ArrowDownload24Regular,
 } from "@fluentui/react-icons";
 import { getDataTableHauling } from "../../helpers/indexedDB/getData";
+import {deleteFormDataHauling} from "../../helpers/indexedDB/deteleData";
 import PropTypes from 'prop-types'
 
 const useStyles = makeStyles({
@@ -103,10 +104,11 @@ const columnsDef = [
   }),
 ];
 
-const TableHauling = ({ handleEdit }) => {
+const TableHauling = ({ handleEdit, dataUpdated, setDataupdated}) => {
   const classes = useStyles();
   const [columns] = useState(columnsDef);
   const [message, setMessage] = useState(null);
+  const [open, setOpen] = useState(false);
 
   const [columnSizingOptions] = useState({
     id: {
@@ -154,54 +156,62 @@ const TableHauling = ({ handleEdit }) => {
   const getTodayDateString = useCallback(() => {
     const today = new Date();
     return formatDate(today);
-  },[]);
+  }, []);
+
+  const fetchData = useCallback(async () => {
+    try {
+      const dateToday = getTodayDateString();
+      // const dts = await Transaksi.getAllTransaction(dateToday);
+      const dts = await getDataTableHauling(dateToday);
+
+      const updatedItems = dts.map((itemFromDB) => ({
+        id: itemFromDB.id,
+        tanggal: itemFromDB.tanggal,
+        shift: itemFromDB.shift,
+        unitno: itemFromDB.unitno,
+        operator: itemFromDB.operator,
+        tonnage: itemFromDB.tonnage,
+        loader: itemFromDB.loader,
+        pit: itemFromDB.pit,
+        seam: itemFromDB.seam,
+        dumpingpoint: itemFromDB.dumpingpoint,
+        rom: itemFromDB.rom,
+        inrom: itemFromDB.inrom,
+        outrom: itemFromDB.outrom,
+        action: itemFromDB.action,
+      }));
+
+      setItems(updatedItems);
+      setDataupdated(false)
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  }, [getTodayDateString, setDataupdated])
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const dateToday = getTodayDateString();
-        // const dts = await Transaksi.getAllTransaction(dateToday);
-        const dts = await getDataTableHauling(dateToday);
-        // console.log(2,dts)
-
-        const updatedItems = dts.map((itemFromDB) => ({
-          id: { label: itemFromDB.id },
-
-          // id: { label: ( index + 1).toString() },
-          tanggal:  itemFromDB.tanggal ,
-          shift:  itemFromDB.shift ,
-          unitno: itemFromDB.unitno ,
-          operator: itemFromDB.operator ,
-          tonnage:  itemFromDB.tonnage ,
-          loader:  itemFromDB.loader,
-          pit: itemFromDB.pit ,
-          seam:  itemFromDB.seam ,
-          dumpingpoint:  itemFromDB.dumpingpoint ,
-          rom: itemFromDB.rom,
-          inrom:  itemFromDB.inrom ,
-          outrom: itemFromDB.outrom ,
-          action:  itemFromDB.action ,
-        }));
-
-        setItems(updatedItems);
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      }
-    };
+    if(dataUpdated){
+      fetchData();
+    }
 
     fetchData();
-  }, [getTodayDateString]);
+   
+  }, [getTodayDateString, fetchData, dataUpdated]);
 
   const handleDelete = async (id) => {
     try {
-      await Transaksi.getDeteleTransaction(id.label);
-      setMessage({
-        type: "success",
-        content: "Data derhasil dihapus",
-      });
-      setTimeout(() => {
-        window.location.reload();
-      }, 1000);
+     
+      // await Transaksi.getDeteleTransaction(id.label);
+      const deleted = await deleteFormDataHauling(id);
+  
+      if(deleted){
+        fetchData();
+        setMessage({
+          type: "success",
+          content: "Data derhasil dihapus",
+        });
+        setOpen(false)
+      }
+
     } catch (error) {
       console.error("Error deleting data:", error);
       setMessage({
@@ -220,17 +230,12 @@ const TableHauling = ({ handleEdit }) => {
   //   }
   // };
 
-  const handleSubmitServer = async () => {}
+  const handleSubmitServer = async () => { }
 
-
-  const edit = (id) => {
-      
-      const dataEdit = items.find((val) => val.id === id);
-      handleEdit(dataEdit)
-      
+  const editData = (id) => {
+    const dataEdit = items.find((val) => val.id === id);
+    handleEdit(dataEdit)
   }
-
-  
 
   return (
     <>
@@ -245,8 +250,8 @@ const TableHauling = ({ handleEdit }) => {
           </Button> */}
           {/* <SearchBox placeholder="Search" /> */}
           <Button
-          onClick={() => handleSubmitServer()}
-          style={{ backgroundColor: "#28499c", color: "#ffffff" }}>
+            onClick={() => handleSubmitServer()}
+            style={{ backgroundColor: "#28499c", color: "#ffffff" }}>
             Submit Data to Server
           </Button>
         </div>
@@ -288,8 +293,7 @@ const TableHauling = ({ handleEdit }) => {
               {rows.map(({ item }) => (
                 <TableRow key={item.id}>
                   <TableCell {...columnSizing_unstable.getTableCellProps("id")}>
-                    {/* <TableCellLayout>{item.id.label}</TableCellLayout> */}
-                    {/* <TableCellLayout>{item.id.label || (index + 1).toString()}</TableCellLayout> */}
+                    <TableCellLayout>{item.id}</TableCellLayout>
                   </TableCell>
                   <TableCell
                     {...columnSizing_unstable.getTableCellProps("tanggal")}>
@@ -345,14 +349,11 @@ const TableHauling = ({ handleEdit }) => {
                     {...columnSizing_unstable.getTableCellProps("action")}>
                     <TableCellLayout>
                       <Button
-                        // value={item.id}
                         icon={<EditRegular />}
                         aria-label="Edit"
-                        onClick={() => edit(item.id)}
+                        onClick={() => editData(item.id)}
                       />
-                      {/* <Button icon={<DeleteRegular />} aria-label="Delete" /> */}
-
-                      <Dialog modalType="alert">
+                      <Dialog open={open} onOpenChange={(event, data) => setOpen(data.open)}>
                         <DialogTrigger disableButtonEnhancement>
                           <Button
                             icon={<DeleteRegular />}
@@ -404,6 +405,8 @@ const TableHauling = ({ handleEdit }) => {
 
 export default TableHauling;
 
-TableHauling.propTypes={
-  handleEdit: PropTypes.any
+TableHauling.propTypes = {
+  handleEdit: PropTypes.any, 
+  dataUpdated: PropTypes.any,
+  setDataupdated: PropTypes.any
 }

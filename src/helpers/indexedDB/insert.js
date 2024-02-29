@@ -25,10 +25,8 @@ export const insertUnit = async (data) =>{
 }
 
 export const insertFormDataHauling = async (data) =>{
-console.log(data);
   try {
-   let a = await db.formdatahauling.add(data);
-   console.log(a);
+   return await db.formdatahauling.add(data);
   } catch (error) {
     console.log(error);
   }
