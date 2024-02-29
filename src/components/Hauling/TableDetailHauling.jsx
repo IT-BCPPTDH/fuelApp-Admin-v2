@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { SearchBox } from "@fluentui/react-search-preview";
+// import { SearchBox } from "@fluentui/react-search-preview";
 import Transaksi from "../../services/inputCoalHauling";
 import {
   Table,
@@ -18,13 +18,13 @@ import {
   MenuPopover,
   MenuTrigger,
   Button,
-  Dialog,
-  DialogTrigger,
-  DialogSurface,
-  DialogTitle,
-  DialogBody,
-  DialogActions,
-  DialogContent,
+  // Dialog,
+  // DialogTrigger,
+  // DialogSurface,
+  // DialogTitle,
+  // DialogBody,
+  // DialogActions,
+  // DialogContent,
   MessageBar,
   MessageBarBody,
   MessageBarTitle,
@@ -32,8 +32,8 @@ import {
   makeStyles,
 } from "@fluentui/react-components";
 import {
-  EditRegular,
-  DeleteRegular,
+  // EditRegular,
+  // DeleteRegular,
   ArrowDownload24Regular,
 } from "@fluentui/react-icons";
 import { useParams } from "react-router-dom";
@@ -155,7 +155,7 @@ const TableDetailHauling = () => {
         const dts = await Transaksi.getAllTransaction(value.tanggal);
 
         const updatedItems = dts.data.map((itemFromDB, index) => ({
-          id: { label: itemFromDB.id},
+          // id: { label: itemFromDB.id},
           id: { label: ( index + 1).toString() },
           tanggal: { label: itemFromDB.tanggal },
           shift: { label: itemFromDB.shift },
@@ -177,7 +177,7 @@ const TableDetailHauling = () => {
     };
 
     fetchData();
-  }, []);
+  }, [value.tanggal]);
 
   const handleDownload = async () => {
     try {

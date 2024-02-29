@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import "./CoalHauling.css";
-import { useId, makeStyles, Card } from "@fluentui/react-components";
+import { makeStyles, Card } from "@fluentui/react-components";
 import Transaksi from "../../services/inputCoalHauling";
 
 const useStyles = makeStyles({
@@ -11,58 +11,8 @@ const useStyles = makeStyles({
 });
 
 const CardDataHauling = () => {
-  const datacard = [
-    {
-      InputId: useId("totalhauling"),
-      grid: "col-12",
-      label: "Total Hauling",
-      value: 451,
-      type: "TextDataView",
-      grid: "col-12",
-    },
-    {
-      InputId: useId("haulingtohopper"),
-      grid: "col-6",
-      label: "Hauling To Hopper",
-      value: 451,
-      type: "TextDataView",
-      grid: "col-6",
-    },
-    {
-      InputId: useId("haulingtooverflow"),
-      grid: "col-6",
-      label: "Hauling To OverFlow",
-      value: 451,
-      type: "TextDataView",
-      grid: "col-6",
-    },
-    {
-      InputId: useId("haulingtoecf"),
-      grid: "col-6",
-      label: "Hauling To ECF",
-      value: 451,
-      type: "TextDataView",
-      grid: "col-12",
-    },
-    {
-      InputId: useId("haulingtomiddlestock"),
-      grid: "col-6",
-      label: "Hauling To MiddleStock",
-      value: 451,
-      type: "TextDataView",
-      grid: "col-12",
-    },
-    {
-      InputId: useId("haulingtosekurau"),
-      grid: "col-6",
-      label: "Hauling To Sekurau",
-      value: 451,
-      type: "TextDataView",
-      grid: "col-12",
-    },
-  ];
-  const styles = useStyles();
 
+  const styles = useStyles();
   const [totalData, setTotalData] = useState();
   const [dataHopper, setDataHopper] = useState();
   const [dataOverflow, setDataOverflow] = useState();

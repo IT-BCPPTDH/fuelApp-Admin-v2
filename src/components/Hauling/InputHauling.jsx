@@ -1,7 +1,6 @@
-import React, { useState, useMemo, useEffect, useCallback } from "react";
+import { useState, useMemo, useEffect, useCallback } from "react";
 import "./CoalHauling.css";
 import {
-  useId,
   Button,
   MessageBar,
   MessageBarTitle,
@@ -13,6 +12,8 @@ import FormComponent from "../FormComponent";
 import Transaksi from "../../services/inputCoalHauling";
 import { Save24Regular, ArrowReset24Regular } from "@fluentui/react-icons";
 import { insertFormDataHauling } from "../../helpers/indexedDB/insert";
+import PropTypes from 'prop-types'
+import { unitOptionsData, shiftOptionsData, loaderOptionsData, dumpingpointOptionsData, pitOptionsData, seamOptionsData } from "../../helpers/optionHelper";
 
 const useStyles = makeStyles({
   messageContainer: {
@@ -23,115 +24,19 @@ const useStyles = makeStyles({
   },
 });
 
-const shiftOptions = ["Day", "Night"];
-const unitOptions = [
-  "HPM9040",
-  "HPM9041",
-  "HPM9042",
-  "HPM9043",
-  "HPM9044",
-  "HPM9045",
-];
-// const tonnageOptions = [68, 110, 140, 160, 135,];
-const loaderOptions = [
-  "HWL1038",
-  "HWL1039",
-  "HWL1040",
-  "HWL5043",
-  "HEX1472",
-  "HEX1312",
-  "HEX1473",
-  "HEX1248",
-  "HEX1320",
-  "HEX1473",
-  "HWL5041",
-];
-
-const dumpingpointOptions = [
-  "MAIN COAL FACILITY ( HOPPER)",
-  "STOCK PILE / OVERFLOW ( ROM MF)",
-  "STOCK PILE / EARLY COAL FACILITY (ROM ECF)",
-  "MIDLE STOCK PILE",
-  "SEKURAU",
-];
-const pitOptions = [
-  "PIT A NORTH 1",
-  "PIT A NORTH 2",
-  "PIT A SOUTH 1",
-  "PIT A SOUTH 2",
-  "PIT B01",
-  "PIT B02",
-];
-
-const seamOptionsData = {
-  "PIT A NORTH 1": ["C2", "B Hs", "BB", "ARB", "D", "A", "C"],
-  "PIT A NORTH 2": ["C2", "B Hs", "BB", "ARB", "D", "A", "C"],
-  "PIT A SOUTH 1": [
-    "ARB",
-    "B Hs",
-    "B AMM",
-    "D",
-    "C",
-    "FF",
-    "C2",
-    "CC",
-    "D MTN",
-  ],
-  "PIT A SOUTH 2": [
-    "ARB",
-    "B Hs",
-    "B AMM",
-    "D",
-    "C",
-    "FF",
-    "C2",
-    "CC",
-    "D MTN",
-  ],
-  "PIT B01": [
-    "A PAMA",
-    "C PAMA",
-    "D",
-    "BM PAMA",
-    "AHS PAMA",
-    "B AAM",
-    "DE AAM",
-    "E1",
-    "A2",
-    "C DH",
-    "D AMM",
-    "A AMM",
-    "B SEAM",
-    "E 1 MTN",
-    "DE1 AMM",
-    "D MTN",
-  ],
-  "PIT B02": [
-    "A PAMA",
-    "C PAMA",
-    "D",
-    "BM PAMA",
-    "AHS PAMA",
-    "B AAM",
-    "DE AAM",
-    "E1",
-    "A2",
-    "C DH",
-    "D AMM",
-    "A AMM",
-    "B SEAM",
-    "E 1 MTN",
-    "DE1 AMM",
-    "D MTN",
-  ],
-};
-
 const InputHauling = ({ dataEdit, postData, setPostData, tid }) => {
   const classes = useStyles();
-  const [message, setMessage] = React.useState(null);
+  const [message, setMessage] = useState(null);
   const [isFormValid, setIsFormValid] = useState(false);
   const [seamOptions, setSeamOptions] = useState([]);
   const [formData, setFormData] = useState({});
+  const [seamDataOptions] = useState(seamOptionsData);
+  const [unitOptions] = useState(unitOptionsData)
+  const [shiftOptions] = useState(shiftOptionsData)
+  const [loaderOptions] = useState(loaderOptionsData)
+  const [dumpingpointOptions] = useState(dumpingpointOptionsData)
+  const [pitOptions] = useState(pitOptionsData)
+
 
   const determineShift = () => {
     const currentHour = new Date().getHours();
@@ -158,7 +63,9 @@ const InputHauling = ({ dataEdit, postData, setPostData, tid }) => {
       outrom: dataEdit?.outrom ?? "",
       pit: dataEdit?.pit ?? "",
     });
-  }, [dataEdit]);
+    setSeamOptions(seamDataOptions['PIT A NORTH 1']);
+
+  }, [dataEdit, seamDataOptions]);
 
   const handleChange = useCallback(
     (e, v) => {
@@ -175,9 +82,6 @@ const InputHauling = ({ dataEdit, postData, setPostData, tid }) => {
           minutes
         )}:${addLeadingZero(second)}`;
 
-        console.log(formattedTime);
-        console.log(hours, minutes, second);
-
         if (name === "inrom" && formattedTime > formData.outrom) {
           alert("inrom tidak boleh lebih besar dari outrom");
         } else if (name === "outrom" && formData.inrom > formattedTime) {
@@ -188,10 +92,13 @@ const InputHauling = ({ dataEdit, postData, setPostData, tid }) => {
           ...prevFormData,
           [name]: formattedTime,
         }));
+
       } else {
         if (name === "pit") {
           let a = pitOptions?.find((v) => v === value);
-          setSeamOptions(seamOptionsData[a]);
+          if(a){
+            setSeamOptions(seamDataOptions[a]);
+          }
         }
 
         setFormData((prevFormData) => ({ ...prevFormData, [name]: value }));
@@ -200,10 +107,10 @@ const InputHauling = ({ dataEdit, postData, setPostData, tid }) => {
       const isValid = Object.values(formData).every((val) => val !== "");
       setIsFormValid(isValid);
     },
-    [formData, setIsFormValid, setFormData, setSeamOptions]
+    [formData, setIsFormValid, setFormData, setSeamOptions, pitOptions, seamDataOptions]
   );
 
-  const handleSubmit = async () => {
+  const handleSubmit = useCallback(async () => {
     try {
       const requiredFields = [
         "tanggal",
@@ -231,10 +138,10 @@ const InputHauling = ({ dataEdit, postData, setPostData, tid }) => {
         ...formData,
       };
       if (postData) {
-        let datainsert = await insertFormDataHauling(data);
+        await insertFormDataHauling(data);
         setPostData(true);
       } else {
-        let dataUpdate = await Transaksi.patchEditTransaction(tid, data);
+        await Transaksi.patchEditTransaction(tid, data);
         setPostData(true);
       }
 
@@ -256,9 +163,9 @@ const InputHauling = ({ dataEdit, postData, setPostData, tid }) => {
         content: "Gagal menginput data. Silahkan coba kembali!",
       });
     }
-  };
+  }, [formData, postData, setPostData, tid]);
 
-  const handleReset = () => {
+  const handleReset = useCallback(() => {
     setFormData({
       inrom: "",
       outrom: "",
@@ -268,7 +175,7 @@ const InputHauling = ({ dataEdit, postData, setPostData, tid }) => {
     setMessage(null);
     setIsFormValid(false);
     setPostData(true);
-  };
+  }, [setPostData]);
 
   const comp = useMemo(
     () => [
@@ -385,7 +292,7 @@ const InputHauling = ({ dataEdit, postData, setPostData, tid }) => {
         type: "TimePicker",
       },
     ],
-    [formData, seamOptions]
+    [formData, seamOptions, dumpingpointOptions, loaderOptions, pitOptions, shiftOptions, unitOptions]
   );
 
   return (
@@ -398,6 +305,7 @@ const InputHauling = ({ dataEdit, postData, setPostData, tid }) => {
         </div>
         <div className="btn-wrapper">
           <Button
+            disabled={!isFormValid}
             onClick={handleSubmit}
             icon={<Save24Regular />}
             iconPosition="after"
@@ -430,3 +338,10 @@ const InputHauling = ({ dataEdit, postData, setPostData, tid }) => {
 };
 
 export default InputHauling;
+
+InputHauling.propTypes = {
+  dataEdit: PropTypes.any,
+  postData: PropTypes.any,
+  setPostData: PropTypes.any,
+  tid: PropTypes.any
+}

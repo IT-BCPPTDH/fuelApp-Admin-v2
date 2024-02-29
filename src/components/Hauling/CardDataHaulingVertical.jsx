@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import  { useState, useEffect, useCallback } from 'react';
 import "./CoalHauling.css";
-import { useId, makeStyles, Card } from "@fluentui/react-components";
+import { makeStyles, Card } from "@fluentui/react-components";
 import Transaksi from "../../services/inputCoalHauling";
 
 const useStyles = makeStyles({
@@ -11,57 +11,6 @@ const useStyles = makeStyles({
 });
 
 const CardDataHauling = () => {
-  const datacard = [
-    {
-      InputId: useId("totalhauling"),
-      grid: "col-12",
-      label: "Total Hauling",
-      value: 451,
-      type: "TextDataView",
-      grid: "col-12",
-    },
-    {
-      InputId: useId("haulingtohopper"),
-      grid: "col-6",
-      label: "Hauling To Hopper",
-      value: 451,
-      type: "TextDataView",
-      grid: "col-6",
-    },
-    {
-      InputId: useId("haulingtooverflow"),
-      grid: "col-6",
-      label: "Hauling To OverFlow",
-      value: 451,
-      type: "TextDataView",
-      grid: "col-6",
-    },
-    {
-      InputId: useId("haulingtoecf"),
-      grid: "col-6",
-      label: "Hauling To ECF",
-      value: 451,
-      type: "TextDataView",
-      grid: "col-12",
-    },
-    {
-      InputId: useId("haulingtomiddlestock"),
-      grid: "col-6",
-      label: "Hauling To MiddleStock",
-      value: 451,
-      type: "TextDataView",
-      grid: "col-12",
-    },
-    {
-      InputId: useId("haulingtosekurau"),
-      grid: "col-6",
-      label: "Hauling To Sekurau",
-      value: 451,
-      type: "TextDataView",
-      grid: "col-12",
-    },
-  ];
- 
 
   const formatDate = (date) => {
     const year = date.getFullYear();
@@ -71,10 +20,10 @@ const CardDataHauling = () => {
     return `${year}-${month}-${day}`;
   };
 
-  const getTodayDateString = () => {
+  const getTodayDateString = useCallback(() => {
     const today = new Date();
     return formatDate(today);
-  };
+  },[]);
 
   const styles = useStyles();
 
@@ -120,7 +69,7 @@ const CardDataHauling = () => {
     };
 
     fetchData();
-  }, []);
+  }, [getTodayDateString]);
 
 
   return (
