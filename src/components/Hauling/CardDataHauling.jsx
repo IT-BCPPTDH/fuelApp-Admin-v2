@@ -64,7 +64,7 @@ const CardDataHauling = ({dataUpdated}) => {
 
   return (
     <>
-      <div className="form-wrapper" style={{ marginBottom: "0" }}>
+      <div className="form-wrapper" style={{ marginBottom: "0", marginTop: "0" }}>
         <div className="card-base">
           <Card style={{ marginBottom: "10px" }} className="card-data-full">
             <span className={styles.card}>Total Hauling</span>
