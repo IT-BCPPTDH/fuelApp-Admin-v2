@@ -1,5 +1,5 @@
 import { HeaderPageForm } from "../components/FormComponent/HeaderPageForm";
-import CardDataHauling from "../components/Hauling/CardDataHauling";
+import CardDataHaulingVertical from "../components/Hauling/CardDataHaulingVertical";
 import TableDetailHauling from "../components/Hauling/TableDetailHauling";
 import { NavigateUrl } from "../utils/Navigation";
 
@@ -8,13 +8,13 @@ const DetailHauling = ({value}) => {
   return (
     <>
       <HeaderPageForm
-        title={`Detail Tanggal 12/01/2024`}
+        title={`Detail Data`}
         urlCreate={NavigateUrl.COAL_HAULING_DATA_ENTRY_FORM}
         urlBack={NavigateUrl.COAL_HAULING_MAIN_TABLE}
       />
       <div className="row">
         <div className="col-12">
-          <CardDataHauling />
+          <CardDataHaulingVertical />
         </div>
         <div className="col-12">
           <TableDetailHauling />

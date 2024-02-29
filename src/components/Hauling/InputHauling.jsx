@@ -12,8 +12,10 @@ import FormComponent from "../FormComponent";
 import Transaksi from "../../services/inputCoalHauling";
 import { Save24Regular, ArrowReset24Regular } from "@fluentui/react-icons";
 import { insertFormDataHauling } from "../../helpers/indexedDB/insert";
+import { updateFormDataHauling } from "../../helpers/indexedDB/editData";
 import PropTypes from 'prop-types'
 import { unitOptionsData, shiftOptionsData, loaderOptionsData, dumpingpointOptionsData, pitOptionsData, seamOptionsData } from "../../helpers/optionHelper";
+
 
 const useStyles = makeStyles({
   messageContainer: {
@@ -141,7 +143,10 @@ const InputHauling = ({ dataEdit, postData, setPostData, tid }) => {
         await insertFormDataHauling(data);
         setPostData(true);
       } else {
-        await Transaksi.patchEditTransaction(tid, data);
+
+        // let dataUpdate = await Transaksi.patchEditTransaction(tid, data);
+        let dataUpdate = await updateFormDataHauling(data);
+
         setPostData(true);
       }
 
@@ -151,9 +156,9 @@ const InputHauling = ({ dataEdit, postData, setPostData, tid }) => {
       });
 
       // Optionally, you can reload the window after a delay (e.g., 2 seconds)
-      setTimeout(() => {
-        window.location.reload();
-      }, 2000);
+      // setTimeout(() => {
+      //   window.location.reload();
+      // }, 2000);
     } catch (error) {
       console.error("Error inserting  :", error);
 

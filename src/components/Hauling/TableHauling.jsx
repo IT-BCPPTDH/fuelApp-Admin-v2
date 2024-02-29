@@ -166,19 +166,21 @@ const TableHauling = ({ handleEdit }) => {
 
         const updatedItems = dts.map((itemFromDB) => ({
           id: { label: itemFromDB.id },
+
           // id: { label: ( index + 1).toString() },
-          tanggal: { label: itemFromDB.tanggal },
-          shift: { label: itemFromDB.shift },
-          unitno: { label: itemFromDB.unitno },
-          operator: { label: itemFromDB.operator },
-          tonnage: { label: itemFromDB.tonnage },
-          loader: { label: itemFromDB.loader },
-          pit: { label: itemFromDB.pit },
-          seam: { label: itemFromDB.seam },
-          dumpingpoint: { label: itemFromDB.dumpingpoint },
-          inrom: { label: itemFromDB.inrom },
-          outrom: { label: itemFromDB.outrom },
-          action: { label: itemFromDB.action },
+          tanggal:  itemFromDB.tanggal ,
+          shift:  itemFromDB.shift ,
+          unitno: itemFromDB.unitno ,
+          operator: itemFromDB.operator ,
+          tonnage:  itemFromDB.tonnage ,
+          loader:  itemFromDB.loader,
+          pit: itemFromDB.pit ,
+          seam:  itemFromDB.seam ,
+          dumpingpoint:  itemFromDB.dumpingpoint ,
+          rom: itemFromDB.rom,
+          inrom:  itemFromDB.inrom ,
+          outrom: itemFromDB.outrom ,
+          action:  itemFromDB.action ,
         }));
 
         setItems(updatedItems);
@@ -219,6 +221,16 @@ const TableHauling = ({ handleEdit }) => {
   // };
 
   const handleSubmitServer = async () => {}
+
+
+  const edit = (id) => {
+      
+      const dataEdit = items.find((val) => val.id === id);
+      handleEdit(dataEdit)
+      
+  }
+
+  
 
   return (
     <>
@@ -274,7 +286,7 @@ const TableHauling = ({ handleEdit }) => {
 
             <TableBody>
               {rows.map(({ item }) => (
-                <TableRow key={item}>
+                <TableRow key={item.id}>
                   <TableCell {...columnSizing_unstable.getTableCellProps("id")}>
                     {/* <TableCellLayout>{item.id.label}</TableCellLayout> */}
                     {/* <TableCellLayout>{item.id.label || (index + 1).toString()}</TableCellLayout> */}
@@ -282,52 +294,52 @@ const TableHauling = ({ handleEdit }) => {
                   <TableCell
                     {...columnSizing_unstable.getTableCellProps("tanggal")}>
                     <TableCellLayout>
-                      {formatDate(item.tanggal.label)}
+                      {formatDate(item.tanggal)}
                     </TableCellLayout>
                   </TableCell>
                   <TableCell
                     {...columnSizing_unstable.getTableCellProps("shift")}>
                     <TableCellLayout truncate>
-                      {item.shift.label}
+                      {item.shift}
                     </TableCellLayout>
                   </TableCell>
                   <TableCell
                     {...columnSizing_unstable.getTableCellProps("unitno")}>
-                    <TableCellLayout>{item.unitno.label}</TableCellLayout>
+                    <TableCellLayout>{item.unitno}</TableCellLayout>
                   </TableCell>
                   <TableCell
                     {...columnSizing_unstable.getTableCellProps("operator")}>
-                    <TableCellLayout>{item.operator.label}</TableCellLayout>
+                    <TableCellLayout>{item.operator}</TableCellLayout>
                   </TableCell>
                   <TableCell
                     {...columnSizing_unstable.getTableCellProps("tonnage")}>
-                    <TableCellLayout>{item.tonnage.label}</TableCellLayout>
+                    <TableCellLayout>{item.tonnage}</TableCellLayout>
                   </TableCell>
                   <TableCell
                     {...columnSizing_unstable.getTableCellProps("loader")}>
-                    <TableCellLayout>{item.loader.label}</TableCellLayout>
+                    <TableCellLayout>{item.loader}</TableCellLayout>
                   </TableCell>
                   <TableCell
                     {...columnSizing_unstable.getTableCellProps("pit")}>
-                    <TableCellLayout>{item.pit.label}</TableCellLayout>
+                    <TableCellLayout>{item.pit}</TableCellLayout>
                   </TableCell>
                   <TableCell
                     {...columnSizing_unstable.getTableCellProps("seam")}>
-                    <TableCellLayout>{item.seam.label}</TableCellLayout>
+                    <TableCellLayout>{item.seam}</TableCellLayout>
                   </TableCell>
                   <TableCell
                     {...columnSizing_unstable.getTableCellProps(
                       "dumpingpoint"
                     )}>
-                    <TableCellLayout>{item.dumpingpoint.label}</TableCellLayout>
+                    <TableCellLayout>{item.dumpingpoint}</TableCellLayout>
                   </TableCell>
                   <TableCell
                     {...columnSizing_unstable.getTableCellProps("inrom")}>
-                    <TableCellLayout>{item.inrom.label}</TableCellLayout>
+                    <TableCellLayout>{item.inrom}</TableCellLayout>
                   </TableCell>
                   <TableCell
                     {...columnSizing_unstable.getTableCellProps("outrom")}>
-                    <TableCellLayout>{item.outrom.label}</TableCellLayout>
+                    <TableCellLayout>{item.outrom}</TableCellLayout>
                   </TableCell>
                   <TableCell
                     {...columnSizing_unstable.getTableCellProps("action")}>
@@ -336,7 +348,7 @@ const TableHauling = ({ handleEdit }) => {
                         // value={item.id}
                         icon={<EditRegular />}
                         aria-label="Edit"
-                        onClick={() => handleEdit(item.id)}
+                        onClick={() => edit(item.id)}
                       />
                       {/* <Button icon={<DeleteRegular />} aria-label="Delete" /> */}
 

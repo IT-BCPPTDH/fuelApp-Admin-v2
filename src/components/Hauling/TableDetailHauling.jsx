@@ -153,7 +153,6 @@ const TableDetailHauling = () => {
     const fetchData = async () => {
       try {
         const dts = await Transaksi.getAllTransaction(value.tanggal);
-
         const updatedItems = dts.data.map((itemFromDB, index) => ({
           // id: { label: itemFromDB.id},
           id: { label: ( index + 1).toString() },
