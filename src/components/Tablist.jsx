@@ -1,5 +1,6 @@
 import { makeStyles, Tab, TabList } from "@fluentui/react-components";
 import { useNavigate } from 'react-router-dom';
+import PropTypes from 'prop-types'
 
 const useStyles = makeStyles({
   root: {
@@ -34,3 +35,8 @@ export const DynamicTablistMenu = ({ tabs, active }) => {
     </div>
   );
 };
+
+DynamicTablistMenu.propTypes = {
+  tabs: PropTypes.array,
+  active: PropTypes.string
+}

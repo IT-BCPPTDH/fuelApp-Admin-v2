@@ -5,6 +5,9 @@
 .mt2em {
    margin-top: 2em;
 }
+.mb2em{
+   margin-bottom: 2em;
+}
 
 .flex-row {
    display: flex;
@@ -26,8 +29,6 @@ button:hover {
 .border-input-error {
    border-color: red !important;
 }
-
-
 
 .x-spreadsheet-toolbar {
    width: 1295px !important;

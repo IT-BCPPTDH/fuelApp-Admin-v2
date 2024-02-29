@@ -36,16 +36,15 @@ export const HomePage = () => {
   const { id } = useParams();
 
   useEffect(() => {
-    function onConnect () {
+    function onConnect() {
       setIsConnected(true)
     }
 
-    function onDisconnect () {
+    function onDisconnect() {
       setIsConnected(false)
     }
 
-    function onFooEvent (value) {
-      // console.log(value)
+    function onFooEvent(value) {
       setDataXls(JSON.parse(value))
     }
 
@@ -61,10 +60,13 @@ export const HomePage = () => {
   }, [dataXls])
 
   useEffect(() => {
-    socket.emit('getData', `${id}`, e => {
-      console.log(e)
-    })
-  }, [])
+    if(isConnected){
+      socket.emit('getData', `${id}`, e => {
+        console.log(e)
+      })
+    }
+  
+  }, [id, isConnected])
 
   return (
     <>
@@ -81,10 +83,10 @@ export const HomePage = () => {
 
       <div className={styles.example}>{/* <Divider /> */}</div>
       <div className={styles.tableContainer}>
-      {dataXls ? 
-        <ExcelLike dataXls={dataXls} setDataXls={setDataXls}  id={id}/> :
-        <Spinner size="small" label="Please wait while loading all data..." />
-      }
+        {dataXls ?
+          <ExcelLike dataXls={dataXls} setDataXls={setDataXls} id={id} /> :
+          <Spinner size="small" label="Please wait while loading all data..." />
+        }
       </div>
     </>
   )

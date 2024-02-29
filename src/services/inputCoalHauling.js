@@ -12,14 +12,28 @@ const api = axios.create({
 //   return config
 // })
 
-const getAllTransaction = async () => {
-  const response = await api.get(URL_ENUMS.transactionHoul);
+const getAllTransaction = async (tanggal) => {
+  const response = await api.post(URL_ENUMS.transactionHoul+tanggal);
   // console.log(1, response);
   return response.data;
 };
 
 const getEditTransaction = async () => {
   const response = await api.get(URL_ENUMS.transactionHoul);
+  console.log(1, response);
+  return response.data;
+};
+
+const patchEditTransaction = async (id,data) => {
+  console.log(id)
+  console.log(URL_ENUMS.patchEditData+id)
+  const response = await api.patch(URL_ENUMS.patchEditData+id,data);
+  console.log(1, response);
+  return response.data;
+};
+
+const getDownload = async () => {
+  const response = await api.get(URL_ENUMS.getDownload);
   console.log(1, response);
   return response.data;
 };
@@ -43,38 +57,44 @@ const getEditData = async (id) => {
   return response.data;
 };
 
-const getDataTotal = async () => {
-  const response = await api.get(URL_ENUMS.cardDataTotal);
+const getDataTotal = async (tanggal) => {
+  const response = await api.post(URL_ENUMS.cardDataTotal+tanggal);
   console.log(1, response);
   return response.data;
 };
 
-const getDataHopper = async () => {
-  const response = await api.get(URL_ENUMS.cardDataHopper);
+const getDataHopper = async (tanggal) => {
+  const response = await api.post(URL_ENUMS.cardDataHopper+tanggal);
   console.log(1, response);
   return response.data;
 };
 
-const getDataOverflow = async () => {
-  const response = await api.get(URL_ENUMS.cardDataOverflow);
+const getDataOverflow = async (tanggal) => {
+  const response = await api.post(URL_ENUMS.cardDataOverflow+tanggal);
   console.log(1, response);
   return response.data;
 };
 
-const getDataECF = async () => {
-  const response = await api.get(URL_ENUMS.cardDataECF);
+const getDataECF = async (tanggal) => {
+  const response = await api.post(URL_ENUMS.cardDataECF+tanggal);
   console.log(1, response);
   return response.data;
 };
 
-const getDataMiddleStock = async () => {
-  const response = await api.get(URL_ENUMS.cardDataMiddleStcok);
+const getDataMiddleStock = async (tanggal) => {
+  const response = await api.post(URL_ENUMS.cardDataMiddleStcok+tanggal);
   console.log(1, response);
   return response.data;
 };
 
-const getDataSekurau = async () => {
-  const response = await api.get(URL_ENUMS.cardDataSekurau);
+const getDataSekurau = async (tanggal) => {
+  const response = await api.post(URL_ENUMS.cardDataSekurau+tanggal);
+  console.log(1, response);
+  return response.data;
+};
+
+const getDataMain = async () => {
+  const response = await api.get(URL_ENUMS.dataMain);
   console.log(1, response);
   return response.data;
 };
@@ -86,11 +106,14 @@ const Transaksi = {
   postCreateTransaction,
   getDataTotal,
   getEditData,
+  patchEditTransaction,
   getDataHopper,
   getDataOverflow,
   getDataECF,
   getDataMiddleStock,
   getDataSekurau,
+  getDownload,
+  getDataMain,
 };
 
 

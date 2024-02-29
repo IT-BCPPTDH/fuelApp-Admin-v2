@@ -1,21 +1,17 @@
-import React, { useState, useMemo, useEffect, useCallback } from "react";
-import "./CoalHauling.css";
-import {
-  useId,
-  Button,
-  MessageBar,
-  MessageBarTitle,
-  MessageBarBody,
-  Link,
-  makeStyles,
-} from "@fluentui/react-components";
+import { useState, useMemo, useEffect, useCallback } from "react";
+import PropTypes from 'prop-types'
+import { Button, MessageBar, MessageBarTitle, MessageBarBody, Link, makeStyles, MessageBarActions} from "@fluentui/react-components";
 import FormComponent from "../FormComponent";
-import Transaksi from "../../services/inputCoalHauling";
-import { Save24Regular, ArrowReset24Regular } from "@fluentui/react-icons";
-// import pitOption from "../../data/datapit.json";
+import { Save24Regular, ArrowReset24Regular, DismissRegular } from "@fluentui/react-icons";
+import { insertFormDataHauling } from "../../helpers/indexedDB/insert";
+import { updateFormDataHauling } from "../../helpers/indexedDB/editData";
+import { unitOptionsData, shiftOptionsData, loaderOptionsData, dumpingpointOptionsData, pitOptionsData, seamOptionsData } from "../../helpers/optionHelper";
+import "./CoalHauling.css";
+// import Transaksi from "../../services/inputCoalHauling";
 
 const useStyles = makeStyles({
   messageContainer: {
+    width: "300px",
     position: "fixed",
     bottom: "20px",
     right: "20px",
@@ -23,208 +19,168 @@ const useStyles = makeStyles({
   },
 });
 
-const shiftOptions = ["Day", "Night"];
-const unitOptions = ["EXA526", "EXA726"];
-const loaderOptions = [
-  "HWL1038",
-  "HWL1039",
-  "HWL1040",
-  "HWL5043",
-  "HEX1472",
-  "HEX1312",
-  "HEX1473",
-  "HEX1248",
-  "HEX1320",
-  "HEX1473",
-  "HWL5041",
-];
-// const seamOptions = ["C2", "A", "BB"];
-const dumpingpointOptions = [
-  "MAIN COAL FACILITY ( HOPPER)",
-  "STOCK PILE / OVERFLOW ( ROM MF)",
-  "STOCK PILE / EARLY COAL FACILITY (ROM ECF)",
-  "MIDLE STOCK PILE",
-  "SEKURAU",
-];
-const pitOptions = [
-  "PIT A NORTH 1",
-  "PIT A NORTH 2",
-  "PIT A SOUTH 1",
-  "PIT A SOUTH 2",
-  "PIT B01",
-  "PIT B02",
-];
+const InputHauling = ({ dataEdit, postData, setPostData, dataId, setDataupdated }) => {
 
-const seamOptionsData = {
-  "PIT A NORTH 1": ["C2", "B Hs", "BB", "ARB", "D", "A", "C"],
-  "PIT A NORTH 2": ["C2", "B Hs", "BB", "ARB", "D", "A", "C"],
-  "PIT A SOUTH 1": [
-    "ARB",
-    "B Hs",
-    "B AMM",
-    "D",
-    "C",
-    "FF",
-    "C2",
-    "CC",
-    "D MTN",
-  ],
-  "PIT A SOUTH 2": [
-    "ARB",
-    "B Hs",
-    "B AMM",
-    "D",
-    "C",
-    "FF",
-    "C2",
-    "CC",
-    "D MTN",
-  ],
-  "PIT B01": [
-    "A PAMA",
-    "C PAMA",
-    "D",
-    "BM PAMA",
-    "AHS PAMA",
-    "B AAM",
-    "DE AAM",
-    "E1",
-    "A2",
-    "C DH",
-    "D AMM",
-    "A AMM",
-    "B SEAM",
-    "E 1 MTN",
-    "DE1 AMM",
-    "D MTN",
-  ],
-  "PIT B02": [
-    "A PAMA",
-    "C PAMA",
-    "D",
-    "BM PAMA",
-    "AHS PAMA",
-    "B AAM",
-    "DE AAM",
-    "E1",
-    "A2",
-    "C DH",
-    "D AMM",
-    "A AMM",
-    "B SEAM",
-    "E 1 MTN",
-    "DE1 AMM",
-    "D MTN",
-  ],
-};
-
-const InputHauling = ({ dataEdit }) => {
   const classes = useStyles();
-  const [message, setMessage] = React.useState(null);
-  const [isFormValid, setIsFormValid] = useState(false);
+  const [message, setMessage] = useState(null);
+  // const [isFormValid, setIsFormValid] = useState(false);
   const [seamOptions, setSeamOptions] = useState([]);
   const [formData, setFormData] = useState({});
 
-  useEffect(() => {
+  const [seamDataOptions] = useState(seamOptionsData);
+  const [unitOptions] = useState(unitOptionsData)
+  const [shiftOptions] = useState(shiftOptionsData)
+  const [loaderOptions] = useState(loaderOptionsData)
+  const [dumpingpointOptions] = useState(dumpingpointOptionsData)
+  const [pitOptions] = useState(pitOptionsData)
 
+  const determineShift = () => {
+    const currentHour = new Date().getHours();
+    return currentHour >= 6 && currentHour < 18 ? "Day" : "Night";
+  };
+
+  useEffect(() => {
     setFormData({
       tanggal: dataEdit?.tanggal ?? new Date(),
-      shift: dataEdit?.shift ?? 'Day',
-      unitNo: dataEdit?.unitNo ?? '',
-      operator: dataEdit?.operator ?? '',
-      loader: dataEdit?.loader ?? '',
-      tonnage: dataEdit?.tonnage ?? '',
-      seam: dataEdit?.seam ?? '',
-      dumpingpoint: dataEdit?.dumpingpoint ?? '',
-      rom: dataEdit?.rom ?? '',
-      inrom: dataEdit?.inrom ?? '',
-      outrom: dataEdit?.outrom ?? '',
-      pit: dataEdit?.pit ?? '',
+      shift: dataEdit?.shift ?? determineShift(),
+      unitno: dataEdit?.unitno ?? "",
+      operator: dataEdit?.operator ?? "",
+      loader: dataEdit?.loader ?? "",
+      tonnage: dataEdit?.tonnage ?? "",
+      seam: dataEdit?.seam ?? "",
+      dumpingpoint: dataEdit?.dumpingpoint ?? "",
+      rom: dataEdit?.rom ?? "",
+      inrom: dataEdit?.inrom ?? "",
+      outrom: dataEdit?.outrom ?? "",
+      pit: dataEdit?.pit ?? "",
     });
-    
-  }, [dataEdit]);
 
-  const handleChange = useCallback((e, v) => {
-    const { name, value } = v;
+    setSeamOptions(seamDataOptions['PIT A NORTH 1']);
 
-    if (name === "inrom" || name === "outrom") {
-      const hours = value.selectedTime.getHours();
-      const minutes = value.selectedTime.getMinutes();
-      const second = value.selectedTime.getSeconds();
+  }, [dataEdit, seamDataOptions]);
 
-      const addLeadingZero = (num) => (num < 10 ? `0${num}` : num);
+  const handleChange = useCallback(
+    (e, v) => {
+      const { name, value } = v;
 
-      const formattedTime = `${addLeadingZero(hours)}:${addLeadingZero(minutes)}:${addLeadingZero(second)}`;
+      if (name === "inrom" || name === "outrom") {
 
-      console.log(formattedTime);
-      console.log(hours, minutes, second);
+        if(value.selectedTime){
 
-      if (name === "inrom" && formattedTime > formData.outrom) {
-        alert("inrom tidak boleh lebih besar dari outrom");
-      } else if (name === "outrom" && formData.inrom > formattedTime) {
-        alert("outrom tidak boleh lebih kecil dari inrom");
-      }
-
-      setFormData((prevFormData) => ({
-        ...prevFormData,
-        [name]: formattedTime,
-      }));
-
-
-    } else {
-
-      if (name === "pit") {
-        let a = pitOptions?.find((v) => v === value);
-        setSeamOptions(seamOptionsData[a]);
-      }
-      
-      setFormData((prevFormData) => ({ ...prevFormData, [name]: value }));
-    }
+          const hours = value.selectedTime.getHours();
+          const minutes = value.selectedTime.getMinutes();
+          const second = value.selectedTime.getSeconds();
   
-    const isValid = Object.values(formData).every((val) => val !== "");
-    setIsFormValid(isValid);
+          const addLeadingZero = (num) => (num < 10 ? `0${num}` : num);
+  
+          const formattedTime = `${addLeadingZero(hours)}:${addLeadingZero(
+            minutes
+          )}:${addLeadingZero(second)}`;
+  
+          if (name === "outrom" && formData.inrom > formattedTime) {
+            alert("outrom tidak boleh lebih kecil dari inrom");
+          } else {
+            setFormData((prevFormData) => ({
+              ...prevFormData,
+              [name]: formattedTime,
+            }));
+          }
+        }
+      
+      } else {
+        if (name === "pit") {
+          let a = pitOptions?.find((v) => v === value);
+          if(a){
+            setSeamOptions(seamDataOptions[a]);
+          }
+        }
 
-  }, [formData, setIsFormValid, setFormData, setSeamOptions]);
+        setFormData((prevFormData) => ({ ...prevFormData, [name]: value }));
+      }
 
-  const handleSubmit = async () => {
+      // const isValid = Object.values(formData).every((val) => val !== "");
+      // setIsFormValid(isValid);
+    },
+    [formData, setFormData, setSeamOptions, pitOptions, seamDataOptions]
+  );
+
+  const handleSubmit = useCallback(async () => {
     try {
+
+      let dbInserted = false
+      const requiredFields = [
+        "tanggal",
+        "shift",
+        "unitno",
+        "operator",
+        "loader",
+        "tonnage",
+        "seam",
+        "dumpingpoint",
+        "rom",
+        "inrom",
+        "outrom",
+        "pit",
+      ];
+
+      const isAnyFieldEmpty = requiredFields.some((field) => !formData[field]);
+
+      if (isAnyFieldEmpty) {
+        alert("Mohon isi semua data yang diperlukan.");
+        return;
+      }
+
       let data = {
         ...formData,
       };
 
-      let datainsert = await Transaksi.postCreateTransaction(data);
+      if (postData) {
+        const inserted = await insertFormDataHauling(data);
+        if(inserted){
+          dbInserted = true
+        }
+    
+      } else {
+        // let dataUpdate = await Transaksi.patchEditTransaction(tid, data);
+        const updated = await updateFormDataHauling(dataId, data);
+        if(updated){
+          dbInserted = true
+        }
+      }
 
-      // Display success toast
+      if(dbInserted){
+        handleReset()
+        setDataupdated(true)
+        dbInserted = false
+      }
+
       setMessage({
         type: "success",
         content: "Data berhasil di input",
       });
 
-      // Optionally, you can reload the window after a delay (e.g., 2 seconds)
-      setTimeout(() => {
-        window.location.reload();
-      }, 2000);
     } catch (error) {
-      console.error("Error inserting data:", error);
+      console.error("Error inserting  :", error);
 
-      // Display error toast
       setMessage({
         type: "error",
         content: "Gagal menginput data. Silahkan coba kembali!",
       });
     }
-  };
+  }, [formData, postData, dataId, setDataupdated]);
 
-  const handleReset = () => {
+  const handleReset = useCallback(() => {
     setFormData({
       inrom: "",
       outrom: "",
       tonnage: "",
       dumpingpoint: "",
     });
-    setMessage(null);
-    setIsFormValid(false);
-  };
+    setMessage(false);
+    // setIsFormValid(false);
+    setPostData(true);
+
+  }, [setPostData]);
 
   const comp = useMemo(
     () => [
@@ -256,12 +212,12 @@ const InputHauling = ({ dataEdit }) => {
         options: pitOptions,
       },
       {
-        name: "unitNo",
+        name: "unitno",
         grid: "col-4",
         label: "No Unit",
-        value: formData.unitNo,
         readOnly: false,
         disabled: false,
+        value: formData.unitno,
         type: "Combobox",
         options: unitOptions,
       },
@@ -341,19 +297,23 @@ const InputHauling = ({ dataEdit }) => {
         type: "TimePicker",
       },
     ],
-    [formData, seamOptions]
+    [formData, seamOptions, dumpingpointOptions, loaderOptions, pitOptions, shiftOptions, unitOptions]
   );
+
+  const dismissMessage = () =>{
+    setMessage(null)
+  }
 
   return (
     <>
-      <div
-        className="form-wrapper wrapper"
-        style={{ marginBottom: "0", paddingTop: "3em" }}>
+      <div className="form-wrapper wrapper" style={{ marginBottom: "0", paddingTop: "3em", marginTop: "0" }}>
         <div className="input-base">
           <FormComponent components={comp} handleChange={handleChange} />
         </div>
+        <hr />
         <div className="btn-wrapper">
           <Button
+            // disabled={!isFormValid}
             onClick={handleSubmit}
             icon={<Save24Regular />}
             iconPosition="after"
@@ -378,6 +338,18 @@ const InputHauling = ({ dataEdit }) => {
                 <Link onClick={() => setMessage(null)}>Dismiss</Link>
               )}
             </MessageBarBody>
+            <MessageBarActions
+              containerAction={
+                <Button
+                onClick={dismissMessage}
+                  aria-label="dismiss"
+                  appearance="transparent"
+                  icon={<DismissRegular />}
+                />
+              }
+            >
+ 
+            </MessageBarActions>
           </MessageBar>
         )}
       </div>
@@ -386,3 +358,11 @@ const InputHauling = ({ dataEdit }) => {
 };
 
 export default InputHauling;
+
+InputHauling.propTypes = {
+  dataEdit: PropTypes.any,
+  postData: PropTypes.any,
+  setPostData: PropTypes.any,
+  dataId: PropTypes.any,
+  setDataupdated: PropTypes.any
+}

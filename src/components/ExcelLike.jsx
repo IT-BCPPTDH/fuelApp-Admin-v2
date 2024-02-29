@@ -1,12 +1,13 @@
-import { useState, useCallback, useEffect } from 'react'
+import { useState, useCallback } from 'react'
 import { Workbook } from '@fortune-sheet/react'
 import { socket } from '../socket'
-import { makeStyles, shorthands, Spinner } from "@fluentui/react-components";
+// import { makeStyles, shorthands, Spinner } from "@fluentui/react-components";
 import Cookies from 'js-cookie';
+import PropTypes from 'prop-types'
 
 const ExcelLike = ({dataXls, setDataXls, id }) => {
 
-  const [user, setUser] = useState(() => {
+  const [user] = useState(() => {
     let userCookie = Cookies.get('user');
     userCookie = JSON.parse(userCookie);
     return userCookie
@@ -71,11 +72,11 @@ const ExcelLike = ({dataXls, setDataXls, id }) => {
         })
       }
     },
-    [transformSheetData, setDataXls]
+    [transformSheetData, setDataXls, dataXls,id,user.JDE,user.fullname]
   )
 
   const onOp = useCallback(e => {
-    // console.log(e)
+    console.log(e)
   }, [])
 
   return (
@@ -92,3 +93,9 @@ const ExcelLike = ({dataXls, setDataXls, id }) => {
 }
 
 export default ExcelLike
+
+ExcelLike.propTypes={
+  dataXls: PropTypes.any,
+  setDataXls: PropTypes.any,
+  id: PropTypes.any
+}

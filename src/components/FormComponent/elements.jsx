@@ -17,6 +17,7 @@ import {
   Virtualizer,
   useStaticVirtualizerMeasure,
 } from "@fluentui/react-components/unstable";
+import PropTypes from 'prop-types'
 
 
 const useStyles = makeStyles({
@@ -53,6 +54,8 @@ const useStyles = makeStyles({
     height: "32px",
   },
 });
+
+
 export const FormElement = ({
   name,
   label,
@@ -176,11 +179,13 @@ export const FormElement = ({
 };
 
 
+
 const ComboBoxCustom = (props) => {
   const { inputId, name, label, options, handleChange, value } = props;
   const [matchingOptions, setMatchingOptions] = useState([]);
-  const [customSearch, setCustomSearch] = useState("");
   const styles = useStyles();
+  const [itemHeight] = useState(10)
+  const [numberOfItems, setNumberofItems] = useState(0)
 
   const onChange = (event) => {
     const value = event.target.value.trim();
@@ -190,29 +195,19 @@ const ComboBoxCustom = (props) => {
       (option) => option.toLowerCase().indexOf(value.toLowerCase()) === 0
     );
     setMatchingOptions(matches);
-    if (value.length && matches.length < 1) {
-      setCustomSearch(value);
-    } else {
-      setCustomSearch(undefined);
-    }
   };
 
   const onOptionSelect = (event, data) => {
     const matchingOptions = data.optionText && options.includes(data.optionText);
     if (matchingOptions) {
-      setCustomSearch(data.optionText);
       handleChange(event, { name: name, value: data.optionText });
-    } else {
-      setCustomSearch(undefined);
-    }
+    } 
   };
 
   useEffect(() => {
     setMatchingOptions([...options])
+    setNumberofItems(options.length)
   }, [options]);
-
-  const itemHeight = 10;
-  const numberOfItems = options.length;
 
   const { virtualizerLength, bufferItems, bufferSize, scrollRef } =
     useStaticVirtualizerMeasure({
@@ -253,3 +248,23 @@ const ComboBoxCustom = (props) => {
     </Combobox>
   );
 };
+
+FormElement.propTypes={
+  name: PropTypes.string,
+  label: PropTypes.string,
+  type: PropTypes.string,
+  options: PropTypes.array,
+  value: PropTypes.any,
+  handleChange: PropTypes.any,
+  disabled: PropTypes.any,
+  readOnly: PropTypes.any
+}
+
+ComboBoxCustom.propTypes={
+  inputId: PropTypes.any,
+  name: PropTypes.string,
+  label: PropTypes.string,
+  options: PropTypes.array,
+  handleChange: PropTypes.any,
+  value: PropTypes.any
+}

@@ -1,33 +1,30 @@
-import { useRef, useEffect, useState, useCallback } from 'react'
+import { useRef, useEffect, useState } from 'react'
 import jspreadsheet from 'jspreadsheet-ce'
 import { HeaderPageForm } from '../components/FormComponent/HeaderPageForm'
 import FormComponent from '../components/FormComponent'
 import { calculateTotalTimeFromArray } from '../helpers/timeHelper'
-// import { FooterPageForm } from '../components/FormComponent/FooterPageForm'
 import { DynamicTablistMenu } from '../components/Tablist'
-// import DataJson from '../data/test-data.json'
 import { tabsRekapTimeEntry } from '../helpers/tabArrayHelper'
 import { colHelperTimesheetMines } from '../helpers/columnHelper'
 import Services from '../services/timeEntry'
 import { useLocation } from 'react-router-dom'
 
-export const TimeEntryMinesEntryPage = () => {
+const TimeEntryMinesEntryPage = () => {
   const jRef = useRef(null)
   const [totalDuration, setTotalDuration] = useState(0)
   const [buttonDisabled, setButtonDisabled] = useState(true)
   // const [secName, setSecName] = useState(null)
   const location = useLocation();
   const secName = location.pathname.includes('mines') ? 'mines' : 'fms';
+
   const handleChange = (ev, data) => {
-    const { name, value } = data
+    // const { name, value } = data
   }
 
   // const handleSubmit = () => {}
 
-
   const isChange = () => {
     const data = jRef.current.jspreadsheet.getData()
-
     const arrayDuration = data.map(k => k[14])
     const totalTimeDuration = calculateTotalTimeFromArray(arrayDuration)
     if (totalTimeDuration !== 'NaN.NaN') {
@@ -71,7 +68,6 @@ export const TimeEntryMinesEntryPage = () => {
   //       tableWidth: `${(width * 87) / 100}px`,
   //       tableOverflow: true
   //     };
-
   //    if (!jRef.current.jspreadsheet) {
   //       jspreadsheet(jRef.current, options);
   //    }
@@ -80,7 +76,7 @@ export const TimeEntryMinesEntryPage = () => {
 
   useEffect(() => {
     let getFrom = location.pathname.split('-')
-    console.log(1,getFrom)
+    
     const fetchData = async () => {
       try {
         let json = null
@@ -90,10 +86,10 @@ export const TimeEntryMinesEntryPage = () => {
         }else{
           json = await Services.getDataMines();
         }
-        console.log(123,json.data.length)
+        
         setDataJson(json.data);
         jRef.current.jspreadsheet.setData(json.data)
-        // contentExcel(json.data)
+        
       } catch (error) {
         console.error('Error fetching data:', error);
       }
@@ -120,8 +116,6 @@ export const TimeEntryMinesEntryPage = () => {
     // }
   }, []);
 
- 
-
   useEffect(() => {
     const disabled =
       parseFloat(totalDuration) > 12 || parseFloat(totalDuration) < 12
@@ -130,10 +124,13 @@ export const TimeEntryMinesEntryPage = () => {
     setButtonDisabled(disabled)
   }, [totalDuration])
 
-  // console.log(jRef)
   return (
     <>
-      <HeaderPageForm title={`Time Entry BCP - 11 Januari 2024`} />
+      <HeaderPageForm 
+        title={`Time Entry BCP`} 
+        urlCreate={''}
+        urlBack={'/'}
+      />
 
       <div className='form-wrapper'>
         <div className='row'>
@@ -179,3 +176,5 @@ export const TimeEntryMinesEntryPage = () => {
     </>
   )
 }
+
+export default TimeEntryMinesEntryPage

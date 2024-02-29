@@ -23,6 +23,7 @@ const unitOptions = ['DT11223', 'DT11224', 'DT11225', 'DT11226']
 // const jdeOptions = ['112233', '223344', '334455', '445566', '556677']
 
 const activeTab = 'time-entry/digger/';
+
 export default function ProductionDiggerPage() {
   const jRef = useRef(null)
   const currentDate = new Date()

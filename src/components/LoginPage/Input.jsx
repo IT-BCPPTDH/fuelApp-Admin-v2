@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect } from "react";
 import {
   makeStyles,
   shorthands,
@@ -83,10 +83,6 @@ export const InputForm = () => {
   const passwordRef = useRef(null);
   const inputReference = useRef(null);
 
-  const [state, setState] = useState({
-    cursor: 0,
-    result: [],
-  });
   useEffect(() => {
     inputReference.current.focus();
   }, []);

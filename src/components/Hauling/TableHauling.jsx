@@ -1,6 +1,6 @@
-import { useState, useEffect } from "react";
-import { SearchBox } from "@fluentui/react-search-preview";
-import Transaksi from "../../services/inputCoalHauling";
+import { useState, useEffect, useCallback } from "react";
+// import { SearchBox } from "@fluentui/react-search-preview";
+// import Transaksi from "../../services/inputCoalHauling";
 import {
   Table,
   TableBody,
@@ -28,17 +28,22 @@ import {
   MessageBar,
   MessageBarBody,
   MessageBarTitle,
+  MessageBarActions,
   Link,
   makeStyles,
 } from "@fluentui/react-components";
 import {
   EditRegular,
   DeleteRegular,
-  ArrowDownload24Regular,
+  DismissRegular
 } from "@fluentui/react-icons";
+import { getDataTableHauling } from "../../helpers/indexedDB/getData";
+import {deleteFormDataHauling} from "../../helpers/indexedDB/deteleData";
+import PropTypes from 'prop-types'
 
 const useStyles = makeStyles({
   messageContainer: {
+    width: "300px",
     position: "fixed",
     bottom: "20px",
     right: "20px",
@@ -60,7 +65,7 @@ const columnsDef = [
     renderHeaderCell: () => <>Shift</>,
   }),
   createTableColumn({
-    columnId: "unitNo",
+    columnId: "unitno",
     renderHeaderCell: () => <>Unit</>,
   }),
   createTableColumn({
@@ -101,10 +106,11 @@ const columnsDef = [
   }),
 ];
 
-const TableHauling = ({ handleEdit }) => {
+const TableHauling = ({ handleEdit, dataUpdated, setDataupdated}) => {
   const classes = useStyles();
   const [columns] = useState(columnsDef);
   const [message, setMessage] = useState(null);
+  const [open, setOpen] = useState(false);
 
   const [columnSizingOptions] = useState({
     id: {
@@ -112,15 +118,19 @@ const TableHauling = ({ handleEdit }) => {
       minWidth: 20,
     },
     operator: {
-      minWidth: 190,
-      defaultWidth: 100,
+      minWidth: 80,
+      defaultWidth: 50,
     },
     shift: {
+      idealWidth: 80,
+      minWidth: 50,
+    },
+    seam: {
       idealWidth: 90,
       minWidth: 50,
     },
     pit: {
-      idealWidth: 40,
+      idealWidth: 100,
       minWidth: 50,
     },
   });
@@ -137,57 +147,73 @@ const TableHauling = ({ handleEdit }) => {
 
   const rows = getRows();
 
-  const formatDate = (dateString) => {
-    const options = {
-      day: "2-digit",
-      month: "2-digit",
-      year: "numeric",
-    };
-    return new Date(dateString).toLocaleDateString("en-GB", options);
+  const formatDate = (date) => {
+    const year = date.getFullYear();
+    const month = (date.getMonth() + 1).toString().padStart(2, "0");
+    const day = date.getDate().toString().padStart(2, "0");
+
+    return `${year}-${month}-${day}`;
   };
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const dts = await Transaksi.getAllTransaction();
-
-        const updatedItems = dts.data.map((itemFromDB) => ({
-          id: { label: itemFromDB.id },
-          tanggal: { label: itemFromDB.tanggal },
-          shift: { label: itemFromDB.shift },
-          unitNo: { label: itemFromDB.unitno },
-          operator: { label: itemFromDB.operator },
-          tonnage: { label: itemFromDB.tonnage },
-          loader: { label: itemFromDB.loader },
-          pit: { label: itemFromDB.pit },
-          seam: { label: itemFromDB.seam },
-          dumpingpoint: { label: itemFromDB.dumpingpoint },
-          inrom: { label: itemFromDB.inrom },
-          outrom: { label: itemFromDB.outrom },
-          action: { label: itemFromDB.action },
-        }));
-
-        setItems(updatedItems);
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      }
-    };
-
-    fetchData();
+  const getTodayDateString = useCallback(() => {
+    const today = new Date();
+    return formatDate(today);
   }, []);
 
-  const handleDelete = async (id) => {
-    console.log(id.label);
+  const fetchData = useCallback(async () => {
     try {
-      const updatedData = await Transaksi.getDeteleTransaction(id.label);
-      console.log(updatedData);
-      setMessage({
-        type: "success",
-        content: "Data derhasil dihapus",
-      });
-      setTimeout(() => {
-        window.location.reload();
-      }, 1000);
+      const dateToday = getTodayDateString();
+      // const dts = await Transaksi.getAllTransaction(dateToday);
+      const dts = await getDataTableHauling(dateToday);
+
+      const updatedItems = dts.map((itemFromDB) => ({
+        id: itemFromDB.id,
+        tanggal: itemFromDB.tanggal,
+        shift: itemFromDB.shift,
+        unitno: itemFromDB.unitno,
+        operator: itemFromDB.operator,
+        tonnage: itemFromDB.tonnage,
+        loader: itemFromDB.loader,
+        pit: itemFromDB.pit,
+        seam: itemFromDB.seam,
+        dumpingpoint: itemFromDB.dumpingpoint,
+        rom: itemFromDB.rom,
+        inrom: itemFromDB.inrom,
+        outrom: itemFromDB.outrom,
+        action: itemFromDB.action,
+      }));
+
+      setItems(updatedItems);
+      setDataupdated(false)
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  }, [getTodayDateString, setDataupdated])
+
+  useEffect(() => {
+    if(dataUpdated){
+      fetchData();
+    }
+
+    fetchData();
+   
+  }, [getTodayDateString, fetchData, dataUpdated]);
+
+  const handleDelete = async (id) => {
+    try {
+     
+      // await Transaksi.getDeteleTransaction(id.label);
+      const deleted = await deleteFormDataHauling(id);
+  
+      if(deleted){
+        fetchData();
+        setMessage({
+          type: "success",
+          content: "Data derhasil dihapus",
+        });
+        setOpen(false)
+      }
+
     } catch (error) {
       console.error("Error deleting data:", error);
       setMessage({
@@ -197,17 +223,67 @@ const TableHauling = ({ handleEdit }) => {
     }
   };
 
+  // const handleDownload = async () => {
+  //   try {
+  //     const downloadData = await Transaksi.getDownload();
+  //     // const link = document.createElement('a');
+  //   } catch (error) {
+  //     console.error("Error downloading data:", error);
+  //   }
+  // };
+
+  const handleSubmitServer = async () => { }
+
+  const editData = (id) => {
+    const dataEdit = items.find((val) => val.id === id);
+    handleEdit(dataEdit)
+  }
+
+  const dismissMessage = () =>{
+    setMessage(null)
+  }
+
   return (
     <>
-      <div className="form-wrapper" style={{ marginTop: "10px" }}>
+      <div className="form-wrapper">
+      <div className={classes.messageContainer}>
+        {message && (
+          <MessageBar intent={message.type}>
+            <MessageBarBody>
+              <MessageBarTitle>{message.content}</MessageBarTitle>
+              {message.type === "error" && (
+                <Link onClick={() => setMessage(null)}>Dismiss</Link>
+              )}
+            </MessageBarBody>
+            <MessageBarActions
+              containerAction={
+                <Button
+                onClick={dismissMessage}
+                  aria-label="dismiss"
+                  appearance="transparent"
+                  icon={<DismissRegular />}
+                />
+              }
+            >
+ 
+            </MessageBarActions>
+          </MessageBar>
+        )}
+      </div>
         <div className="search-box">
-          <Button
+          {/* <Button
             icon={<ArrowDownload24Regular />}
             iconPosition="after"
+            onClick={() => handleDownload()}
             style={{ backgroundColor: "#28499c", color: "#ffffff" }}>
             Download
+          </Button> */}
+          {/* <SearchBox placeholder="Search" /> */}
+          <Button
+            onClick={() => handleSubmitServer()}
+            style={{ backgroundColor: "#28499c", color: "#ffffff" }}>
+            Submit Data to Server
           </Button>
-          <SearchBox placeholder="Search" />
         </div>
         <div style={{ overflowX: "auto" }}>
           <Table
@@ -245,72 +321,69 @@ const TableHauling = ({ handleEdit }) => {
 
             <TableBody>
               {rows.map(({ item }) => (
-                <TableRow key={item.id.label}>
+                <TableRow key={item.id}>
                   <TableCell {...columnSizing_unstable.getTableCellProps("id")}>
-                    {/* <TableCellLayout>{item.id.label}</TableCellLayout> */}
+                    <TableCellLayout>{item.id}</TableCellLayout>
                   </TableCell>
                   <TableCell
                     {...columnSizing_unstable.getTableCellProps("tanggal")}>
                     <TableCellLayout>
-                      {formatDate(item.tanggal.label)}
+                      {formatDate(item.tanggal)}
                     </TableCellLayout>
                   </TableCell>
                   <TableCell
                     {...columnSizing_unstable.getTableCellProps("shift")}>
                     <TableCellLayout truncate>
-                      {item.shift.label}
+                      {item.shift}
                     </TableCellLayout>
                   </TableCell>
                   <TableCell
-                    {...columnSizing_unstable.getTableCellProps("unitNo")}>
-                    <TableCellLayout>{item.unitNo.label}</TableCellLayout>
+                    {...columnSizing_unstable.getTableCellProps("unitno")}>
+                    <TableCellLayout>{item.unitno}</TableCellLayout>
                   </TableCell>
                   <TableCell
                     {...columnSizing_unstable.getTableCellProps("operator")}>
-                    <TableCellLayout>{item.operator.label}</TableCellLayout>
+                    <TableCellLayout>{item.operator}</TableCellLayout>
                   </TableCell>
                   <TableCell
                     {...columnSizing_unstable.getTableCellProps("tonnage")}>
-                    <TableCellLayout>{item.tonnage.label}</TableCellLayout>
+                    <TableCellLayout>{item.tonnage}</TableCellLayout>
                   </TableCell>
                   <TableCell
                     {...columnSizing_unstable.getTableCellProps("loader")}>
-                    <TableCellLayout>{item.loader.label}</TableCellLayout>
+                    <TableCellLayout>{item.loader}</TableCellLayout>
                   </TableCell>
                   <TableCell
                     {...columnSizing_unstable.getTableCellProps("pit")}>
-                    <TableCellLayout>{item.pit.label}</TableCellLayout>
+                    <TableCellLayout>{item.pit}</TableCellLayout>
                   </TableCell>
                   <TableCell
                     {...columnSizing_unstable.getTableCellProps("seam")}>
-                    <TableCellLayout>{item.seam.label}</TableCellLayout>
+                    <TableCellLayout>{item.seam}</TableCellLayout>
                   </TableCell>
                   <TableCell
                     {...columnSizing_unstable.getTableCellProps(
                       "dumpingpoint"
                     )}>
-                    <TableCellLayout>{item.dumpingpoint.label}</TableCellLayout>
+                    <TableCellLayout>{item.dumpingpoint}</TableCellLayout>
                   </TableCell>
                   <TableCell
                     {...columnSizing_unstable.getTableCellProps("inrom")}>
-                    <TableCellLayout>{item.inrom.label}</TableCellLayout>
+                    <TableCellLayout>{item.inrom}</TableCellLayout>
                   </TableCell>
                   <TableCell
                     {...columnSizing_unstable.getTableCellProps("outrom")}>
-                    <TableCellLayout>{item.outrom.label}</TableCellLayout>
+                    <TableCellLayout>{item.outrom}</TableCellLayout>
                   </TableCell>
                   <TableCell
                     {...columnSizing_unstable.getTableCellProps("action")}>
                     <TableCellLayout>
                       <Button
-                        // value={item.id}
                         icon={<EditRegular />}
                         aria-label="Edit"
-                        onClick={() => handleEdit(item.id)}
+                        onClick={() => editData(item.id)}
                       />
-                      {/* <Button icon={<DeleteRegular />} aria-label="Delete" /> */}
-
-                      <Dialog modalType="alert">
+                      <Dialog open={open} onOpenChange={(event, data) => setOpen(data.open)}>
                         <DialogTrigger disableButtonEnhancement>
                           <Button
                             icon={<DeleteRegular />}
@@ -344,20 +417,14 @@ const TableHauling = ({ handleEdit }) => {
           </Table>
         </div>
       </div>
-      <div className={classes.messageContainer}>
-        {message && (
-          <MessageBar intent={message.type}>
-            <MessageBarBody>
-              <MessageBarTitle>{message.content}</MessageBarTitle>
-              {message.type === "error" && (
-                <Link onClick={() => setMessage(null)}>Dismiss</Link>
-              )}
-            </MessageBarBody>
-          </MessageBar>
-        )}
-      </div>
     </>
   );
 };
 
 export default TableHauling;
+
+TableHauling.propTypes = {
+  handleEdit: PropTypes.any, 
+  dataUpdated: PropTypes.any,
+  setDataupdated: PropTypes.any
+}
