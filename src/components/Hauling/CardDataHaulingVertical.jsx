@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import "./CoalHauling.css";
 import { useId, makeStyles, Card } from "@fluentui/react-components";
 import Transaksi from "../../services/inputCoalHauling";
+import { useParams } from "react-router-dom";
 
 const useStyles = makeStyles({
   caption: {
@@ -10,7 +11,8 @@ const useStyles = makeStyles({
   },
 });
 
-const CardDataHauling = () => {
+const CardDataHaulingVertical = () => {
+  const value = useParams();
   const datacard = [
     {
       InputId: useId("totalhauling"),
@@ -61,22 +63,16 @@ const CardDataHauling = () => {
       grid: "col-12",
     },
   ];
- 
-
-  const formatDate = (date) => {
-    const year = date.getFullYear();
-    const month = (date.getMonth() + 1).toString().padStart(2, "0");
-    const day = date.getDate().toString().padStart(2, "0");
-
-    return `${year}-${month}-${day}`;
-  };
-
-  const getTodayDateString = () => {
-    const today = new Date();
-    return formatDate(today);
-  };
 
   const styles = useStyles();
+  const formatDate = (dateString) => {
+    const options = {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+    };
+    return new Date(dateString).toLocaleDateString("en-GB", options);
+  };
 
   const [totalData, setTotalData] = useState();
   const [dataHopper, setDataHopper] = useState();
@@ -88,24 +84,22 @@ const CardDataHauling = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const dateToday = getTodayDateString();
-        const dataCard = await Transaksi.getDataTotal(dateToday);
-        console.log(11,dataCard)
+        const dataCard = await Transaksi.getDataTotal(value.tanggal);
         console.log(dataCard.result[0].total);
 
-        const dataHopper = await Transaksi.getDataHopper(dateToday);
+        const dataHopper = await Transaksi.getDataHopper(value.tanggal);
         console.log(dataHopper);
 
-        const dataOverflow = await Transaksi.getDataOverflow(dateToday);
+        const dataOverflow = await Transaksi.getDataOverflow(value.tanggal);
         console.log(dataOverflow);
 
-        const dataECF = await Transaksi.getDataECF(dateToday);
+        const dataECF = await Transaksi.getDataECF(value.tanggal);
         console.log(dataECF);
 
-        const dataMiddleStock = await Transaksi.getDataMiddleStock(dateToday);
+        const dataMiddleStock = await Transaksi.getDataMiddleStock(value.tanggal);
         console.log(dataMiddleStock);
 
-        const dataSekurau = await Transaksi.getDataSekurau(dateToday);
+        const dataSekurau = await Transaksi.getDataSekurau(value.tanggal);
         console.log(dataSekurau);
 
         setTotalData(dataCard.result[0].total);
@@ -193,4 +187,4 @@ const CardDataHauling = () => {
   );
 };
 
-export default CardDataHauling;
+export default CardDataHaulingVertical;
