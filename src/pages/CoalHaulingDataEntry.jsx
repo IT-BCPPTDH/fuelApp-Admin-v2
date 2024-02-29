@@ -45,7 +45,7 @@ export default function CoalHaulingDataEntry() {
           />
         </div>
         <div className="col-5">
-          <CardDataHauling />
+          <CardDataHauling dataUpdated={dataUpdated}/>
         </div>
         <div className="col-12">
           <TableHauling handleEdit={handleEdit} dataUpdated={dataUpdated} setDataupdated={setDataupdated} />

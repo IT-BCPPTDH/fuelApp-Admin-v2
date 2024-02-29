@@ -1,4 +1,4 @@
-import  { useState, useEffect, useCallback } from 'react';
+import  { useState, useEffect } from 'react';
 import "./CoalHauling.css";
 import { makeStyles, Card } from "@fluentui/react-components";
 import Transaksi from "../../services/inputCoalHauling";
@@ -11,77 +11,15 @@ const useStyles = makeStyles({
   },
 });
 
-
 const CardDataHaulingVertical = () => {
   const value = useParams();
-  const datacard = [
-    {
-      InputId: useId("totalhauling"),
-      grid: "col-12",
-      label: "Total Hauling",
-      value: 451,
-      type: "TextDataView",
-      grid: "col-12",
-    },
-    {
-      InputId: useId("haulingtohopper"),
-      grid: "col-6",
-      label: "Hauling To Hopper",
-      value: 451,
-      type: "TextDataView",
-      grid: "col-6",
-    },
-    {
-      InputId: useId("haulingtooverflow"),
-      grid: "col-6",
-      label: "Hauling To OverFlow",
-      value: 451,
-      type: "TextDataView",
-      grid: "col-6",
-    },
-    {
-      InputId: useId("haulingtoecf"),
-      grid: "col-6",
-      label: "Hauling To ECF",
-      value: 451,
-      type: "TextDataView",
-      grid: "col-12",
-    },
-    {
-      InputId: useId("haulingtomiddlestock"),
-      grid: "col-6",
-      label: "Hauling To MiddleStock",
-      value: 451,
-      type: "TextDataView",
-      grid: "col-12",
-    },
-    {
-      InputId: useId("haulingtosekurau"),
-      grid: "col-6",
-      label: "Hauling To Sekurau",
-      value: 451,
-      type: "TextDataView",
-      grid: "col-12",
-    },
-  ];
-
-
   const styles = useStyles();
-  const formatDate = (dateString) => {
-    const options = {
-      day: "2-digit",
-      month: "2-digit",
-      year: "numeric",
-    };
-    return new Date(dateString).toLocaleDateString("en-GB", options);
-  };
-
-  const [totalData, setTotalData] = useState();
-  const [dataHopper, setDataHopper] = useState();
-  const [dataOverflow, setDataOverflow] = useState();
-  const [dataECF, setDataECF] = useState();
-  const [dataMiddleStock, setDataMiddleStock] = useState();
-  const [dataSekurau, setDataSekurau] = useState();
+  const [totalData, setTotalData] = useState(0);
+  const [dataHopper, setDataHopper] = useState(0);
+  const [dataOverflow, setDataOverflow] = useState(0);
+  const [dataECF, setDataECF] = useState(0);
+  const [dataMiddleStock, setDataMiddleStock] = useState(0);
+  const [dataSekurau, setDataSekurau] = useState(0);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -104,19 +42,19 @@ const CardDataHaulingVertical = () => {
         const dataSekurau = await Transaksi.getDataSekurau(value.tanggal);
         console.log(dataSekurau);
 
-        setTotalData(dataCard.result[0].total);
-        setDataHopper(dataHopper);
-        setDataOverflow(dataOverflow);
-        setDataECF(dataECF);
-        setDataMiddleStock(dataMiddleStock);
-        setDataSekurau(dataSekurau);
+        setTotalData(dataCard.result[0].total ?? 0);
+        setDataHopper(dataHopper ?? 0);
+        setDataOverflow(dataOverflow ?? 0);
+        setDataECF(dataECF ?? 0);
+        setDataMiddleStock(dataMiddleStock ?? 0);
+        setDataSekurau(dataSekurau ?? 0);
       } catch (error) {
         console.error("Error fetching data:", error);
       }
     };
 
     fetchData();
-  }, [getTodayDateString]);
+  }, [value.tanggal]);
 
 
   return (

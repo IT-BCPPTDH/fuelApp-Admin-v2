@@ -85,7 +85,7 @@ const TableCoalHauling = () => {
 
   const handleDetail = async (tanggal) => {
     try {
-      console.log(1, tanggal);
+      // console.log(1, tanggal);
       // setDates(tanggal);
       Navigate(`/coalhauling-dataentry-detail/${tanggal}`);
 

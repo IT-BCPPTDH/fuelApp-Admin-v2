@@ -22,3 +22,11 @@ export const URL_ENUMS ={
     getDataMines : link+'/timeentrymines/',
     getDataFMS : link+'/timeentryfms/',
 }
+
+export const dumpingEnum = {
+    HOPPER: "MAIN COAL FACILITY ( HOPPER)",
+    OVERFLOW: "STOCK PILE / OVERFLOW ( ROM MF)",
+    ECF: "STOCK PILE / EARLY COAL FACILITY (ROM ECF)",
+    MIDDLE: "MIDLE STOCK PILE",
+    SEKURAU: "SEKURAU",
+}

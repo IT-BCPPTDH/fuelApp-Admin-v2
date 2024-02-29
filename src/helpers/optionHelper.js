@@ -21,7 +21,6 @@ export const loaderOptionsData = [
   "HEX1473",
   "HWL5041",
 ];
-
 export const dumpingpointOptionsData = [
   "MAIN COAL FACILITY ( HOPPER)",
   "STOCK PILE / OVERFLOW ( ROM MF)",

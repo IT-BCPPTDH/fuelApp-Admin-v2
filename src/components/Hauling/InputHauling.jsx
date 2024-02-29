@@ -1,8 +1,8 @@
 import { useState, useMemo, useEffect, useCallback } from "react";
 import PropTypes from 'prop-types'
-import { Button, MessageBar, MessageBarTitle, MessageBarBody, Link, makeStyles} from "@fluentui/react-components";
+import { Button, MessageBar, MessageBarTitle, MessageBarBody, Link, makeStyles, MessageBarActions} from "@fluentui/react-components";
 import FormComponent from "../FormComponent";
-import { Save24Regular, ArrowReset24Regular } from "@fluentui/react-icons";
+import { Save24Regular, ArrowReset24Regular, DismissRegular } from "@fluentui/react-icons";
 import { insertFormDataHauling } from "../../helpers/indexedDB/insert";
 import { updateFormDataHauling } from "../../helpers/indexedDB/editData";
 import { unitOptionsData, shiftOptionsData, loaderOptionsData, dumpingpointOptionsData, pitOptionsData, seamOptionsData } from "../../helpers/optionHelper";
@@ -11,6 +11,7 @@ import "./CoalHauling.css";
 
 const useStyles = makeStyles({
   messageContainer: {
+    width: "300px",
     position: "fixed",
     bottom: "20px",
     right: "20px",
@@ -22,7 +23,7 @@ const InputHauling = ({ dataEdit, postData, setPostData, dataId, setDataupdated 
 
   const classes = useStyles();
   const [message, setMessage] = useState(null);
-  const [isFormValid, setIsFormValid] = useState(false);
+  // const [isFormValid, setIsFormValid] = useState(false);
   const [seamOptions, setSeamOptions] = useState([]);
   const [formData, setFormData] = useState({});
 
@@ -97,10 +98,10 @@ const InputHauling = ({ dataEdit, postData, setPostData, dataId, setDataupdated 
         setFormData((prevFormData) => ({ ...prevFormData, [name]: value }));
       }
 
-      const isValid = Object.values(formData).every((val) => val !== "");
-      setIsFormValid(isValid);
+      // const isValid = Object.values(formData).every((val) => val !== "");
+      // setIsFormValid(isValid);
     },
-    [formData, setIsFormValid, setFormData, setSeamOptions, pitOptions, seamDataOptions]
+    [formData, setFormData, setSeamOptions, pitOptions, seamDataOptions]
   );
 
   const handleSubmit = useCallback(async () => {
@@ -176,7 +177,7 @@ const InputHauling = ({ dataEdit, postData, setPostData, dataId, setDataupdated 
       dumpingpoint: "",
     });
     setMessage(false);
-    setIsFormValid(false);
+    // setIsFormValid(false);
     setPostData(true);
 
   }, [setPostData]);
@@ -299,12 +300,17 @@ const InputHauling = ({ dataEdit, postData, setPostData, dataId, setDataupdated 
     [formData, seamOptions, dumpingpointOptions, loaderOptions, pitOptions, shiftOptions, unitOptions]
   );
 
+  const dismissMessage = () =>{
+    setMessage(null)
+  }
+
   return (
     <>
-      <div className="form-wrapper wrapper" style={{ marginBottom: "0", paddingTop: "3em" }}>
+      <div className="form-wrapper wrapper" style={{ marginBottom: "0", paddingTop: "3em", marginTop: "0" }}>
         <div className="input-base">
           <FormComponent components={comp} handleChange={handleChange} />
         </div>
+        <hr />
         <div className="btn-wrapper">
           <Button
             // disabled={!isFormValid}
@@ -332,6 +338,18 @@ const InputHauling = ({ dataEdit, postData, setPostData, dataId, setDataupdated 
                 <Link onClick={() => setMessage(null)}>Dismiss</Link>
               )}
             </MessageBarBody>
+            <MessageBarActions
+              containerAction={
+                <Button
+                onClick={dismissMessage}
+                  aria-label="dismiss"
+                  appearance="transparent"
+                  icon={<DismissRegular />}
+                />
+              }
+            >
+ 
+            </MessageBarActions>
           </MessageBar>
         )}
       </div>

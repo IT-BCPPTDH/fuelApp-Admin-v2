@@ -1,7 +1,9 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import "./CoalHauling.css";
 import { makeStyles, Card } from "@fluentui/react-components";
-import Transaksi from "../../services/inputCoalHauling";
+import { getDataTableHauling } from "../../helpers/indexedDB/getData";
+import { dumpingEnum } from "../../utils/Enums";
+import PropTypes from 'prop-types'
 
 const useStyles = makeStyles({
   caption: {
@@ -10,50 +12,55 @@ const useStyles = makeStyles({
   },
 });
 
-const CardDataHauling = () => {
+const CardDataHauling = ({dataUpdated}) => {
 
   const styles = useStyles();
-  const [totalData, setTotalData] = useState();
-  const [dataHopper, setDataHopper] = useState();
-  const [dataOverflow, setDataOverflow] = useState();
-  const [dataECF, setDataECF] = useState();
-  const [dataMiddleStock, setDataMiddleStock] = useState();
-  const [dataSekurau, setDataSekurau] = useState();
+  
+  const [totalData, setTotalData] = useState(0);
+  const [dataHopper, setDataHopper] = useState(0);
+  const [dataOverflow, setDataOverflow] = useState(0);
+  const [dataECF, setDataECF] = useState(0);
+  const [dataMiddleStock, setDataMiddleStock] = useState(0);
+  const [dataSekurau, setDataSekurau] = useState(0);
+
+  const calculateTonnage = async (data) => {
+    const tonnageByPitAndDumpingPoint = {};
+    let totalTonnage = 0;
+  
+    data.forEach((entry) => {
+      const { dumpingpoint, tonnage } = entry;
+  
+      const key = `${dumpingpoint}`;
+      tonnageByPitAndDumpingPoint[key] = (tonnageByPitAndDumpingPoint[key] || 0) + parseInt(tonnage, 10);
+  
+      totalTonnage += parseInt(tonnage, 10);
+    });
+  
+    return { tonnageByPitAndDumpingPoint, totalTonnage };
+  };
+  
+  const fetchData =  useCallback(async() =>{
+    const dataArray = await getDataTableHauling()
+
+    const { tonnageByPitAndDumpingPoint, totalTonnage } = await calculateTonnage(dataArray);
+
+    setTotalData(totalTonnage)
+    setDataHopper(tonnageByPitAndDumpingPoint[dumpingEnum.HOPPER] ?? 0)
+    setDataOverflow(tonnageByPitAndDumpingPoint[dumpingEnum.OVERFLOW] ?? 0)
+    setDataECF(tonnageByPitAndDumpingPoint[dumpingEnum.ECF] ?? 0)
+    setDataMiddleStock(tonnageByPitAndDumpingPoint[dumpingEnum.MIDDLE] ?? 0)
+    setDataSekurau(tonnageByPitAndDumpingPoint[dumpingEnum.SEKURAU] ?? 0)
+  
+  },[])
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const dataCard = await Transaksi.getDataTotal();
-        console.log(dataCard.result[0].total);
+    if(dataUpdated){
+      fetchData()
+    }
 
-        const dataHopper = await Transaksi.getDataHopper();
-        console.log(dataHopper);
-
-        const dataOverflow = await Transaksi.getDataOverflow();
-        console.log(dataOverflow);
-
-        const dataECF = await Transaksi.getDataECF();
-        console.log(dataECF);
-
-        const dataMiddleStock = await Transaksi.getDataMiddleStock();
-        console.log(dataMiddleStock);
-
-        const dataSekurau = await Transaksi.getDataSekurau();
-        console.log(dataSekurau);
-
-        setTotalData(dataCard.result[0].total);
-        setDataHopper(dataCard.result[0].total);
-        setDataOverflow(dataCard.result[0].total);
-        setDataECF(dataCard.result[0].total);
-        setDataMiddleStock(dataCard.result[0].total);
-        setDataSekurau(dataCard.result[0].total);
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      }
-    };
-
-    fetchData();
-  }, []);
+    fetchData()
+    
+  }, [fetchData, dataUpdated]);
 
   return (
     <>
@@ -126,3 +133,7 @@ const CardDataHauling = () => {
 };
 
 export default CardDataHauling;
+
+CardDataHauling.propTypes={
+  dataUpdated: PropTypes.bool
+}
