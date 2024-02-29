@@ -29,7 +29,7 @@ const RouteApp = () => {
       {/* <Route path='/collector/:id' element={<HomePage />} /> */}
 
       <Route path='/coalhauling' element={<CoalHauling />}></Route>
-      <Route path='/coalhauling-dataentry-detail' element={<DetailHauling />}></Route>
+      <Route path='/coalhauling-dataentry-detail/:tanggal' element={<DetailHauling />}></Route>
       <Route path='/coalhauling-dataentry-form' element={<CoalHaulingDataEntry />}></Route>
 
       {/* <Route path='/coalhauling-admin' element={<AdminCoalHauling />}></Route>
