@@ -1,5 +1,5 @@
-import { useState, useEffect } from "react";
-import { SearchBox } from "@fluentui/react-search-preview";
+import { useState, useEffect, useCallback } from "react";
+// import { SearchBox } from "@fluentui/react-search-preview";
 import Transaksi from "../../services/inputCoalHauling";
 import {
   Table,
@@ -34,9 +34,10 @@ import {
 import {
   EditRegular,
   DeleteRegular,
-  ArrowDownload24Regular,
+  // ArrowDownload24Regular,
 } from "@fluentui/react-icons";
 import { getDataTableHauling } from "../../helpers/indexedDB/getData";
+import PropTypes from 'prop-types'
 
 const useStyles = makeStyles({
   messageContainer: {
@@ -150,10 +151,10 @@ const TableHauling = ({ handleEdit }) => {
     return `${year}-${month}-${day}`;
   };
 
-  const getTodayDateString = () => {
+  const getTodayDateString = useCallback(() => {
     const today = new Date();
     return formatDate(today);
-  };
+  },[]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -161,10 +162,11 @@ const TableHauling = ({ handleEdit }) => {
         const dateToday = getTodayDateString();
         // const dts = await Transaksi.getAllTransaction(dateToday);
         const dts = await getDataTableHauling(dateToday);
-        console.log(2,dts)
+        // console.log(2,dts)
 
-        const updatedItems = dts.map((itemFromDB, index) => ({
-          id:  itemFromDB.id ,
+        const updatedItems = dts.map((itemFromDB) => ({
+          id: { label: itemFromDB.id },
+
           // id: { label: ( index + 1).toString() },
           tanggal:  itemFromDB.tanggal ,
           shift:  itemFromDB.shift ,
@@ -188,11 +190,11 @@ const TableHauling = ({ handleEdit }) => {
     };
 
     fetchData();
-  }, []);
+  }, [getTodayDateString]);
 
   const handleDelete = async (id) => {
     try {
-      const updatedData = await Transaksi.getDeteleTransaction(id.label);
+      await Transaksi.getDeteleTransaction(id.label);
       setMessage({
         type: "success",
         content: "Data derhasil dihapus",
@@ -209,20 +211,17 @@ const TableHauling = ({ handleEdit }) => {
     }
   };
 
-  const handleDownload = async () => {
-    try {
-      const downloadData = await Transaksi.getDownload();
-      // const link = document.createElement('a');
-    } catch (error) {
-      console.error("Error downloading data:", error);
-    }
-  };
-
-  // const handleSubmitServer = async () => {
+  // const handleDownload = async () => {
   //   try {
-  //     const sentData = await Transaksi.
+  //     const downloadData = await Transaksi.getDownload();
+  //     // const link = document.createElement('a');
+  //   } catch (error) {
+  //     console.error("Error downloading data:", error);
   //   }
-  // }
+  // };
+
+  const handleSubmitServer = async () => {}
+
 
   const edit = (id) => {
       
@@ -404,3 +403,7 @@ const TableHauling = ({ handleEdit }) => {
 };
 
 export default TableHauling;
+
+TableHauling.propTypes={
+  handleEdit: PropTypes.any
+}

@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useMemo } from "react";
 // import { SearchBox } from "@fluentui/react-search-preview";
 import FormComponent from "../FormComponent";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { ArrowSquareUpRight24Regular } from "@fluentui/react-icons";
 import {
   TableBody,
@@ -12,11 +12,10 @@ import {
   TableHeader,
   TableHeaderCell,
   TableCellLayout,
-  Button,
-  Avatar,
+  Button
 } from "@fluentui/react-components";
 import Transaksi from "../../services/inputCoalHauling";
-import DetailHauling from "../../pages/DetailHauling";
+// import DetailHauling from "../../pages/DetailHauling";
 
 // const items = [
 //   {
@@ -52,7 +51,7 @@ const TableCoalHauling = () => {
     ],
     []
   );
-  const [dates, setDates] = useState("");
+  // const [dates, setDates] = useState("");
   const [items, setItems] = useState([]);
   const Navigate = useNavigate();
 
@@ -70,7 +69,7 @@ const TableCoalHauling = () => {
       try {
         const datamain = await Transaksi.getDataMain();
         console.log("Data fetched: ", datamain);
-        const updatedItems = datamain.data.map((itemFromDB, index) => ({
+        const updatedItems = datamain.data.map((itemFromDB) => ({
           // id: { label: itemFromDB.id },
           tanggal: { label: itemFromDB.tanggal },
           totaltonnage: { label: itemFromDB.totaltonnage },
@@ -87,7 +86,7 @@ const TableCoalHauling = () => {
   const handleDetail = async (tanggal) => {
     try {
       console.log(1, tanggal);
-      setDates(tanggal);
+      // setDates(tanggal);
       Navigate(`/coalhauling-dataentry-detail/${tanggal}`);
 
     } catch (error) {

@@ -1,5 +1,5 @@
-// import { useEffect } from 'react';
 import { FormElement } from './elements';
+import PropTypes from 'prop-types'
 
 const FormComponent = ({ handleChange, components }) => {
   return (
@@ -24,3 +24,8 @@ const FormComponent = ({ handleChange, components }) => {
 };
 
 export default FormComponent
+
+FormComponent.propTypes={
+  handleChange: PropTypes.any,
+  components: PropTypes.any
+}

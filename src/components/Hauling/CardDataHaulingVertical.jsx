@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import  { useState, useEffect, useCallback } from 'react';
 import "./CoalHauling.css";
-import { useId, makeStyles, Card } from "@fluentui/react-components";
+import { makeStyles, Card } from "@fluentui/react-components";
 import Transaksi from "../../services/inputCoalHauling";
 import { useParams } from "react-router-dom";
 
@@ -10,6 +10,7 @@ const useStyles = makeStyles({
     textAlign: "center",
   },
 });
+
 
 const CardDataHaulingVertical = () => {
   const value = useParams();
@@ -64,6 +65,7 @@ const CardDataHaulingVertical = () => {
     },
   ];
 
+
   const styles = useStyles();
   const formatDate = (dateString) => {
     const options = {
@@ -114,7 +116,7 @@ const CardDataHaulingVertical = () => {
     };
 
     fetchData();
-  }, []);
+  }, [getTodayDateString]);
 
 
   return (
