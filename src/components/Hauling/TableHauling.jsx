@@ -36,6 +36,7 @@ import {
   DeleteRegular,
   ArrowDownload24Regular,
 } from "@fluentui/react-icons";
+import { getDataTableHauling } from "../../helpers/indexedDB/getData";
 
 const useStyles = makeStyles({
   messageContainer: {
@@ -141,22 +142,29 @@ const TableHauling = ({ handleEdit }) => {
 
   const rows = getRows();
 
-  const formatDate = (dateString) => {
-    const options = {
-      day: "2-digit",
-      month: "2-digit",
-      year: "numeric",
-    };
-    return new Date(dateString).toLocaleDateString("en-GB", options);
+  const formatDate = (date) => {
+    const year = date.getFullYear();
+    const month = (date.getMonth() + 1).toString().padStart(2, "0");
+    const day = date.getDate().toString().padStart(2, "0");
+
+    return `${year}-${month}-${day}`;
+  };
+
+  const getTodayDateString = () => {
+    const today = new Date();
+    return formatDate(today);
   };
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const dts = await Transaksi.getAllTransaction();
+        const dateToday = getTodayDateString();
+        // const dts = await Transaksi.getAllTransaction(dateToday);
+        const dts = await getDataTableHauling(dateToday);
+        console.log(2,dts)
 
-        const updatedItems = dts.data.map((itemFromDB, index) => ({
-          id: { label: itemFromDB.id},
+        const updatedItems = dts.map((itemFromDB, index) => ({
+          id: { label: itemFromDB.id },
           // id: { label: ( index + 1).toString() },
           tanggal: { label: itemFromDB.tanggal },
           shift: { label: itemFromDB.shift },
@@ -182,10 +190,8 @@ const TableHauling = ({ handleEdit }) => {
   }, []);
 
   const handleDelete = async (id) => {
-    console.log(id.label);
     try {
       const updatedData = await Transaksi.getDeteleTransaction(id.label);
-      console.log(updatedData);
       setMessage({
         type: "success",
         content: "Data derhasil dihapus",
@@ -205,26 +211,36 @@ const TableHauling = ({ handleEdit }) => {
   const handleDownload = async () => {
     try {
       const downloadData = await Transaksi.getDownload();
-      console.log(downloadData);
       // const link = document.createElement('a');
-    }catch (error) {
-      console.error('Error downloading data:', error);
+    } catch (error) {
+      console.error("Error downloading data:", error);
     }
   };
+
+  // const handleSubmitServer = async () => {
+  //   try {
+  //     const sentData = await Transaksi.
+  //   }
+    
+  // }
 
   return (
     <>
       <div className="form-wrapper">
         <div className="search-box">
-          <Button
+          {/* <Button
             icon={<ArrowDownload24Regular />}
             iconPosition="after"
             onClick={() => handleDownload()}
             style={{ backgroundColor: "#28499c", color: "#ffffff" }}>
             Download
-          
-          </Button>
+          </Button> */}
           {/* <SearchBox placeholder="Search" /> */}
+          <Button
+          onClick={() => handleSubmitServer()}
+          style={{ backgroundColor: "#28499c", color: "#ffffff" }}>
+            Submit Data to Server
+          </Button>
         </div>
         <div style={{ overflowX: "auto" }}>
           <Table

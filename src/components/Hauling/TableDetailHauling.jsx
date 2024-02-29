@@ -36,6 +36,7 @@ import {
   DeleteRegular,
   ArrowDownload24Regular,
 } from "@fluentui/react-icons";
+import { useParams } from "react-router-dom";
 
 const useStyles = makeStyles({
   messageContainer: {
@@ -101,6 +102,8 @@ const TableDetailHauling = () => {
   const classes = useStyles();
   const [columns] = useState(columnsDef);
   const [message, setMessage] = useState(null);
+  const value = useParams();
+  
 
   const [columnSizingOptions] = useState({
     id: {
@@ -149,7 +152,7 @@ const TableDetailHauling = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const dts = await Transaksi.getAllTransaction();
+        const dts = await Transaksi.getAllTransaction(value.tanggal);
 
         const updatedItems = dts.data.map((itemFromDB, index) => ({
           id: { label: itemFromDB.id},
