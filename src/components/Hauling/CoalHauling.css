@@ -1,7 +1,7 @@
 .wrapper {
   padding-top: 3em;
   width: 100%;
-  height: 400px;
+  height: 445px;
 }
 .input-base {
   grid-column: 2 / 4;
@@ -19,14 +19,14 @@
 
 .card-data-full{
     width: 100%;
-    height: 80px;
+    height: 70px;
 }
 
 .btn-wrapper {
     display: flex;
     justify-content: flex-end;
-    margin-top: 20px;
-    margin-right: 20px;
+    margin-top: 50px;
+    margin-right: 40px;
     gap: 3px
   }
 .search-box {
