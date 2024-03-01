@@ -1,5 +1,5 @@
 import { HeaderPageForm } from "../components/FormComponent/HeaderPageForm";
-import CardDataHaulingVertical from "../components/Hauling/CardDataHaulingVertical";
+import CardDataHauling from "../components/Hauling/CardDataHauling";
 import TableDetailHauling from "../components/Hauling/TableDetailHauling";
 import { NavigateUrl } from "../utils/Navigation";
 import PropTypes from 'prop-types'
@@ -15,7 +15,7 @@ const DetailHauling = ({value}) => {
       />
       <div className="row">
         <div className="col-12">
-          <CardDataHaulingVertical />
+          <CardDataHauling />
         </div>
         <div className="col-12">
           <TableDetailHauling />
