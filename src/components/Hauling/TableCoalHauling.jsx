@@ -98,13 +98,6 @@ const TableCoalHauling = () => {
     <>
       <div className="form-wrapper">
         <div className="search-box">
-          {/* <Button
-            icon={<ArrowDownload24Regular />}
-            iconPosition="after"
-            style={{ backgroundColor: "#28499c", color: "#ffffff" }}>
-            Download
-          </Button>
-          <SearchBox placeholder="Search" /> */}
           <FormComponent components={selectTgl} />
         </div>
         <Table aria-label="Default table">
@@ -125,36 +118,14 @@ const TableCoalHauling = () => {
                     {formatDate(item.tanggal.label)}
                   </TableCellLayout>
                 </TableCell>
-                {/* <TableCell>
-                  <TableCellLayout
-                    media={
-                      <Avatar
-                        aria-label={item.author.label}
-                        name={item.author.label}
-                        badge={{
-                          status: item.author.status,
-                        }}
-                      />
-                    }>
-                    {item.author.label}
-                  </TableCellLayout>
-                </TableCell> */}
                 <TableCell>
                   <TableCellLayout>{item.totaltonnage.label}</TableCellLayout>
                 </TableCell>
                 <TableCell>
-                  {/* <Link to="/coalhauling-dataentry-detail">
-                      <Button
-                        icon={<ArrowSquareUpRight24Regular />}
-                        iconPosition="after"
-                        onClick={handleDetail(formatDate(item.tanggal.label))}>
-                        Detail
-                      </Button>
-                    </Link> */}
                   <Button
                     icon={<ArrowSquareUpRight24Regular />}
                     iconPosition="after"
-                    onClick={() => handleDetail(formatDate(item.tanggal.label))}>
+                    onClick={() => handleDetail(formatDate(item.tanggal))}>
                     Detail
                   </Button>
                 </TableCell>
