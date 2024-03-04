@@ -16,7 +16,7 @@ const Header = () => {
   return (
     <div
       className={styles.root}
-      style={{ padding: '10px 38px', borderBottom: '1px solid #c8c8c8' }}
+      style={{ padding: '10px 38px', borderBottom: '1px solid #c8c8c8', borderTop: '1px solid #c8c8c8' }}
     >
       <div style={{ display: 'flex', alignItems: 'center', gap: '65px' }}>
         <Image alt='Darma Henwa' src={Logo} height={26} width={130} />

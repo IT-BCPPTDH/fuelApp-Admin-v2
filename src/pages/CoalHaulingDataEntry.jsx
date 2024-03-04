@@ -4,6 +4,7 @@ import CardDataHauling from "../components/Hauling/CardDataHauling";
 import TableHauling from "../components/Hauling/TableHauling";
 import { HeaderPageForm } from "../components/FormComponent/HeaderPageForm";
 import { NavigateUrl } from "../utils/Navigation";
+import {FormMultiple28Regular} from "@fluentui/react-icons"
 
 export default function CoalHaulingDataEntry() {
   const [dataEdit, setDataEdit] = useState();
@@ -30,9 +31,10 @@ export default function CoalHaulingDataEntry() {
   return (
     <>
       <HeaderPageForm
-        title={`Data Entry Coal Hauling`}
+        title={`Form Data Entry Coal Hauling`}
         urlCreate={''}
         urlBack={NavigateUrl.COAL_HAULING_MAIN_TABLE}
+        icon={<FormMultiple28Regular/>}
       />
       <div className="row">
         <div className="col-7">

@@ -30,3 +30,9 @@ export const dumpingEnum = {
     MIDDLE: "MIDLE STOCK PILE",
     SEKURAU: "SEKURAU",
 }
+
+export const tabMenuTimeEntryEnum = {
+    UNIT_DIGGER: "time-entry-digger-form",
+    UNIT_SUPPORT: "time-entry-support-form",
+    UNIT_HAULER: "time-entry-hauler-form"
+}

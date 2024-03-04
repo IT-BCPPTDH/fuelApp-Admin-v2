@@ -25,7 +25,7 @@ const useStyles = makeStyles({
     display: "flex",
     flexDirection: "column",
     ...shorthands.gap("2px"),
-    maxWidth: "200px",
+    // maxWidth: "200px",
   },
   combo: {
     display: "grid",
@@ -35,8 +35,9 @@ const useStyles = makeStyles({
     maxWidth: "180px",
   },
   formName: {
-    color: "green",
-    fontSize: "1.2em",
+    color: "#03a9f4",
+    lineHeight: '15px',
+    // fontSize: "1.2em",
     marginBottom: "0",
   },
   control: {
@@ -161,9 +162,9 @@ export const FormElement = ({
 
       case "StaticInfo":
         return (
-          <h5 id={inputId} className={styles.formName}>
+          <p id={inputId} className={styles.formName}>
             {value}
-          </h5>
+          </p>
         );
       default:
         return null;

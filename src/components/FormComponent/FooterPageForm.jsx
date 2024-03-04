@@ -4,10 +4,8 @@ import PropTypes from 'prop-types';
 
 export const FooterPageForm = ({ handleSubmit, buttonDisabled }) => {
     return (
-      <div className='row mt1em'>
-        <div className='col-6'></div>
-        <div className='col-6'>
-          <CompoundButton
+      <>
+        <CompoundButton
             onClick={() => handleSubmit(1)}
             icon={<SaveArrowRight24Regular primaryFill='#ffffff' />}
             iconPosition='after'
@@ -39,8 +37,9 @@ export const FooterPageForm = ({ handleSubmit, buttonDisabled }) => {
           >
             Save & Entry Other
           </CompoundButton>
-        </div>
-      </div>
+      </>
+        
+    
     )
 }
 
