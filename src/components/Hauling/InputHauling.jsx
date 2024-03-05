@@ -121,6 +121,7 @@ const InputHauling = ({ dataEdit, postData, setPostData, dataId, setDataupdated 
         "inrom",
         "outrom",
         "pit",
+        // "status",
       ];
 
       const isAnyFieldEmpty = requiredFields.some((field) => !formData[field]);

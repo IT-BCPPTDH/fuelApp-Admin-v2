@@ -99,6 +99,14 @@ const getDataMain = async () => {
   return response.data;
 };
 
+const getPingServer = async () => {
+  const response = await api.get(URL_ENUMS.ping);
+  console.log(1, response);
+  return response.data;
+};
+
+
+
 const Transaksi = {
   getAllTransaction,
   getEditTransaction,
@@ -114,6 +122,7 @@ const Transaksi = {
   getDataSekurau,
   getDownload,
   getDataMain,
+  getPingServer,
 };
 
 
