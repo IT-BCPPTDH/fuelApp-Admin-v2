@@ -26,6 +26,7 @@ export const HeaderPageForm = ({ title, urlCreate, urlBack, childrenMenu, icon }
       >
         Back
       </Button>
+    
       {childrenMenu ? <div className='left--15em'>{childrenMenu}</div> : <></>}
       <Title title={title} icon={icon} />
       {urlCreate ? <Button

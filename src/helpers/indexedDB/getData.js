@@ -32,7 +32,7 @@ export const getTimeEntryByUnit = async (unitNo) => {
     const timeEntries = await db.timeEntries
       .where('unitNo')
       .equals(unitNo)
-      .first();
+      .toArray();
 
     return timeEntries;
   } catch (error) {
@@ -50,5 +50,14 @@ export const getTimeEntryByformTitle = async (formTitle) => {
     return timeEntries;
   } catch (error) {
     console.log(error)
+  }
+}
+
+export const getTimeEntryDetailById = async(itemId) => {
+  try {
+    return await db.timeEntries.get(itemId)
+  } catch (error) {
+    console.log(error)
+      return false
   }
 }

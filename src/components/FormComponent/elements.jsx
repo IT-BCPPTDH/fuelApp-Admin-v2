@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { DatePicker } from "@fluentui/react-datepicker-compat";
 import { TimePicker } from "@fluentui/react-timepicker-compat";
 import {
@@ -56,8 +56,7 @@ const useStyles = makeStyles({
   },
 });
 
-
-export const FormElement = ({
+export const FormElement = React.memo(({
   name,
   label,
   type,
@@ -177,38 +176,37 @@ export const FormElement = ({
       {renderInput()}
     </div>
   );
-};
+})
 
 
-
-const ComboBoxCustom = (props) => {
+const ComboBoxCustom = React.memo((props) => {
   const { inputId, name, label, options, handleChange, value } = props;
   const [matchingOptions, setMatchingOptions] = useState([]);
   const styles = useStyles();
-  const [itemHeight] = useState(10)
-  const [numberOfItems, setNumberofItems] = useState(0)
+  const [itemHeight] = useState(10);
+  const [numberOfItems, setNumberofItems] = useState(0);
 
   const onChange = (event) => {
-    const value = event.target.value.trim();
-    handleChange(event, { name: name, value: value });
+    const inputValue = event.target.value.trim();
+    handleChange(event, { name, value: inputValue });
 
     const matches = options.filter(
-      (option) => option.toLowerCase().indexOf(value.toLowerCase()) === 0
+      (option) => option.toLowerCase().indexOf(inputValue.toLowerCase()) === 0
     );
     setMatchingOptions(matches);
   };
 
   const onOptionSelect = (event, data) => {
-    const matchingOptions = data.optionText && options.includes(data.optionText);
-    if (matchingOptions) {
-      handleChange(event, { name: name, value: data.optionText });
-    } 
+    const isOptionMatching = data.optionText && options.includes(data.optionText);
+    if (isOptionMatching) {
+      handleChange(event, { name, value: data.optionText });
+    }
   };
 
   useEffect(() => {
-    setMatchingOptions([...options])
-    setNumberofItems(options.length)
-  }, [options]);
+    setMatchingOptions([...options]);
+    setNumberofItems(options.length);
+  }, [options, value]);
 
   const { virtualizerLength, bufferItems, bufferSize, scrollRef } =
     useStaticVirtualizerMeasure({
@@ -227,20 +225,23 @@ const ComboBoxCustom = (props) => {
       onChange={onChange}
       onOptionSelect={onOptionSelect}
       defaultSelectedOptions={value ? [value] : []}
-      value={value ?? ""}>
+      value={value ?? ""}
+    >
       <Virtualizer
         numItems={numberOfItems}
         virtualizerLength={virtualizerLength}
         bufferItems={bufferItems}
         bufferSize={bufferSize}
-        itemSize={itemHeight}>
+        itemSize={itemHeight}
+      >
         {(index) => {
           const option = matchingOptions[index];
           return (
             <Option
               key={index}
               aria-posinset={index}
-              aria-setsize={numberOfItems}>
+              aria-setsize={numberOfItems}
+            >
               {option}
             </Option>
           );
@@ -248,18 +249,21 @@ const ComboBoxCustom = (props) => {
       </Virtualizer>
     </Combobox>
   );
-};
+});
 
-FormElement.propTypes={
-  name: PropTypes.string,
-  label: PropTypes.string,
-  type: PropTypes.string,
+FormElement.displayName = "FormElement"
+ComboBoxCustom.displayName = "ComboBoxCustome"
+
+FormElement.propTypes = {
+  name: PropTypes.string.isRequired,
+  label: PropTypes.string.isRequired,
+  type: PropTypes.string.isRequired,
   options: PropTypes.array,
   value: PropTypes.any,
-  handleChange: PropTypes.any,
-  disabled: PropTypes.any,
-  readOnly: PropTypes.any
-}
+  handleChange: PropTypes.func.isRequired,
+  disabled: PropTypes.bool,
+  readOnly: PropTypes.bool,
+};
 
 ComboBoxCustom.propTypes={
   inputId: PropTypes.any,

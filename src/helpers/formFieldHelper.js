@@ -6,8 +6,6 @@ export const timeEntryFormField = {
     tanggal: new Date(),
     shift: '',
     unitNo: '',
-    // jdeOperator: '',
-    // nameOperator: '',
     hmAwal: '',
     hmAkhir: '',
     hm: ''

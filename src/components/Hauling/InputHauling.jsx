@@ -167,7 +167,7 @@ const InputHauling = ({ dataEdit, postData, setPostData, dataId, setDataupdated 
         content: "Gagal menginput data. Silahkan coba kembali!",
       });
     }
-  }, [formData, postData, dataId, setDataupdated]);
+  }, [formData, postData, dataId, setDataupdated, handleReset]);
 
   const handleReset = useCallback(() => {
     setFormData({

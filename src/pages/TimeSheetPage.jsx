@@ -19,20 +19,24 @@ import { timeEntryFormField } from '../helpers/formFieldHelper'
 import { getURLPath } from '../helpers/commonHelper'
 import Services from '../services/timeEntry'
 import { insertTimeEntry } from '../helpers/indexedDB/insert'
-
+import { TableDataInputed } from '../components/TimeSheet/TableDataInputed'
+import { formatTime, calculateTotalTime } from '../helpers/timeHelper'
+import { getTimeEntryDetailById } from '../helpers/indexedDB/getData'
 
 export default function TimeSheetPage() {
 
   const jRef = useRef(null)
   const [totalDuration, setTotalDuration] = useState(0)
   const [buttonDisabled, setButtonDisabled] = useState(true)
-  const [formData, setFormData] = useState(timeEntryFormField);
+  const [formData, setFormData] = useState({});
   const [menuTabs, setMenuTabs] = useState([])
   const [shiftOptions] = useState(shiftOptionsData)
   const [activeTab, setActiveTab] = useState(getURLPath())
   const [formTitle, setFormTitle] = useState('Unit Digger')
   const [formValue, setFormValue] = useState([])
   const [tableData, setTableData] = useState([])
+  const [loaded, setLoaded] = useState(false)
+  const [isNew, setIsNew] = useState(true)
   
   useLiveQuery(() => db.activity.toArray())
 
@@ -40,51 +44,12 @@ export default function TimeSheetPage() {
   const [unitOptions] = useState(() => getLocalStorage('timeEntry-unit'));
   const masterOP = useLiveQuery(() => db.operator.toArray());
 
-  const formatTime = useCallback(input => {
-    const parts = input.split('.')
-
-    let hours = parseInt(parts[0], 10) || 0
-    let minutes = parseInt(parts[1], 10) || 0
-
-    if (minutes < 10 && parts[1] && parts[1].length === 1) {
-      minutes *= 10
-    }
-
-    hours = Math.min(23, Math.max(0, hours))
-    minutes = Math.min(59, Math.max(0, minutes))
-
-    const formattedTime = `${String(hours).padStart(2, '0')}.${String(
-      minutes
-    ).padStart(2, '0')}.00`
-
-    return formattedTime
-  }, [])
-
-  const calculateTotalTime = useCallback((startTime, endTime) => {
-    const [startHours, startMinutes, startSeconds] = startTime
-      .split('.')
-      .map(Number)
-    const [endHours, endMinutes, endSeconds] = endTime.split('.').map(Number)
-    const totalStartSeconds =
-      startHours * 3600 + startMinutes * 60 + startSeconds
-    const totalEndSeconds = endHours * 3600 + endMinutes * 60 + endSeconds
-    const timeDifferenceSeconds = totalEndSeconds - totalStartSeconds
-    const hours = Math.floor(timeDifferenceSeconds / 3600)
-    const minutes = Math.floor((timeDifferenceSeconds % 3600) / 60)
-    const formattedTotalTime = `${String(hours).padStart(2, '0')}.${String(
-      minutes
-    ).padStart(2, '0')}`
-
-    return formattedTotalTime
-  }, [])
-
   const transformData = useCallback(
     inputData => {
       const newArray = []
 
       for (let i = 0; i < inputData.length; i++) {
         const currentData = inputData[i]
-
         const start_time = formatTime(currentData[2])
         const end_time = formatTime(currentData[3])
         const duration = calculateTotalTime(start_time, end_time)
@@ -109,7 +74,7 @@ export default function TimeSheetPage() {
 
       return newArray
     },
-    [formatTime, calculateTotalTime]
+    []
   )
 
   const handleChangeSheet = useCallback(() => {
@@ -170,7 +135,7 @@ export default function TimeSheetPage() {
     console.log(totalDurationTime)
     setTotalDuration(totalDurationTime)
 
-  }, [calculateTotalTime, formatTime, transformData])
+  }, [transformData])
 
   useEffect(() => {
 
@@ -219,7 +184,7 @@ export default function TimeSheetPage() {
       jspreadsheet(jRef.current, options)
     }
 
-  }, [calculateTotalTime, formatTime, jdeOptions, handleChangeSheet])
+  }, [jdeOptions, handleChangeSheet])
 
   const handleSubmitToServer = async () => {
     let act = JSON.stringify(formValue)
@@ -232,7 +197,7 @@ export default function TimeSheetPage() {
   }
 
   const handleSubmitToLocalDB = async () => {
-    console.log(formData, tableData)
+    // console.log(formData, tableData)
     let data = {
       ...formData,
       activity: tableData,
@@ -240,7 +205,11 @@ export default function TimeSheetPage() {
     }
 
     let inserted = await insertTimeEntry(data)
-    console.log(inserted)
+    // console.log(inserted)
+    if(inserted){
+      setLoaded(true)
+      setIsNew(true)
+    }
   }
 
   const handleChange = (ev, data) => {
@@ -290,9 +259,86 @@ export default function TimeSheetPage() {
     }
   }
 
+  const getDataFirst = useCallback(() => {
+    let user = Cookies.get('user')
+    user = JSON.parse(user)
+
+    const now = new Date()
+    const currentHour = now.getHours()
+    let shift = null
+    if (currentHour >= 6 && currentHour < 18) {
+      shift = 'Day'
+    } else {
+      shift = 'Night'
+    }
+
+    let dt = formData
+    dt = {
+      ...dt,
+      shift: shift,
+      stafEntry: user.fullname
+    }
+    setFormData(dt)
+  }, [formData, setFormData])
+
+  useEffect(() => {
+    setMenuTabs(menuTabsTimeEntry)
+    setFormData(timeEntryFormField)
+  }, []);
+
+  useEffect(() => {
+    const disabled =
+      parseFloat(totalDuration) > 12 || parseFloat(totalDuration) < 12
+        ? true
+        : false
+    setButtonDisabled(disabled)
+
+    if(isNew){
+      getDataFirst()
+    }
+
+    const lastPart = getURLPath()
+    setActiveTab(lastPart)
+
+    switch (lastPart) {
+      case tabMenuTimeEntryEnum.UNIT_DIGGER:
+        setFormTitle('Unit Digger')
+        break;
+      case tabMenuTimeEntryEnum.UNIT_HAULER:
+        setFormTitle("Unit Hauler")
+        break;
+      case tabMenuTimeEntryEnum.UNIT_SUPPORT:
+        setFormTitle("Unit Support")
+        break;
+      default:
+        break;
+    }
+
+  }, [totalDuration, getDataFirst, isNew]);
+
+  const handleEditData = useCallback( async (itemId) => {
+    setIsNew(false)
+    const spreadSheet = jRef.current.jspreadsheet
+    const dataDetail = await getTimeEntryDetailById(itemId)
+    if(dataDetail){
+      setFormData({
+        site: dataDetail.site,
+        tanggal: new Date(dataDetail.tanggal),
+        shift: dataDetail.shift,
+        unitNo: dataDetail.unitNo,
+        hmAwal: dataDetail.hmAwal,
+        hmAkhir: dataDetail.hmAkhir,
+        hm: dataDetail.hm,
+        formId: dataDetail.formId
+      })
+
+      spreadSheet.setData(dataDetail.activity)
+      handleChangeSheet()
+    }
+  },[handleChangeSheet])
+
   const components = useMemo(
     () => [
-   
       {
         name: 'site',
         grid: 'col-2',
@@ -406,61 +452,6 @@ export default function TimeSheetPage() {
     ],
     [formData, shiftOptions, unitOptions]
   )
-
-  const getDataFirst = useCallback(() => {
-    let user = Cookies.get('user')
-    user = JSON.parse(user)
-
-    const now = new Date()
-    const currentHour = now.getHours()
-    let shift = null
-    if (currentHour >= 6 && currentHour < 18) {
-      shift = 'Day'
-    } else {
-      shift = 'Night'
-    }
-
-    let dt = formData
-    dt = {
-      ...dt,
-      shift: shift,
-      stafEntry: user.fullname
-    }
-    setFormData(dt)
-  }, [formData, setFormData])
-
-  useEffect(() => {
-    setMenuTabs(menuTabsTimeEntry)
-  }, []);
-
-  useEffect(() => {
-    const disabled =
-      parseFloat(totalDuration) > 12 || parseFloat(totalDuration) < 12
-        ? true
-        : false
-    setButtonDisabled(disabled)
-
-    getDataFirst()
-
-    const lastPart = getURLPath()
-    setActiveTab(lastPart)
-
-    switch (lastPart) {
-      case tabMenuTimeEntryEnum.UNIT_DIGGER:
-        setFormTitle('Unit Digger')
-        break;
-      case tabMenuTimeEntryEnum.UNIT_HAULER:
-        setFormTitle("Unit Hauler")
-        break;
-      case tabMenuTimeEntryEnum.UNIT_SUPPORT:
-        setFormTitle("Unit Support")
-        break;
-      default:
-        break;
-    }
-
-  }, [totalDuration, getDataFirst]);
-
   return (
     <>
       <HeaderPageForm
@@ -498,6 +489,9 @@ export default function TimeSheetPage() {
             />
           </div>
         </div>
+      </div>
+      <div className="mt1em form-wrapper">
+          <TableDataInputed formTitle={formTitle} loaded={loaded} setLoaded={setLoaded} handleEdit={handleEditData} />
       </div>
     </>
   )
