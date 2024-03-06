@@ -42,8 +42,8 @@ import { deleteFormDataHauling } from "../../helpers/indexedDB/deteleData";
 import PropTypes from "prop-types";
 import Transaksi from "../../services/inputCoalHauling";
 import {
-  clearInterval,
-  pingInterval,
+  // clearInterval,
+  // pingInterval,
   pingServer,
 } from "../../helpers/pingServer";
 
@@ -169,10 +169,14 @@ const TableHauling = ({ handleEdit, dataUpdated, setDataupdated }) => {
   const fetchData = useCallback(async () => {
     try {
       const dateToday = getTodayDateString();
-      // const dts = await Transaksi.getAllTransaction(dateToday);
       const dts = await getDataTableHauling(dateToday);
 
-      const updatedItems = dts.map((itemFromDB) => ({
+      const todayItems = dts.filter((itemFromDB) => {
+        const itemDate = formatDate(itemFromDB.tanggal);
+        return itemDate === dateToday;
+      });
+  
+      const updatedItems = todayItems.map((itemFromDB) => ({
         id: itemFromDB.id,
         tanggal: itemFromDB.tanggal,
         shift: itemFromDB.shift,
@@ -187,15 +191,15 @@ const TableHauling = ({ handleEdit, dataUpdated, setDataupdated }) => {
         inrom: itemFromDB.inrom,
         outrom: itemFromDB.outrom,
         action: itemFromDB.action,
-        status: "pending",
       }));
-
+  
       setItems(updatedItems);
       setDataupdated(false);
     } catch (error) {
       console.error("Error fetching data:", error);
     }
   }, [getTodayDateString, setDataupdated]);
+  
 
   useEffect(() => {
     if (dataUpdated) {
@@ -213,7 +217,7 @@ const TableHauling = ({ handleEdit, dataUpdated, setDataupdated }) => {
         fetchData();
         setMessage({
           type: "success",
-          content: "Data derhasil dihapus",
+          content: "Data berhasil dihapus",
         });
         setOpen(false);
       }
@@ -235,31 +239,48 @@ const TableHauling = ({ handleEdit, dataUpdated, setDataupdated }) => {
   //   }
   // };
 
+
   const sendDataToServer = async () => {
     const response = await Transaksi.getAllTransaction();
     console.log(response);
-    //proses selanjutnya: 1. clear indexeddb, 2. munculin pesan, 3. back to home, 4. window reload
+    // Next steps: 1. Clear IndexedDB, 2. Show message, 3. Redirect to home, 4. Reload window
   };
+  
+  const pingServerWithRetry = async () => {
+    const maxAttempts = 5;
+    let attempts = 0;
+  
+    return new Promise((resolve) => {
+      const intervalId = setInterval(async () => {
+        const isServerAvailable = await pingServer();
+        attempts++;
+  
+        if (isServerAvailable || attempts >= maxAttempts) {
+          clearInterval(intervalId); 
+          resolve(isServerAvailable);
+        }
+      }, 50000); 
+    });
+  };
+  
   const handleSubmitServer = async () => {
     try {
-      //buat fungsi untuk mengecek server
-      const check = await pingServer();
-      if (check) {
-        await sendDataToServer();
-      } else {
-        const pingInterval = await pingInterval();
-        if (pingInterval) {
-          await sendDataToServer();
-
-          clearInterval();
+      const isServerAvailable = await pingServerWithRetry();
+      if (isServerAvailable.status == 200) {
+        const send = await sendDataToServer();
+        if(send.status == 200){
+          console.log("berhasil")
+        }else {
+          console.log("gagal")
         }
+      } else {
+        console.log("Server is not reachable after retries.");
       }
-
-      console.log("Success:", response.data);
     } catch (error) {
-      console.error("Error:", error);
+      console.error("Error in handleSubmitServer:", error);
     }
   };
+  
 
   const editData = (id) => {
     const dataEdit = items.find((val) => val.id === id);

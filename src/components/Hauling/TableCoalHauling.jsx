@@ -111,8 +111,8 @@ const TableCoalHauling = () => {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {items.map((item) => (
-              <TableRow key={item.id}>
+            {items.map((item, index) => (
+              <TableRow key={`${item.id}-${index}`}>
                 <TableCell>
                   <TableCellLayout>
                     {formatDate(item.tanggal.label)}
@@ -125,7 +125,7 @@ const TableCoalHauling = () => {
                   <Button
                     icon={<ArrowSquareUpRight24Regular />}
                     iconPosition="after"
-                    onClick={() => handleDetail(formatDate(item.tanggal))}>
+                    onClick={() => handleDetail(formatDate(item.tanggal.label))}>
                     Detail
                   </Button>
                 </TableCell>

@@ -14,6 +14,7 @@ export const URL_ENUMS ={
     getDeteleData : link+'/transaction/',
     cardDataTotal : link+'/transaction/total/',
     dataMain : link+'/transaction/main/',
+    ping : link+'/transaction/ping',
     cardDataHopper: link+'/transaction/hopper/',
     cardDataOverflow : link+'/transaction/overflow/',
     cardDataECF : link+'/transaction/ecf/',
