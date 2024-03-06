@@ -21,7 +21,7 @@ export const FooterPageForm = ({ handleSubmit, buttonDisabled }) => {
           >
             Save & Exit Form
           </CompoundButton>
-          <CompoundButton
+          {/* <CompoundButton
             onClick={() => handleSubmit(2)}
             icon={<SaveArrowRight24Regular primaryFill='#ffffff' />}
             iconPosition='after'
@@ -36,7 +36,7 @@ export const FooterPageForm = ({ handleSubmit, buttonDisabled }) => {
             disabled={buttonDisabled}
           >
             Save & Entry Other
-          </CompoundButton>
+          </CompoundButton> */}
       </>
         
     

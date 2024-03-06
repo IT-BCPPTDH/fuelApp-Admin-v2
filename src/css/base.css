@@ -261,6 +261,11 @@ input:disabled {
   max-width: 1365px;
 }
 
+.container-overflow{
+  overflow: auto;
+    height: 59vh;
+}
+
 .row {
   display: -webkit-box;
   display: -ms-flexbox;

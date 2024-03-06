@@ -19,22 +19,22 @@ export const menuArrayData = [
         desc: 'Template Time Entry model Mines',
         link: '/time-sheet-fms'
     },
-    {
-        name: 'Data Production',
-        desc: 'Data Collector for Production Records',
-        link: '/production'
-    },
-    {
-        name: 'Data Mine Plan',
-        desc: 'Data Collector for Mine Planning Activity',
-        link: '/mineplan'
-    },
+    // {
+    //     name: 'Data Production',
+    //     desc: 'Data Collector for Production Records',
+    //     link: '/production'
+    // },
+    // {
+    //     name: 'Data Mine Plan',
+    //     desc: 'Data Collector for Mine Planning Activity',
+    //     link: '/mineplan'
+    // },
 
-    {
-        name: 'Data Distance',
-        desc: 'Template Data Entry for Distance',
-        link: '/distance-data-entry'
-    }
+    // {
+    //     name: 'Data Distance',
+    //     desc: 'Template Data Entry for Distance',
+    //     link: '/distance-data-entry'
+    // }
 ]
 
 export const formArrayData = [

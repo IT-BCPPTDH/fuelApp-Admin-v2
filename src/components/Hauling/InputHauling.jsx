@@ -104,6 +104,19 @@ const InputHauling = ({ dataEdit, postData, setPostData, dataId, setDataupdated 
     [formData, setFormData, setSeamOptions, pitOptions, seamDataOptions]
   );
 
+  const handleReset = useCallback(() => {
+    setFormData({
+      inrom: "",
+      outrom: "",
+      tonnage: "",
+      dumpingpoint: "",
+    });
+    setMessage(false);
+    // setIsFormValid(false);
+    setPostData(true);
+
+  }, [setPostData]);
+
   const handleSubmit = useCallback(async () => {
     try {
 
@@ -169,18 +182,7 @@ const InputHauling = ({ dataEdit, postData, setPostData, dataId, setDataupdated 
     }
   }, [formData, postData, dataId, setDataupdated, handleReset]);
 
-  const handleReset = useCallback(() => {
-    setFormData({
-      inrom: "",
-      outrom: "",
-      tonnage: "",
-      dumpingpoint: "",
-    });
-    setMessage(false);
-    // setIsFormValid(false);
-    setPostData(true);
 
-  }, [setPostData]);
 
   const comp = useMemo(
     () => [

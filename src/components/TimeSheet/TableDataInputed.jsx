@@ -4,8 +4,10 @@ import { getTimeEntryByformTitle } from "../../helpers/indexedDB/getData";
 import PropTypes from "prop-types";
 import { indonesianDate } from "../../helpers/convertDate";
 import { TableButtonDialog } from "../TableButtonDialog";
+import { CompoundButton } from '@fluentui/react-components'
+import { SaveArrowRight24Regular } from '@fluentui/react-icons'
 
-export const TableDataInputed = ({ formTitle, loaded, setLoaded, handleEdit }) => {
+export const TableDataInputed = ({ formTitle, loaded, setLoaded, handleEdit, handleSubmitToServer }) => {
     const [columnData] = useState([
         { columnId: "id", headerLabel: "ID", defaultWidth: 50 },
         { columnId: "unitNo", headerLabel: "Unit No", defaultWidth: 200 },
@@ -18,7 +20,8 @@ export const TableDataInputed = ({ formTitle, loaded, setLoaded, handleEdit }) =
 
     const [itemsData, setItemData] = useState([]);
     const [open, setOpen] = useState(false);
-
+    const [button2Disabled, setButton2Disabled] = useState(true)
+    const [localData, setLocalData] = useState([])
 
     const handleDelete = (itemId) => {
         console.log(itemId)
@@ -26,8 +29,7 @@ export const TableDataInputed = ({ formTitle, loaded, setLoaded, handleEdit }) =
 
     const fetchData = useCallback(async (title) => {
         const data = await getTimeEntryByformTitle(title);
-
-        if (data.length > 0) {
+        if (data?.length > 0) {
             const dataTable = data.map((val) => ({
                 id: val.id,
                 unitNo: val.unitNo,
@@ -39,6 +41,8 @@ export const TableDataInputed = ({ formTitle, loaded, setLoaded, handleEdit }) =
             }));
        
             setItemData(dataTable);
+            setButton2Disabled(false)
+            setLocalData(data)
         }
     }, [open, handleEdit]);
 
@@ -52,12 +56,33 @@ export const TableDataInputed = ({ formTitle, loaded, setLoaded, handleEdit }) =
         }
     }, [fetchData, loaded, setLoaded, formTitle]);
 
-    return <TableList columnsData={columnData} items={itemsData} backgroundColor={`#ffffff`} />;
+    return <>
+      <CompoundButton
+          onClick={() => handleSubmitToServer(localData)}
+          icon={<SaveArrowRight24Regular primaryFill='#ffffff' />}
+          iconPosition='after'
+          size='small'
+          style={{
+            float: 'right',
+            marginRight: '0',
+            marginBottom: '1em',
+            padding: '0 1.5em',
+            backgroundColor: '#035bb6',
+            color: '#fff'
+          }}
+          disabled={button2Disabled}
+        >
+          Submit data to server
+        </CompoundButton>
+    <TableList columnsData={columnData} items={itemsData} backgroundColor={`#ffffff`} />;
+    </>
+     
 };
 
 TableDataInputed.propTypes = {
     formTitle: PropTypes.string,
     loaded: PropTypes.bool,
     setLoaded: PropTypes.any,
-    handleEdit: PropTypes.any
+    handleEdit: PropTypes.any,
+    handleSubmitToServer: PropTypes.func
 };

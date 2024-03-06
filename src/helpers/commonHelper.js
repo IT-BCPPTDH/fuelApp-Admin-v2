@@ -4,3 +4,8 @@ export const getURLPath=()=>{
     const lastPart = urlParts[urlParts.length - 1];
     return lastPart
 }
+
+export const generateID=()=>{
+    const now = new Date()
+    return now.getTime()
+}

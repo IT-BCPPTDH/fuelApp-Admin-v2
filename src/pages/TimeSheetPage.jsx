@@ -1,6 +1,6 @@
 import { useRef, useEffect, useCallback, useState, useMemo } from 'react'
 import jspreadsheet from 'jspreadsheet-ce'
-import { InfoLabel } from '@fluentui/react-components'
+// import { InfoLabel } from '@fluentui/react-components'
 import { Form28Regular } from '@fluentui/react-icons'
 import { DynamicTablistMenu } from '../components/Tablist'
 import FormComponent from '../components/FormComponent'
@@ -21,7 +21,9 @@ import Services from '../services/timeEntry'
 import { insertTimeEntry } from '../helpers/indexedDB/insert'
 import { TableDataInputed } from '../components/TimeSheet/TableDataInputed'
 import { formatTime, calculateTotalTime } from '../helpers/timeHelper'
-import { getTimeEntryDetailById } from '../helpers/indexedDB/getData'
+import { getTimeEntryDetailById, getTimeEntryByUnit } from '../helpers/indexedDB/getData'
+import { DialogComponent } from '../components/Dialog'
+import { generateID } from '../helpers/commonHelper'
 
 export default function TimeSheetPage() {
 
@@ -33,11 +35,15 @@ export default function TimeSheetPage() {
   const [shiftOptions] = useState(shiftOptionsData)
   const [activeTab, setActiveTab] = useState(getURLPath())
   const [formTitle, setFormTitle] = useState('Unit Digger')
-  const [formValue, setFormValue] = useState([])
+  // const [formValue, setFormValue] = useState([])
   const [tableData, setTableData] = useState([])
   const [loaded, setLoaded] = useState(false)
   const [isNew, setIsNew] = useState(true)
-  
+  const [openDialog, setOpenDialog] = useState(false)
+  const [dialogTitle, setDialogTitle] = useState("")
+  const [dialogMessage, setDialogMessage] = useState("")
+  const [randomId] = useState(generateID())
+
   useLiveQuery(() => db.activity.toArray())
 
   const [jdeOptions] = useState(() => getLocalStorage('timeEntry-operator'));
@@ -107,7 +113,7 @@ export default function TimeSheetPage() {
       if (colStartTime && colEndTime) {
         const result = calculateTotalTime(startTime, endTime)
         if (result !== 'NaN.NaN') {
-          if(parseFloat(startTime) > parseFloat(endTime)){
+          if (parseFloat(startTime) > parseFloat(endTime)) {
             spreadSheet.updateCell(3, index, '', false);
             spreadSheet.updateCell(4, index, '', false);
           } else {
@@ -119,7 +125,7 @@ export default function TimeSheetPage() {
         const validateResult = parseFloat(calculateTotalTimeFromArray(arrayTime)) == 12 ? true : false
         if (!validateResult) {
           spreadSheet.updateCell(2, index + 1, endTime, false)
-          if(parseFloat(startTime) > parseFloat(endTime)){
+          if (parseFloat(startTime) > parseFloat(endTime)) {
             spreadSheet.updateCell(2, index + 1, '', false);
           }
         }
@@ -128,14 +134,15 @@ export default function TimeSheetPage() {
 
     const datanya = spreadSheet.getData()
     setTableData(datanya)
-    let dt = transformData(datanya)
-    setFormValue(dt)
+
+    // let dt = transformData(datanya)
+    // setFormValue(dt)
 
     const totalDurationTime = calculateTotalTimeFromArray(arrayTime)
-    console.log(totalDurationTime)
+    // console.log(totalDurationTime)
     setTotalDuration(totalDurationTime)
 
-  }, [transformData])
+  }, [])
 
   useEffect(() => {
 
@@ -186,78 +193,104 @@ export default function TimeSheetPage() {
 
   }, [jdeOptions, handleChangeSheet])
 
-  const handleSubmitToServer = async () => {
-    let act = JSON.stringify(formValue)
-    let data = {
-      ...formData,
-      activity: act
+  const handleSubmitToServer = useCallback(async (localData) => {
+    // console.log(localData)
+    for (let index = 0; index < localData.length; index++) {
+      const data = localData[index];
+      let transformedData = transformData(data.activity)
+      console.log(data)
+
+      let activity = JSON.stringify(transformedData)
+      let dataToSave = {
+        formID: data.formID,
+        site: data.site,
+        stafEntry: data.stafEntry,
+        tanggal: data.tanggal,
+        shift: data.shift,
+        unitNo: data.unitNo,
+        hmAwal: data.hmAwal,
+        hmAkhir: data.hmAkhir,
+        hm: data.hm,
+        activity: activity
+      }
+      let saveData = await Services.postTimeEntrySupport(dataToSave)
+      console.log(saveData)
+
     }
-    let dt = await Services.postTimeEntrySupport(data)
-    console.log(dt)
-  }
+
+
+  }, [transformData])
 
   const handleSubmitToLocalDB = async () => {
-    // console.log(formData, tableData)
+
     let data = {
       ...formData,
       activity: tableData,
       formTitle: formTitle
     }
 
-    let inserted = await insertTimeEntry(data)
-    // console.log(inserted)
-    if(inserted){
-      setLoaded(true)
-      setIsNew(true)
+    const checkExisted = await getTimeEntryByUnit(data.unitNo)
+
+    if (checkExisted.length === 0) {
+      let inserted = await insertTimeEntry(data)
+      // console.log(inserted)
+      if (inserted) {
+        setLoaded(true)
+        setIsNew(true)
+        setFormData([])
+        setTotalDuration(0)
+        jRef.current.jspreadsheet.setData([])
+      }
+    } else {
+      setOpenDialog(true)
+      setDialogTitle("Cannot Save Database")
+      setDialogMessage(`Please check again Unit No field, Unit No: ${data.unitNo} already existed in Database`)
     }
   }
 
   const handleChange = (ev, data) => {
-    const { name, value } = data
+    const { name, value } = data;
+
     if (name === 'hmAwal' || name === 'hmAkhir') {
-      const isValidNumber = /^(\d+(\.\d{0,2})?)?$/.test(value)
+      const isValidNumber = /^(\d+(\.\d{0,2})?)?$/.test(value);
 
       if (isValidNumber) {
-        const formattedValue = value !== '' ? value : ''
-        setFormData(prevFormData => ({
+        const formattedValue = value !== '' ? value : '';
+        setFormData((prevFormData) => ({
           ...prevFormData,
-          [name]: formattedValue
-        }))
+          [name]: formattedValue,
+        }));
 
         if (name === 'hmAkhir') {
-          const hmAwalValue = parseFloat(formData.hmAwal) || 0
-          const hmAkhirValue = parseFloat(formattedValue) || 0
-          const totalHmValue = (hmAkhirValue - hmAwalValue).toFixed(2)
+          const hmAwalValue = parseFloat(formData.hmAwal) || 0;
+          const hmAkhirValue = parseFloat(formattedValue) || 0;
+          const totalHmValue = (hmAkhirValue - hmAwalValue).toFixed(2);
 
           if (hmAkhirValue < hmAwalValue) {
-
-            setFormData(prevFormData => ({ ...prevFormData, hm: 'ERROR' }))
-            ev.target.parentElement.classList.add('border-input-error')
+            setFormData((prevFormData) => ({ ...prevFormData, hm: 'ERROR' }));
+            ev.target.parentElement.classList.add('border-input-error');
           } else {
-            setFormData(prevFormData => ({ ...prevFormData, hm: totalHmValue }))
-            if (
-              ev.target.parentElement.classList.contains('border-input-error')
-            ) {
-              ev.target.parentElement.classList.remove('border-input-error')
+            setFormData((prevFormData) => ({ ...prevFormData, hm: totalHmValue }));
+            const inputErrorClassList = ev.target.parentElement.classList;
+            if (inputErrorClassList.contains('border-input-error')) {
+              inputErrorClassList.remove('border-input-error');
             }
           }
         }
       } else {
-        console.error('Invalid input for HM values')
+        console.error('Invalid input for HM values');
       }
-    } else {
-      setFormData(prevFormData => ({ ...prevFormData, [name]: value }))
-    }
-
-    if (name === 'jdeOperator' && value.length >= 6) {
-      let mo = masterOP?.find(v => v.jde === value)
+    } else if (name === 'jdeOperator' && value.length >= 6) {
+      const mo = masterOP?.find((v) => v.jde === value);
       setFormData({
         ...formData,
-        nameOperator: mo.fullname,
-        jdeOperator: value
-      })
+        nameOperator: mo?.fullname || '',
+        jdeOperator: value,
+      });
+    } else {
+      setFormData((prevFormData) => ({ ...prevFormData, [name]: value }));
     }
-  }
+  };
 
   const getDataFirst = useCallback(() => {
     let user = Cookies.get('user')
@@ -265,6 +298,7 @@ export default function TimeSheetPage() {
 
     const now = new Date()
     const currentHour = now.getHours()
+
     let shift = null
     if (currentHour >= 6 && currentHour < 18) {
       shift = 'Day'
@@ -276,10 +310,13 @@ export default function TimeSheetPage() {
     dt = {
       ...dt,
       shift: shift,
-      stafEntry: user.fullname
+      tanggal: now,
+      site: "BCP",
+      stafEntry: user.fullname,
+      formID: randomId
     }
     setFormData(dt)
-  }, [formData, setFormData])
+  }, [formData, setFormData, randomId])
 
   useEffect(() => {
     setMenuTabs(menuTabsTimeEntry)
@@ -293,7 +330,7 @@ export default function TimeSheetPage() {
         : false
     setButtonDisabled(disabled)
 
-    if(isNew){
+    if (isNew) {
       getDataFirst()
     }
 
@@ -316,11 +353,11 @@ export default function TimeSheetPage() {
 
   }, [totalDuration, getDataFirst, isNew]);
 
-  const handleEditData = useCallback( async (itemId) => {
+  const handleEditData = useCallback(async (itemId) => {
     setIsNew(false)
     const spreadSheet = jRef.current.jspreadsheet
     const dataDetail = await getTimeEntryDetailById(itemId)
-    if(dataDetail){
+    if (dataDetail) {
       setFormData({
         site: dataDetail.site,
         tanggal: new Date(dataDetail.tanggal),
@@ -329,13 +366,14 @@ export default function TimeSheetPage() {
         hmAwal: dataDetail.hmAwal,
         hmAkhir: dataDetail.hmAkhir,
         hm: dataDetail.hm,
-        formId: dataDetail.formId
+        formID: dataDetail.formID,
+        stafEntry: dataDetail.stafEntry
       })
 
       spreadSheet.setData(dataDetail.activity)
       handleChangeSheet()
     }
-  },[handleChangeSheet])
+  }, [handleChangeSheet])
 
   const components = useMemo(
     () => [
@@ -409,7 +447,7 @@ export default function TimeSheetPage() {
         name: 'formID',
         grid: 'col-2',
         label: 'Form ID',
-        value: formData.formId,
+        value: formData.formID,
         readOnly: true,
         disabled: true,
         type: 'Input'
@@ -452,6 +490,7 @@ export default function TimeSheetPage() {
     ],
     [formData, shiftOptions, unitOptions]
   )
+
   return (
     <>
       <HeaderPageForm
@@ -466,12 +505,13 @@ export default function TimeSheetPage() {
         <div ref={jRef} className='mt1em' />
         <div className='row mt1em'>
           <div className='col-6 flex-row'>
-            <InfoLabel
+            {/* <InfoLabel
               size='large'
               info="Jika nilai total < 12 atau > 12, status form menjadi 'INVALIDATED'"
             >
               Total Duration: {totalDuration}
-            </InfoLabel>
+            </InfoLabel> */}
+            <h4> Total Duration: {totalDuration}</h4>
 
             {parseFloat(totalDuration) > 12 ||
               parseFloat(totalDuration) < 12 ? (
@@ -491,8 +531,15 @@ export default function TimeSheetPage() {
         </div>
       </div>
       <div className="mt1em form-wrapper">
-          <TableDataInputed formTitle={formTitle} loaded={loaded} setLoaded={setLoaded} handleEdit={handleEditData} />
+        <TableDataInputed
+          formTitle={formTitle}
+          loaded={loaded}
+          setLoaded={setLoaded}
+          handleEdit={handleEditData}
+          handleSubmitToServer={handleSubmitToServer}
+        />
       </div>
+      <DialogComponent open={openDialog} setOpen={setOpenDialog} title={dialogTitle} message={dialogMessage} />
     </>
   )
 }

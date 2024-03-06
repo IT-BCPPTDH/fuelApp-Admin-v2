@@ -88,7 +88,7 @@ const DashboardPage = () => {
   const operator = useLiveQuery(() => db.operator.toArray());
   const unit = useLiveQuery(() => db.unit.toArray());
 
-  const getDataMaster = useCallback(async (activity, operator, unit) => {
+  const getDataMaster = useCallback(async () => {
     try {
       const [dataMasterActivity, dataMasterOp, dataMasterUnit] = await Promise.all([
         Services.getMasterActivity(),
@@ -128,7 +128,6 @@ const DashboardPage = () => {
       const op = decodeDataOperator?.data?.map((v) => v.jde);
       const unt = decodeDataUnit?.data?.map((v) => v.unitno);
 
-
       toLocalStorage('timeEntry-unit', unt);
       toLocalStorage('timeEntry-activity', act);
       toLocalStorage('timeEntry-masterAct', decodedDataActivity.data);
@@ -137,14 +136,14 @@ const DashboardPage = () => {
     } catch (err) {
       console.log(err);
     }
-  }, []);
+  }, [activity?.length, operator?.length, unit?.length]);
 
   useEffect(() => {
     document.title = 'Homepage Production Data Collector - PTDH'
     if (activity && operator && unit) {
-      getDataMaster(activity, operator, unit)
+      getDataMaster()
     }
-  }, [ getDataMaster, activity, operator, unit])
+  }, [getDataMaster])
 
   return (
     <div className={styles.main}>

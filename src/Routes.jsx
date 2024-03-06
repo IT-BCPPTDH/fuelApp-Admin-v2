@@ -6,6 +6,7 @@ import DashboardPage from './pages/DashboardPage'
 import CoalHauling from './pages/CoalHauling';
 import CoalHaulingDataEntry from './pages/CoalHaulingDataEntry';
 import DetailHauling from './pages/DetailHauling';
+
 // import AdminCoalHauling from './pages/AdminCoalHauling';
 // import InputUnit from './pages/AdminCoalHauling/InputUnit';
 // import InputOperator from './pages/AdminCoalHauling/InputOperator';
@@ -33,18 +34,16 @@ const RouteApp = () => {
       {/* <Route path='/coalhauling-admin' element={<AdminCoalHauling />}></Route>
       <Route path='/coalhaulig-admin/nounit/' element={<InputUnit />}></Route>
       <Route path='/coalhaulig-admin/operator/' element={<InputOperator />}></Route> */}
-      
+
+      <Route path='/time-entry-from-fms' element={<TimeEntryAll />} />
       <Route path='/time-entry-from-collector' element={<TimeEntryAll />} />
       <Route path='/time-entry-support-form' element={<TimeSheetPage />} />
       <Route path='/time-entry-digger-form' element={<TimeSheetPage />} />
       <Route path='/time-entry-hauler-form' element={<TimeSheetPage />} />
 
-
       <Route path='/time-sheet-mines' element={<TimeEntryMinesEntryPage />}></Route>
       <Route path='/time-sheet-fms' element={<TimeEntryMinesEntryPage />}></Route>
       <Route path='/time-entry-production' element={<RekapTimeEntryPage />}></Route>
-      
-      
 
       <Route path='/production' element={<ProductionEntryPage />}></Route>
       <Route path='/mineplan' element={<MineplanEntryPage />}></Route>

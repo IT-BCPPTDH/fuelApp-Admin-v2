@@ -7,14 +7,14 @@ import {
     DialogBody,
     DialogActions,
     DialogContent
-  } from "@fluentui/react-components";
-  import {
+} from "@fluentui/react-components";
+import {
     EditRegular,
     DeleteRegular
-  } from "@fluentui/react-icons";
-  import PropTypes from 'prop-types'
+} from "@fluentui/react-icons";
+import PropTypes from 'prop-types'
 
-export const TableButtonDialog = ({handleEdit, itemId, open, setOpen, handleDelete }) => {
+export const TableButtonDialog = ({ handleEdit, itemId, open, setOpen, handleDelete }) => {
     return (
         <>
             <Button
@@ -54,7 +54,7 @@ export const TableButtonDialog = ({handleEdit, itemId, open, setOpen, handleDele
     )
 }
 
-TableButtonDialog.propTypes={
+TableButtonDialog.propTypes = {
     handleEdit: PropTypes.any,
     itemId: PropTypes.number,
     open: PropTypes.bool,

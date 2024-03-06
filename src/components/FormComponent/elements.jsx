@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { DatePicker } from "@fluentui/react-datepicker-compat";
 import { TimePicker } from "@fluentui/react-timepicker-compat";
 import {
@@ -19,7 +19,6 @@ import {
 } from "@fluentui/react-components/unstable";
 import PropTypes from 'prop-types'
 
-
 const useStyles = makeStyles({
   root: {
     display: "flex",
@@ -35,7 +34,7 @@ const useStyles = makeStyles({
     maxWidth: "180px",
   },
   formName: {
-    color: "#03a9f4",
+    color: "#056b99",
     lineHeight: '15px',
     // fontSize: "1.2em",
     marginBottom: "0",
@@ -56,7 +55,7 @@ const useStyles = makeStyles({
   },
 });
 
-export const FormElement = React.memo(({
+export const FormElement =  ({
   name,
   label,
   type,
@@ -176,10 +175,10 @@ export const FormElement = React.memo(({
       {renderInput()}
     </div>
   );
-})
+}
 
 
-const ComboBoxCustom = React.memo((props) => {
+const ComboBoxCustom =  (props) => {
   const { inputId, name, label, options, handleChange, value } = props;
   const [matchingOptions, setMatchingOptions] = useState([]);
   const styles = useStyles();
@@ -188,7 +187,9 @@ const ComboBoxCustom = React.memo((props) => {
 
   const onChange = (event) => {
     const inputValue = event.target.value.trim();
+
     handleChange(event, { name, value: inputValue });
+   // console.log(inputValue)
 
     const matches = options.filter(
       (option) => option.toLowerCase().indexOf(inputValue.toLowerCase()) === 0
@@ -197,7 +198,7 @@ const ComboBoxCustom = React.memo((props) => {
   };
 
   const onOptionSelect = (event, data) => {
-    const isOptionMatching = data.optionText && options.includes(data.optionText);
+    const isOptionMatching = data.optionText && matchingOptions.includes(data.optionText);
     if (isOptionMatching) {
       handleChange(event, { name, value: data.optionText });
     }
@@ -249,15 +250,12 @@ const ComboBoxCustom = React.memo((props) => {
       </Virtualizer>
     </Combobox>
   );
-});
-
-FormElement.displayName = "FormElement"
-ComboBoxCustom.displayName = "ComboBoxCustome"
+}
 
 FormElement.propTypes = {
-  name: PropTypes.string.isRequired,
-  label: PropTypes.string.isRequired,
-  type: PropTypes.string.isRequired,
+  name: PropTypes.string,
+  label: PropTypes.string,
+  type: PropTypes.string,
   options: PropTypes.array,
   value: PropTypes.any,
   handleChange: PropTypes.func.isRequired,
