@@ -5,7 +5,7 @@ export const URL_ENUMS ={
     masterActivity : link+'/master/activity',
     masterTimeEntryOperator : link+'/master/operator',
     masterTimeEntryUnit : link+'/master/unit',
-    postTimeEntrySupport : link+'/timeentry/timeentry-support',
+    postTimeEntrySupport : link+'/timeentry/timeentry-post',
     transactionHoul : link+'/transaction/',
     patchEditData : link+'/transaction/editTrx/',
     getDownload : link+'/transaction/download/',

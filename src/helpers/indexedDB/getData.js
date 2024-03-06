@@ -18,6 +18,27 @@ export const getOperator = async () => {
   }
 }
 
+export const getOperatorNameById = async (operatorId) => {
+  try {
+    return await db.operator.get({
+      jde: operatorId
+    })
+  } catch (error) {
+    console.error(error)
+  }
+}
+
+export const getUnitDataByNo = async (unitNo) => {
+  try {
+    return await db.unit.get({
+      unitno: unitNo
+    });
+
+  } catch (error) {
+    console.error(error)
+  }
+}
+
 export const getDataTableHauling = async () => {
   try {
     const formdatahaulings = await db.formdatahauling.toArray();
@@ -36,7 +57,7 @@ export const getTimeEntryByUnit = async (unitNo) => {
 
     return timeEntries;
   } catch (error) {
-    console.log(error)
+    console.error(error)
   }
 }
 
@@ -49,15 +70,16 @@ export const getTimeEntryByformTitle = async (formTitle) => {
 
     return timeEntries;
   } catch (error) {
-    console.log(error)
+    console.error(error)
   }
 }
 
-export const getTimeEntryDetailById = async(itemId) => {
+export const getTimeEntryDetailById = async (itemId) => {
   try {
     return await db.timeEntries.get(itemId)
   } catch (error) {
-    console.log(error)
-      return false
+    console.error(error)
+    return false
   }
 }
+

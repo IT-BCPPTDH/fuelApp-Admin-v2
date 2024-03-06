@@ -32,7 +32,7 @@ export const TableDataInputed = ({ formTitle, loaded, setLoaded, handleEdit, han
         if (data?.length > 0) {
             const dataTable = data.map((val) => ({
                 id: val.id,
-                unitno: val.unitno,
+                unitno: val.unitNo,
                 tanggal: indonesianDate(val.tanggal),
                 shift: val.shift,
                 hmAwal: val.hmAwal,

@@ -50,3 +50,46 @@ export const formatTime = input => {
 
   return formattedTime
 }
+
+export function calculateAndConvertDuration(startTime, endTime) {
+  
+  const start = new Date(`1970-01-01T${startTime.replace(/\./g, ':')}`);
+  const end = new Date(`1970-01-01T${endTime.replace(/\./g, ':')}`);
+
+  if (isNaN(start) || isNaN(end)) {
+    console.error('Invalid date or time format');
+    return {
+      duration: NaN,
+      convertDuration: "Invalid date or time format",
+    };
+  }
+
+  const durationMinutes = (end - start) / (1000 * 60);
+
+  if (isNaN(durationMinutes)) {
+    console.error('Invalid duration calculation');
+    return {
+      duration: NaN,
+      convertDuration: "Invalid duration calculation",
+    };
+  }
+
+  const hours = Math.floor(durationMinutes / 60);
+  const minutes = durationMinutes % 60;
+
+  return {
+    duration: durationMinutes,
+    convertDuration: `${hours},${String(minutes).padStart(2, '0')}`
+  };
+}
+
+export function convertToAMPM(time) {
+    // eslint-disable-next-line no-unused-vars
+  const [hours, minutes, seconds] = time.split('.').map(Number);
+  const period = hours >= 12 ? 'PM' : 'AM';
+  const formattedHours = ((hours % 12) || 12).toString().padStart(2, '0');
+  const formattedMinutes = minutes.toString().padStart(2, '0');
+  // const formattedSeconds = seconds.toString().padStart(2, '0');
+
+  return `${formattedHours}:${formattedMinutes} ${period}`;
+}

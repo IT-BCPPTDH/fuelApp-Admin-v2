@@ -54,7 +54,7 @@ const TimeEntryAll = () => {
             />
           </div>
         </div>
-        <TableList columnsData={columnData} items={itemsData} />
+        <TableList columnsData={columnData} items={itemsData} backgroundColor={`#ffffff`} />
       </div>
     </>
   );

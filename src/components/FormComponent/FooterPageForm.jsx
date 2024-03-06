@@ -19,7 +19,7 @@ export const FooterPageForm = ({ handleSubmit, buttonDisabled }) => {
             }}
             disabled={buttonDisabled}
           >
-            Save & Exit Form
+            Save & Entry Other
           </CompoundButton>
           {/* <CompoundButton
             onClick={() => handleSubmit(2)}

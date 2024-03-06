@@ -1,13 +1,12 @@
 import { useRef, useEffect, useCallback, useState, useMemo } from 'react'
 import jspreadsheet from 'jspreadsheet-ce'
-// import { InfoLabel } from '@fluentui/react-components'
 import { Form28Regular } from '@fluentui/react-icons'
 import { DynamicTablistMenu } from '../components/Tablist'
 import FormComponent from '../components/FormComponent'
 import Cookies from 'js-cookie'
 import { getLocalStorage } from '../helpers/toLocalStorage'
 import { HeaderPageForm } from '../components/FormComponent/HeaderPageForm'
-import { calculateTotalTimeFromArray } from '../helpers/timeHelper'
+import { calculateTotalTimeFromArray, formatTime, calculateTotalTime, calculateAndConvertDuration, convertToAMPM } from '../helpers/timeHelper'
 import { FooterPageForm } from '../components/FormComponent/FooterPageForm'
 import { useLiveQuery } from 'dexie-react-hooks'
 import { db } from '../models/db'
@@ -16,14 +15,13 @@ import { menuTabsTimeEntry } from '../helpers/menuHelper'
 import { shiftOptionsData, materialOptions } from '../helpers/optionHelper'
 import { tabMenuTimeEntryEnum } from '../utils/Enums'
 import { timeEntryFormField } from '../helpers/formFieldHelper'
-import { getURLPath } from '../helpers/commonHelper'
+import { getURLPath, generateID } from '../helpers/commonHelper'
 import Services from '../services/timeEntry'
 import { insertTimeEntry } from '../helpers/indexedDB/insert'
 import { TableDataInputed } from '../components/TimeSheet/TableDataInputed'
-import { formatTime, calculateTotalTime } from '../helpers/timeHelper'
-import { getTimeEntryDetailById, getTimeEntryByUnit } from '../helpers/indexedDB/getData'
+import { getTimeEntryDetailById, getTimeEntryByUnit, getUnitDataByNo, getOperatorNameById } from '../helpers/indexedDB/getData'
 import { DialogComponent } from '../components/Dialog'
-import { generateID } from '../helpers/commonHelper'
+
 
 export default function TimeSheetPage() {
 
@@ -35,7 +33,6 @@ export default function TimeSheetPage() {
   const [shiftOptions] = useState(shiftOptionsData)
   const [activeTab, setActiveTab] = useState(getURLPath())
   const [formTitle, setFormTitle] = useState('Unit Digger')
-  // const [formValue, setFormValue] = useState([])
   const [tableData, setTableData] = useState([])
   const [loaded, setLoaded] = useState(false)
   const [isNew, setIsNew] = useState(true)
@@ -51,24 +48,29 @@ export default function TimeSheetPage() {
   const masterOP = useLiveQuery(() => db.operator.toArray());
 
   const transformData = useCallback(
-    inputData => {
+    async (inputData) => {
       const newArray = []
 
       for (let i = 0; i < inputData.length; i++) {
         const currentData = inputData[i]
         const start_time = formatTime(currentData[2])
         const end_time = formatTime(currentData[3])
-        const duration = calculateTotalTime(start_time, end_time)
-
+        const duration = calculateAndConvertDuration(start_time, end_time)
+    
         if (currentData[0] !== '') {
+          
+          const operatorData = await getOperatorNameById(currentData[6])
+          
           const newData = {
             activity: currentData[0],
             delay_description: currentData[1],
-            start: start_time,
-            end: end_time,
-            duration: duration,
+            start_time: convertToAMPM(start_time),
+            end_time: convertToAMPM(end_time),
+            duration: duration.duration,
+            convertDuration: duration.convertDuration,
             material: currentData[5],
-            operator: currentData[6],
+            operatorId: currentData[6],
+            operatorName: operatorData?.fullname ?? '-',
             cut_status: currentData[7],
             digger: currentData[8],
             lokasi: currentData[9]
@@ -77,7 +79,7 @@ export default function TimeSheetPage() {
           newArray.push(newData)
         }
       }
-
+      
       return newArray
     },
     []
@@ -135,11 +137,7 @@ export default function TimeSheetPage() {
     const datanya = spreadSheet.getData()
     setTableData(datanya)
 
-    // let dt = transformData(datanya)
-    // setFormValue(dt)
-
     const totalDurationTime = calculateTotalTimeFromArray(arrayTime)
-    // console.log(totalDurationTime)
     setTotalDuration(totalDurationTime)
 
   }, [])
@@ -194,33 +192,55 @@ export default function TimeSheetPage() {
   }, [jdeOptions, handleChangeSheet])
 
   const handleSubmitToServer = useCallback(async (localData) => {
-    // console.log(localData)
-    for (let index = 0; index < localData.length; index++) {
-      const data = localData[index];
-      let transformedData = transformData(data.activity)
-      console.log(data)
-
-      let activity = JSON.stringify(transformedData)
-      let dataToSave = {
-        formID: data.formID,
-        site: data.site,
-        stafEntry: data.stafEntry,
-        tanggal: data.tanggal,
-        shift: data.shift,
-        unitNo: data.unitNo,
-        hmAwal: data.hmAwal,
-        hmAkhir: data.hmAkhir,
-        hm: data.hm,
-        activity: activity
-      }
-      let saveData = await Services.postTimeEntrySupport(dataToSave)
-      console.log(saveData)
-
+    try {
+      const postData = (await Promise.all(localData.map(async (data) => {
+        const transformedData = await transformData(data.activity);
+        const unitData = await getUnitDataByNo(data.unitNo);
+  
+        return transformedData.map((activity) => ({
+          formID: data.formID,
+          unitNo: data.unitNo,
+          productModel: unitData.type ?? '-',
+          description: unitData.merk ? `${unitData.merk} ${unitData.category} ${unitData.type}` : '-',
+          owner: unitData.owner ?? '-',
+          productionDate: data.tanggal,
+          shift: data.shift,
+          operatorId: activity.operatorId,
+          operatorName: activity.operatorName,
+          smuStart: data.hmAwal,
+          smuFinish: data.hmAkhir,
+          hm: data.hm,
+          activity: activity.activity,
+          startTime: activity.start_time,
+          endTime: activity.end_time,
+          duration: activity.duration,
+          convertDuration: activity.convertDuration,
+          bdNumber: '-',
+          fromEquipment: activity.digger,
+          material: activity.material,
+          matGroup: '-',
+          distance: '-',
+          loadingLocation: '-',
+          dumpingLocation: '-',
+          trip: '-',
+          bcm: '-',
+          notes: '-',
+          cutOffStatus: activity.cut_status,
+          loc: activity.lokasi,
+          site: data.site,
+          unitType: data.formTitle,
+          stafEntry: data.stafEntry
+        }));
+      }))).flat();
+  
+      console.log(postData);
+      const saveData = await Services.postTimeEntryData(postData);
+      console.log(saveData);
+    } catch (error) {
+      console.error('Error while submitting data:', error);
     }
-
-
-  }, [transformData])
-
+  }, [transformData]);
+  
   const handleSubmitToLocalDB = async () => {
 
     let data = {
@@ -233,7 +253,6 @@ export default function TimeSheetPage() {
 
     if (checkExisted.length === 0) {
       let inserted = await insertTimeEntry(data)
-      // console.log(inserted)
       if (inserted) {
         setLoaded(true)
         setIsNew(true)
@@ -467,26 +486,7 @@ export default function TimeSheetPage() {
         label: 'Note',
         value: "Mohon lengkapi form berikut, dan pastikan durasi total 12 jam, nilai 'End Time' harus lebih besar dari 'Start Time'",
         type: 'StaticInfo'
-      },
-      // {
-      //   name: 'jdeOperator',
-      //   grid: 'col-2',
-      //   label: 'JDE Operator',
-      //   value: formData.jdeOperator,
-      //   readOnly: false,
-      //   disabled: false,
-      //   type: 'Combobox',
-      //   options: jdeOptions
-      // },
-      // {
-      //   name: 'nameOperator',
-      //   grid: 'col-2',
-      //   label: 'Nama Operator',
-      //   value: formData.nameOperator,
-      //   readOnly: true,
-      //   disabled: false,
-      //   type: 'Input'
-      // },
+      }
     ],
     [formData, shiftOptions, unitOptions]
   )
@@ -505,13 +505,7 @@ export default function TimeSheetPage() {
         <div ref={jRef} className='mt1em' />
         <div className='row mt1em'>
           <div className='col-6 flex-row'>
-            {/* <InfoLabel
-              size='large'
-              info="Jika nilai total < 12 atau > 12, status form menjadi 'INVALIDATED'"
-            >
-              Total Duration: {totalDuration}
-            </InfoLabel> */}
-            <h4> Total Duration: {totalDuration}</h4>
+            <h5> Total Time Duration: {totalDuration}</h5>
 
             {parseFloat(totalDuration) > 12 ||
               parseFloat(totalDuration) < 12 ? (
