@@ -102,4 +102,12 @@ export const seamOptionsData = {
 
 export const siteOptions=["BCP", "ACP", "WKP"]
 
-export const materialOptions= ['-','OB', 'Coal', 'TS', 'Mud']
+export const materialOptions= ['-','OB Freedig', 'OB Blast', 'Mud Solid (60%)', 'Mud Liquid (40%)', 'NP OB', 'Coal', 'TS Inpit', 'TS Outpit']
+
+
+
+
+
+
+
+

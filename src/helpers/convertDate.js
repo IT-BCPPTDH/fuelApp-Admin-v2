@@ -26,3 +26,18 @@ export const indonesianDate = (date) => {
   return `${day}-${month}-${year}`;
 }
 
+
+export function convertDateFormat(inputDate) {
+  const months = [
+    'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+    'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+  ];
+
+  const dateObject = new Date(inputDate);
+  const day = dateObject.getDate().toString().padStart(2, '0');
+  const month = months[dateObject.getMonth()];
+  const year = dateObject.getFullYear().toString().slice(-2);
+
+  return `${day}-${month}-${year}`;
+}
+
