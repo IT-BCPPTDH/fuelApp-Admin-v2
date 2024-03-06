@@ -27,7 +27,7 @@ const createTableColumnDef = (columnData) => {
     });
 };
 
-export const TableList = ({ columnsData, items }) => {
+export const TableList = ({ columnsData, items, backgroundColor }) => {
 
     const [columns] = useState(createTableColumnDef(columnsData));
 
@@ -55,7 +55,7 @@ export const TableList = ({ columnsData, items }) => {
             aria-label="Table with sort"
             ref={tableRef}
             {...columnSizing_unstable.getTableProps()}
-            style={{ marginTop: '10px' }}
+            style={{ marginTop: '10px', backgroundColor: backgroundColor }}
         >
             <TableHeader>
                 <TableRow>
@@ -104,5 +104,6 @@ export const TableList = ({ columnsData, items }) => {
 TableList.propTypes = {
     columnsData: PropTypes.array,
     items: PropTypes.array,
-    columnSizingOptions: PropTypes.array
+    columnSizingOptions: PropTypes.array,
+    backgroundColor: PropTypes.string
 }

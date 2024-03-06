@@ -43,7 +43,7 @@ const TimeEntryAll = () => {
       <HeaderPageForm 
         title={`Time Entry From Collector`} 
         urlBack={NavigateUrl.HOME} 
-        urlCreate={NavigateUrl.TIME_ENTRY_SUPPORT_FORM}
+        urlCreate={NavigateUrl.TIME_ENTRY_DIGGER_FORM}
       />
       <div className="form-wrapper">
         <div className='row'>

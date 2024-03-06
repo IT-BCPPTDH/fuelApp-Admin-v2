@@ -35,11 +35,17 @@ import {
 import {
   EditRegular,
   DeleteRegular,
-  DismissRegular
+  DismissRegular,
 } from "@fluentui/react-icons";
 import { getDataTableHauling } from "../../helpers/indexedDB/getData";
-import {deleteFormDataHauling} from "../../helpers/indexedDB/deteleData";
-import PropTypes from 'prop-types'
+import { deleteFormDataHauling } from "../../helpers/indexedDB/deteleData";
+import PropTypes from "prop-types";
+import Transaksi from "../../services/inputCoalHauling";
+import {
+  // clearInterval,
+  // pingInterval,
+  pingServer,
+} from "../../helpers/pingServer";
 
 const useStyles = makeStyles({
   messageContainer: {
@@ -106,7 +112,7 @@ const columnsDef = [
   }),
 ];
 
-const TableHauling = ({ handleEdit, dataUpdated, setDataupdated}) => {
+const TableHauling = ({ handleEdit, dataUpdated, setDataupdated }) => {
   const classes = useStyles();
   const [columns] = useState(columnsDef);
   const [message, setMessage] = useState(null);
@@ -163,10 +169,14 @@ const TableHauling = ({ handleEdit, dataUpdated, setDataupdated}) => {
   const fetchData = useCallback(async () => {
     try {
       const dateToday = getTodayDateString();
-      // const dts = await Transaksi.getAllTransaction(dateToday);
       const dts = await getDataTableHauling(dateToday);
 
-      const updatedItems = dts.map((itemFromDB) => ({
+      const todayItems = dts.filter((itemFromDB) => {
+        const itemDate = formatDate(itemFromDB.tanggal);
+        return itemDate === dateToday;
+      });
+  
+      const updatedItems = todayItems.map((itemFromDB) => ({
         id: itemFromDB.id,
         tanggal: itemFromDB.tanggal,
         shift: itemFromDB.shift,
@@ -182,38 +192,35 @@ const TableHauling = ({ handleEdit, dataUpdated, setDataupdated}) => {
         outrom: itemFromDB.outrom,
         action: itemFromDB.action,
       }));
-
+  
       setItems(updatedItems);
-      setDataupdated(false)
+      setDataupdated(false);
     } catch (error) {
       console.error("Error fetching data:", error);
     }
-  }, [getTodayDateString, setDataupdated])
+  }, [getTodayDateString, setDataupdated]);
+  
 
   useEffect(() => {
-    if(dataUpdated){
+    if (dataUpdated) {
       fetchData();
     }
 
     fetchData();
-   
   }, [getTodayDateString, fetchData, dataUpdated]);
 
   const handleDelete = async (id) => {
     try {
-     
       // await Transaksi.getDeteleTransaction(id.label);
       const deleted = await deleteFormDataHauling(id);
-  
-      if(deleted){
+      if (deleted) {
         fetchData();
         setMessage({
           type: "success",
-          content: "Data derhasil dihapus",
+          content: "Data berhasil dihapus",
         });
-        setOpen(false)
+        setOpen(false);
       }
-
     } catch (error) {
       console.error("Error deleting data:", error);
       setMessage({
@@ -232,53 +239,83 @@ const TableHauling = ({ handleEdit, dataUpdated, setDataupdated}) => {
   //   }
   // };
 
-  const handleSubmitServer = async () => { }
+
+  const sendDataToServer = async () => {
+    const response = await Transaksi.getAllTransaction();
+    console.log(response);
+    // Next steps: 1. Clear IndexedDB, 2. Show message, 3. Redirect to home, 4. Reload window
+  };
+  
+  const pingServerWithRetry = async () => {
+    const maxAttempts = 5;
+    let attempts = 0;
+  
+    return new Promise((resolve) => {
+      const intervalId = setInterval(async () => {
+        const isServerAvailable = await pingServer();
+        attempts++;
+  
+        if (isServerAvailable || attempts >= maxAttempts) {
+          clearInterval(intervalId); 
+          resolve(isServerAvailable);
+        }
+      }, 50000); 
+    });
+  };
+  
+  const handleSubmitServer = async () => {
+    try {
+      const isServerAvailable = await pingServerWithRetry();
+      if (isServerAvailable.status == 200) {
+        const send = await sendDataToServer();
+        if(send.status == 200){
+          console.log("berhasil")
+        }else {
+          console.log("gagal")
+        }
+      } else {
+        console.log("Server is not reachable after retries.");
+      }
+    } catch (error) {
+      console.error("Error in handleSubmitServer:", error);
+    }
+  };
+  
 
   const editData = (id) => {
     const dataEdit = items.find((val) => val.id === id);
-    handleEdit(dataEdit)
-  }
+    handleEdit(dataEdit);
+  };
 
-  const dismissMessage = () =>{
-    setMessage(null)
-  }
+  const dismissMessage = () => {
+    setMessage(null);
+  };
 
   return (
     <>
-      <div className="form-wrapper" style={{marginTop: '0'}}>
-      <div className={classes.messageContainer}>
-        {message && (
-          <MessageBar intent={message.type}>
-            <MessageBarBody>
-              <MessageBarTitle>{message.content}</MessageBarTitle>
-              {message.type === "error" && (
-                <Link onClick={() => setMessage(null)}>Dismiss</Link>
-              )}
-            </MessageBarBody>
-            <MessageBarActions
-              containerAction={
-                <Button
-                onClick={dismissMessage}
-                  aria-label="dismiss"
-                  appearance="transparent"
-                  icon={<DismissRegular />}
-                />
-              }
-            >
- 
-            </MessageBarActions>
-          </MessageBar>
-        )}
-      </div>
+      <div className="form-wrapper" style={{ marginTop: "0" }}>
+        <div className={classes.messageContainer}>
+          {message && (
+            <MessageBar intent={message.type}>
+              <MessageBarBody>
+                <MessageBarTitle>{message.content}</MessageBarTitle>
+                {message.type === "error" && (
+                  <Link onClick={() => setMessage(null)}>Dismiss</Link>
+                )}
+              </MessageBarBody>
+              <MessageBarActions
+                containerAction={
+                  <Button
+                    onClick={dismissMessage}
+                    aria-label="dismiss"
+                    appearance="transparent"
+                    icon={<DismissRegular />}
+                  />
+                }></MessageBarActions>
+            </MessageBar>
+          )}
+        </div>
         <div className="search-box">
-          {/* <Button
-            icon={<ArrowDownload24Regular />}
-            iconPosition="after"
-            onClick={() => handleDownload()}
-            style={{ backgroundColor: "#28499c", color: "#ffffff" }}>
-            Download
-          </Button> */}
-          {/* <SearchBox placeholder="Search" /> */}
           <Button
             onClick={() => handleSubmitServer()}
             style={{ backgroundColor: "#28499c", color: "#ffffff" }}>
@@ -333,9 +370,7 @@ const TableHauling = ({ handleEdit, dataUpdated, setDataupdated}) => {
                   </TableCell>
                   <TableCell
                     {...columnSizing_unstable.getTableCellProps("shift")}>
-                    <TableCellLayout truncate>
-                      {item.shift}
-                    </TableCellLayout>
+                    <TableCellLayout truncate>{item.shift}</TableCellLayout>
                   </TableCell>
                   <TableCell
                     {...columnSizing_unstable.getTableCellProps("unitno")}>
@@ -383,7 +418,9 @@ const TableHauling = ({ handleEdit, dataUpdated, setDataupdated}) => {
                         aria-label="Edit"
                         onClick={() => editData(item.id)}
                       />
-                      <Dialog open={open} onOpenChange={(event, data) => setOpen(data.open)}>
+                      <Dialog
+                        open={open}
+                        onOpenChange={(event, data) => setOpen(data.open)}>
                         <DialogTrigger disableButtonEnhancement>
                           <Button
                             icon={<DeleteRegular />}
@@ -424,7 +461,7 @@ const TableHauling = ({ handleEdit, dataUpdated, setDataupdated}) => {
 export default TableHauling;
 
 TableHauling.propTypes = {
-  handleEdit: PropTypes.any, 
+  handleEdit: PropTypes.any,
   dataUpdated: PropTypes.any,
-  setDataupdated: PropTypes.any
-}
+  setDataupdated: PropTypes.any,
+};

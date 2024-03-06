@@ -14,6 +14,7 @@ export const URL_ENUMS ={
     getDeteleData : link+'/transaction/',
     cardDataTotal : link+'/transaction/total/',
     dataMain : link+'/transaction/main/',
+    ping : link+'/transaction/ping',
     cardDataHopper: link+'/transaction/hopper/',
     cardDataOverflow : link+'/transaction/overflow/',
     cardDataECF : link+'/transaction/ecf/',
@@ -29,4 +30,10 @@ export const dumpingEnum = {
     ECF: "STOCK PILE / EARLY COAL FACILITY (ROM ECF)",
     MIDDLE: "MIDLE STOCK PILE",
     SEKURAU: "SEKURAU",
+}
+
+export const tabMenuTimeEntryEnum = {
+    UNIT_DIGGER: "time-entry-digger-form",
+    UNIT_SUPPORT: "time-entry-support-form",
+    UNIT_HAULER: "time-entry-hauler-form"
 }

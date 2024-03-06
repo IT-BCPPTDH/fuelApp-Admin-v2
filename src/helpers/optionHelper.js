@@ -100,3 +100,6 @@ export const seamOptionsData = {
   ],
 };
 
+export const siteOptions=["BCP", "ACP", "WKP"]
+
+export const materialOptions= ['-','OB', 'Coal', 'TS', 'Mud']

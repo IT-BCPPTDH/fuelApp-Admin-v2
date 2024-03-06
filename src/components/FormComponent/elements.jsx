@@ -19,13 +19,12 @@ import {
 } from "@fluentui/react-components/unstable";
 import PropTypes from 'prop-types'
 
-
 const useStyles = makeStyles({
   root: {
     display: "flex",
     flexDirection: "column",
     ...shorthands.gap("2px"),
-    maxWidth: "200px",
+    // maxWidth: "200px",
   },
   combo: {
     display: "grid",
@@ -35,8 +34,9 @@ const useStyles = makeStyles({
     maxWidth: "180px",
   },
   formName: {
-    color: "green",
-    fontSize: "1.2em",
+    color: "#056b99",
+    lineHeight: '15px',
+    // fontSize: "1.2em",
     marginBottom: "0",
   },
   control: {
@@ -55,8 +55,7 @@ const useStyles = makeStyles({
   },
 });
 
-
-export const FormElement = ({
+export const FormElement =  ({
   name,
   label,
   type,
@@ -161,9 +160,9 @@ export const FormElement = ({
 
       case "StaticInfo":
         return (
-          <h5 id={inputId} className={styles.formName}>
+          <p id={inputId} className={styles.formName}>
             {value}
-          </h5>
+          </p>
         );
       default:
         return null;
@@ -176,38 +175,39 @@ export const FormElement = ({
       {renderInput()}
     </div>
   );
-};
+}
 
 
-
-const ComboBoxCustom = (props) => {
+const ComboBoxCustom =  (props) => {
   const { inputId, name, label, options, handleChange, value } = props;
   const [matchingOptions, setMatchingOptions] = useState([]);
   const styles = useStyles();
-  const [itemHeight] = useState(10)
-  const [numberOfItems, setNumberofItems] = useState(0)
+  const [itemHeight] = useState(10);
+  const [numberOfItems, setNumberofItems] = useState(0);
 
   const onChange = (event) => {
-    const value = event.target.value.trim();
-    handleChange(event, { name: name, value: value });
+    const inputValue = event.target.value.trim();
+
+    handleChange(event, { name, value: inputValue });
+   // console.log(inputValue)
 
     const matches = options.filter(
-      (option) => option.toLowerCase().indexOf(value.toLowerCase()) === 0
+      (option) => option.toLowerCase().indexOf(inputValue.toLowerCase()) === 0
     );
     setMatchingOptions(matches);
   };
 
   const onOptionSelect = (event, data) => {
-    const matchingOptions = data.optionText && options.includes(data.optionText);
-    if (matchingOptions) {
-      handleChange(event, { name: name, value: data.optionText });
-    } 
+    const isOptionMatching = data.optionText && matchingOptions.includes(data.optionText);
+    if (isOptionMatching) {
+      handleChange(event, { name, value: data.optionText });
+    }
   };
 
   useEffect(() => {
-    setMatchingOptions([...options])
-    setNumberofItems(options.length)
-  }, [options]);
+    setMatchingOptions([...options]);
+    setNumberofItems(options.length);
+  }, [options, value]);
 
   const { virtualizerLength, bufferItems, bufferSize, scrollRef } =
     useStaticVirtualizerMeasure({
@@ -226,20 +226,23 @@ const ComboBoxCustom = (props) => {
       onChange={onChange}
       onOptionSelect={onOptionSelect}
       defaultSelectedOptions={value ? [value] : []}
-      value={value ?? ""}>
+      value={value ?? ""}
+    >
       <Virtualizer
         numItems={numberOfItems}
         virtualizerLength={virtualizerLength}
         bufferItems={bufferItems}
         bufferSize={bufferSize}
-        itemSize={itemHeight}>
+        itemSize={itemHeight}
+      >
         {(index) => {
           const option = matchingOptions[index];
           return (
             <Option
               key={index}
               aria-posinset={index}
-              aria-setsize={numberOfItems}>
+              aria-setsize={numberOfItems}
+            >
               {option}
             </Option>
           );
@@ -247,18 +250,18 @@ const ComboBoxCustom = (props) => {
       </Virtualizer>
     </Combobox>
   );
-};
+}
 
-FormElement.propTypes={
+FormElement.propTypes = {
   name: PropTypes.string,
   label: PropTypes.string,
   type: PropTypes.string,
   options: PropTypes.array,
   value: PropTypes.any,
-  handleChange: PropTypes.any,
-  disabled: PropTypes.any,
-  readOnly: PropTypes.any
-}
+  handleChange: PropTypes.func.isRequired,
+  disabled: PropTypes.bool,
+  readOnly: PropTypes.bool,
+};
 
 ComboBoxCustom.propTypes={
   inputId: PropTypes.any,

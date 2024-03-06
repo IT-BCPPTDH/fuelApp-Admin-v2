@@ -120,3 +120,13 @@ button:hover {
    background-color: cadetblue;
    color: #fff
  }
+.width-title{
+   display: flex !important;
+   align-items: center;
+   gap: 5px;
+   font-weight: 300 !important;
+}
+ .left--15em{
+   position: relative;
+   left: -15em;
+ }

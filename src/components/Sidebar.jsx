@@ -28,7 +28,7 @@ const useStyles = makeStyles({
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
-    cursor: 'pointer', 
+    cursor: 'pointer',
   },
 });
 
@@ -41,77 +41,42 @@ const Sidebar = () => {
   };
 
   const handleLogout = () => {
-    deleteAllCookies()
-    navigate("/")
-    window.location.reload()
-  }
+    deleteAllCookies();
+    navigate('/');
+    window.location.reload();
+  };
 
   const deleteAllCookies = () => {
-
     const cookieNames = Cookies.get();
-  
+
     for (const cookieName in cookieNames) {
       Cookies.remove(cookieName);
     }
 
-    localStorage.clear()
+    localStorage.clear();
   };
 
+  const tabData = [
+    { value: 'tab1', icon: <Home24Regular />, label: 'Home', onClick: () => handleTabClick('/') },
+    { value: 'tab2', icon: <Feed24Regular />, label: 'Report', onClick: () => handleTabClick('/data-master') },
+    { value: 'tab3', icon: <Open24Regular />, label: 'Logout', onClick: handleLogout },
+  ];
+
   return (
-    <div className={styles.root} style={{ borderRight: '1px solid #cfcfcf' }}>
+    <div className={styles.root} style={{ borderRight: '1px solid #cfcfcf', borderTop: '1px solid #c8c8c8' }}>
       <div>
-        <Image
-          alt="Darma Henwa"
-          shape="circular"
-          src={Elipse}
-          height={16}
-          width={16}
-        />
+        <Image alt="Darma Henwa" shape="circular" src={Elipse} height={16} width={16} />
       </div>
 
-      <TabList defaultSelectedValue='tab1' vertical color='seafoam' style={{ marginTop: '1em' }}>
-        <Tab
-          value='tab1'
-          style={{ marginBottom: '10px' }}
-          onClick={() => handleTabClick('/')}
-        >
-          <div className={styles.tabStyle}>
-            <Home24Regular />
-            <small>Home</small>
-          </div>
-        </Tab>
-        {/* <Tab
-          value='tab2'
-          style={{ marginBottom: '10px' }}
-          onClick={() => handleTabClick('/report')}
-        >
-          <div className={styles.tabStyle}>
-            <Feed24Regular />
-            <small>Report</small>
-          </div>
-        </Tab> */}
-
-          <Tab
-          value='tab2'
-          style={{ marginBottom: '10px' }}
-          onClick={() => handleTabClick('/data-master')}
-        >
-          <div className={styles.tabStyle}>
-            <Feed24Regular />
-            <small>Report</small>
-          </div>
-        </Tab>
-        
-        <Tab
-          value='tab3'
-          style={{ marginBottom: '10px' }}
-          onClick={() => handleLogout()}
-        >
-          <div className={styles.tabStyle}>
-            <Open24Regular />
-            <small>Logout</small>
-          </div>
-        </Tab>
+      <TabList defaultSelectedValue={tabData[0].value} vertical color='seafoam' style={{ marginTop: '1em' }}>
+        {tabData.map((tab) => (
+          <Tab key={tab.value} value={tab.value} style={{ marginBottom: '10px' }} onClick={tab.onClick}>
+            <div className={styles.tabStyle}>
+              {tab.icon}
+              <small>{tab.label}</small>
+            </div>
+          </Tab>
+        ))}
       </TabList>
     </div>
   );

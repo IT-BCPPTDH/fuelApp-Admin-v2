@@ -51,7 +51,7 @@ table {
   --bg-color: #f9fffb;
   --bg-secondary-color: #f3f3f6;
   --color-primary: #14854f;
-  --color-lightGrey: #d2d6dd;
+  --color-lightGrey: #efefef;
   --color-grey: #747681;
   --color-darkGrey: #3f4144;
   --color-error: #d43939;
@@ -250,11 +250,20 @@ button:disabled {
 input:disabled {
   color: #3f4144;
 }
+.fui-Input:has(> input[disabled]) {
+  /* Gaya untuk elemen <span> ketika elemen <input> di dalamnya memiliki atribut readonly */
+  background-color: var(--color-lightGrey); /* Ganti dengan warna latar belakang yang Anda inginkan */
+}
 
 .container {
   min-height: calc(92vh);
   padding: 30px 32px;
   max-width: 1365px;
+}
+
+.container-overflow{
+  overflow: auto;
+    height: 59vh;
 }
 
 .row {

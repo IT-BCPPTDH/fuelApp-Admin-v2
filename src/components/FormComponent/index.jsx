@@ -1,7 +1,8 @@
 import { FormElement } from './elements';
-import PropTypes from 'prop-types'
+import PropTypes from 'prop-types';
+import React from 'react';
 
-const FormComponent = ({ handleChange, components }) => {
+const FormComponent = React.memo(({ handleChange, components }) => {
   return (
     <div className='row'>
       {components.map((val, key) => (
@@ -21,11 +22,13 @@ const FormComponent = ({ handleChange, components }) => {
       ))}
     </div>
   );
+});
+
+FormComponent.propTypes = {
+  handleChange: PropTypes.any,
+  components: PropTypes.any,
 };
 
-export default FormComponent
+FormComponent.displayName = 'FormComponent'; // Add display name here
 
-FormComponent.propTypes={
-  handleChange: PropTypes.any,
-  components: PropTypes.any
-}
+export default FormComponent;

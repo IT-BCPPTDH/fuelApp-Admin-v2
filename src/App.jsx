@@ -61,7 +61,7 @@ function App() {
                     <Sidebar />
                     <div style={{ flex: '1 1 auto' }}>
                       <Header />
-                      <div className={`container`}>
+                      <div className={`container container-overflow`}>
                         <RouteApp />
                       </div>
                     </div>

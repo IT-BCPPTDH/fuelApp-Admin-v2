@@ -1,101 +1,54 @@
 import { useRef, useEffect, useCallback, useState, useMemo } from 'react'
 import jspreadsheet from 'jspreadsheet-ce'
-import { InfoLabel } from '@fluentui/react-components'
+// import { InfoLabel } from '@fluentui/react-components'
+import { Form28Regular } from '@fluentui/react-icons'
 import { DynamicTablistMenu } from '../components/Tablist'
 import FormComponent from '../components/FormComponent'
 import Cookies from 'js-cookie'
-import Services from '../services/timeEntry'
 import { getLocalStorage } from '../helpers/toLocalStorage'
 import { HeaderPageForm } from '../components/FormComponent/HeaderPageForm'
 import { calculateTotalTimeFromArray } from '../helpers/timeHelper'
 import { FooterPageForm } from '../components/FormComponent/FooterPageForm'
 import { useLiveQuery } from 'dexie-react-hooks'
 import { db } from '../models/db'
-import { useNavigate } from 'react-router-dom'
 import { NavigateUrl } from '../utils/Navigation'
+import { menuTabsTimeEntry } from '../helpers/menuHelper'
+import { shiftOptionsData, materialOptions } from '../helpers/optionHelper'
+import { tabMenuTimeEntryEnum } from '../utils/Enums'
+import { timeEntryFormField } from '../helpers/formFieldHelper'
+import { getURLPath } from '../helpers/commonHelper'
+import Services from '../services/timeEntry'
+import { insertTimeEntry } from '../helpers/indexedDB/insert'
+import { TableDataInputed } from '../components/TimeSheet/TableDataInputed'
+import { formatTime, calculateTotalTime } from '../helpers/timeHelper'
+import { getTimeEntryDetailById, getTimeEntryByUnit } from '../helpers/indexedDB/getData'
+import { DialogComponent } from '../components/Dialog'
+import { generateID } from '../helpers/commonHelper'
 
-// import { getActivity } from '../helpers/indexedDB/getData'
-
-const tabs = [
-  { label: 'Time Entry Support', value: 'time-entry-support-form' },
-  { label: 'Time Entry Digger', value: 'time-entry-digger-form' },
-  { label: 'Time Entry Hauler', value: 'time-entry-hauler-form' }
-]
-
-const shiftOptions = ['Day', 'Night']
-const activeTab = 'time-entry-support-form';
-
-export default function TimeSheetPage () {
+export default function TimeSheetPage() {
 
   const jRef = useRef(null)
-  const [totalDuration, setTotalDuration] = useState()
+  const [totalDuration, setTotalDuration] = useState(0)
   const [buttonDisabled, setButtonDisabled] = useState(true)
-  const navigate = useNavigate()
-  
+  const [formData, setFormData] = useState({});
+  const [menuTabs, setMenuTabs] = useState([])
+  const [shiftOptions] = useState(shiftOptionsData)
+  const [activeTab, setActiveTab] = useState(getURLPath())
+  const [formTitle, setFormTitle] = useState('Unit Digger')
+  // const [formValue, setFormValue] = useState([])
+  const [tableData, setTableData] = useState([])
+  const [loaded, setLoaded] = useState(false)
+  const [isNew, setIsNew] = useState(true)
+  const [openDialog, setOpenDialog] = useState(false)
+  const [dialogTitle, setDialogTitle] = useState("")
+  const [dialogMessage, setDialogMessage] = useState("")
+  const [randomId] = useState(generateID())
+
   useLiveQuery(() => db.activity.toArray())
 
   const [jdeOptions] = useState(() => getLocalStorage('timeEntry-operator'));
   const [unitOptions] = useState(() => getLocalStorage('timeEntry-unit'));
-  // const [masterOP, setMasterOP] = useState(() => getLocalStorage('timeEntry-masterOP'));
   const masterOP = useLiveQuery(() => db.operator.toArray());
-  const [formData, setFormData] = useState({});
-
-  useEffect(() => {
-    setFormData({
-      formID: 'Time Entry Support',
-      site: 'BCP',
-      stafEntry: 'Nama Lengkap',
-      tanggal: new Date(),
-      shift: '',
-      unitNo: '',
-      lastUpdate: '-',
-      jdeOperator: '',
-      nameOperator: '',
-      hmAwal: '',
-      hmAkhir: '',
-      hm: ''
-    })
-  }, []);
-
-  const [formValue, setFormValue] = useState()
-
-  const formatTime = useCallback(input => {
-    const parts = input.split('.')
-
-    let hours = parseInt(parts[0], 10) || 0
-    let minutes = parseInt(parts[1], 10) || 0
-
-    if (minutes < 10 && parts[1] && parts[1].length === 1) {
-      minutes *= 10
-    }
-
-    hours = Math.min(23, Math.max(0, hours))
-    minutes = Math.min(59, Math.max(0, minutes))
-
-    const formattedTime = `${String(hours).padStart(2, '0')}.${String(
-      minutes
-    ).padStart(2, '0')}.00`
-
-    return formattedTime
-  }, [])
-
-  const calculateTotalTime = useCallback((startTime, endTime) => {
-    const [startHours, startMinutes, startSeconds] = startTime
-      .split('.')
-      .map(Number)
-    const [endHours, endMinutes, endSeconds] = endTime.split('.').map(Number)
-    const totalStartSeconds =
-      startHours * 3600 + startMinutes * 60 + startSeconds
-    const totalEndSeconds = endHours * 3600 + endMinutes * 60 + endSeconds
-    const timeDifferenceSeconds = totalEndSeconds - totalStartSeconds
-    const hours = Math.floor(timeDifferenceSeconds / 3600)
-    const minutes = Math.floor((timeDifferenceSeconds % 3600) / 60)
-    const formattedTotalTime = `${String(hours).padStart(2, '0')}.${String(
-      minutes
-    ).padStart(2, '0')}`
-
-    return formattedTotalTime
-  }, [])
 
   const transformData = useCallback(
     inputData => {
@@ -103,7 +56,6 @@ export default function TimeSheetPage () {
 
       for (let i = 0; i < inputData.length; i++) {
         const currentData = inputData[i]
-
         const start_time = formatTime(currentData[2])
         const end_time = formatTime(currentData[3])
         const duration = calculateTotalTime(start_time, end_time)
@@ -116,9 +68,10 @@ export default function TimeSheetPage () {
             end: end_time,
             duration: duration,
             material: currentData[5],
-            cut_status: currentData[6],
-            digger: currentData[7],
-            lokasi: currentData[8]
+            operator: currentData[6],
+            cut_status: currentData[7],
+            digger: currentData[8],
+            lokasi: currentData[9]
           }
 
           newArray.push(newData)
@@ -127,45 +80,74 @@ export default function TimeSheetPage () {
 
       return newArray
     },
-    [formatTime, calculateTotalTime]
+    []
   )
 
-  const onchange = useCallback(
-    val => {
-      let dt = transformData(val)
-      setFormValue(dt)
-    },
-    [transformData]
-  )
-
-  useEffect( () => {
-
-    let lastEndTimeVal = null
-    let lastStartTimeVal = null
+  const handleChangeSheet = useCallback(() => {
+    const spreadSheet = jRef.current.jspreadsheet
+    const masterActivity = getLocalStorage('timeEntry-masterAct')
+    let startTime = null
+    let endTime = null
     let arrayTime = []
-    let validateResult = false
-    let delAct = null
-    let arrTemp = [
-      ['', '', '', '', '', '', '', '', ''],
-      ['', '', '', '', '', '', '', '', ''],
-      ['', '', '', '', '', '', '', '', ''],
-      ['', '', '', '', '', '', '', '', ''],
-      ['', '', '', '', '', '', '', '', ''],
-      ['', '', '', '', '', '', '', '', ''],
-      ['', '', '', '', '', '', '', '', ''],
-      ['', '', '', '', '', '', '', '', ''],
-      ['', '', '', '', '', '', '', '', ''],
-      ['', '', '', '', '', '', '', '', ''],
-      ['', '', '', '', '', '', '', '', ''],
-      ['', '', '', '', '', '', '', '', ''],
-      ['', '', '', '', '', '', '', '', ''],
-      ['', '', '', '', '', '', '', '', '']
-    ]
+
+    for (let index = 0; index < 20; index++) {
+      const col1Val = spreadSheet.getValueFromCoords(0, index)
+      const activity = masterActivity?.find(obj => obj.activityname === col1Val)
+      const descriptionActivity = activity?.delaydescription
+
+      if (descriptionActivity) spreadSheet.updateCell(1, index, descriptionActivity, false)
+
+      const colStartTime = spreadSheet.getValueFromCoords(2, index)
+      const colEndTime = spreadSheet.getValueFromCoords(3, index)
+
+      if (colStartTime) {
+        startTime = formatTime(colStartTime)
+        spreadSheet.updateCell(2, index, startTime, false)
+      }
+
+      if (colEndTime) {
+        endTime = formatTime(colEndTime)
+        spreadSheet.updateCell(3, index, endTime, false)
+      }
+
+      if (colStartTime && colEndTime) {
+        const result = calculateTotalTime(startTime, endTime)
+        if (result !== 'NaN.NaN') {
+          if (parseFloat(startTime) > parseFloat(endTime)) {
+            spreadSheet.updateCell(3, index, '', false);
+            spreadSheet.updateCell(4, index, '', false);
+          } else {
+            spreadSheet.updateCell(4, index, result, false)
+            arrayTime[index] = result
+          }
+        }
+
+        const validateResult = parseFloat(calculateTotalTimeFromArray(arrayTime)) == 12 ? true : false
+        if (!validateResult) {
+          spreadSheet.updateCell(2, index + 1, endTime, false)
+          if (parseFloat(startTime) > parseFloat(endTime)) {
+            spreadSheet.updateCell(2, index + 1, '', false);
+          }
+        }
+      }
+    }
+
+    const datanya = spreadSheet.getData()
+    setTableData(datanya)
+
+    // let dt = transformData(datanya)
+    // setFormValue(dt)
+
+    const totalDurationTime = calculateTotalTimeFromArray(arrayTime)
+    // console.log(totalDurationTime)
+    setTotalDuration(totalDurationTime)
+
+  }, [])
+
+  useEffect(() => {
 
     let act = getLocalStorage('timeEntry-activity')
-    let mastr = getLocalStorage('timeEntry-masterAct')
-    // let mastr = getActivity()
-    // console.log(mastr)
+    const width = screen.width;
 
     const options = {
       data: [],
@@ -181,12 +163,19 @@ export default function TimeSheetPage () {
         { type: 'text', width: '100', title: 'Start' },
         { type: 'text', width: '100', title: 'End' },
         { type: 'text', width: '100', title: 'Duration' },
-
         {
           type: 'dropdown',
           width: '130',
           title: 'Material',
-          source: ['OB', 'Coal', 'TS', 'Mud']
+          source: materialOptions,
+          autocomplete: true
+        },
+        {
+          type: 'dropdown',
+          width: '130',
+          title: 'Operator',
+          source: jdeOptions,
+          autocomplete: true
         },
         { type: 'text', width: '100', title: 'Cut Status' },
         { type: 'text', width: '100', title: 'Digger' },
@@ -194,164 +183,210 @@ export default function TimeSheetPage () {
       ],
       minDimensions: [9, 14],
       tableHeight: '375px',
+      tableWidth: `${(width * 86) / 100}px`,
       tableOverflow: true,
-      updateTable: function (instance, cell, col, row, val, label, cellName) {
-        if (col == 0) {
-          let v = cell.innerText
-          let a = mastr?.find(obj => obj.activityname === v)
-          delAct = a?.delaydescription
-        }
-
-        if (col == 1) {
-          if (delAct != null) {
-            cell.innerHTML = delAct
-            val = delAct
-          }
-        }
-
-        if (col == 2 || col == 3) {
-          let val = cell.innerText
-          if (val !== '') {
-            const res = formatTime(val)
-            cell.innerHTML = res
-          }
-        }
-
-        for (let index = 0; index < 20; index++) {
-          if (col == 2 && row == index) {
-            lastStartTimeVal = cell.innerText
-            val = cell.innerText
-          }
-          if (col == 3 && row == index) {
-            lastEndTimeVal = cell.innerText
-            val = cell.innerText
-          }
-
-          if (col == 2 && row == index + 1) {
-            const resVal = calculateTotalTimeFromArray(arrayTime)
-            validateResult = parseFloat(resVal) == 12 ? true : false
-            if (!validateResult) {
-              cell.innerText = lastEndTimeVal
-              val = lastEndTimeVal
-            }
-          }
-
-          if (col == 4 && row == index) {
-            const result = calculateTotalTime(lastStartTimeVal, lastEndTimeVal)
-            if (result !== 'NaN.NaN') {
-              cell.innerText = result
-              val = cell.innerText
-              arrayTime[index] = result
-            }
-          }
-        }
-
-        if (cellName == 'E14') {
-          const resVal = calculateTotalTimeFromArray(arrayTime)
-          setTotalDuration(resVal)
-        }
-
-        if (row > arrTemp[row].length - 1) {
-          arrTemp.push(['', '', '', '', '', '', '', '', ''])
-        }
-        arrTemp[row][col] = val
-        onchange(arrTemp)
-      }
+      onafterchanges: handleChangeSheet,
     }
     if (!jRef.current.jspreadsheet) {
       jspreadsheet(jRef.current, options)
     }
-    return () => {
-      jspreadsheet.destroy(jRef)
-    }
-  }, [calculateTotalTime, formatTime, onchange])
 
-  const handleSubmit = async () => {
-    let act = JSON.stringify(formValue)
+  }, [jdeOptions, handleChangeSheet])
+
+  const handleSubmitToServer = useCallback(async (localData) => {
+    // console.log(localData)
+    for (let index = 0; index < localData.length; index++) {
+      const data = localData[index];
+      let transformedData = transformData(data.activity)
+      console.log(data)
+
+      let activity = JSON.stringify(transformedData)
+      let dataToSave = {
+        formID: data.formID,
+        site: data.site,
+        stafEntry: data.stafEntry,
+        tanggal: data.tanggal,
+        shift: data.shift,
+        unitNo: data.unitNo,
+        hmAwal: data.hmAwal,
+        hmAkhir: data.hmAkhir,
+        hm: data.hm,
+        activity: activity
+      }
+      let saveData = await Services.postTimeEntrySupport(dataToSave)
+      console.log(saveData)
+
+    }
+
+
+  }, [transformData])
+
+  const handleSubmitToLocalDB = async () => {
+
     let data = {
       ...formData,
-      activity: act
+      activity: tableData,
+      formTitle: formTitle
     }
 
-    let dt = await Services.postTimeEntrySupport(data)
-    console.log(dt)
+    const checkExisted = await getTimeEntryByUnit(data.unitNo)
+
+    if (checkExisted.length === 0) {
+      let inserted = await insertTimeEntry(data)
+      // console.log(inserted)
+      if (inserted) {
+        setLoaded(true)
+        setIsNew(true)
+        setFormData([])
+        setTotalDuration(0)
+        jRef.current.jspreadsheet.setData([])
+      }
+    } else {
+      setOpenDialog(true)
+      setDialogTitle("Cannot Save Database")
+      setDialogMessage(`Please check again Unit No field, Unit No: ${data.unitNo} already existed in Database`)
+    }
   }
 
   const handleChange = (ev, data) => {
-    const { name, value } = data
+    const { name, value } = data;
+
     if (name === 'hmAwal' || name === 'hmAkhir') {
-      const isValidNumber = /^(\d+(\.\d{0,2})?)?$/.test(value)
+      const isValidNumber = /^(\d+(\.\d{0,2})?)?$/.test(value);
 
       if (isValidNumber) {
-        const formattedValue = value !== '' ? value : ''
-        setFormData(prevFormData => ({
+        const formattedValue = value !== '' ? value : '';
+        setFormData((prevFormData) => ({
           ...prevFormData,
-          [name]: formattedValue
-        }))
+          [name]: formattedValue,
+        }));
 
         if (name === 'hmAkhir') {
-          const hmAwalValue = parseFloat(formData.hmAwal) || 0
-          const hmAkhirValue = parseFloat(formattedValue) || 0
-          const totalHmValue = (hmAkhirValue - hmAwalValue).toFixed(2)
+          const hmAwalValue = parseFloat(formData.hmAwal) || 0;
+          const hmAkhirValue = parseFloat(formattedValue) || 0;
+          const totalHmValue = (hmAkhirValue - hmAwalValue).toFixed(2);
 
           if (hmAkhirValue < hmAwalValue) {
-            
-            setFormData(prevFormData => ({ ...prevFormData, hm: 'ERROR' }))
-            ev.target.parentElement.classList.add('border-input-error')
+            setFormData((prevFormData) => ({ ...prevFormData, hm: 'ERROR' }));
+            ev.target.parentElement.classList.add('border-input-error');
           } else {
-            setFormData(prevFormData => ({ ...prevFormData, hm: totalHmValue }))
-            if (
-              ev.target.parentElement.classList.contains('border-input-error')
-            ) {
-              ev.target.parentElement.classList.remove('border-input-error')
+            setFormData((prevFormData) => ({ ...prevFormData, hm: totalHmValue }));
+            const inputErrorClassList = ev.target.parentElement.classList;
+            if (inputErrorClassList.contains('border-input-error')) {
+              inputErrorClassList.remove('border-input-error');
             }
           }
         }
       } else {
-        console.error('Invalid input for HM values')
+        console.error('Invalid input for HM values');
       }
-    } else {
-      setFormData(prevFormData => ({ ...prevFormData, [name]: value }))
-    }
-
-    if (name === 'jdeOperator' && value.length >= 6) {
-      let mo = masterOP?.find(v => v.jde === value)
+    } else if (name === 'jdeOperator' && value.length >= 6) {
+      const mo = masterOP?.find((v) => v.jde === value);
       setFormData({
         ...formData,
-        nameOperator: mo.fullname,
-        jdeOperator: value
-      })
+        nameOperator: mo?.fullname || '',
+        jdeOperator: value,
+      });
+    } else {
+      setFormData((prevFormData) => ({ ...prevFormData, [name]: value }));
     }
-  }
+  };
+
+  const getDataFirst = useCallback(() => {
+    let user = Cookies.get('user')
+    user = JSON.parse(user)
+
+    const now = new Date()
+    const currentHour = now.getHours()
+
+    let shift = null
+    if (currentHour >= 6 && currentHour < 18) {
+      shift = 'Day'
+    } else {
+      shift = 'Night'
+    }
+
+    let dt = formData
+    dt = {
+      ...dt,
+      shift: shift,
+      tanggal: now,
+      site: "BCP",
+      stafEntry: user.fullname,
+      formID: randomId
+    }
+    setFormData(dt)
+  }, [formData, setFormData, randomId])
+
+  useEffect(() => {
+    setMenuTabs(menuTabsTimeEntry)
+    setFormData(timeEntryFormField)
+  }, []);
+
+  useEffect(() => {
+    const disabled =
+      parseFloat(totalDuration) > 12 || parseFloat(totalDuration) < 12
+        ? true
+        : false
+    setButtonDisabled(disabled)
+
+    if (isNew) {
+      getDataFirst()
+    }
+
+    const lastPart = getURLPath()
+    setActiveTab(lastPart)
+
+    switch (lastPart) {
+      case tabMenuTimeEntryEnum.UNIT_DIGGER:
+        setFormTitle('Unit Digger')
+        break;
+      case tabMenuTimeEntryEnum.UNIT_HAULER:
+        setFormTitle("Unit Hauler")
+        break;
+      case tabMenuTimeEntryEnum.UNIT_SUPPORT:
+        setFormTitle("Unit Support")
+        break;
+      default:
+        break;
+    }
+
+  }, [totalDuration, getDataFirst, isNew]);
+
+  const handleEditData = useCallback(async (itemId) => {
+    setIsNew(false)
+    const spreadSheet = jRef.current.jspreadsheet
+    const dataDetail = await getTimeEntryDetailById(itemId)
+    if (dataDetail) {
+      setFormData({
+        site: dataDetail.site,
+        tanggal: new Date(dataDetail.tanggal),
+        shift: dataDetail.shift,
+        unitNo: dataDetail.unitNo,
+        hmAwal: dataDetail.hmAwal,
+        hmAkhir: dataDetail.hmAkhir,
+        hm: dataDetail.hm,
+        formID: dataDetail.formID,
+        stafEntry: dataDetail.stafEntry
+      })
+
+      spreadSheet.setData(dataDetail.activity)
+      handleChangeSheet()
+    }
+  }, [handleChangeSheet])
 
   const components = useMemo(
     () => [
-      {
-        name: 'formID',
-        grid: 'col-2',
-        label: 'Form ID',
-        value: formData.formID,
-        type: 'StaticInfo'
-      },
-
       {
         name: 'site',
         grid: 'col-2',
         label: 'Site',
         value: formData.site,
-        readOnly: true,
-        disabled: true,
+        readOnly: false,
+        disabled: false,
         type: 'Input'
       },
-      {
-        name: 'stafEntry',
-        grid: 'col-2',
-        label: 'Staf Entry',
-        value: formData.stafEntry,
-        readOnly: true,
-        disabled: true,
-        type: 'Input'
-      },
+
       {
         name: 'tanggal',
         grid: 'col-2',
@@ -371,7 +406,6 @@ export default function TimeSheetPage () {
         type: 'Combobox',
         options: shiftOptions
       },
-
       {
         name: 'unitNo',
         grid: 'col-2',
@@ -381,32 +415,6 @@ export default function TimeSheetPage () {
         disabled: false,
         type: 'Combobox',
         options: unitOptions
-      },
-      {
-        name: 'lastUpdate',
-        grid: 'col-2',
-        label: 'Last Update',
-        value: formData.lastUpdate,
-        type: 'StaticInfo'
-      },
-      {
-        name: 'jdeOperator',
-        grid: 'col-2',
-        label: 'JDE Operator',
-        value: formData.jdeOperator,
-        readOnly: false,
-        disabled: false,
-        type: 'Combobox',
-        options: jdeOptions
-      },
-      {
-        name: 'nameOperator',
-        grid: 'col-2',
-        label: 'Nama Operator',
-        value: formData.nameOperator,
-        readOnly: false,
-        disabled: true,
-        type: 'Input'
       },
       {
         name: 'hmAwal',
@@ -434,73 +442,79 @@ export default function TimeSheetPage () {
         readOnly: true,
         disabled: true,
         type: 'Input'
-      }
+      },
+      {
+        name: 'formID',
+        grid: 'col-2',
+        label: 'Form ID',
+        value: formData.formID,
+        readOnly: true,
+        disabled: true,
+        type: 'Input'
+      },
+      {
+        name: 'stafEntry',
+        grid: 'col-2',
+        label: 'Staf Entry',
+        value: formData.stafEntry,
+        readOnly: true,
+        disabled: true,
+        type: 'Input'
+      },
+      {
+        name: 'note',
+        grid: 'col-6',
+        label: 'Note',
+        value: "Mohon lengkapi form berikut, dan pastikan durasi total 12 jam, nilai 'End Time' harus lebih besar dari 'Start Time'",
+        type: 'StaticInfo'
+      },
+      // {
+      //   name: 'jdeOperator',
+      //   grid: 'col-2',
+      //   label: 'JDE Operator',
+      //   value: formData.jdeOperator,
+      //   readOnly: false,
+      //   disabled: false,
+      //   type: 'Combobox',
+      //   options: jdeOptions
+      // },
+      // {
+      //   name: 'nameOperator',
+      //   grid: 'col-2',
+      //   label: 'Nama Operator',
+      //   value: formData.nameOperator,
+      //   readOnly: true,
+      //   disabled: false,
+      //   type: 'Input'
+      // },
     ],
-    [formData, jdeOptions]
+    [formData, shiftOptions, unitOptions]
   )
-
-  const getDataFirst = useCallback(() => {
-    let user = Cookies.get('user')
-    user = JSON.parse(user)
-
-    const now = new Date()
-    const currentHour = now.getHours()
-    let shift = null
-    if (currentHour >= 6 && currentHour < 18) {
-      shift = 'Day'
-    } else {
-      shift = 'Night'
-    }
-
-    let dt = formData
-    dt = {
-      ...dt,
-      shift: shift,
-      stafEntry: user.fullname
-    }
-    setFormData(dt)
-  }, [formData, setFormData])
-
-  useEffect(() => {
-    const disabled =
-      parseFloat(totalDuration) > 12 || parseFloat(totalDuration) < 12
-        ? true
-        : false
-    setButtonDisabled(disabled)
-
-    getDataFirst()
-
-  }, [totalDuration, getDataFirst]);
-
-  const handleTabChange = (value) => {
-    // console.log(`Navigating to: /${value}`);
-    navigate(`/${value}`);
-  };
 
   return (
     <>
-      <HeaderPageForm 
-        title={`Time Entry Form - Unit Support`} 
+      <HeaderPageForm
+        title={`Form Time Entry - ${formTitle}`}
         urlCreate={''}
         urlBack={NavigateUrl.TIME_ENTRY_MAIN_TABLE}
+        childrenMenu={<DynamicTablistMenu tabs={menuTabs} active={activeTab} />}
+        icon={<Form28Regular />}
       />
       <div className='form-wrapper'>
         <FormComponent handleChange={handleChange} components={components} />
         <div ref={jRef} className='mt1em' />
-        <div className='row'>
-          <div className='col-6'>
-          <DynamicTablistMenu tabs={tabs} active={activeTab} onTab={() => handleTabChange(tabs.value)} />
-          </div>
+        <div className='row mt1em'>
           <div className='col-6 flex-row'>
-            <InfoLabel
+            {/* <InfoLabel
               size='large'
               info="Jika nilai total < 12 atau > 12, status form menjadi 'INVALIDATED'"
             >
               Total Duration: {totalDuration}
-            </InfoLabel>
+            </InfoLabel> */}
+            <h4> Total Duration: {totalDuration}</h4>
 
             {parseFloat(totalDuration) > 12 ||
-            parseFloat(totalDuration) < 12 ? (
+              parseFloat(totalDuration) < 12 ? (
               <div className='status-element status-invalidated'>
                 INVALIDATED
               </div>
@@ -508,13 +522,24 @@ export default function TimeSheetPage () {
               <div className='status-element status-validated'>VALIDATED</div>
             )}
           </div>
+          <div className='col-6'>
+            <FooterPageForm
+              handleSubmit={handleSubmitToLocalDB}
+              buttonDisabled={buttonDisabled}
+            />
+          </div>
         </div>
-
-        <FooterPageForm
-          handleSubmit={handleSubmit}
-          buttonDisabled={buttonDisabled}
+      </div>
+      <div className="mt1em form-wrapper">
+        <TableDataInputed
+          formTitle={formTitle}
+          loaded={loaded}
+          setLoaded={setLoaded}
+          handleEdit={handleEditData}
+          handleSubmitToServer={handleSubmitToServer}
         />
-      </div> 
+      </div>
+      <DialogComponent open={openDialog} setOpen={setOpenDialog} title={dialogTitle} message={dialogMessage} />
     </>
   )
 }

@@ -5,7 +5,7 @@ import { ArrowCircleLeft24Regular, Add24Filled } from '@fluentui/react-icons'
 import { useNavigate } from 'react-router-dom'
 import PropTypes from 'prop-types';
 
-export const HeaderPageForm = ({ title, urlCreate, urlBack }) => {
+export const HeaderPageForm = ({ title, urlCreate, urlBack, childrenMenu, icon }) => {
   const navigate = useNavigate()
 
   const handleClick = useCallback((url) => {
@@ -26,7 +26,9 @@ export const HeaderPageForm = ({ title, urlCreate, urlBack }) => {
       >
         Back
       </Button>
-      <Title title={title} />
+    
+      {childrenMenu ? <div className='left--15em'>{childrenMenu}</div> : <></>}
+      <Title title={title} icon={icon} />
       {urlCreate ? <Button
         icon={<Add24Filled />}
         iconPosition='before'
@@ -42,5 +44,7 @@ export const HeaderPageForm = ({ title, urlCreate, urlBack }) => {
 HeaderPageForm.propTypes = {
   title: PropTypes.string,
   urlCreate: PropTypes.string,
-  urlBack: PropTypes.string
+  urlBack: PropTypes.string,
+  childrenMenu: PropTypes.any,
+  icon: PropTypes.any
 }
