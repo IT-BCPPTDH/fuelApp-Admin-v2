@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+// import { useParams } from "react-router-dom";
 // import { SearchBox } from "@fluentui/react-search-preview";
 import Transaksi from "../../services/inputCoalHauling";
 import {
@@ -37,6 +38,7 @@ import {
   ArrowDownload24Regular,
 } from "@fluentui/react-icons";
 import { useParams } from "react-router-dom";
+
 
 const useStyles = makeStyles({
   messageContainer: {
@@ -102,7 +104,7 @@ const TableDetailHauling = () => {
   const classes = useStyles();
   const [columns] = useState(columnsDef);
   const [message, setMessage] = useState(null);
-  const value = useParams();
+  const params = useParams();
   
 
   const [columnSizingOptions] = useState({
@@ -130,6 +132,7 @@ const TableDetailHauling = () => {
 
   const [items, setItems] = useState([]);
 
+
   const { getRows, columnSizing_unstable, tableRef } = useTableFeatures(
     {
       columns,
@@ -152,7 +155,7 @@ const TableDetailHauling = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const dts = await Transaksi.getAllTransaction(value.tanggal);
+        const dts = await Transaksi.getAllTransaction(params.tanggal);
         const updatedItems = dts.data.map((itemFromDB, index) => ({
           // id: { label: itemFromDB.id},
           id: { label: ( index + 1).toString() },
@@ -176,12 +179,12 @@ const TableDetailHauling = () => {
     };
 
     fetchData();
-  }, [value.tanggal]);
+   
+  }, [params.tanggal]);
 
   const handleDownload = async () => {
     try {
-      const downloadData = await Transaksi.getDownload();
-      console.log(downloadData);
+      const downloadData = await Transaksi.getDownload(params.tanggal);
       // const link = document.createElement('a');
     }catch (error) {
       console.error('Error downloading data:', error);

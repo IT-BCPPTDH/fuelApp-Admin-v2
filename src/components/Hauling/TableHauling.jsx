@@ -241,7 +241,8 @@ const TableHauling = ({ handleEdit, dataUpdated, setDataupdated }) => {
 
 
   const sendDataToServer = async () => {
-    const response = await Transaksi.getAllTransaction();
+    // const response = await Transaksi.getAllTransaction(); data index db
+    const response = await 
     console.log(response);
     // Next steps: 1. Clear IndexedDB, 2. Show message, 3. Redirect to home, 4. Reload window
   };
@@ -259,7 +260,7 @@ const TableHauling = ({ handleEdit, dataUpdated, setDataupdated }) => {
           clearInterval(intervalId); 
           resolve(isServerAvailable);
         }
-      }, 50000); 
+      }, 200); 
     });
   };
   
@@ -267,7 +268,8 @@ const TableHauling = ({ handleEdit, dataUpdated, setDataupdated }) => {
     try {
       const isServerAvailable = await pingServerWithRetry();
       if (isServerAvailable.status == 200) {
-        const send = await sendDataToServer();
+        // console.log(1,items)
+        const send = await Transaksi.postCreateTransaction(items)
         if(send.status == 200){
           console.log("berhasil")
         }else {

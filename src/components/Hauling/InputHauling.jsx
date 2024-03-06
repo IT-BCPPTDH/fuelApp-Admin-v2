@@ -1,11 +1,30 @@
 import { useState, useMemo, useEffect, useCallback } from "react";
-import PropTypes from 'prop-types'
-import { Button, MessageBar, MessageBarTitle, MessageBarBody, Link, makeStyles, MessageBarActions} from "@fluentui/react-components";
+import PropTypes from "prop-types";
+import {
+  Button,
+  MessageBar,
+  MessageBarTitle,
+  MessageBarBody,
+  Link,
+  makeStyles,
+  MessageBarActions,
+} from "@fluentui/react-components";
 import FormComponent from "../FormComponent";
-import { Save24Regular, ArrowReset24Regular, DismissRegular } from "@fluentui/react-icons";
+import {
+  Save24Regular,
+  ArrowReset24Regular,
+  DismissRegular,
+} from "@fluentui/react-icons";
 import { insertFormDataHauling } from "../../helpers/indexedDB/insert";
 import { updateFormDataHauling } from "../../helpers/indexedDB/editData";
-import { unitOptionsData, shiftOptionsData, loaderOptionsData, dumpingpointOptionsData, pitOptionsData, seamOptionsData } from "../../helpers/optionHelper";
+import {
+  unitOptionsData,
+  shiftOptionsData,
+  loaderOptionsData,
+  dumpingpointOptionsData,
+  pitOptionsData,
+  seamOptionsData,
+} from "../../helpers/optionHelper";
 import "./CoalHauling.css";
 // import Transaksi from "../../services/inputCoalHauling";
 
@@ -19,8 +38,13 @@ const useStyles = makeStyles({
   },
 });
 
-const InputHauling = ({ dataEdit, postData, setPostData, dataId, setDataupdated }) => {
-
+const InputHauling = ({
+  dataEdit,
+  postData,
+  setPostData,
+  dataId,
+  setDataupdated,
+}) => {
   const classes = useStyles();
   const [message, setMessage] = useState(null);
   // const [isFormValid, setIsFormValid] = useState(false);
@@ -28,11 +52,11 @@ const InputHauling = ({ dataEdit, postData, setPostData, dataId, setDataupdated 
   const [formData, setFormData] = useState({});
 
   const [seamDataOptions] = useState(seamOptionsData);
-  const [unitOptions] = useState(unitOptionsData)
-  const [shiftOptions] = useState(shiftOptionsData)
-  const [loaderOptions] = useState(loaderOptionsData)
-  const [dumpingpointOptions] = useState(dumpingpointOptionsData)
-  const [pitOptions] = useState(pitOptionsData)
+  const [unitOptions] = useState(unitOptionsData);
+  const [shiftOptions] = useState(shiftOptionsData);
+  const [loaderOptions] = useState(loaderOptionsData);
+  const [dumpingpointOptions] = useState(dumpingpointOptionsData);
+  const [pitOptions] = useState(pitOptionsData);
 
   const determineShift = () => {
     const currentHour = new Date().getHours();
@@ -55,8 +79,7 @@ const InputHauling = ({ dataEdit, postData, setPostData, dataId, setDataupdated 
       pit: dataEdit?.pit ?? "",
     });
 
-    setSeamOptions(seamDataOptions['PIT A NORTH 1']);
-
+    setSeamOptions(seamDataOptions["PIT A NORTH 1"]);
   }, [dataEdit, seamDataOptions]);
 
   const handleChange = useCallback(
@@ -64,19 +87,17 @@ const InputHauling = ({ dataEdit, postData, setPostData, dataId, setDataupdated 
       const { name, value } = v;
 
       if (name === "inrom" || name === "outrom") {
-
-        if(value.selectedTime){
-
+        if (value.selectedTime) {
           const hours = value.selectedTime.getHours();
           const minutes = value.selectedTime.getMinutes();
           const second = value.selectedTime.getSeconds();
-  
+
           const addLeadingZero = (num) => (num < 10 ? `0${num}` : num);
-  
+
           const formattedTime = `${addLeadingZero(hours)}:${addLeadingZero(
             minutes
           )}:${addLeadingZero(second)}`;
-  
+
           if (name === "outrom" && formData.inrom > formattedTime) {
             alert("outrom tidak boleh lebih kecil dari inrom");
           } else {
@@ -86,11 +107,10 @@ const InputHauling = ({ dataEdit, postData, setPostData, dataId, setDataupdated 
             }));
           }
         }
-      
       } else {
         if (name === "pit") {
           let a = pitOptions?.find((v) => v === value);
-          if(a){
+          if (a) {
             setSeamOptions(seamDataOptions[a]);
           }
         }
@@ -114,13 +134,11 @@ const InputHauling = ({ dataEdit, postData, setPostData, dataId, setDataupdated 
     setMessage(false);
     // setIsFormValid(false);
     setPostData(true);
-
   }, [setPostData]);
 
   const handleSubmit = useCallback(async () => {
     try {
-
-      let dbInserted = false
+      let dbInserted = false;
       const requiredFields = [
         "tanggal",
         "shift",
@@ -134,7 +152,6 @@ const InputHauling = ({ dataEdit, postData, setPostData, dataId, setDataupdated 
         "inrom",
         "outrom",
         "pit",
-        // "status",
       ];
 
       const isAnyFieldEmpty = requiredFields.some((field) => !formData[field]);
@@ -146,33 +163,33 @@ const InputHauling = ({ dataEdit, postData, setPostData, dataId, setDataupdated 
 
       let data = {
         ...formData,
+        status: "pending",
       };
 
       if (postData) {
+        // console.log(data)
         const inserted = await insertFormDataHauling(data);
         if(inserted){
           dbInserted = true
         }
-    
       } else {
         // let dataUpdate = await Transaksi.patchEditTransaction(tid, data);
         const updated = await updateFormDataHauling(dataId, data);
-        if(updated){
-          dbInserted = true
+        if (updated) {
+          dbInserted = true;
         }
       }
 
-      if(dbInserted){
-        handleReset()
-        setDataupdated(true)
-        dbInserted = false
+      if (dbInserted) {
+        handleReset();
+        setDataupdated(true);
+        dbInserted = false;
       }
 
       setMessage({
         type: "success",
         content: "Data berhasil di input",
       });
-
     } catch (error) {
       console.error("Error inserting  :", error);
 
@@ -182,8 +199,6 @@ const InputHauling = ({ dataEdit, postData, setPostData, dataId, setDataupdated 
       });
     }
   }, [formData, postData, dataId, setDataupdated, handleReset]);
-
-
 
   const comp = useMemo(
     () => [
@@ -300,16 +315,26 @@ const InputHauling = ({ dataEdit, postData, setPostData, dataId, setDataupdated 
         type: "TimePicker",
       },
     ],
-    [formData, seamOptions, dumpingpointOptions, loaderOptions, pitOptions, shiftOptions, unitOptions]
+    [
+      formData,
+      seamOptions,
+      dumpingpointOptions,
+      loaderOptions,
+      pitOptions,
+      shiftOptions,
+      unitOptions,
+    ]
   );
 
-  const dismissMessage = () =>{
-    setMessage(null)
-  }
+  const dismissMessage = () => {
+    setMessage(null);
+  };
 
   return (
     <>
-      <div className="form-wrapper wrapper" style={{ marginBottom: "0", paddingTop: "3em", marginTop: "0" }}>
+      <div
+        className="form-wrapper wrapper"
+        style={{ marginBottom: "0", paddingTop: "3em", marginTop: "0" }}>
         <div className="input-base">
           <FormComponent components={comp} handleChange={handleChange} />
         </div>
@@ -344,15 +369,12 @@ const InputHauling = ({ dataEdit, postData, setPostData, dataId, setDataupdated 
             <MessageBarActions
               containerAction={
                 <Button
-                onClick={dismissMessage}
+                  onClick={dismissMessage}
                   aria-label="dismiss"
                   appearance="transparent"
                   icon={<DismissRegular />}
                 />
-              }
-            >
- 
-            </MessageBarActions>
+              }></MessageBarActions>
           </MessageBar>
         )}
       </div>
@@ -367,5 +389,5 @@ InputHauling.propTypes = {
   postData: PropTypes.any,
   setPostData: PropTypes.any,
   dataId: PropTypes.any,
-  setDataupdated: PropTypes.any
-}
+  setDataupdated: PropTypes.any,
+};
