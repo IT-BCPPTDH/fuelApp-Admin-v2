@@ -32,8 +32,8 @@ const patchEditTransaction = async (id,data) => {
   return response.data;
 };
 
-const getDownload = async () => {
-  const response = await api.get(URL_ENUMS.getDownload);
+const getDownload = async (tanggal) => {
+  const response = await api.post(URL_ENUMS.getDownload+tanggal);
   console.log(1, response);
   return response.data;
 };
