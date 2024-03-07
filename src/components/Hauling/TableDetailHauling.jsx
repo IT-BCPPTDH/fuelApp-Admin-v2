@@ -37,7 +37,9 @@ import {
   // DeleteRegular,
   ArrowDownload24Regular,
 } from "@fluentui/react-icons";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
+import { URL_ENUMS } from "../../utils/Enums";
+
 
 
 const useStyles = makeStyles({
@@ -182,9 +184,12 @@ const TableDetailHauling = () => {
    
   }, [params.tanggal]);
 
+  const navigate = useNavigate();
   const handleDownload = async () => {
     try {
       const downloadData = await Transaksi.getDownload(params.tanggal);
+      console.log(22,downloadData)
+      window.location.href = URL_ENUMS.downloadFile+downloadData.link
       // const link = document.createElement('a');
     }catch (error) {
       console.error('Error downloading data:', error);
