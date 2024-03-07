@@ -8,6 +8,13 @@
 .mb2em{
    margin-bottom: 2em;
 }
+.mr-5{
+   margin-right: 5px !important;
+}
+.font-button-sm{
+   font-size: 14px !important;
+   font-weight: 400 !important;
+}
 
 .flex-row {
    display: flex;

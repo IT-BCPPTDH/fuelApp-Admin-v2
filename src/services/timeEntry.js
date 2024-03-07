@@ -45,6 +45,10 @@ const getAllTimeEntryData = async () => {
   const response = await api.get(URL_ENUMS.getAllTimeEntryData)
   return response.data
 }
+const getTimeEntryDetailData = async (date, type) => {
+  const response = await api.get(`${URL_ENUMS.getTimeEntryDetailData}${date}/${type}`)
+  return response.data
+}
 const Services = {
   getMasterActivity,
   getMasterTimeEntryOperator,
@@ -52,7 +56,8 @@ const Services = {
   getMasterTimeEntryUnit,
   getDataFMS,
   getDataMines,
-  getAllTimeEntryData
+  getAllTimeEntryData,
+  getTimeEntryDetailData
 }
 
 

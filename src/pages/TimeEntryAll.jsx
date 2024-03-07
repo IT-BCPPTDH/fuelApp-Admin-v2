@@ -3,9 +3,23 @@ import { DynamicTablistMenu } from "../components/Tablist";
 import { tabsTimeEntry } from "../helpers/tabArrayHelper";
 import { NavigateUrl } from "../utils/Navigation";
 import { TableList } from "../components/TableList";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import Services from "../services/timeEntry";
+import { Button } from "@fluentui/react-components";
+import {ContentView24Regular} from '@fluentui/react-icons'
+import PropTypes from 'prop-types'
+import { useNavigate } from "react-router-dom";
 
+const ActionButtons = ({handleAction, param}) =>{
+  return(
+    <>
+    <Button icon={<ContentView24Regular/>} className="mr-5 font-button-sm" onClick={()=>handleAction('digger', param)}>Digger</Button>
+    <Button icon={<ContentView24Regular/>} className="mr-5 font-button-sm" onClick={()=>handleAction('hauler', param)}>Hauler</Button>
+    <Button icon={<ContentView24Regular/>} className="mr-5 font-button-sm"onClick={()=>handleAction('support', param)}>Support</Button>
+    <Button icon={<ContentView24Regular/>} className="font-button-sm" onClick={()=>handleAction('all', param)}>All</Button>
+    </>
+  )
+}
 
 const TimeEntryAll = () => {
   const [columnData] = useState([
@@ -13,26 +27,41 @@ const TimeEntryAll = () => {
     { columnId: "entryDate", headerLabel: "Entry Date", defaultWidth: 200 },
     { columnId: "totalUnit", headerLabel: "Total Unit", defaultWidth: 200 },
     { columnId: "totalOperator", headerLabel: "Total Operator", defaultWidth: 200 },
-    { columnId: "entryBy", headerLabel: "Entry By", defaultWidth: 200 },
+    { columnId: "actions", headerLabel: "Action View By:", defaultWidth: 400 },
   ])
+
+  const navigate = useNavigate()
 
   const [itemsData, setItemsData] = useState([])
 
-  const fetchData = async()=>{
+  const handleAction = useCallback( async(type, param) => {
+    console.log(type, param)
+    navigate(`/time-entry-detail/${param}/${type}`)
+  },[navigate])
+
+  const fetchData = useCallback(async()=>{
     try {
         const data = await Services.getAllTimeEntryData()
         if(data.status === 200){
-          setItemsData(data.data)
+          const dataRes = data.data
+          const dataItems = dataRes.map((val) => ({
+            key: val.key,
+            entryDate: val.date,
+            totalUnit: val.totalUnits,
+            totalOperator: val.totalOperators,
+            actions: <ActionButtons handleAction={handleAction} param={val.date}/>
+          }))
+          setItemsData(dataItems)
         }
         console.log(data)
     } catch (error) {
       console.log(error)
     }
-  }
+  },[handleAction])
 
   useEffect(() => {
     fetchData()
-  }, []);
+  }, [fetchData]);
   return (
     <>
       <HeaderPageForm 
@@ -56,3 +85,8 @@ const TimeEntryAll = () => {
 };
 
 export default TimeEntryAll;
+
+ActionButtons.propTypes={
+  handleAction: PropTypes.func,
+  param: PropTypes.string
+}

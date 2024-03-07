@@ -14,6 +14,7 @@ import DetailHauling from './pages/DetailHauling';
 import TimeEntryAll from './pages/TimeEntryAll';
 import TimeSheetPage from './pages/TimeSheetPage'
 import TimeEntryMinesEntryPage from './pages/TimeEntryMinesEntryPage'
+import TimeEntryMinesDetailPage from './pages/TimeEntryDetailPage';
 
 import { ProductionEntryPage } from './pages/ProductionEntryPage'
 import { MineplanEntryPage } from './pages/MineplanEntryPage'
@@ -40,6 +41,8 @@ const RouteApp = () => {
       <Route path='/time-entry-support-form' element={<TimeSheetPage />} />
       <Route path='/time-entry-digger-form' element={<TimeSheetPage />} />
       <Route path='/time-entry-hauler-form' element={<TimeSheetPage />} />
+
+      <Route path='/time-entry-detail/:tanggal/:type' element={<TimeEntryMinesDetailPage />}></Route>
 
       <Route path='/time-sheet-mines' element={<TimeEntryMinesEntryPage />}></Route>
       <Route path='/time-sheet-fms' element={<TimeEntryMinesEntryPage />}></Route>

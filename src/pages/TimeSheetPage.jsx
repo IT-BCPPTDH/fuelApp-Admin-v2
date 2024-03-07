@@ -164,7 +164,7 @@ export default function TimeSheetPage() {
           source: act,
           autocomplete: true
         },
-        { type: 'text', width: '215', title: 'Delay Description' },
+        { type: 'text', width: '150', title: 'Delay Description' },
         { type: 'text', width: '100', title: 'Start' },
         { type: 'text', width: '100', title: 'End' },
         { type: 'text', width: '100', title: 'Duration' },
@@ -564,7 +564,6 @@ export default function TimeSheetPage() {
           handleEdit={handleEditData}
           handleSubmitToServer={handleSubmitToServer}
           sendingData={sendingData}
-          
         />
       </div>
       <DialogComponent open={openDialog} setOpen={setOpenDialog} title={dialogTitle} message={dialogMessage} />
