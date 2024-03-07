@@ -344,9 +344,9 @@ const TableHauling = ({ handleEdit, dataUpdated, setDataupdated }) => {
             onClose={() => setConfirmationOpen(false)}>
             <DialogSurface>
               <DialogBody>
-                <DialogTitle>Konfirmasi Pengiriman Data</DialogTitle>
+                <DialogTitle>Data Akan Disimpan</DialogTitle>
                 <DialogContent>
-                  Apakah Anda yakin ingin mengirim data ini ke server?
+                  Apakah Anda yakin ingin menyimpan data ini ke server?
                 </DialogContent>
                 <DialogActions>
                   <Button
@@ -371,7 +371,7 @@ const TableHauling = ({ handleEdit, dataUpdated, setDataupdated }) => {
                 <DialogTitle>
                   {isServerAvailable
                     ? "Data Berhasil Disimpan"
-                    : "Datat Gagal Disimpan"}
+                    : "Data Gagal Disimpan"}
                 </DialogTitle>
                 <DialogContent>
                   {isServerAvailable
