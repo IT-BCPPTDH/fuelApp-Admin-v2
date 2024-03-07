@@ -1,11 +1,11 @@
 import { HeaderPageForm } from "../components/FormComponent/HeaderPageForm";
-import CardDataHauling from "../components/Hauling/CardDataHauling";
+import CardDataHaulingVertical from "../components/Hauling/CardDataHaulingVertical";
 import TableDetailHauling from "../components/Hauling/TableDetailHauling";
 import { NavigateUrl } from "../utils/Navigation";
 import PropTypes from 'prop-types'
 
 const DetailHauling = ({value}) => {
-  console.log(2, value)
+  // console.log(2, value)
   return (
     <>
       <HeaderPageForm
@@ -15,7 +15,7 @@ const DetailHauling = ({value}) => {
       />
       <div className="row">
         <div className="col-12">
-          <CardDataHauling />
+          <CardDataHaulingVertical />
         </div>
         <div className="col-12">
           <TableDetailHauling />
