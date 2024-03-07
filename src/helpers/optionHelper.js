@@ -7,7 +7,7 @@ export const unitOptionsData = [
   "HPM9044",
   "HPM9045",
 ];
-export const tonnageOptions = [68, 110, 140, 160, 135];
+export const tonnageOptionsData = [68, 110, 140, 160, 135];
 export const loaderOptionsData = [
   "HWL1038",
   "HWL1039",

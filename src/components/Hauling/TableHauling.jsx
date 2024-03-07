@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
+
 // import { SearchBox } from "@fluentui/react-search-preview";
 // import Transaksi from "../../services/inputCoalHauling";
 import {
@@ -117,6 +118,9 @@ const TableHauling = ({ handleEdit, dataUpdated, setDataupdated }) => {
   const [columns] = useState(columnsDef);
   const [message, setMessage] = useState(null);
   const [open, setOpen] = useState(false);
+  const [isServerAvailable, setServerAvailable] = useState(true);
+  const [isDialogOpen, setDialogOpen] = useState(false);
+  const [isConfirmationOpen, setConfirmationOpen] = useState(false);
 
   const [columnSizingOptions] = useState({
     id: {
@@ -175,7 +179,7 @@ const TableHauling = ({ handleEdit, dataUpdated, setDataupdated }) => {
         const itemDate = formatDate(itemFromDB.tanggal);
         return itemDate === dateToday;
       });
-  
+
       const updatedItems = todayItems.map((itemFromDB) => ({
         id: itemFromDB.id,
         tanggal: itemFromDB.tanggal,
@@ -192,14 +196,13 @@ const TableHauling = ({ handleEdit, dataUpdated, setDataupdated }) => {
         outrom: itemFromDB.outrom,
         action: itemFromDB.action,
       }));
-  
+
       setItems(updatedItems);
       setDataupdated(false);
     } catch (error) {
       console.error("Error fetching data:", error);
     }
   }, [getTodayDateString, setDataupdated]);
-  
 
   useEffect(() => {
     if (dataUpdated) {
@@ -239,41 +242,54 @@ const TableHauling = ({ handleEdit, dataUpdated, setDataupdated }) => {
   //   }
   // };
 
-
-  const sendDataToServer = async () => {
-    // const response = await Transaksi.getAllTransaction(); data index db
-    const response = await 
-    console.log(response);
-    // Next steps: 1. Clear IndexedDB, 2. Show message, 3. Redirect to home, 4. Reload window
+  const handleConfirmDialog = () => {
+    setConfirmationOpen(true);
   };
-  
+
+  const handleConfirmSend = () => {
+    setConfirmationOpen(false);
+    handleSubmitServer();
+  };
+
+  const handleTutupClick = () => {
+    setDialogOpen(false);
+    window.location.reload();
+    window.history.back();
+  };
+
+  const handleCancelSend = () => {
+    setConfirmationOpen(false);
+  };
   const pingServerWithRetry = async () => {
     const maxAttempts = 5;
     let attempts = 0;
-  
+
     return new Promise((resolve) => {
       const intervalId = setInterval(async () => {
         const isServerAvailable = await pingServer();
         attempts++;
-  
+
         if (isServerAvailable || attempts >= maxAttempts) {
-          clearInterval(intervalId); 
+          clearInterval(intervalId);
           resolve(isServerAvailable);
         }
-      }, 200); 
+      }, 200);
     });
   };
-  
+
   const handleSubmitServer = async () => {
     try {
-      const isServerAvailable = await pingServerWithRetry();
-      if (isServerAvailable.status == 200) {
-        // console.log(1,items)
-        const send = await Transaksi.postCreateTransaction(items)
-        if(send.status == 200){
-          console.log("berhasil")
-        }else {
-          console.log("gagal")
+      const serverStatus = await pingServerWithRetry();
+      setServerAvailable(serverStatus.status === 200);
+
+      if (serverStatus.status === 200) {
+        const send = await Transaksi.postCreateTransaction(items);
+
+        if (send.status === 200) {
+          console.log("berhasil");
+          setDialogOpen(true);
+        } else {
+          console.log("gagal");
         }
       } else {
         console.log("Server is not reachable after retries.");
@@ -282,7 +298,6 @@ const TableHauling = ({ handleEdit, dataUpdated, setDataupdated }) => {
       console.error("Error in handleSubmitServer:", error);
     }
   };
-  
 
   const editData = (id) => {
     const dataEdit = items.find((val) => val.id === id);
@@ -319,10 +334,60 @@ const TableHauling = ({ handleEdit, dataUpdated, setDataupdated }) => {
         </div>
         <div className="search-box">
           <Button
-            onClick={() => handleSubmitServer()}
+            onClick={() => handleConfirmDialog()}
             style={{ backgroundColor: "#28499c", color: "#ffffff" }}>
             Submit Data to Server
           </Button>
+          <Dialog
+            modalType="alert"
+            open={isConfirmationOpen}
+            onClose={() => setConfirmationOpen(false)}>
+            <DialogSurface>
+              <DialogBody>
+                <DialogTitle>Data Akan Disimpan</DialogTitle>
+                <DialogContent>
+                  Apakah Anda yakin ingin menyimpan data ini ke server?
+                </DialogContent>
+                <DialogActions>
+                  <Button
+                    style={{ backgroundColor: "#28499c", color: "#ffffff" }}
+                    onClick={handleConfirmSend}>
+                    Ya
+                  </Button>
+                  <Button appearance="secondary" onClick={handleCancelSend}>
+                    Batal
+                  </Button>
+                </DialogActions>
+              </DialogBody>
+            </DialogSurface>
+          </Dialog>
+
+          <Dialog
+            modalType="alert"
+            open={isDialogOpen}
+            onClose={() => setDialogOpen(false)}>
+            <DialogSurface>
+              <DialogBody>
+                <DialogTitle>
+                  {isServerAvailable
+                    ? "Data Berhasil Disimpan"
+                    : "Data Gagal Disimpan"}
+                </DialogTitle>
+                <DialogContent>
+                  {isServerAvailable
+                    ? "Data berhasil disimpan ke server."
+                    : "Tidak dapat menghubungi server setelah beberapa percobaan."}
+                </DialogContent>
+                <DialogActions>
+                  <Button
+                    appearance="second"
+                    onClick={() => handleTutupClick()}>
+                    Tutup
+                  </Button>
+                </DialogActions>
+              </DialogBody>
+            </DialogSurface>
+          </Dialog>
         </div>
         <div style={{ overflowX: "auto" }}>
           <Table
