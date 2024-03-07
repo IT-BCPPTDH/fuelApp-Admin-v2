@@ -80,9 +80,9 @@ const TimeEntryMinesEntryPage = () => {
     const fetchData = async () => {
       try {
         let json = null
-        console.log(111,getFrom[2])
+        
         if(getFrom[2] === 'fms'){
-          json = await Services.getDataFMS();
+          json = []//await Services.getDataFMS();
         }else{
           json = await Services.getDataMines();
         }

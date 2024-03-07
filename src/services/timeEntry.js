@@ -28,7 +28,7 @@ const getMasterTimeEntryUnit = async () => {
   return response.data
 }
 
-const postTimeEntrySupport = async data => {
+const postTimeEntryData = async data => {
   const response = await api.post(URL_ENUMS.postTimeEntrySupport, data)
   return response.data
 }
@@ -45,7 +45,7 @@ const getDataMines = async () => {
 const Services = {
   getMasterActivity,
   getMasterTimeEntryOperator,
-  postTimeEntrySupport,
+  postTimeEntryData,
   getMasterTimeEntryUnit,
   getDataFMS,
   getDataMines,
