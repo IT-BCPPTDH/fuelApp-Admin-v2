@@ -6,8 +6,10 @@ import { indonesianDate } from "../../helpers/convertDate";
 import { TableButtonDialog } from "../TableButtonDialog";
 import { CompoundButton } from '@fluentui/react-components'
 import { SaveArrowRight24Regular } from '@fluentui/react-icons'
+import { deleteTimeEntries } from "../../helpers/indexedDB/deteleData";
+import { DialogComponent } from "../Dialog";
 
-export const TableDataInputed = ({ formTitle, loaded, setLoaded, handleEdit, handleSubmitToServer }) => {
+export const TableDataInputed = ({ formTitle, loaded, setLoaded, handleEdit, handleSubmitToServer, sendingData}) => {
     const [columnData] = useState([
         { columnId: "id", headerLabel: "ID", defaultWidth: 50 },
         { columnId: "unitno", headerLabel: "Unit No", defaultWidth: 200 },
@@ -22,14 +24,18 @@ export const TableDataInputed = ({ formTitle, loaded, setLoaded, handleEdit, han
     const [open, setOpen] = useState(false);
     const [button2Disabled, setButton2Disabled] = useState(true)
     const [localData, setLocalData] = useState([])
+    const [openDialog, setOpenDialog] = useState(false)
+    const [showButton, setShowButton] = useState(true)
 
-    const handleDelete = (itemId) => {
-        console.log(itemId)
+    const handleDelete = async (itemId) => {
+        await deleteTimeEntries(itemId)
+        setOpen(false)
     }
 
-    const fetchData = useCallback(async (title) => {
-        const data = await getTimeEntryByformTitle(title);
-        if (data?.length > 0) {
+    const fetchData = useCallback(async () => {
+        const data = await getTimeEntryByformTitle(formTitle);
+      
+        if (data.length > 0) {
             const dataTable = data.map((val) => ({
                 id: val.id,
                 unitno: val.unitNo,
@@ -44,7 +50,12 @@ export const TableDataInputed = ({ formTitle, loaded, setLoaded, handleEdit, han
             setButton2Disabled(false)
             setLocalData(data)
         }
-    }, [open, handleEdit]);
+    }, [open, handleEdit, formTitle]);
+
+    const handleAction = useCallback(()=>{
+        handleSubmitToServer(localData)
+        
+    },[handleSubmitToServer, localData])
 
     useEffect(() => {
         setItemData([])
@@ -52,13 +63,22 @@ export const TableDataInputed = ({ formTitle, loaded, setLoaded, handleEdit, han
             fetchData();
             setLoaded(false);
         } else {
-            fetchData(formTitle);
+            fetchData();
         }
-    }, [fetchData, loaded, setLoaded, formTitle]);
+    }, [fetchData, loaded, setLoaded]);
+
+    useEffect(() => {
+        if(sendingData){
+            setShowButton(false)
+        } else {
+            setShowButton(true)
+            setOpenDialog(false)
+        }
+    }, [sendingData]);
 
     return <>
       <CompoundButton
-          onClick={() => handleSubmitToServer(localData)}
+          onClick={() => setOpenDialog(true)}
           icon={<SaveArrowRight24Regular primaryFill='#ffffff' />}
           iconPosition='after'
           size='small'
@@ -74,9 +94,18 @@ export const TableDataInputed = ({ formTitle, loaded, setLoaded, handleEdit, han
         >
           Submit data to server
         </CompoundButton>
-    <TableList columnsData={columnData} items={itemsData} backgroundColor={`#ffffff`} />;
+        <TableList columnsData={columnData} items={itemsData} backgroundColor={`#ffffff`} />
+        <DialogComponent 
+            open={openDialog} 
+            setOpen={setOpenDialog} 
+            title={'Konfirmasi simpan data'} 
+            message={`Apakah kamu yakin data sudah valid semua?`} 
+            handleAction={handleAction}
+            buttonText={'Iya, Simpan Sekarang.'}
+            showButton={showButton}
+            sendingData={sendingData}
+        />
     </>
-     
 };
 
 TableDataInputed.propTypes = {
@@ -84,5 +113,6 @@ TableDataInputed.propTypes = {
     loaded: PropTypes.bool,
     setLoaded: PropTypes.any,
     handleEdit: PropTypes.any,
-    handleSubmitToServer: PropTypes.func
+    handleSubmitToServer: PropTypes.func,
+    sendingData: PropTypes.bool
 };

@@ -50,11 +50,7 @@ export const getDataTableHauling = async () => {
 
 export const getTimeEntryByUnit = async (unitNo) => {
   try {
-    const timeEntries = await db.timeEntries
-      .where('unitNo')
-      .equals(unitNo)
-      .toArray();
-
+    const timeEntries = await db.timeEntries.where('unitNo').equals(unitNo).toArray()
     return timeEntries;
   } catch (error) {
     console.error(error)
@@ -63,11 +59,7 @@ export const getTimeEntryByUnit = async (unitNo) => {
 
 export const getTimeEntryByformTitle = async (formTitle) => {
   try {
-    const timeEntries = await db.timeEntries
-      .where('formTitle')
-      .equals(formTitle)
-      .toArray();
-
+    const timeEntries = await db.timeEntries.where('formTitle').equals(formTitle).toArray()
     return timeEntries;
   } catch (error) {
     console.error(error)

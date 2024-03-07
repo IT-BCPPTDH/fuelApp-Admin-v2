@@ -12,11 +12,12 @@ const useStyles = makeStyles({
   },
 });
 
-export const DynamicTablistMenu = ({ tabs, active }) => {
+export const DynamicTablistMenu = ({ tabs, active, handleTab }) => {
   const styles = useStyles();
   const navigate = useNavigate();
   const handleTabChange = (value) => {
     navigate(`/${value}`);
+    handleTab()
   };
 
   const renderTabs = () => {
@@ -38,5 +39,6 @@ export const DynamicTablistMenu = ({ tabs, active }) => {
 
 DynamicTablistMenu.propTypes = {
   tabs: PropTypes.array,
-  active: PropTypes.string
+  active: PropTypes.string,
+  handleTab: PropTypes.func
 }

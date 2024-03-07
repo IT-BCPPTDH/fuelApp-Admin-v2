@@ -9,3 +9,12 @@ export const deleteFormDataHauling = async (dataId) => {
     return false
   }
 };
+
+export const deleteTimeEntries = async (dataId) => {
+  try {
+    await db.timeEntries.delete(dataId)
+    return true
+  } catch (error) {
+    console.log(error)
+  }
+}

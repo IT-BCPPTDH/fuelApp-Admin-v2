@@ -3,41 +3,36 @@ import { DynamicTablistMenu } from "../components/Tablist";
 import { tabsTimeEntry } from "../helpers/tabArrayHelper";
 import { NavigateUrl } from "../utils/Navigation";
 import { TableList } from "../components/TableList";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import Services from "../services/timeEntry";
+
 
 const TimeEntryAll = () => {
   const [columnData] = useState([
-    { columnId: "id", headerLabel: "ID", defaultWidth: 100 },
+    { columnId: "key", headerLabel: "ID", defaultWidth: 100 },
     { columnId: "entryDate", headerLabel: "Entry Date", defaultWidth: 200 },
-    { columnId: "unitType", headerLabel: "Unit Type", defaultWidth: 200 },
     { columnId: "totalUnit", headerLabel: "Total Unit", defaultWidth: 200 },
+    { columnId: "totalOperator", headerLabel: "Total Operator", defaultWidth: 200 },
     { columnId: "entryBy", headerLabel: "Entry By", defaultWidth: 200 },
   ])
 
-  const [itemsData] = useState([
-    {
-      id: "01",
-      entryDate: "01-01-2024",
-      unitType: "Production",
-      totalUnit: "100",
-      entryBy: "DataEntry-123456"
-    },
-    {
-      id: "02",
-      entryDate: "03-01-2024",
-      unitType: "Production",
-      totalUnit: "102",
-      entryBy: "DataEntry-12348"
-    },
-    {
-      id: "03",
-      entryDate: "04-01-2024",
-      unitType: "Production",
-      totalUnit: "105",
-      entryBy: "DataEntry-12344"
-    }
-  ])
+  const [itemsData, setItemsData] = useState([])
 
+  const fetchData = async()=>{
+    try {
+        const data = await Services.getAllTimeEntryData()
+        if(data.status === 200){
+          setItemsData(data.data)
+        }
+        console.log(data)
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  useEffect(() => {
+    fetchData()
+  }, []);
   return (
     <>
       <HeaderPageForm 

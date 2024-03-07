@@ -21,6 +21,9 @@ import { insertTimeEntry } from '../helpers/indexedDB/insert'
 import { TableDataInputed } from '../components/TimeSheet/TableDataInputed'
 import { getTimeEntryDetailById, getTimeEntryByUnit, getUnitDataByNo, getOperatorNameById } from '../helpers/indexedDB/getData'
 import { DialogComponent } from '../components/Dialog'
+import { deleteTimeEntries } from '../helpers/indexedDB/deteleData'
+import { useNavigate } from 'react-router-dom'
+import { updateTimeEntry } from '../helpers/indexedDB/editData'
 
 
 export default function TimeSheetPage() {
@@ -40,6 +43,10 @@ export default function TimeSheetPage() {
   const [dialogTitle, setDialogTitle] = useState("")
   const [dialogMessage, setDialogMessage] = useState("")
   const [randomId] = useState(generateID())
+  const [sendingData, setSendingData] = useState(false)
+  const navigate = useNavigate()
+  const [dataItemId, setDataItemId] = useState(0)
+ 
 
   useLiveQuery(() => db.activity.toArray())
 
@@ -233,39 +240,56 @@ export default function TimeSheetPage() {
         }));
       }))).flat();
   
-      console.log(postData);
+      setSendingData(true)
       const saveData = await Services.postTimeEntryData(postData);
-      console.log(saveData);
+      if(saveData.status === 200) {
+        const deleted = localData.map(async (val) => {
+          return await deleteTimeEntries(val.id)
+        })
+        if(deleted){
+          setSendingData(false)
+          navigate('/time-entry-from-collector')
+        } 
+      }
     } catch (error) {
       console.error('Error while submitting data:', error);
     }
-  }, [transformData]);
+  }, [transformData, navigate]);
   
-  const handleSubmitToLocalDB = async () => {
-
-    let data = {
+  const handleSubmitToLocalDB = useCallback(async () => {
+    const data = {
       ...formData,
       activity: tableData,
       formTitle: formTitle
-    }
+    };
+  
+    const checkExisted = await getTimeEntryByUnit(data.unitNo);
 
-    const checkExisted = await getTimeEntryByUnit(data.unitNo)
-
+    const resetState = () => {
+      setLoaded(true);
+      setIsNew(true);
+      setFormData([]);
+      setTotalDuration(0);
+      jRef.current.jspreadsheet.setData([]);
+    };
+  
     if (checkExisted.length === 0) {
-      let inserted = await insertTimeEntry(data)
+      const inserted = await insertTimeEntry(data);
       if (inserted) {
-        setLoaded(true)
-        setIsNew(true)
-        setFormData([])
-        setTotalDuration(0)
-        jRef.current.jspreadsheet.setData([])
+        resetState();
       }
+    } else if (isNew) {
+      setOpenDialog(true);
+      setDialogTitle("Cannot Save Database");
+      setDialogMessage(`Please check again Unit No field, Unit No: ${data.unitNo} already existed in Database`);
     } else {
-      setOpenDialog(true)
-      setDialogTitle("Cannot Save Database")
-      setDialogMessage(`Please check again Unit No field, Unit No: ${data.unitNo} already existed in Database`)
+      const updated = await updateTimeEntry(dataItemId, data);
+      if (updated) {
+        resetState();
+      }
     }
-  }
+  },[dataItemId, formData, formTitle, isNew, tableData])
+  
 
   const handleChange = (ev, data) => {
     const { name, value } = data;
@@ -311,6 +335,31 @@ export default function TimeSheetPage() {
     }
   };
 
+  const handleTab = () => {
+
+    const lastPart = getURLPath()
+    setActiveTab(lastPart)
+
+    switch (lastPart) {
+      case tabMenuTimeEntryEnum.UNIT_DIGGER:
+        setFormTitle('Unit Digger')
+        break;
+      case tabMenuTimeEntryEnum.UNIT_HAULER:
+        setFormTitle("Unit Hauler")
+        break;
+      case tabMenuTimeEntryEnum.UNIT_SUPPORT:
+        setFormTitle("Unit Support")
+        break;
+      default:
+        break;
+    }
+
+    setIsNew(true)
+    setFormData([])
+    setTotalDuration(0)
+    jRef.current.jspreadsheet.setData([])
+  }
+
   const getDataFirst = useCallback(() => {
     let user = Cookies.get('user')
     user = JSON.parse(user)
@@ -353,26 +402,10 @@ export default function TimeSheetPage() {
       getDataFirst()
     }
 
-    const lastPart = getURLPath()
-    setActiveTab(lastPart)
-
-    switch (lastPart) {
-      case tabMenuTimeEntryEnum.UNIT_DIGGER:
-        setFormTitle('Unit Digger')
-        break;
-      case tabMenuTimeEntryEnum.UNIT_HAULER:
-        setFormTitle("Unit Hauler")
-        break;
-      case tabMenuTimeEntryEnum.UNIT_SUPPORT:
-        setFormTitle("Unit Support")
-        break;
-      default:
-        break;
-    }
-
   }, [totalDuration, getDataFirst, isNew]);
 
   const handleEditData = useCallback(async (itemId) => {
+    setDataItemId(itemId)
     setIsNew(false)
     const spreadSheet = jRef.current.jspreadsheet
     const dataDetail = await getTimeEntryDetailById(itemId)
@@ -497,7 +530,7 @@ export default function TimeSheetPage() {
         title={`Form Time Entry - ${formTitle}`}
         urlCreate={''}
         urlBack={NavigateUrl.TIME_ENTRY_MAIN_TABLE}
-        childrenMenu={<DynamicTablistMenu tabs={menuTabs} active={activeTab} />}
+        childrenMenu={<DynamicTablistMenu tabs={menuTabs} active={activeTab} handleTab={handleTab}/>}
         icon={<Form28Regular />}
       />
       <div className='form-wrapper'>
@@ -506,7 +539,6 @@ export default function TimeSheetPage() {
         <div className='row mt1em'>
           <div className='col-6 flex-row'>
             <h5> Total Time Duration: {totalDuration}</h5>
-
             {parseFloat(totalDuration) > 12 ||
               parseFloat(totalDuration) < 12 ? (
               <div className='status-element status-invalidated'>
@@ -531,6 +563,8 @@ export default function TimeSheetPage() {
           setLoaded={setLoaded}
           handleEdit={handleEditData}
           handleSubmitToServer={handleSubmitToServer}
+          sendingData={sendingData}
+          
         />
       </div>
       <DialogComponent open={openDialog} setOpen={setOpenDialog} title={dialogTitle} message={dialogMessage} />

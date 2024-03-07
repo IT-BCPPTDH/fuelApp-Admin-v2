@@ -75,7 +75,7 @@ export const FormElement =  ({
           (date.getMonth() + 1).toString().padStart(2, "0") +
           "-" +
           date.getFullYear();
-  };
+  };  
 
   const inputId = useId(name);
   const renderInput = () => {
@@ -85,7 +85,7 @@ export const FormElement =  ({
           <DatePicker
             id={inputId}
             placeholder={`Select ${label}...`}
-            value={value ? new Date(value) : null}
+            value={value ? new Date(value) : ""}
             name={name}
             formatDate={onFormatDate}
             onSelectDate={(e) => handleChange(e, { name: name, value: e })}
@@ -184,15 +184,15 @@ const ComboBoxCustom =  (props) => {
   const styles = useStyles();
   const [itemHeight] = useState(10);
   const [numberOfItems, setNumberofItems] = useState(0);
+  const [inputValue, setInputValue] = useState(null)
 
   const onChange = (event) => {
-    const inputValue = event.target.value.trim();
+    const inputValuen = event.target.value.trim();
 
-    handleChange(event, { name, value: inputValue });
-   // console.log(inputValue)
+    handleChange(event, { name, value: inputValuen });
 
-    const matches = options.filter(
-      (option) => option.toLowerCase().indexOf(inputValue.toLowerCase()) === 0
+    const matches = matchingOptions.filter(
+      (option) => option.toLowerCase().indexOf(inputValuen.toLowerCase()) === 0
     );
     setMatchingOptions(matches);
   };
@@ -207,6 +207,12 @@ const ComboBoxCustom =  (props) => {
   useEffect(() => {
     setMatchingOptions([...options]);
     setNumberofItems(options.length);
+
+    if (typeof value === 'function') {
+     setInputValue("")
+    } else {
+      setInputValue(value)
+    }
   }, [options, value]);
 
   const { virtualizerLength, bufferItems, bufferSize, scrollRef } =
@@ -225,8 +231,8 @@ const ComboBoxCustom =  (props) => {
       placeholder={`Select ${label}`}
       onChange={onChange}
       onOptionSelect={onOptionSelect}
-      defaultSelectedOptions={value ? [value] : []}
-      value={value ?? ""}
+      defaultSelectedOptions={inputValue ? [inputValue] : [""]}
+      value={inputValue ?? ""}
     >
       <Virtualizer
         numItems={numberOfItems}

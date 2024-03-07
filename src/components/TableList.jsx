@@ -55,7 +55,7 @@ export const TableList = ({ columnsData, items, backgroundColor }) => {
             aria-label="Table with sort"
             ref={tableRef}
             {...columnSizing_unstable.getTableProps()}
-            style={{ marginTop: '10px', backgroundColor: backgroundColor }}
+            style={{ marginTop: '10px', backgroundColor: backgroundColor, boxShadow: '0 1px 7px 0 #33333329' }}
         >
             <TableHeader>
                 <TableRow>

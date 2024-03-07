@@ -22,6 +22,7 @@ export const URL_ENUMS ={
     cardDataSekurau : link+'/transaction/sekurau/',
     getDataMines : link+'/timeentrymines/',
     getDataFMS : link+'/timeentryfms/',
+    getAllTimeEntryData: link+'/timeentry/get-all'
 }
 
 export const dumpingEnum = {

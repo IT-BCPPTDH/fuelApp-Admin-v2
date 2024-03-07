@@ -41,7 +41,10 @@ const getDataMines = async () => {
   const response = await api.get(URL_ENUMS.getDataMines)
   return response.data
 }
-
+const getAllTimeEntryData = async () => {
+  const response = await api.get(URL_ENUMS.getAllTimeEntryData)
+  return response.data
+}
 const Services = {
   getMasterActivity,
   getMasterTimeEntryOperator,
@@ -49,6 +52,7 @@ const Services = {
   getMasterTimeEntryUnit,
   getDataFMS,
   getDataMines,
+  getAllTimeEntryData
 }
 
 
