@@ -24,6 +24,7 @@ import {
   dumpingpointOptionsData,
   pitOptionsData,
   seamOptionsData,
+  tonnageOptionsData,
 } from "../../helpers/optionHelper";
 import "./CoalHauling.css";
 // import Transaksi from "../../services/inputCoalHauling";
@@ -57,6 +58,7 @@ const InputHauling = ({
   const [loaderOptions] = useState(loaderOptionsData);
   const [dumpingpointOptions] = useState(dumpingpointOptionsData);
   const [pitOptions] = useState(pitOptionsData);
+  const [tonnageOptions] = useState(tonnageOptionsData);
 
   const determineShift = () => {
     const currentHour = new Date().getHours();
@@ -126,9 +128,10 @@ const InputHauling = ({
 
   const handleReset = useCallback(() => {
     setFormData({
+      // operator:"",
       inrom: "",
       outrom: "",
-      tonnage: "",
+      // tonnage: "",
       dumpingpoint: "",
     });
     setMessage(false);
@@ -167,10 +170,9 @@ const InputHauling = ({
       };
 
       if (postData) {
-        // console.log(data)
         const inserted = await insertFormDataHauling(data);
-        if(inserted){
-          dbInserted = true
+        if (inserted) {
+          dbInserted = true;
         }
       } else {
         // let dataUpdate = await Transaksi.patchEditTransaction(tid, data);
@@ -265,7 +267,8 @@ const InputHauling = ({
         readOnly: false,
         disabled: false,
         value: formData.tonnage,
-        type: "Input",
+        type: "Combobox",
+        options: tonnageOptions,
       },
       {
         name: "seam",
