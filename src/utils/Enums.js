@@ -9,6 +9,7 @@ export const URL_ENUMS ={
     transactionHoul : link+'/transaction/',
     patchEditData : link+'/transaction/editTrx/',
     getDownload : link+'/transaction/download/',
+    downloadFile : link+'/downloads/',
     postCreateTransaction: link+'/transaction/insertTrx',
     getEditData : link+'/transaction/getOne/',
     getDeteleData : link+'/transaction/',

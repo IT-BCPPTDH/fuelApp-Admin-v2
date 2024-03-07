@@ -28,26 +28,26 @@ const CardDataHaulingVertical = () => {
         console.log(dataCard.result[0].total);
 
         const dataHopper = await Transaksi.getDataHopper(value.tanggal);
-        console.log(dataHopper);
+        
 
         const dataOverflow = await Transaksi.getDataOverflow(value.tanggal);
-        console.log(dataOverflow);
+        // console.log(dataOverflow);
 
         const dataECF = await Transaksi.getDataECF(value.tanggal);
-        console.log(dataECF);
+        // console.log(dataECF);
 
         const dataMiddleStock = await Transaksi.getDataMiddleStock(value.tanggal);
-        console.log(dataMiddleStock);
+        // console.log(dataMiddleStock);
 
         const dataSekurau = await Transaksi.getDataSekurau(value.tanggal);
-        console.log(dataSekurau);
+        // console.log(dataSekurau);
 
         setTotalData(dataCard.result[0].total ?? 0);
-        setDataHopper(dataHopper ?? 0);
-        setDataOverflow(dataOverflow ?? 0);
-        setDataECF(dataECF ?? 0);
-        setDataMiddleStock(dataMiddleStock ?? 0);
-        setDataSekurau(dataSekurau ?? 0);
+        setDataHopper(dataHopper.result[0].total ?? 0);
+        setDataOverflow(dataOverflow.result[0].total ?? 0);
+        setDataECF(dataECF.result[0].total ?? 0);
+        setDataMiddleStock(dataMiddleStock.result[0].total ?? 0);
+        setDataSekurau(dataSekurau.result[0].total ?? 0);
       } catch (error) {
         console.error("Error fetching data:", error);
       }
@@ -80,7 +80,7 @@ const CardDataHaulingVertical = () => {
                 </p>
               </Card>
             </div>
-            <div className="col-6">
+            <div className="col-12">
               <Card className="card-data">
                 <span className={styles.card}>Hauling To OverFlow</span>
                 <p className={styles.caption}>
@@ -90,7 +90,7 @@ const CardDataHaulingVertical = () => {
                 </p>
               </Card>
             </div>
-            <div className="col-6">
+            <div className="col-12">
               <Card className="card-data">
                 <span className={styles.card}>Hauling To ECF</span>
                 <p className={styles.caption}>
@@ -100,7 +100,7 @@ const CardDataHaulingVertical = () => {
                 </p>
               </Card>
             </div>
-            <div className="col-6">
+            <div className="col-12">
               <Card className="card-data">
                 <span className={styles.card}>Hauling To MiddleStock</span>
                 <p className={styles.caption}>
@@ -110,7 +110,7 @@ const CardDataHaulingVertical = () => {
                 </p>
               </Card>
             </div>
-            <div className="col-6">
+            <div className="col-12">
               <Card className="card-data">
                 <span className={styles.card}>Hauling To Sekurau</span>
                 <p className={styles.caption}>

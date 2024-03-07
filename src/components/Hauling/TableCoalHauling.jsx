@@ -61,7 +61,7 @@ const TableCoalHauling = () => {
     const month = (date.getMonth() + 1).toString().padStart(2, '0');
     const day = date.getDate().toString().padStart(2, '0');
   
-    return `${year}-${month}-${day}`;
+    return `${day}-${month}-${year}`;
   };
 
   useEffect(() => {
@@ -72,7 +72,7 @@ const TableCoalHauling = () => {
         const updatedItems = datamain.data.map((itemFromDB) => ({
           // id: { label: itemFromDB.id },
           tanggal: { label: itemFromDB.tanggal },
-          totaltonnage: { label: itemFromDB.totaltonnage },
+          totaltonnage: { label: itemFromDB.totalTonnage },
         }));
 
         setItems(updatedItems);
@@ -115,7 +115,7 @@ const TableCoalHauling = () => {
               <TableRow key={`${item.id}-${index}`}>
                 <TableCell>
                   <TableCellLayout>
-                    {formatDate(item.tanggal.label)}
+                    {item.tanggal.label}
                   </TableCellLayout>
                 </TableCell>
                 <TableCell>
@@ -125,7 +125,7 @@ const TableCoalHauling = () => {
                   <Button
                     icon={<ArrowSquareUpRight24Regular />}
                     iconPosition="after"
-                    onClick={() => handleDetail(formatDate(item.tanggal.label))}>
+                    onClick={() => handleDetail(item.tanggal.label)}>
                     Detail
                   </Button>
                 </TableCell>

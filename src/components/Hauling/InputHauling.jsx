@@ -128,10 +128,8 @@ const InputHauling = ({
 
   const handleReset = useCallback(() => {
     setFormData({
-      // operator:"",
       inrom: "",
       outrom: "",
-      // tonnage: "",
       dumpingpoint: "",
     });
     setMessage(false);
@@ -270,6 +268,15 @@ const InputHauling = ({
         type: "Combobox",
         options: tonnageOptions,
       },
+      // {
+      //   name: "tonnage",
+      //   grid: "col-4",
+      //   label: "Tonnage",
+      //   readOnly: false,
+      //   disabled: false,
+      //   value: formData.tonnage,
+      //   type: "Input",
+      // },
       {
         name: "seam",
         grid: "col-4",
