@@ -10,7 +10,7 @@ import { SaveArrowRight24Regular } from '@fluentui/react-icons'
 export const TableDataInputed = ({ formTitle, loaded, setLoaded, handleEdit, handleSubmitToServer }) => {
     const [columnData] = useState([
         { columnId: "id", headerLabel: "ID", defaultWidth: 50 },
-        { columnId: "unitno", headerLabel: "Unit No", defaultWidth: 200 },
+        { columnId: "unitNo", headerLabel: "Unit No", defaultWidth: 200 },
         { columnId: "tanggal", headerLabel: "Tanggal", defaultWidth: 200 },
         { columnId: "shift", headerLabel: "Shift", defaultWidth: 200 },
         { columnId: "hmAwal", headerLabel: "HM Awal", defaultWidth: 200 },
@@ -32,7 +32,7 @@ export const TableDataInputed = ({ formTitle, loaded, setLoaded, handleEdit, han
         if (data?.length > 0) {
             const dataTable = data.map((val) => ({
                 id: val.id,
-                unitno: val.unitno,
+                unitNo: val.unitNo,
                 tanggal: indonesianDate(val.tanggal),
                 shift: val.shift,
                 hmAwal: val.hmAwal,
