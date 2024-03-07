@@ -212,6 +212,15 @@ const TableHauling = ({ handleEdit, dataUpdated, setDataupdated }) => {
     fetchData();
   }, [getTodayDateString, fetchData, dataUpdated]);
 
+  // const handleDeteleIndexeddb = async () => {
+  //   try {
+      
+
+  //   }catch(error){
+
+  //   }
+  // }
+
   const handleDelete = async (id) => {
     try {
       // await Transaksi.getDeteleTransaction(id.label);
@@ -288,6 +297,7 @@ const TableHauling = ({ handleEdit, dataUpdated, setDataupdated }) => {
         if (send.status === 200) {
           console.log("berhasil");
           setDialogOpen(true);
+
         } else {
           console.log("gagal");
         }

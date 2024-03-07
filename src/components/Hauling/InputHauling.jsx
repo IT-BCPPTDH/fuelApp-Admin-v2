@@ -260,6 +260,16 @@ const InputHauling = ({
         type: "Combobox",
         options: loaderOptions,
       },
+      // {
+      //   name: "tonnage",
+      //   grid: "col-4",
+      //   label: "Tonnage",
+      //   readOnly: false,
+      //   disabled: false,
+      //   value: formData.tonnage,
+      //   type: "Combobox",
+      //   options: tonnageOptions,
+      // },
       {
         name: "tonnage",
         grid: "col-4",
@@ -267,8 +277,7 @@ const InputHauling = ({
         readOnly: false,
         disabled: false,
         value: formData.tonnage,
-        type: "Combobox",
-        options: tonnageOptions,
+        type: "Input",
       },
       {
         name: "seam",
