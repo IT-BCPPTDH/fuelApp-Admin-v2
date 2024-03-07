@@ -250,6 +250,9 @@ export default function TimeSheetPage() {
           setSendingData(false)
           navigate('/time-entry-from-collector')
         } 
+       
+      } else {
+         // TODO : add message when data already existed in database
       }
     } catch (error) {
       console.error('Error while submitting data:', error);

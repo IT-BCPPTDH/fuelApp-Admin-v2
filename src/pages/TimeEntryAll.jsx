@@ -35,7 +35,7 @@ const TimeEntryAll = () => {
   const [itemsData, setItemsData] = useState([])
 
   const handleAction = useCallback( async(type, param) => {
-    console.log(type, param)
+    // console.log(type, param)
     navigate(`/time-entry-detail/${param}/${type}`)
   },[navigate])
 
@@ -53,7 +53,7 @@ const TimeEntryAll = () => {
           }))
           setItemsData(dataItems)
         }
-        console.log(data)
+        // console.log(data)
     } catch (error) {
       console.log(error)
     }

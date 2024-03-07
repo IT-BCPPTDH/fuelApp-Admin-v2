@@ -6,48 +6,45 @@ import { HeaderPageForm } from '../components/FormComponent/HeaderPageForm'
 import { colHelperTimesheetMines } from '../helpers/columnHelper'
 import Services from '../services/timeEntry'
 import { useParams } from 'react-router-dom'
+import { NavigateUrl } from '../utils/Navigation'
 
 const TimeEntryMinesDetailPage = () => {
   const jRef = useRef(null)
   const params = useParams()
   const [formTitle, setFormTitle] = useState('')
-  
+
   const fetchData = useCallback(async () => {
-    
+
     try {
 
+      const result = await Services.getTimeEntryDetailData(params.tanggal, params.type)
+      if (result.status === 200) {
+        jRef.current.jspreadsheet.setData(result.data)
+      }
 
-
-        console.log(params)
-        const result = await Services.getTimeEntryDetailData(params.tanggal,params.type)
-        console.log(result)
-    //   jRef.current.jspreadsheet.setData([])
-      
     } catch (error) {
       console.error('Error fetching data:', error);
     }
-  },[params])
+  }, [params])
 
   const setTitle = useCallback(() => {
     switch (params.type) {
-        case 'all':
-            setFormTitle(`Time Entry Detail-${params.date}-All Unit`)
-            break;
-            case 'digger':
-                setFormTitle(`Time Entry Detail-${params.date}-Unit Digger`)
-                break;
-
-                case 'hauler':
-            setFormTitle(`Time Entry Detail-${params.date}- Unit Hauler`)
-            break;
-            case 'support':
-            setFormTitle(`Time Entry Detail-${params.date}-Unit Support`)
-            break;
-    
-        default:
-            break;
+      case 'all':
+        setFormTitle(`Time Entry Detail All Unit, Tanggal: ${params.tanggal}`)
+        break;
+      case 'digger':
+        setFormTitle(`Time Entry Detail Unit Digger, Tanggal: ${params.tanggal}`)
+        break;
+      case 'hauler':
+        setFormTitle(`Time Entry Detail Unit Hauler, Tanggal: ${params.tanggal}`)
+        break;
+      case 'support':
+        setFormTitle(`Time Entry Detail Unit Support, Tanggal: ${params.tanggal}`)
+        break;
+      default:
+        break;
     }
-  },[params])
+  }, [params])
 
   useEffect(() => {
     fetchData();
@@ -55,28 +52,28 @@ const TimeEntryMinesDetailPage = () => {
   }, [fetchData, setTitle]);
 
   useEffect(() => {
-      const width = screen.width;
-      const options = {
-        lazyLoading: true,
-        loadingSpin: true,
-        columns: colHelperTimesheetMines.columnHeader,
-        minDimensions: [5, 15],
-        tableHeight: '500px',
-        tableWidth: `${(width * 87) / 100}px`,
-        tableOverflow: true
-      };
+    const width = screen.width;
+    const options = {
+      lazyLoading: true,
+      loadingSpin: true,
+      columns: colHelperTimesheetMines.columnHeader,
+      minDimensions: [5, 15],
+      tableHeight: '500px',
+      tableWidth: `${(width * 87) / 100}px`,
+      tableOverflow: true
+    };
 
-     if (!jRef.current.jspreadsheet) {
-        jspreadsheet(jRef.current, options);
-     }
+    if (!jRef.current.jspreadsheet) {
+      jspreadsheet(jRef.current, options);
+    }
   }, []);
 
   return (
     <>
-      <HeaderPageForm 
-        title={`Time Entry Detail - `} 
-        urlCreate={''}
-        urlBack={'/'}
+      <HeaderPageForm
+        title={formTitle}
+        urlCreate={NavigateUrl.TIME_ENTRY_DIGGER_FORM}
+        urlBack={NavigateUrl.TIME_ENTRY_MAIN_TABLE}
       />
 
       <div className='form-wrapper'>
@@ -86,8 +83,8 @@ const TimeEntryMinesDetailPage = () => {
           </div>
         </div>
 
-          <div ref={jRef} className='mt1em' />
-        
+        <div ref={jRef} className='mt1em' />
+
       </div>
     </>
   )
