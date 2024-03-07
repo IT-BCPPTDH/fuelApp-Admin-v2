@@ -55,22 +55,20 @@ const TableCoalHauling = () => {
   const [items, setItems] = useState([]);
   const Navigate = useNavigate();
 
-  const formatDate = (dateString) => {
-    const date = new Date(dateString);
-    const year = date.getFullYear();
-    const month = (date.getMonth() + 1).toString().padStart(2, '0');
-    const day = date.getDate().toString().padStart(2, '0');
+  // const formatDate = (dateString) => {
+  //   const date = new Date(dateString);
+  //   const year = date.getFullYear();
+  //   const month = (date.getMonth() + 1).toString().padStart(2, '0');
+  //   const day = date.getDate().toString().padStart(2, '0');
   
-    return `${day}-${month}-${year}`;
-  };
+  //   return `${day}-${month}-${year}`;
+  // };
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const datamain = await Transaksi.getDataMain();
-        console.log("Data fetched: ", datamain);
         const updatedItems = datamain.data.map((itemFromDB) => ({
-          // id: { label: itemFromDB.id },
           tanggal: { label: itemFromDB.tanggal },
           totaltonnage: { label: itemFromDB.totalTonnage },
         }));

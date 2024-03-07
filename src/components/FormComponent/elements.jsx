@@ -226,7 +226,7 @@ const ComboBoxCustom =  (props) => {
       id={inputId}
       aria-labelledby={inputId}
       listbox={{ ref: scrollRef, className: styles.listbox }}
-      style={{ maxWidth: "200px", minWidth: "180px" }}
+      style={{  minWidth: "180px" }}
       freeform
       placeholder={`Select ${label}`}
       onChange={onChange}
@@ -264,7 +264,7 @@ FormElement.propTypes = {
   type: PropTypes.string,
   options: PropTypes.array,
   value: PropTypes.any,
-  handleChange: PropTypes.func.isRequired,
+  handleChange: PropTypes.func,
   disabled: PropTypes.bool,
   readOnly: PropTypes.bool,
 };

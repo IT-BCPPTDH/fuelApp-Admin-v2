@@ -1,25 +1,27 @@
 import { useRef, useEffect, useState, useCallback } from 'react'
 import jspreadsheet from 'jspreadsheet-ce'
 import { HeaderPageForm } from '../components/FormComponent/HeaderPageForm'
-// import { DynamicTablistMenu } from '../components/Tablist'
-// import { tabsRekapTimeEntry } from '../helpers/tabArrayHelper'
 import { colHelperTimesheetMines } from '../helpers/columnHelper'
 import Services from '../services/timeEntry'
 import { useParams } from 'react-router-dom'
 import { NavigateUrl } from '../utils/Navigation'
+import {Button} from "@fluentui/react-components";
+import { ArrowDownload24Regular } from "@fluentui/react-icons";
+import { URL_ENUMS } from '../utils/Enums'
 
 const TimeEntryMinesDetailPage = () => {
   const jRef = useRef(null)
   const params = useParams()
   const [formTitle, setFormTitle] = useState('')
+  const [file, setFile] = useState("")
 
   const fetchData = useCallback(async () => {
 
     try {
-
       const result = await Services.getTimeEntryDetailData(params.tanggal, params.type)
       if (result.status === 200) {
         jRef.current.jspreadsheet.setData(result.data)
+        setFile(result.fileName)
       }
 
     } catch (error) {
@@ -68,6 +70,10 @@ const TimeEntryMinesDetailPage = () => {
     }
   }, []);
 
+  const handleDownload = () => {
+    window.location.href = URL_ENUMS.downloadFile+file
+  }
+
   return (
     <>
       <HeaderPageForm
@@ -78,8 +84,16 @@ const TimeEntryMinesDetailPage = () => {
 
       <div className='form-wrapper'>
         <div className='row'>
+          <div className="col-6"></div>
           <div className='col-6'>
-            {/* <DynamicTablistMenu tabs={tabsRekapTimeEntry} active={secName === 'mines'?`time-sheet-mines`:`time-sheet-fms`}/> */}
+          <Button
+            icon={<ArrowDownload24Regular />}
+            iconPosition="after"
+            onClick={() => handleDownload()}
+            className='pull-right'
+            style={{ backgroundColor: "#28499c", color: "#ffffff" }}>
+            Download
+          </Button>
           </div>
         </div>
 
