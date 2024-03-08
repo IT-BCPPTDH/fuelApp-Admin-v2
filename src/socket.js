@@ -1,10 +1,8 @@
 import { io } from 'socket.io-client';
-
-const URL = 'https://be-collector.thinkmatch.id'
-// const URL = 'http://127.0.0.1:3939'
+const link = import.meta.env.VITE_LINK_BACKEND;
 
 const initializedSocket = () => {
-    const socket = io(URL);
+    const socket = io(link);
     return socket;
 };
 export default initializedSocket
