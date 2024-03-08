@@ -1,28 +1,14 @@
-import { useRef, useEffect, useCallback, useState } from 'react'
+import { useRef, useEffect } from 'react'
 import jspreadsheet from 'jspreadsheet-ce'
-// import 'jspreadsheet-ce/dist/jspreadsheet.css'
 import { HeaderPageForm } from '../components/FormComponent/HeaderPageForm'
-// import Title from '../components/Title'
-// import {
-//   CompoundButton,
-//   useId,
-//   Button,
-//   InfoLabel
-// } from '@fluentui/react-components'
-// import {
-//   SaveArrowRight24Regular,
-//   ArrowCircleLeft24Regular
-// } from '@fluentui/react-icons'
-// import { DynamicTablistMenu } from '../components/Tablist'
-// import FormComponent from '../components/FormComponent'
 
-export const ProductionEntryPage=()=>{
+const ProductionEntryPage=()=>{
 
     const jRef = useRef(null)
 
-    const handleChange = (ev, data) => {
-        const { name, value } = data
-    }
+    // const handleChange = (ev, data) => {
+    //     const { name, value } = data
+    // }
 
     useEffect(() => {
         const sideLabel = ["Distance", "Budg. Rit/Hr", "Average", "DT  Actual"]
@@ -85,3 +71,5 @@ export const ProductionEntryPage=()=>{
         </div>
     </>)
 }
+
+export default ProductionEntryPage

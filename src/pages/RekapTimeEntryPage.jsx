@@ -8,7 +8,7 @@ import { getTimeSheetData } from '../helpers/arrayGroupHelper'
 import { tabsRekapTimeEntry } from '../helpers/tabArrayHelper'
 import '../css/rekap.css'
 
-export const RekapTimeEntryPage = () => {
+const RekapTimeEntryPage = () => {
   const jRef = useRef(null)
   // const [totalDuration, setTotalDuration] = useState(0)
   const [buttonDisabled, setButtonDisabled] = useState(true)
@@ -279,3 +279,4 @@ export const RekapTimeEntryPage = () => {
     </>
   )
 }
+export default RekapTimeEntryPage
