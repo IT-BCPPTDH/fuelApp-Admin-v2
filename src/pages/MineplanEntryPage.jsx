@@ -1,4 +1,4 @@
-import { useRef, useEffect, useCallback, useState } from 'react'
+import { useRef, useEffect } from 'react'
 import jspreadsheet from 'jspreadsheet-ce'
 // import 'jspreadsheet-ce/dist/jspreadsheet.css'
 import { HeaderPageForm } from '../components/FormComponent/HeaderPageForm'
@@ -16,7 +16,7 @@ import { HeaderPageForm } from '../components/FormComponent/HeaderPageForm'
 // import { DynamicTablistMenu } from '../components/Tablist'
 // import FormComponent from '../components/FormComponent'
 
-export const MineplanEntryPage=()=>{
+const MineplanEntryPage=()=>{
 
     const jRef = useRef(null)
 
@@ -69,3 +69,5 @@ export const MineplanEntryPage=()=>{
         </div>
     </>)
 }
+
+export default MineplanEntryPage

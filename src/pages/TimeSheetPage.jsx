@@ -25,7 +25,6 @@ import { deleteTimeEntries } from '../helpers/indexedDB/deteleData'
 import { useNavigate } from 'react-router-dom'
 import { updateTimeEntry } from '../helpers/indexedDB/editData'
 
-
 export default function TimeSheetPage() {
 
   const jRef = useRef(null)
@@ -47,7 +46,6 @@ export default function TimeSheetPage() {
   const navigate = useNavigate()
   const [dataItemId, setDataItemId] = useState(0)
  
-
   useLiveQuery(() => db.activity.toArray())
 
   const [jdeOptions] = useState(() => getLocalStorage('timeEntry-operator'));
