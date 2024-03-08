@@ -60,10 +60,10 @@ const InputHauling = ({
   const [pitOptions] = useState(pitOptionsData);
   const [tonnageOptions] = useState(tonnageOptionsData);
 
-  const determineShift = () => {
+  const determineShift = useCallback(() => {
     const currentHour = new Date().getHours();
     return currentHour >= 6 && currentHour < 18 ? "Day" : "Night";
-  };
+  }, []);
 
   useEffect(() => {
     setFormData({
@@ -87,28 +87,18 @@ const InputHauling = ({
   const handleChange = useCallback(
     (e, v) => {
       const { name, value } = v;
-
       if (name === "inrom" || name === "outrom") {
-        if (value.selectedTime) {
-          const hours = value.selectedTime.getHours();
-          const minutes = value.selectedTime.getMinutes();
-          const second = value.selectedTime.getSeconds();
-
-          const addLeadingZero = (num) => (num < 10 ? `0${num}` : num);
-
-          const formattedTime = `${addLeadingZero(hours)}:${addLeadingZero(
-            minutes
-          )}:${addLeadingZero(second)}`;
-
-          if (name === "outrom" && formData.inrom > formattedTime) {
-            alert("outrom tidak boleh lebih kecil dari inrom");
-          } else {
-            setFormData((prevFormData) => ({
-              ...prevFormData,
-              [name]: formattedTime,
-            }));
-          }
-        }
+        //menjalankan filter inrom atau outrom
+        const filter =  /^[0-9.:]+$/;
+        const filteredValue = filter.test(value) ? value.match(filter)[0] : "";
+        console.log(filteredValue)
+        setFormData((prevFormData) => ({
+          ...prevFormData,
+          [name]: filteredValue,
+        }));
+        // const filteredValue = ''
+        
+        // setFormData((prevFormData) => ({ ...prevFormData, [name]: filter.test(value) ? value : filteredValue}));
       } else {
         if (name === "pit") {
           let a = pitOptions?.find((v) => v === value);
@@ -128,9 +118,18 @@ const InputHauling = ({
 
   const handleReset = useCallback(() => {
     setFormData({
+      tanggal: new Date(),
+      shift: determineShift(),
+      unitno: "",
+      operator: "",
+      loader: "",
+      tonnage: "",
+      seam: "",
+      dumpingpoint: "",
+      rom: "",
       inrom: "",
       outrom: "",
-      dumpingpoint: "",
+      pit: "",
     });
     setMessage(false);
     // setIsFormValid(false);
@@ -167,7 +166,21 @@ const InputHauling = ({
         status: "pending",
       };
 
+      // const isValidTimeFormat = (time) => {
+
+      //   //tidak boleh huruf, untuk format angka dan ada karakter titik atau titik dua
+      //   return /^\d{2}:\d{2}$/.test(time);
+      // };
+
+      // if (!isValidTimeFormat(data.inrom) || !isValidTimeFormat(data.outrom)) {
+      //   alert(
+      //     "Format waktu untuk inrom atau outrom tidak valid. Harap gunakan format HH:MM."
+      //   );
+      //   return;
+      // }
+
       if (postData) {
+        console.log(1, data);
         const inserted = await insertFormDataHauling(data);
         if (inserted) {
           dbInserted = true;
@@ -247,6 +260,7 @@ const InputHauling = ({
         disabled: false,
         value: formData.operator,
         type: "Input",
+        placeholder: "Nama Operator",
       },
       {
         name: "loader",
@@ -268,15 +282,6 @@ const InputHauling = ({
         type: "Combobox",
         options: tonnageOptions,
       },
-      // {
-      //   name: "tonnage",
-      //   grid: "col-4",
-      //   label: "Tonnage",
-      //   readOnly: false,
-      //   disabled: false,
-      //   value: formData.tonnage,
-      //   type: "Input",
-      // },
       {
         name: "seam",
         grid: "col-4",
@@ -305,6 +310,7 @@ const InputHauling = ({
         disabled: false,
         value: formData.rom,
         type: "Input",
+        placeholder: "Contoh: E",
       },
       {
         name: "inrom",
@@ -313,7 +319,8 @@ const InputHauling = ({
         readOnly: false,
         disabled: false,
         value: formData.inrom,
-        type: "TimePicker",
+        type: "Input",
+        placeholder: "Contoh: 12:00",
       },
       {
         name: "outrom",
@@ -322,7 +329,8 @@ const InputHauling = ({
         readOnly: false,
         disabled: false,
         value: formData.outrom,
-        type: "TimePicker",
+        type: "Input",
+        placeholder: "Contoh: 13:00",
       },
     ],
     [

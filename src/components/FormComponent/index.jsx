@@ -17,6 +17,7 @@ const FormComponent = React.memo(({ handleChange, components }) => {
             handleChange={handleChange}
             disabled={val.disabled}
             readOnly={val.readOnly}
+            placeholder={val.placeholder}
           />
         </div>
       ))}

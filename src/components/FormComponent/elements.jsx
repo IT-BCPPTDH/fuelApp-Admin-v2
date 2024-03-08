@@ -64,6 +64,7 @@ export const FormElement =  ({
   handleChange,
   disabled,
   readOnly,
+  placeholder,
 }) => {
   const styles = useStyles();
 
@@ -110,6 +111,7 @@ export const FormElement =  ({
             name={name}
             readOnly={readOnly}
             disabled={disabled}
+            placeholder={placeholder}
             onChange={(e) =>
               handleChange(e, { name: name, value: e.target.value })
             }
