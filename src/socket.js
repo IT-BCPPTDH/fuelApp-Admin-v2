@@ -1,10 +1,10 @@
 import { io } from 'socket.io-client';
 
-// "undefined" means the URL will be computed from the `window.location` object
+// const URL = 'https://be-collector.thinkmatch.id'
+const URL = 'http://127.0.0.1:3939'
 
-// https://be-collector.thinkmatch.id
-const URL = 'https://be-collector.thinkmatch.id'
-// const URL = 'http://127.0.0.1:3939'
-
-
-export const socket = io(URL);
+const initializedSocket = () => {
+    const socket = io(URL);
+    return socket;
+};
+export default initializedSocket

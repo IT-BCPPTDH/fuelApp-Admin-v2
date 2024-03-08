@@ -292,7 +292,6 @@ export default function TimeSheetPage() {
       }
     }
   },[dataItemId, formData, formTitle, isNew, tableData])
-  
 
   const handleChange = (ev, data) => {
     const { name, value } = data;

@@ -14,11 +14,11 @@ export const menuArrayData = [
         desc: 'List Time Entry All Date',
         link: '/time-entry-from-collector'
     },
-    {
-        name: 'Data Time Entry (FMS)',
-        desc: 'Template Time Entry model Mines',
-        link: '/time-sheet-fms'
-    },
+    // {
+    //     name: 'Data Time Entry (FMS)',
+    //     desc: 'Template Time Entry model Mines',
+    //     link: '/time-sheet-fms'
+    // },
     // {
     //     name: 'Data Production',
     //     desc: 'Data Collector for Production Records',
