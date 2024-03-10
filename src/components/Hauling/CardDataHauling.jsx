@@ -39,12 +39,10 @@ const CardDataHauling = ({ dataUpdated }) => {
     return { tonnageByPitAndDumpingPoint, totalTonnage };
   };
 
-
   const fetchData = useCallback(async () => {
 
     const dataArray = await getDataTableHauling();
-    const { tonnageByPitAndDumpingPoint, totalTonnage } =
-      await calculateTonnage(dataArray);
+    const { tonnageByPitAndDumpingPoint, totalTonnage } = await calculateTonnage(dataArray);
 
     setTotalData(totalTonnage);
     setDataHopper(tonnageByPitAndDumpingPoint[dumpingEnum.HOPPER] ?? 0);
@@ -62,7 +60,6 @@ const CardDataHauling = ({ dataUpdated }) => {
     fetchData();
   }, [fetchData, dataUpdated]);
 
-  
   return (
     <>
       <div

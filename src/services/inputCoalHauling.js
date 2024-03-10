@@ -51,7 +51,6 @@ const getEditData = async (id) => {
 
 const getDataTotal = async (tanggal) => {
   const response = await api.post(URL_ENUMS.cardDataTotal+tanggal);
-  console.log(13, response.data);
   return response.data;
 };
 

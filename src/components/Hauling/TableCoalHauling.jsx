@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { useMemo } from "react";
-// import { SearchBox } from "@fluentui/react-search-preview";
 import FormComponent from "../FormComponent";
 import { useNavigate } from "react-router-dom";
 import { ArrowSquareUpRight24Regular } from "@fluentui/react-icons";
@@ -15,24 +14,9 @@ import {
   Button
 } from "@fluentui/react-components";
 import Transaksi from "../../services/inputCoalHauling";
-// import DetailHauling from "../../pages/DetailHauling";
-
-// const items = [
-//   {
-//     tanggal: { label: "12/01/2024" },
-//     author: { label: "Rahmansyah Kurniawan" },
-//     total: { label: 177 },
-//   },
-//   {
-//     tanggal: { label: "13/01/2024" },
-//     author: { label: "Walyadin" },
-//     total: { label: 478 },
-//   },
-// ];
 
 const columns = [
   { columnKey: "tanggal", label: "Tanggal" },
-  // { columnKey: "author", label: "Author" },
   { columnKey: "total", label: "Total Hauling" },
   { columnKey: "action", label: "Action" },
 ];
@@ -51,18 +35,9 @@ const TableCoalHauling = () => {
     ],
     []
   );
-  // const [dates, setDates] = useState("");
+  
   const [items, setItems] = useState([]);
   const Navigate = useNavigate();
-
-  // const formatDate = (dateString) => {
-  //   const date = new Date(dateString);
-  //   const year = date.getFullYear();
-  //   const month = (date.getMonth() + 1).toString().padStart(2, '0');
-  //   const day = date.getDate().toString().padStart(2, '0');
-  
-  //   return `${day}-${month}-${year}`;
-  // };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -83,8 +58,6 @@ const TableCoalHauling = () => {
 
   const handleDetail = async (tanggal) => {
     try {
-      // console.log(1, tanggal);
-      // setDates(tanggal);
       Navigate(`/coalhauling-dataentry-detail/${tanggal}`);
 
     } catch (error) {

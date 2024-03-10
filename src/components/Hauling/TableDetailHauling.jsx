@@ -1,6 +1,4 @@
 import { useState, useEffect } from "react";
-// import { useParams } from "react-router-dom";
-// import { SearchBox } from "@fluentui/react-search-preview";
 import Transaksi from "../../services/inputCoalHauling";
 import {
   Table,
@@ -19,13 +17,6 @@ import {
   MenuPopover,
   MenuTrigger,
   Button,
-  // Dialog,
-  // DialogTrigger,
-  // DialogSurface,
-  // DialogTitle,
-  // DialogBody,
-  // DialogActions,
-  // DialogContent,
   MessageBar,
   MessageBarBody,
   MessageBarTitle,
@@ -33,21 +24,17 @@ import {
   makeStyles,
 } from "@fluentui/react-components";
 import {
-  // EditRegular,
-  // DeleteRegular,
   ArrowDownload24Regular,
 } from "@fluentui/react-icons";
 import { useParams } from "react-router-dom";
 import { URL_ENUMS } from "../../utils/Enums";
-
-
 
 const useStyles = makeStyles({
   messageContainer: {
     position: "fixed",
     bottom: "20px",
     right: "20px",
-    zIndex: 1000, // Adjust the z-index as needed
+    zIndex: 1000, 
   },
 });
 
@@ -107,7 +94,6 @@ const TableDetailHauling = () => {
   const [columns] = useState(columnsDef);
   const [message, setMessage] = useState(null);
   const params = useParams();
-  
 
   const [columnSizingOptions] = useState({
     id: {
@@ -159,7 +145,6 @@ const TableDetailHauling = () => {
       try {
         const dts = await Transaksi.getAllTransaction(params.tanggal);
         const updatedItems = dts.data.map((itemFromDB, index) => ({
-          // id: { label: itemFromDB.id},
           id: { label: ( index + 1).toString() },
           tanggal: { label: itemFromDB.tanggal },
           shift: { label: itemFromDB.shift },
@@ -204,7 +189,6 @@ const TableDetailHauling = () => {
             style={{ backgroundColor: "#28499c", color: "#ffffff" }}>
             Download
           </Button>
-          {/* <SearchBox placeholder="Search" /> */}
         </div>
         <div style={{ overflowX: "auto" }}>
           <Table
@@ -242,7 +226,7 @@ const TableDetailHauling = () => {
 
             <TableBody>
               {rows.map(({ item }) => (
-                <TableRow key={item}>
+                <TableRow key={item.id.label}>
                   <TableCell {...columnSizing_unstable.getTableCellProps("id")}>
                     <TableCellLayout>{item.id.label}</TableCellLayout>
                     {/* <TableCellLayout>{item.id.label || (index + 1).toString()}</TableCellLayout> */}

@@ -48,10 +48,8 @@ const InputHauling = ({
 }) => {
   const classes = useStyles();
   const [message, setMessage] = useState(null);
-  // const [isFormValid, setIsFormValid] = useState(false);
   const [seamOptions, setSeamOptions] = useState([]);
   const [formData, setFormData] = useState({});
-
   const [seamDataOptions] = useState(seamOptionsData);
   const [unitOptions] = useState(unitOptionsData);
   const [shiftOptions] = useState(shiftOptionsData);
@@ -82,7 +80,7 @@ const InputHauling = ({
     });
 
     setSeamOptions(seamDataOptions["PIT A NORTH 1"]);
-  }, [dataEdit, seamDataOptions]);
+  }, [dataEdit, seamDataOptions, determineShift]);
 
   const handleChange = useCallback(
     (e, v) => {
@@ -90,15 +88,10 @@ const InputHauling = ({
       if (name === "inrom" || name === "outrom") {
         //menjalankan filter inrom atau outrom
         const filter =  /^[0-9.:]+$/;
-        const filteredValue = filter.test(value) ? value.match(filter)[0] : "";
-        console.log(filteredValue)
         setFormData((prevFormData) => ({
           ...prevFormData,
-          [name]: filteredValue,
+          [name]: filter.test(value) ? value.match(filter)[0] : "",
         }));
-        // const filteredValue = ''
-        
-        // setFormData((prevFormData) => ({ ...prevFormData, [name]: filter.test(value) ? value : filteredValue}));
       } else {
         if (name === "pit") {
           let a = pitOptions?.find((v) => v === value);
@@ -113,7 +106,7 @@ const InputHauling = ({
       // const isValid = Object.values(formData).every((val) => val !== "");
       // setIsFormValid(isValid);
     },
-    [formData, setFormData, setSeamOptions, pitOptions, seamDataOptions]
+    [setFormData, setSeamOptions, pitOptions, seamDataOptions]
   );
 
   const handleReset = useCallback(() => {
@@ -134,7 +127,7 @@ const InputHauling = ({
     setMessage(false);
     // setIsFormValid(false);
     setPostData(true);
-  }, [setPostData]);
+  }, [setPostData, determineShift]);
 
   const handleSubmit = useCallback(async () => {
     try {
@@ -166,21 +159,8 @@ const InputHauling = ({
         status: "pending",
       };
 
-      // const isValidTimeFormat = (time) => {
-
-      //   //tidak boleh huruf, untuk format angka dan ada karakter titik atau titik dua
-      //   return /^\d{2}:\d{2}$/.test(time);
-      // };
-
-      // if (!isValidTimeFormat(data.inrom) || !isValidTimeFormat(data.outrom)) {
-      //   alert(
-      //     "Format waktu untuk inrom atau outrom tidak valid. Harap gunakan format HH:MM."
-      //   );
-      //   return;
-      // }
-
       if (postData) {
-        console.log(1, data);
+        // console.log(1, data);
         const inserted = await insertFormDataHauling(data);
         if (inserted) {
           dbInserted = true;
@@ -341,6 +321,7 @@ const InputHauling = ({
       pitOptions,
       shiftOptions,
       unitOptions,
+      tonnageOptions
     ]
   );
 

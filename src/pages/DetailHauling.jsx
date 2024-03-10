@@ -2,10 +2,8 @@ import { HeaderPageForm } from "../components/FormComponent/HeaderPageForm";
 import CardDataHaulingVertical from "../components/Hauling/CardDataHaulingVertical";
 import TableDetailHauling from "../components/Hauling/TableDetailHauling";
 import { NavigateUrl } from "../utils/Navigation";
-import PropTypes from 'prop-types'
 
-const DetailHauling = ({value}) => {
-  // console.log(2, value)
+const DetailHauling = () => {
   return (
     <>
       <HeaderPageForm
@@ -26,6 +24,4 @@ const DetailHauling = ({value}) => {
 };
 
 export default DetailHauling;
-DetailHauling.propTypes={
-  value: PropTypes.any
-}
+

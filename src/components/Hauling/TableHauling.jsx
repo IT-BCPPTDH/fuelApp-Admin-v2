@@ -1,7 +1,4 @@
 import { useState, useEffect, useCallback } from "react";
-
-// import { SearchBox } from "@fluentui/react-search-preview";
-// import Transaksi from "../../services/inputCoalHauling";
 import {
   Table,
   TableBody,
@@ -47,6 +44,7 @@ import {
   // pingInterval,
   pingServer,
 } from "../../helpers/pingServer";
+import { useNavigate } from "react-router-dom";
 
 const useStyles = makeStyles({
   messageContainer: {
@@ -121,6 +119,7 @@ const TableHauling = ({ handleEdit, dataUpdated, setDataupdated }) => {
   const [isServerAvailable, setServerAvailable] = useState(true);
   const [isDialogOpen, setDialogOpen] = useState(false);
   const [isConfirmationOpen, setConfirmationOpen] = useState(false);
+  const navigate = useNavigate()
 
   const [columnSizingOptions] = useState({
     id: {
@@ -212,8 +211,6 @@ const TableHauling = ({ handleEdit, dataUpdated, setDataupdated }) => {
     fetchData();
   }, [getTodayDateString, fetchData, dataUpdated]);
 
-  
-
   const handleDelete = async (id) => {
     try {
       // await Transaksi.getDeteleTransaction(id.label);
@@ -263,8 +260,6 @@ const TableHauling = ({ handleEdit, dataUpdated, setDataupdated }) => {
     setConfirmationOpen(false);
   };
 
- 
-
   const pingServerWithRetry = async () => {
     const maxAttempts = 5;
     let attempts = 0;
@@ -289,17 +284,15 @@ const TableHauling = ({ handleEdit, dataUpdated, setDataupdated }) => {
 
       if (serverStatus.status === 200) {
         const send = await Transaksi.postCreateTransaction(items);
-        console.log(11,items)
 
         if (send.status === 200) {
-          console.log("berhasil");
           setDialogOpen(true);
         
           const deleted = items.map(async (val) => {
             return await deleteFormDataHauling(val.id)
           })
-          if(deleted){
           
+          if(deleted){
             navigate('/coalhauling')
           } 
 
