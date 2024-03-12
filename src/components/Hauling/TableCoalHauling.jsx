@@ -11,7 +11,8 @@ import {
   TableHeader,
   TableHeaderCell,
   TableCellLayout,
-  Button
+  Button,
+  Body1Stronger,
 } from "@fluentui/react-components";
 import Transaksi from "../../services/inputCoalHauling";
 
@@ -76,7 +77,7 @@ const TableCoalHauling = () => {
             <TableRow>
               {columns.map((column) => (
                 <TableHeaderCell key={column.columnKey}>
-                  {column.label}
+                  <Body1Stronger>{column.label}</Body1Stronger>
                 </TableHeaderCell>
               ))}
             </TableRow>
@@ -86,7 +87,7 @@ const TableCoalHauling = () => {
               <TableRow key={`${item.id}-${index}`}>
                 <TableCell>
                   <TableCellLayout>
-                    {item.tanggal.label}
+                  {item.tanggal.label}
                   </TableCellLayout>
                 </TableCell>
                 <TableCell>

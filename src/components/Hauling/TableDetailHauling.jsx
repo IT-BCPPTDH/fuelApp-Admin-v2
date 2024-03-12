@@ -22,10 +22,9 @@ import {
   MessageBarTitle,
   Link,
   makeStyles,
+  Body1Stronger,
 } from "@fluentui/react-components";
-import {
-  ArrowDownload24Regular,
-} from "@fluentui/react-icons";
+import { ArrowDownload24Regular } from "@fluentui/react-icons";
 import { useParams } from "react-router-dom";
 import { URL_ENUMS } from "../../utils/Enums";
 
@@ -34,7 +33,7 @@ const useStyles = makeStyles({
     position: "fixed",
     bottom: "20px",
     right: "20px",
-    zIndex: 1000, 
+    zIndex: 1000,
   },
 });
 
@@ -100,26 +99,12 @@ const TableDetailHauling = () => {
       idealWidth: 20,
       minWidth: 20,
     },
-    operator: {
-      minWidth: 80,
-      defaultWidth: 50,
-    },
     shift: {
-      idealWidth: 80,
-      minWidth: 50,
-    },
-    seam: {
-      idealWidth: 90,
-      minWidth: 50,
-    },
-    pit: {
-      idealWidth: 100,
       minWidth: 50,
     },
   });
 
   const [items, setItems] = useState([]);
-
 
   const { getRows, columnSizing_unstable, tableRef } = useTableFeatures(
     {
@@ -145,7 +130,7 @@ const TableDetailHauling = () => {
       try {
         const dts = await Transaksi.getAllTransaction(params.tanggal);
         const updatedItems = dts.data.map((itemFromDB, index) => ({
-          id: { label: ( index + 1).toString() },
+          id: { label: (index + 1).toString() },
           tanggal: { label: itemFromDB.tanggal },
           shift: { label: itemFromDB.shift },
           unitno: { label: itemFromDB.unitno },
@@ -166,15 +151,14 @@ const TableDetailHauling = () => {
     };
 
     fetchData();
-   
   }, [params.tanggal]);
 
   const handleDownload = async () => {
     try {
       const downloadData = await Transaksi.getDownload(params.tanggal);
-      window.location.href = URL_ENUMS.downloadFile+downloadData.link
-    }catch (error) {
-      console.error('Error downloading data:', error);
+      window.location.href = URL_ENUMS.downloadFile + downloadData.link;
+    } catch (error) {
+      console.error("Error downloading data:", error);
     }
   };
 
@@ -206,7 +190,10 @@ const TableDetailHauling = () => {
                         {...columnSizing_unstable.getTableHeaderCellProps(
                           column.columnId
                         )}>
-                        {column.renderHeaderCell()}
+                        <Body1Stronger>
+                          {" "}
+                          {column.renderHeaderCell()}{" "}
+                        </Body1Stronger>
                       </TableHeaderCell>
                     </MenuTrigger>
                     <MenuPopover>
@@ -281,7 +268,6 @@ const TableDetailHauling = () => {
                     {...columnSizing_unstable.getTableCellProps("outrom")}>
                     <TableCellLayout>{item.outrom.label}</TableCellLayout>
                   </TableCell>
-                 
                 </TableRow>
               ))}
             </TableBody>

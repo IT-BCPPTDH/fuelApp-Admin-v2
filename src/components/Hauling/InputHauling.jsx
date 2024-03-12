@@ -48,8 +48,10 @@ const InputHauling = ({
 }) => {
   const classes = useStyles();
   const [message, setMessage] = useState(null);
+  // const [isFormValid, setIsFormValid] = useState(false);
   const [seamOptions, setSeamOptions] = useState([]);
   const [formData, setFormData] = useState({});
+
   const [seamDataOptions] = useState(seamOptionsData);
   const [unitOptions] = useState(unitOptionsData);
   const [shiftOptions] = useState(shiftOptionsData);
@@ -80,7 +82,7 @@ const InputHauling = ({
     });
 
     setSeamOptions(seamDataOptions["PIT A NORTH 1"]);
-  }, [dataEdit, seamDataOptions, determineShift]);
+  }, [dataEdit, seamDataOptions]);
 
   const handleChange = useCallback(
     (e, v) => {
@@ -88,10 +90,19 @@ const InputHauling = ({
       if (name === "inrom" || name === "outrom") {
         //menjalankan filter inrom atau outrom
         const filter =  /^[0-9.:]+$/;
+        // const filter = /^([01]?[0-9]|2[0-3]):[0-5][0-9]$/;
+
+        const filteredValue = filter.test(value) ? value : "";
+        console.log(filteredValue);
+
         setFormData((prevFormData) => ({
           ...prevFormData,
-          [name]: filter.test(value) ? value.match(filter)[0] : "",
+          [name]: filteredValue,
         }));
+
+        // const filteredValue = ''
+
+        // setFormData((prevFormData) => ({ ...prevFormData, [name]: filter.test(value) ? value : filteredValue}));
       } else {
         if (name === "pit") {
           let a = pitOptions?.find((v) => v === value);
@@ -106,7 +117,7 @@ const InputHauling = ({
       // const isValid = Object.values(formData).every((val) => val !== "");
       // setIsFormValid(isValid);
     },
-    [setFormData, setSeamOptions, pitOptions, seamDataOptions]
+    [formData, setFormData, setSeamOptions, pitOptions, seamDataOptions]
   );
 
   const handleReset = useCallback(() => {
@@ -127,7 +138,7 @@ const InputHauling = ({
     setMessage(false);
     // setIsFormValid(false);
     setPostData(true);
-  }, [setPostData, determineShift]);
+  }, [setPostData]);
 
   const handleSubmit = useCallback(async () => {
     try {
@@ -160,7 +171,7 @@ const InputHauling = ({
       };
 
       if (postData) {
-        // console.log(1, data);
+        console.log(1, data);
         const inserted = await insertFormDataHauling(data);
         if (inserted) {
           dbInserted = true;
@@ -259,8 +270,8 @@ const InputHauling = ({
         readOnly: false,
         disabled: false,
         value: formData.tonnage,
-        type: "Combobox",
-        options: tonnageOptions,
+        type: "Input",
+        // options: tonnageOptions,
       },
       {
         name: "seam",
@@ -321,7 +332,6 @@ const InputHauling = ({
       pitOptions,
       shiftOptions,
       unitOptions,
-      tonnageOptions
     ]
   );
 
