@@ -28,6 +28,7 @@ import {
   MessageBarTitle,
   MessageBarActions,
   Link,
+  Body1Stronger,
   makeStyles,
 } from "@fluentui/react-components";
 import {
@@ -119,7 +120,7 @@ const TableHauling = ({ handleEdit, dataUpdated, setDataupdated }) => {
   const [isServerAvailable, setServerAvailable] = useState(true);
   const [isDialogOpen, setDialogOpen] = useState(false);
   const [isConfirmationOpen, setConfirmationOpen] = useState(false);
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   const [columnSizingOptions] = useState({
     id: {
@@ -287,15 +288,14 @@ const TableHauling = ({ handleEdit, dataUpdated, setDataupdated }) => {
 
         if (send.status === 200) {
           setDialogOpen(true);
-        
-          const deleted = items.map(async (val) => {
-            return await deleteFormDataHauling(val.id)
-          })
-          
-          if(deleted){
-            navigate('/coalhauling')
-          } 
 
+          const deleted = items.map(async (val) => {
+            return await deleteFormDataHauling(val.id);
+          });
+
+          if (deleted) {
+            navigate("/coalhauling");
+          }
         } else {
           console.log("gagal");
         }
@@ -413,7 +413,9 @@ const TableHauling = ({ handleEdit, dataUpdated, setDataupdated }) => {
                         {...columnSizing_unstable.getTableHeaderCellProps(
                           column.columnId
                         )}>
-                        {column.renderHeaderCell()}
+                        <Body1Stronger>
+                          {column.renderHeaderCell()}
+                        </Body1Stronger>
                       </TableHeaderCell>
                     </MenuTrigger>
                     <MenuPopover>
