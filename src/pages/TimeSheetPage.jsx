@@ -1,9 +1,9 @@
-import { useRef, useEffect, useCallback, useState, useMemo } from 'react'
+import { useRef, useEffect, useCallback, useState, useMemo, lazy, Suspense } from 'react'
 import jspreadsheet from 'jspreadsheet-ce'
 import { Form28Regular } from '@fluentui/react-icons'
 import { DynamicTablistMenu } from '../components/Tablist'
 import FormComponent from '../components/FormComponent'
-import Cookies from 'js-cookie'
+// import Cookies from 'js-cookie'
 import { getLocalStorage } from '../helpers/toLocalStorage'
 import { HeaderPageForm } from '../components/FormComponent/HeaderPageForm'
 import { calculateTotalTimeFromArray, formatTime, calculateTotalTime, calculateAndConvertDuration, convertToAMPM } from '../helpers/timeHelper'
@@ -18,12 +18,13 @@ import { timeEntryFormField } from '../helpers/formFieldHelper'
 import { getURLPath, generateID } from '../helpers/commonHelper'
 import Services from '../services/timeEntry'
 import { insertTimeEntry } from '../helpers/indexedDB/insert'
-import { TableDataInputed } from '../components/TimeSheet/TableDataInputed'
 import { getTimeEntryDetailById, getTimeEntryByUnit, getUnitDataByNo, getOperatorNameById } from '../helpers/indexedDB/getData'
 import { DialogComponent } from '../components/Dialog'
 import { deleteTimeEntries } from '../helpers/indexedDB/deteleData'
 import { useNavigate } from 'react-router-dom'
 import { updateTimeEntry } from '../helpers/indexedDB/editData'
+
+const TableDataInputed = lazy(() => import('../components/TimeSheet/TableDataInputed'))
 
 export default function TimeSheetPage() {
 
@@ -45,7 +46,7 @@ export default function TimeSheetPage() {
   const [sendingData, setSendingData] = useState(false)
   const navigate = useNavigate()
   const [dataItemId, setDataItemId] = useState(0)
- 
+
   useLiveQuery(() => db.activity.toArray())
 
   const [jdeOptions] = useState(() => getLocalStorage('timeEntry-operator'));
@@ -61,11 +62,11 @@ export default function TimeSheetPage() {
         const start_time = formatTime(currentData[2])
         const end_time = formatTime(currentData[3])
         const duration = calculateAndConvertDuration(start_time, end_time)
-    
+
         if (currentData[0] !== '') {
-          
+
           const operatorData = await getOperatorNameById(currentData[6])
-          
+
           const newData = {
             activity: currentData[0],
             delay_description: currentData[1],
@@ -84,7 +85,7 @@ export default function TimeSheetPage() {
           newArray.push(newData)
         }
       }
-      
+
       return newArray
     },
     []
@@ -201,7 +202,7 @@ export default function TimeSheetPage() {
       const postData = (await Promise.all(localData.map(async (data) => {
         const transformedData = await transformData(data.activity);
         const unitData = await getUnitDataByNo(data.unitNo);
-  
+
         return transformedData.map((activity) => ({
           formID: data.formID,
           unitNo: data.unitNo,
@@ -237,33 +238,33 @@ export default function TimeSheetPage() {
           stafEntry: data.stafEntry
         }));
       }))).flat();
-  
+
       setSendingData(true)
       const saveData = await Services.postTimeEntryData(postData);
-      if(saveData.status === 200) {
+      if (saveData.status === 200) {
         const deleted = localData.map(async (val) => {
           return await deleteTimeEntries(val.id)
         })
-        if(deleted){
+        if (deleted) {
           setSendingData(false)
           navigate('/time-entry-from-collector')
-        } 
-       
+        }
+
       } else {
-         // TODO : add message when data already existed in database
+        // TODO : add message when data already existed in database
       }
     } catch (error) {
       console.error('Error while submitting data:', error);
     }
   }, [transformData, navigate]);
-  
+
   const handleSubmitToLocalDB = useCallback(async () => {
     const data = {
       ...formData,
       activity: tableData,
       formTitle: formTitle
     };
-  
+
     const checkExisted = await getTimeEntryByUnit(data.unitNo);
 
     const resetState = () => {
@@ -273,7 +274,7 @@ export default function TimeSheetPage() {
       setTotalDuration(0);
       jRef.current.jspreadsheet.setData([]);
     };
-  
+
     if (checkExisted.length === 0) {
       const inserted = await insertTimeEntry(data);
       if (inserted) {
@@ -289,7 +290,7 @@ export default function TimeSheetPage() {
         resetState();
       }
     }
-  },[dataItemId, formData, formTitle, isNew, tableData])
+  }, [dataItemId, formData, formTitle, isNew, tableData])
 
   const handleChange = (ev, data) => {
     const { name, value } = data;
@@ -361,8 +362,8 @@ export default function TimeSheetPage() {
   }
 
   const getDataFirst = useCallback(() => {
-    let user = Cookies.get('user')
-    user = JSON.parse(user)
+    // let user = Cookies.get('user')
+    // user = JSON.parse(user)
 
     const now = new Date()
     const currentHour = now.getHours()
@@ -380,7 +381,7 @@ export default function TimeSheetPage() {
       shift: shift,
       tanggal: now,
       site: "BCP",
-      stafEntry: user.fullname,
+      stafEntry: "Testing", //user.fullname,
       formID: randomId
     }
     setFormData(dt)
@@ -530,7 +531,7 @@ export default function TimeSheetPage() {
         title={`Form Time Entry - ${formTitle}`}
         urlCreate={''}
         urlBack={NavigateUrl.TIME_ENTRY_MAIN_TABLE}
-        childrenMenu={<DynamicTablistMenu tabs={menuTabs} active={activeTab} handleTab={handleTab}/>}
+        childrenMenu={<DynamicTablistMenu tabs={menuTabs} active={activeTab} handleTab={handleTab} />}
         icon={<Form28Regular />}
       />
       <div className='form-wrapper'>
@@ -557,14 +558,17 @@ export default function TimeSheetPage() {
         </div>
       </div>
       <div className="mt1em form-wrapper">
-        <TableDataInputed
-          formTitle={formTitle}
-          loaded={loaded}
-          setLoaded={setLoaded}
-          handleEdit={handleEditData}
-          handleSubmitToServer={handleSubmitToServer}
-          sendingData={sendingData}
-        />
+        <Suspense fallback={<></>}>
+          <TableDataInputed
+            formTitle={formTitle}
+            loaded={loaded}
+            setLoaded={setLoaded}
+            handleEdit={handleEditData}
+            handleSubmitToServer={handleSubmitToServer}
+            sendingData={sendingData}
+          />
+        </Suspense>
+
       </div>
       <DialogComponent open={openDialog} setOpen={setOpenDialog} title={dialogTitle} message={dialogMessage} />
     </>

@@ -1,6 +1,7 @@
-import { FormElement } from './elements';
+// import { FormElement } from './elements';
 import PropTypes from 'prop-types';
 import React from 'react';
+const FormElement = React.lazy(() => import('./elements'))
 
 const FormComponent = React.memo(({ handleChange, components }) => {
   return (

@@ -9,7 +9,7 @@ import { deleteTimeEntries } from "../../helpers/indexedDB/deteleData";
 import { DialogComponent } from "../Dialog";
 const TableList = lazy(() => import('../TableList'))
 
-export const TableDataInputed = ({ formTitle, loaded, setLoaded, handleEdit, handleSubmitToServer, sendingData }) => {
+const TableDataInputed = ({ formTitle, loaded, setLoaded, handleEdit, handleSubmitToServer, sendingData }) => {
     const [columnData] = useState([
         { columnId: "id", headerLabel: "ID", defaultWidth: 50 },
         { columnId: "unitNo", headerLabel: "Unit No", defaultWidth: 200 },
@@ -110,6 +110,8 @@ export const TableDataInputed = ({ formTitle, loaded, setLoaded, handleEdit, han
         />
     </>
 };
+
+export default TableDataInputed
 
 TableDataInputed.propTypes = {
     formTitle: PropTypes.string,

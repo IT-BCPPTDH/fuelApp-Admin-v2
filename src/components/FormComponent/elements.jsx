@@ -24,7 +24,7 @@ const useStyles = makeStyles({
     display: "flex",
     flexDirection: "column",
     ...shorthands.gap("2px"),
-    maxWidth: "200px",
+    // maxWidth: "200px",
   },
   combo: {
     display: "grid",
@@ -55,7 +55,7 @@ const useStyles = makeStyles({
   },
 });
 
-export const FormElement =  ({
+const FormElement =  ({
   name,
   label,
   type,
@@ -179,7 +179,6 @@ export const FormElement =  ({
   );
 }
 
-
 const ComboBoxCustom =  (props) => {
   const { inputId, name, label, options, handleChange, value } = props;
   const [matchingOptions, setMatchingOptions] = useState([]);
@@ -260,6 +259,7 @@ const ComboBoxCustom =  (props) => {
   );
 }
 
+export default FormElement
 FormElement.propTypes = {
   name: PropTypes.string,
   label: PropTypes.string,
@@ -269,6 +269,7 @@ FormElement.propTypes = {
   handleChange: PropTypes.func,
   disabled: PropTypes.bool,
   readOnly: PropTypes.bool,
+  placeholder: PropTypes.string
 };
 
 ComboBoxCustom.propTypes={
