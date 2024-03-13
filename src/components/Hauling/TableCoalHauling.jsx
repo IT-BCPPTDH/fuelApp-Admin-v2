@@ -1,52 +1,44 @@
-import { useEffect, useState } from "react";
-import { useMemo } from "react";
-import FormComponent from "../FormComponent";
+import { useEffect, useState, useCallback, lazy, Suspense } from "react";
 import { useNavigate } from "react-router-dom";
 import { ArrowSquareUpRight24Regular } from "@fluentui/react-icons";
-import {
-  TableBody,
-  TableCell,
-  TableRow,
-  Table,
-  TableHeader,
-  TableHeaderCell,
-  TableCellLayout,
-  Button,
-  Body1Stronger,
-} from "@fluentui/react-components";
+import { Button } from "@fluentui/react-components";
 import Transaksi from "../../services/inputCoalHauling";
-
-const columns = [
-  { columnKey: "tanggal", label: "Tanggal" },
-  { columnKey: "total", label: "Total Hauling" },
-  { columnKey: "action", label: "Action" },
-];
+const TableList = lazy(() => import('../TableList'))
 
 const TableCoalHauling = () => {
-  const selectTgl = useMemo(
-    () => [
-      {
-        name: "tanggal",
-        grid: "col-12",
-        value: "",
-        readOnly: false,
-        disabled: false,
-        type: "DatePicker",
-      },
-    ],
-    []
-  );
-  
+
+  const [columnData] = useState([
+    { columnId: "key", headerLabel: "ID", defaultWidth: 100 },
+    { columnId: "entryDate", headerLabel: "Entry Date", defaultWidth: 200 },
+    { columnId: "totalTonnage", headerLabel: "Total Hauling", defaultWidth: 200 },
+    { columnId: "actions", headerLabel: "Action:", defaultWidth: 400 },
+  ])
+
   const [items, setItems] = useState([]);
   const Navigate = useNavigate();
+  const handleDetail = useCallback(async (tanggal) => {
+    try {
+      Navigate(`/coalhauling-dataentry-detail/${tanggal}`);
+
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  }, [Navigate])
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const datamain = await Transaksi.getDataMain();
-        const updatedItems = datamain.data.map((itemFromDB) => ({
-          tanggal: { label: itemFromDB.tanggal },
-          totaltonnage: { label: itemFromDB.totalTonnage },
+        const updatedItems = datamain.data.map((itemFromDB, key) => ({
+          key: key + 1,
+          entryDate: itemFromDB.tanggal,
+          totalTonnage: itemFromDB.totalTonnage,
+          actions: <Button
+            icon={<ArrowSquareUpRight24Regular />}
+            iconPosition="after"
+            onClick={() => handleDetail(itemFromDB.tanggal)}>
+            View Detail Data
+          </Button>
         }));
 
         setItems(updatedItems);
@@ -55,58 +47,14 @@ const TableCoalHauling = () => {
       }
     };
     fetchData();
-  }, []);
-
-  const handleDetail = async (tanggal) => {
-    try {
-      Navigate(`/coalhauling-dataentry-detail/${tanggal}`);
-
-    } catch (error) {
-      console.error("Error fetching data:", error);
-    }
-  };
+  }, [handleDetail]);
 
   return (
-    <>
-      <div className="form-wrapper">
-        <div className="search-box">
-          <FormComponent components={selectTgl} />
-        </div>
-        <Table aria-label="Default table">
-          <TableHeader>
-            <TableRow>
-              {columns.map((column) => (
-                <TableHeaderCell key={column.columnKey}>
-                  <Body1Stronger>{column.label}</Body1Stronger>
-                </TableHeaderCell>
-              ))}
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {items.map((item, index) => (
-              <TableRow key={`${item.id}-${index}`}>
-                <TableCell>
-                  <TableCellLayout>
-                  {item.tanggal.label}
-                  </TableCellLayout>
-                </TableCell>
-                <TableCell>
-                  <TableCellLayout>{item.totaltonnage.label}</TableCellLayout>
-                </TableCell>
-                <TableCell>
-                  <Button
-                    icon={<ArrowSquareUpRight24Regular />}
-                    iconPosition="after"
-                    onClick={() => handleDetail(item.tanggal.label)}>
-                    Detail
-                  </Button>
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </div>
-    </>
+    <div className="form-wrapper" style={{marginTop: 0}}>
+      <Suspense fallback={<></>}>
+        <TableList columnsData={columnData} items={items} backgroundColor={`#ffffff`} />
+      </Suspense>
+    </div>
   );
 };
 

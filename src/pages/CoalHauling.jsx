@@ -1,18 +1,21 @@
-import TableCoalHauling from "../components/Hauling/TableCoalHauling";
+import { lazy, Suspense } from 'react';
 import { HeaderPageForm } from "../components/FormComponent/HeaderPageForm";
 import { NavigateUrl } from "../utils/Navigation";
+const TableCoalHauling = lazy(() => import('../components/Hauling/TableCoalHauling'))
 
 export default function CoalHauling() {
   return (
     <>
-      <HeaderPageForm
+     <HeaderPageForm
         title={`Coal Hauling`}
         urlCreate={NavigateUrl.COAL_HAULING_DATA_ENTRY_FORM}
         urlBack={NavigateUrl.HOME} 
       />
       <div className="row">
         <div className="col-12">
-          <TableCoalHauling />
+          <Suspense fallback={<></>}>
+            <TableCoalHauling />
+          </Suspense>
         </div>
       </div>
     </>

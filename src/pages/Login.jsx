@@ -9,9 +9,7 @@ const Login = () => {
           body {
             background: url(${backgroundImage}) center center no-repeat;
             background-size: cover;
-            posision:absolute;x
-            margin: 0; 
-            height: 50vh; 
+            height: 100vh; 
             overflow: hidden; 
           }
         `}

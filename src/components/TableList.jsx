@@ -27,7 +27,7 @@ const createTableColumnDef = (columnData) => {
     });
 };
 
-export const TableList = ({ columnsData, items, backgroundColor }) => {
+const TableList = ({ columnsData, items, backgroundColor }) => {
 
     const [columns] = useState(createTableColumnDef(columnsData));
 
@@ -100,6 +100,8 @@ export const TableList = ({ columnsData, items, backgroundColor }) => {
         </Table>
     )
 }
+
+export default TableList
 
 TableList.propTypes = {
     columnsData: PropTypes.array,

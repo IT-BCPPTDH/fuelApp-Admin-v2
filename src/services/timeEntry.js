@@ -60,5 +60,4 @@ const Services = {
   getTimeEntryDetailData
 }
 
-
 export default Services

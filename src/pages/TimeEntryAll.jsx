@@ -1,14 +1,14 @@
+import { useState, useEffect, useCallback, lazy, Suspense } from "react";
 import { HeaderPageForm } from "../components/FormComponent/HeaderPageForm";
 import { DynamicTablistMenu } from "../components/Tablist";
 import { tabsTimeEntry } from "../helpers/tabArrayHelper";
 import { NavigateUrl } from "../utils/Navigation";
-import { TableList } from "../components/TableList";
-import { useState, useEffect, useCallback } from "react";
 import Services from "../services/timeEntry";
 import { Button } from "@fluentui/react-components";
 import {ContentView24Regular} from '@fluentui/react-icons'
 import PropTypes from 'prop-types'
 import { useNavigate } from "react-router-dom";
+const TableList = lazy(() => import('../components/TableList'))
 
 const ActionButtons = ({handleAction, param}) =>{
   return(
@@ -35,7 +35,6 @@ const TimeEntryAll = () => {
   const [itemsData, setItemsData] = useState([])
 
   const handleAction = useCallback( async(type, param) => {
-    // console.log(type, param)
     navigate(`/time-entry-detail/${param}/${type}`)
   },[navigate])
 
@@ -53,7 +52,6 @@ const TimeEntryAll = () => {
           }))
           setItemsData(dataItems)
         }
-        // console.log(data)
     } catch (error) {
       console.log(error)
     }
@@ -78,7 +76,9 @@ const TimeEntryAll = () => {
             />
           </div>
         </div>
-        <TableList columnsData={columnData} items={itemsData} backgroundColor={`#ffffff`} />
+        <Suspense fallback={<></>}>
+          <TableList columnsData={columnData} items={itemsData} backgroundColor={`#ffffff`} />
+        </Suspense>
       </div>
     </>
   );

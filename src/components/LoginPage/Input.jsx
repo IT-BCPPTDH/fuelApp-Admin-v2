@@ -11,7 +11,8 @@ import {
 } from "@fluentui/react-components";
 import Logo from "../../images/dewa.png";
 import Cookies from "js-cookie";
-import axios from "axios";
+import UserService from "../../services/UserService";
+import { HTTP_STATUS, STATUS_MESSAGE } from "../../utils/Enums";
 
 const {
   spacingVerticalXXS,
@@ -41,7 +42,8 @@ const useStyles = makeStyles({
     fontSize: "20px",
     fontWeight: "bold",
     marginBottom: spacingVerticalXXS,
-    color: "gray",
+    color: "#333",
+    marginTop: '10px'
   },
   filledLighter: {
     backgroundColor: colorNeutralBackgroundInverted,
@@ -86,39 +88,42 @@ export const InputForm = () => {
   useEffect(() => {
     inputReference.current.focus();
   }, []);
+
   const handleLogin = async () => {
+
     try {
+
       if (!jde || !password) {
         setIsJdeValid(!!jde);
         setIsPasswordValid(!!password);
         return;
       }
 
-      let response = await axios.post(
-        `${import.meta.env.VITE_LINK_BACKEND}/auth/login`,
-        { JDE: jde, password: password }
-      );
+      const response = await UserService.authLogin({ JDE: jde, password: password })
 
-      if (response.data.status === 200) {
-        Cookies.set("token", response.data.jwt, { expires: 1 });
-        Cookies.set("user", JSON.stringify(response.data.user), { expires: 1 });
+      if (response.status === HTTP_STATUS.OK || response.status === HTTP_STATUS.CREATED) {
 
+        Cookies.set("token", response.session_token, { expires: 1 });
+        Cookies.set("user", JSON.stringify(response.user_id), { expires: 1 });
         window.location.reload();
+
+      } else if (response.status === HTTP_STATUS.NO_CONTENT) {
+
+        setIsPasswordValid(false);
+        setErrorMessage(STATUS_MESSAGE.INVALID_JDE)
+
+      } else if (response.status === HTTP_STATUS.UNAUTHORIZED) {
+
+        setErrorMessage(STATUS_MESSAGE.CRED_NOT_FOUND)
+
       } else {
-        if (response.status === 401) {
-          if (response.data.message === "Invalid Password") {
-            setIsPasswordValid(false);
-            setErrorMessage("Invalid password");
-          } else {
-            setErrorMessage("JDE or Password is Wrong");
-          }
-        } else {
-          setErrorMessage("JDE  or Password is Wrong");
-        }
+
+        setErrorMessage(STATUS_MESSAGE.ERR_AUTH)
+        
       }
     } catch (error) {
       console.error("Error:", error);
-      setErrorMessage("JDE  or Password is Wrong");
+      setErrorMessage(STATUS_MESSAGE.ERR_AUTH);
     }
   };
 
@@ -137,14 +142,14 @@ export const InputForm = () => {
     <form onSubmit={handleSubmit} className={styles.base}>
       <div className={styles.field}>
         <Image alt="Darma Henwa" src={Logo} height={30} width={130} />
-        <div className={styles.label}>Sign In</div>
+        <div className={styles.label}>Sign In - Data Collector</div>
         {errorMessage && (
           <div style={{ color: "red", marginTop: "10px" }}>{errorMessage}</div>
         )}
       </div>
 
       <div className={`${styles.field} ${isJdeValid ? "" : ""}`}>
-        <Field validationMessage={isJdeValid ? "" : "JDE is required."}>
+        <Field validationMessage={isJdeValid ? "" : STATUS_MESSAGE.JDE_REQ}>
           <Input
             appearance="underline"
             id={underlineId1}
@@ -152,7 +157,7 @@ export const InputForm = () => {
             className={styles.input}
             value={jde}
             ref={inputReference}
-            onKeyPress={handleKeyPress}
+            onKeyUp={handleKeyPress}
             onChange={(e) => {
               const inputValue = e.target.value;
               const isValidInput = /^[a-zA-Z0-9]*$/.test(inputValue);
@@ -163,16 +168,14 @@ export const InputForm = () => {
                 setErrorMessage(null);
               } else {
                 setIsJdeValid(false);
-                setErrorMessage("Invalid characters. Alphanumeric only.");
+                setErrorMessage(STATUS_MESSAGE.INVALID_CHAR);
               }
             }}
           />
         </Field>
       </div>
       <div className={`${styles.field} ${isPasswordValid ? "" : ""}`}>
-        <Field
-          validationMessage={isPasswordValid ? "" : "Password is required."}
-        >
+        <Field validationMessage={isPasswordValid ? "" : STATUS_MESSAGE.PASS_REQ}>
           <Input
             appearance="underline"
             id={underlineId2}

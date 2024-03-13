@@ -40,11 +40,7 @@ import { getDataTableHauling } from "../../helpers/indexedDB/getData";
 import { deleteFormDataHauling } from "../../helpers/indexedDB/deteleData";
 import PropTypes from "prop-types";
 import Transaksi from "../../services/inputCoalHauling";
-import {
-  // clearInterval,
-  // pingInterval,
-  pingServer,
-} from "../../helpers/pingServer";
+import { pingServer } from "../../helpers/pingServer";
 import { useNavigate } from "react-router-dom";
 
 const useStyles = makeStyles({
@@ -53,7 +49,7 @@ const useStyles = makeStyles({
     position: "fixed",
     bottom: "20px",
     right: "20px",
-    zIndex: 1000, // Adjust the z-index as needed
+    zIndex: 1000, 
   },
 });
 
@@ -369,7 +365,6 @@ const TableHauling = ({ handleEdit, dataUpdated, setDataupdated }) => {
               </DialogBody>
             </DialogSurface>
           </Dialog>
-
           <Dialog
             modalType="alert"
             open={isDialogOpen}

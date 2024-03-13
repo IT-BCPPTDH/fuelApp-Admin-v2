@@ -1,32 +1,11 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, lazy, Suspense } from "react";
 import Transaksi from "../../services/inputCoalHauling";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableCellLayout,
-  TableHeader,
-  TableHeaderCell,
-  TableRow,
-  createTableColumn,
-  useTableColumnSizing_unstable,
-  useTableFeatures,
-  Menu,
-  MenuItem,
-  MenuList,
-  MenuPopover,
-  MenuTrigger,
-  Button,
-  MessageBar,
-  MessageBarBody,
-  MessageBarTitle,
-  Link,
-  makeStyles,
-  Body1Stronger,
-} from "@fluentui/react-components";
+import { Button, MessageBar, MessageBarBody, MessageBarTitle, Link, makeStyles } from "@fluentui/react-components";
 import { ArrowDownload24Regular } from "@fluentui/react-icons";
 import { useParams } from "react-router-dom";
 import { URL_ENUMS } from "../../utils/Enums";
+import { indonesianDate } from "../../helpers/convertDate";
+const TableList = lazy(() => import('../TableList'))
 
 const useStyles = makeStyles({
   messageContainer: {
@@ -37,111 +16,45 @@ const useStyles = makeStyles({
   },
 });
 
-const columnsDef = [
-  createTableColumn({
-    columnId: "id",
-    renderHeaderCell: () => <>Id</>,
-  }),
-  createTableColumn({
-    columnId: "tanggal",
-    renderHeaderCell: () => <>Tanggal</>,
-  }),
-  createTableColumn({
-    columnId: "shift",
-    renderHeaderCell: () => <>Shift</>,
-  }),
-  createTableColumn({
-    columnId: "unitno",
-    renderHeaderCell: () => <>Unit</>,
-  }),
-  createTableColumn({
-    columnId: "operator",
-    renderHeaderCell: () => <>Operator</>,
-  }),
-  createTableColumn({
-    columnId: "tonnage",
-    renderHeaderCell: () => <>Tonnage</>,
-  }),
-  createTableColumn({
-    columnId: "loader",
-    renderHeaderCell: () => <>Loader</>,
-  }),
-  createTableColumn({
-    columnId: "pit",
-    renderHeaderCell: () => <>Pit</>,
-  }),
-  createTableColumn({
-    columnId: "seam",
-    renderHeaderCell: () => <>Seam</>,
-  }),
-  createTableColumn({
-    columnId: "dumpingpoint",
-    renderHeaderCell: () => <>Dumping Point</>,
-  }),
-  createTableColumn({
-    columnId: "inrom",
-    renderHeaderCell: () => <>In Rom</>,
-  }),
-  createTableColumn({
-    columnId: "outrom",
-    renderHeaderCell: () => <>Out Rom</>,
-  }),
-];
-
 const TableDetailHauling = () => {
   const classes = useStyles();
-  const [columns] = useState(columnsDef);
   const [message, setMessage] = useState(null);
   const params = useParams();
 
-  const [columnSizingOptions] = useState({
-    id: {
-      idealWidth: 20,
-      minWidth: 20,
-    },
-    shift: {
-      minWidth: 50,
-    },
-  });
+  const [columnData] = useState([
+    { columnId: "id", headerLabel: "ID", defaultWidth: 30 },
+    { columnId: "date", headerLabel: "Date", defaultWidth: 50 },
+    { columnId: "shift", headerLabel: "Shift", defaultWidth: 50 },
+    { columnId: "unitno", headerLabel: "Unit No", defaultWidth: 50 },
+    { columnId: "operator", headerLabel: "Operator", defaultWidth: 100 },
+    { columnId: "tonnage", headerLabel: "Tonnage", defaultWidth: 50 },
+    { columnId: "loader", headerLabel: "Loader", defaultWidth: 100 },
+    { columnId: "pit", headerLabel: "Pit", defaultWidth: 100 },
+    { columnId: "seam", headerLabel: "Seam", defaultWidth: 100 },
+    { columnId: "dumpingpoint", headerLabel: "Dumping Point", defaultWidth: 150 },
+    { columnId: "inrom", headerLabel: "In-Rom", defaultWidth: 50 },
+    { columnId: "outrom", headerLabel: "Out-Rom", defaultWidth: 50 },
+  ])
 
   const [items, setItems] = useState([]);
-
-  const { getRows, columnSizing_unstable, tableRef } = useTableFeatures(
-    {
-      columns,
-      items,
-    },
-    [useTableColumnSizing_unstable({ columnSizingOptions })]
-  );
-
-  const rows = getRows();
-
-  const formatDate = (dateString) => {
-    const options = {
-      day: "2-digit",
-      month: "2-digit",
-      year: "numeric",
-    };
-    return new Date(dateString).toLocaleDateString("en-GB", options);
-  };
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const dts = await Transaksi.getAllTransaction(params.tanggal);
         const updatedItems = dts.data.map((itemFromDB, index) => ({
-          id: { label: (index + 1).toString() },
-          tanggal: { label: itemFromDB.tanggal },
-          shift: { label: itemFromDB.shift },
-          unitno: { label: itemFromDB.unitno },
-          operator: { label: itemFromDB.operator },
-          tonnage: { label: itemFromDB.tonnage },
-          loader: { label: itemFromDB.loader },
-          pit: { label: itemFromDB.pit },
-          seam: { label: itemFromDB.seam },
-          dumpingpoint: { label: itemFromDB.dumpingpoint },
-          inrom: { label: itemFromDB.inrom },
-          outrom: { label: itemFromDB.outrom },
+          id: index + 1,
+          tanggal: indonesianDate(new Date(itemFromDB.tanggal)),
+          shift: itemFromDB.shift,
+          unitno: itemFromDB.unitno,
+          operator: itemFromDB.operator,
+          tonnage: itemFromDB.tonnage,
+          loader: itemFromDB.loader,
+          pit: itemFromDB.pit,
+          seam: itemFromDB.seam,
+          dumpingpoint: itemFromDB.dumpingpoint,
+          inrom: itemFromDB.inrom,
+          outrom: itemFromDB.outrom,
         }));
 
         setItems(updatedItems);
@@ -164,7 +77,7 @@ const TableDetailHauling = () => {
 
   return (
     <>
-      <div className="form-wrapper">
+      <div className="form-wrapper" style={{marginTop: 0}}>
         <div className="search-box">
           <Button
             icon={<ArrowDownload24Regular />}
@@ -175,103 +88,9 @@ const TableDetailHauling = () => {
           </Button>
         </div>
         <div style={{ overflowX: "auto" }}>
-          <Table
-            sortable
-            aria-label="Table with sort"
-            ref={tableRef}
-            {...columnSizing_unstable.getTableProps()}>
-            <TableHeader>
-              <TableRow>
-                {columns.map((column) => (
-                  <Menu openOnContext key={column.columnId}>
-                    <MenuTrigger>
-                      <TableHeaderCell
-                        key={column.columnId}
-                        {...columnSizing_unstable.getTableHeaderCellProps(
-                          column.columnId
-                        )}>
-                        <Body1Stronger>
-                          {" "}
-                          {column.renderHeaderCell()}{" "}
-                        </Body1Stronger>
-                      </TableHeaderCell>
-                    </MenuTrigger>
-                    <MenuPopover>
-                      <MenuList>
-                        <MenuItem
-                          onClick={columnSizing_unstable.enableKeyboardMode(
-                            column.columnId
-                          )}>
-                          Keyboard Column Resizing
-                        </MenuItem>
-                      </MenuList>
-                    </MenuPopover>
-                  </Menu>
-                ))}
-              </TableRow>
-            </TableHeader>
-
-            <TableBody>
-              {rows.map(({ item }) => (
-                <TableRow key={item.id.label}>
-                  <TableCell {...columnSizing_unstable.getTableCellProps("id")}>
-                    <TableCellLayout>{item.id.label}</TableCellLayout>
-                    {/* <TableCellLayout>{item.id.label || (index + 1).toString()}</TableCellLayout> */}
-                  </TableCell>
-                  <TableCell
-                    {...columnSizing_unstable.getTableCellProps("tanggal")}>
-                    <TableCellLayout>
-                      {formatDate(item.tanggal.label)}
-                    </TableCellLayout>
-                  </TableCell>
-                  <TableCell
-                    {...columnSizing_unstable.getTableCellProps("shift")}>
-                    <TableCellLayout truncate>
-                      {item.shift.label}
-                    </TableCellLayout>
-                  </TableCell>
-                  <TableCell
-                    {...columnSizing_unstable.getTableCellProps("unitno")}>
-                    <TableCellLayout>{item.unitno.label}</TableCellLayout>
-                  </TableCell>
-                  <TableCell
-                    {...columnSizing_unstable.getTableCellProps("operator")}>
-                    <TableCellLayout>{item.operator.label}</TableCellLayout>
-                  </TableCell>
-                  <TableCell
-                    {...columnSizing_unstable.getTableCellProps("tonnage")}>
-                    <TableCellLayout>{item.tonnage.label}</TableCellLayout>
-                  </TableCell>
-                  <TableCell
-                    {...columnSizing_unstable.getTableCellProps("loader")}>
-                    <TableCellLayout>{item.loader.label}</TableCellLayout>
-                  </TableCell>
-                  <TableCell
-                    {...columnSizing_unstable.getTableCellProps("pit")}>
-                    <TableCellLayout>{item.pit.label}</TableCellLayout>
-                  </TableCell>
-                  <TableCell
-                    {...columnSizing_unstable.getTableCellProps("seam")}>
-                    <TableCellLayout>{item.seam.label}</TableCellLayout>
-                  </TableCell>
-                  <TableCell
-                    {...columnSizing_unstable.getTableCellProps(
-                      "dumpingpoint"
-                    )}>
-                    <TableCellLayout>{item.dumpingpoint.label}</TableCellLayout>
-                  </TableCell>
-                  <TableCell
-                    {...columnSizing_unstable.getTableCellProps("inrom")}>
-                    <TableCellLayout>{item.inrom.label}</TableCellLayout>
-                  </TableCell>
-                  <TableCell
-                    {...columnSizing_unstable.getTableCellProps("outrom")}>
-                    <TableCellLayout>{item.outrom.label}</TableCellLayout>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+          <Suspense fallback={<></>}>
+            <TableList columnsData={columnData} items={items} backgroundColor={`#ffffff`} />
+          </Suspense>
         </div>
       </div>
       <div className={classes.messageContainer}>

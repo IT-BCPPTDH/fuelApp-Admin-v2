@@ -6,16 +6,13 @@ import { InputForm } from './Input'
 const { margin } = shorthands
 
 const useStyles = makeStyles({
-  fluentProvider: {
-    marginTop: '200px'
-  },
   card: {
     ...margin('auto'),
-    marginLeft: '480px',
     width: '450px',
     backgroundColor: '#e3f3ff',
     position: 'absolute',
-    justifyContent: 'center',
+    left: '35%',
+    top: '30%',
     boxShadow: '0 0 20px rgba(0, 0, 0, 0.2)'
   }
 })
@@ -24,17 +21,15 @@ export const Loginpage = () => {
 
   return (
     <>
-      <div className={styles.fluentProvider}>
-        <Card className={styles.card}>
-          <CardHeader
-            header={
-              <Body1>
-                <InputForm />
-              </Body1>
-            }
-          />
-        </Card>
-      </div>
+      <Card className={styles.card}>
+        <CardHeader
+          header={
+            <Body1>
+              <InputForm />
+            </Body1>
+          }
+        />
+      </Card>
     </>
   )
 }

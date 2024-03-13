@@ -1,26 +1,12 @@
 import { useEffect, useCallback } from 'react';
-import {
-  makeStyles,
-  shorthands,
-  Divider,
-  Caption1,
-  Body1,
-  Subtitle1,
-  Text,
-  Card,
-  CardHeader,
-} from '@fluentui/react-components';
+import { makeStyles, shorthands, Divider, Caption1, Body1, Subtitle1, Text, Card, CardHeader } from '@fluentui/react-components';
 import Title from '../components/Title';
 import { useNavigate } from 'react-router-dom';
 import Services from '../services/timeEntry';
 import { toLocalStorage } from '../helpers/toLocalStorage';
 import { db } from '../models/db';
 import { useLiveQuery } from 'dexie-react-hooks';
-import {
-  insertActivity,
-  insertOperator,
-  insertUnit,
-} from '../helpers/indexedDB/insert';
+import { insertActivity, insertOperator, insertUnit } from '../helpers/indexedDB/insert';
 import msgpack from 'msgpack-lite';
 import PropTypes from 'prop-types';
 import { menuArrayData, formArrayData } from '../helpers/menuHelper';
@@ -102,8 +88,6 @@ const CardMenu = ({ name, desc, link }) => {
 
 const DashboardPage = () => {
   const styles = useStyles();
-  // const navigate = useNavigate();
-
   const activity = useLiveQuery(() => db.activity.toArray());
   const operator = useLiveQuery(() => db.operator.toArray());
   const unit = useLiveQuery(() => db.unit.toArray());
@@ -157,6 +141,7 @@ const DashboardPage = () => {
       toLocalStorage(TIME_ENTRY_ACTIVITY_KEY, act);
       toLocalStorage(TIME_ENTRY_MASTER_ACT_KEY, decodedDataActivity.data);
       toLocalStorage(TIME_ENTRY_OPERATOR_KEY, op);
+      
     } catch (err) {
       console.log(err);
     }
@@ -167,6 +152,7 @@ const DashboardPage = () => {
     if (activity && operator && unit) {
       getDataMaster();
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [getDataMaster]);
 
   return (
