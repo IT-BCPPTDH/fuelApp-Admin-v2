@@ -1,5 +1,4 @@
-import { useEffect, useState, useCallback } from "react";
-import { TableList } from "../TableList";
+import { useEffect, useState, useCallback, lazy, Suspense } from "react";
 import { getTimeEntryByformTitle } from "../../helpers/indexedDB/getData";
 import PropTypes from "prop-types";
 import { indonesianDate } from "../../helpers/convertDate";
@@ -8,8 +7,9 @@ import { CompoundButton } from '@fluentui/react-components'
 import { SaveArrowRight24Regular } from '@fluentui/react-icons'
 import { deleteTimeEntries } from "../../helpers/indexedDB/deteleData";
 import { DialogComponent } from "../Dialog";
+const TableList = lazy(() => import('../TableList'))
 
-export const TableDataInputed = ({ formTitle, loaded, setLoaded, handleEdit, handleSubmitToServer, sendingData}) => {
+export const TableDataInputed = ({ formTitle, loaded, setLoaded, handleEdit, handleSubmitToServer, sendingData }) => {
     const [columnData] = useState([
         { columnId: "id", headerLabel: "ID", defaultWidth: 50 },
         { columnId: "unitNo", headerLabel: "Unit No", defaultWidth: 200 },
@@ -34,7 +34,7 @@ export const TableDataInputed = ({ formTitle, loaded, setLoaded, handleEdit, han
 
     const fetchData = useCallback(async () => {
         const data = await getTimeEntryByformTitle(formTitle);
-      
+
         if (data.length > 0) {
             const dataTable = data.map((val) => ({
                 id: val.id,
@@ -45,17 +45,17 @@ export const TableDataInputed = ({ formTitle, loaded, setLoaded, handleEdit, han
                 hmAkhir: val.hmAkhir,
                 actions: <TableButtonDialog handleEdit={handleEdit} handleDelete={handleDelete} open={open} setOpen={setOpen} itemId={val.id} />
             }));
-       
+
             setItemData(dataTable);
             setButton2Disabled(false)
             setLocalData(data)
         }
     }, [open, handleEdit, formTitle]);
 
-    const handleAction = useCallback(()=>{
+    const handleAction = useCallback(() => {
         handleSubmitToServer(localData)
-        
-    },[handleSubmitToServer, localData])
+
+    }, [handleSubmitToServer, localData])
 
     useEffect(() => {
         setItemData([])
@@ -68,7 +68,7 @@ export const TableDataInputed = ({ formTitle, loaded, setLoaded, handleEdit, han
     }, [fetchData, loaded, setLoaded]);
 
     useEffect(() => {
-        if(sendingData){
+        if (sendingData) {
             setShowButton(false)
         } else {
             setShowButton(true)
@@ -77,29 +77,32 @@ export const TableDataInputed = ({ formTitle, loaded, setLoaded, handleEdit, han
     }, [sendingData]);
 
     return <>
-      <CompoundButton
-          onClick={() => setOpenDialog(true)}
-          icon={<SaveArrowRight24Regular primaryFill='#ffffff' />}
-          iconPosition='after'
-          size='small'
-          style={{
-            float: 'right',
-            marginRight: '0',
-            marginBottom: '1em',
-            padding: '0 1.5em',
-            backgroundColor: '#035bb6',
-            color: '#fff'
-          }}
-          disabled={button2Disabled}
+        <CompoundButton
+            onClick={() => setOpenDialog(true)}
+            icon={<SaveArrowRight24Regular primaryFill='#ffffff' />}
+            iconPosition='after'
+            size='small'
+            style={{
+                float: 'right',
+                marginRight: '0',
+                marginBottom: '1em',
+                padding: '0 1.5em',
+                backgroundColor: '#035bb6',
+                color: '#fff'
+            }}
+            disabled={button2Disabled}
         >
-          Submit data to server
+            Submit data to server
         </CompoundButton>
-        <TableList columnsData={columnData} items={itemsData} backgroundColor={`#ffffff`} />
-        <DialogComponent 
-            open={openDialog} 
-            setOpen={setOpenDialog} 
-            title={'Konfirmasi simpan data'} 
-            message={`Apakah kamu yakin data sudah valid semua?`} 
+        <Suspense fallback={<></>}>
+            <TableList columnsData={columnData} items={itemsData} backgroundColor={`#ffffff`} />
+        </Suspense>
+
+        <DialogComponent
+            open={openDialog}
+            setOpen={setOpenDialog}
+            title={'Konfirmasi simpan data'}
+            message={`Apakah kamu yakin data sudah valid semua?`}
             handleAction={handleAction}
             buttonText={'Iya, Simpan Sekarang.'}
             showButton={showButton}
