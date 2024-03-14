@@ -100,12 +100,12 @@ export const InputForm = () => {
       }
 
       const response = await UserService.authLogin({ JDE: jde, password: password })
-
+console.log(response)
       if (response.status === HTTP_STATUS.OK || response.status === HTTP_STATUS.CREATED) {
 
         Cookies.set("token", response.session_token, { expires: 1 });
-        Cookies.set("user", JSON.stringify(response.user_id), { expires: 1 });
-        window.location.reload();
+        Cookies.set("user", JSON.stringify(response.data), { expires: 1 });
+       window.location.reload();
 
       } else if (response.status === HTTP_STATUS.NO_CONTENT) {
 

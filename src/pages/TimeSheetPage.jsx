@@ -2,8 +2,8 @@ import { useRef, useEffect, useCallback, useState, useMemo, lazy, Suspense } fro
 import jspreadsheet from 'jspreadsheet-ce'
 import { Form28Regular } from '@fluentui/react-icons'
 import { DynamicTablistMenu } from '../components/Tablist'
-import FormComponent from '../components/FormComponent'
-// import Cookies from 'js-cookie'
+// import FormComponent from '../components/FormComponent'
+import Cookies from 'js-cookie'
 import { getLocalStorage } from '../helpers/toLocalStorage'
 import { HeaderPageForm } from '../components/FormComponent/HeaderPageForm'
 import { calculateTotalTimeFromArray, formatTime, calculateTotalTime, calculateAndConvertDuration, convertToAMPM } from '../helpers/timeHelper'
@@ -25,6 +25,7 @@ import { useNavigate } from 'react-router-dom'
 import { updateTimeEntry } from '../helpers/indexedDB/editData'
 
 const TableDataInputed = lazy(() => import('../components/TimeSheet/TableDataInputed'))
+const FormComponent = lazy(() => import('../components/FormComponent'))
 
 export default function TimeSheetPage() {
 
@@ -362,8 +363,8 @@ export default function TimeSheetPage() {
   }
 
   const getDataFirst = useCallback(() => {
-    // let user = Cookies.get('user')
-    // user = JSON.parse(user)
+    let user = Cookies.get('user')
+    user = JSON.parse(user)
 
     const now = new Date()
     const currentHour = now.getHours()
@@ -381,7 +382,7 @@ export default function TimeSheetPage() {
       shift: shift,
       tanggal: now,
       site: "BCP",
-      stafEntry: "Testing", //user.fullname,
+      stafEntry: user.fullname,
       formID: randomId
     }
     setFormData(dt)
@@ -403,7 +404,8 @@ export default function TimeSheetPage() {
       getDataFirst()
     }
 
-  }, [totalDuration, getDataFirst, isNew]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [totalDuration, isNew]);
 
   const handleEditData = useCallback(async (itemId) => {
     setDataItemId(itemId)
@@ -535,7 +537,10 @@ export default function TimeSheetPage() {
         icon={<Form28Regular />}
       />
       <div className='form-wrapper'>
+        <Suspense fallback={<></>}>
         <FormComponent handleChange={handleChange} components={components} />
+        </Suspense>
+        
         <div ref={jRef} className='mt1em' />
         <div className='row mt1em'>
           <div className='col-6 flex-row'>
@@ -568,7 +573,6 @@ export default function TimeSheetPage() {
             sendingData={sendingData}
           />
         </Suspense>
-
       </div>
       <DialogComponent open={openDialog} setOpen={setOpenDialog} title={dialogTitle} message={dialogMessage} />
     </>

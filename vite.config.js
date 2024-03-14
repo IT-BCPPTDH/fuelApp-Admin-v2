@@ -53,4 +53,24 @@ export default defineConfig({
       injectRegister: 'auto'
     })
   ],
+  server: {
+    compress: true, // mengaktifkan gzip compression pada server development
+  },
+  build: {
+    brotliSize: false, // menonaktifkan brotli compression pada file hasil build
+    chunkSizeWarningLimit: 1600, 
+    minify: 'terser', // mengaktifkan minifikasi dengan menggunakan Terser
+    terserOptions: {
+      compress: {
+        drop_console: true, // menghapus semua console.log pada file hasil build
+      },
+    },
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          vendor: ['react', 'react-dom', 'react-router-dom'], // membagi kode menjadi chunk berdasarkan library yang digunakan
+        },
+      },
+    },
+  },
 })
