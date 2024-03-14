@@ -15,6 +15,13 @@ export default defineConfig({
       workbox: {
         globPatterns: ['**/*.{js,css,html,ico,png,svg}'],
         maximumFileSizeToCacheInBytes: 10 * 1024 * 1024, 
+        navigateFallback: '/index.html',
+        navigateFallbackAllowlist: [
+          // blacklist url yang tidak ingin dicache
+          new RegExp('^/_'),
+        ],
+        clientsClaim: true,
+        skipWaiting: true,
       },
       includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'pwa-maskable-192x192.png'],
       manifest: {
