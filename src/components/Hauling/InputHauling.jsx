@@ -88,12 +88,20 @@ const InputHauling = ({
     (e, v) => {
       const { name, value } = v;
       if (name === "inrom" || name === "outrom") {
-        //menjalankan filter inrom atau outrom
+        
         const filter =  /^[0-9.:]+$/;
-        // const filter = /^([01]?[0-9]|2[0-3]):[0-5][0-9]$/;
 
-        const filteredValue = filter.test(value) ? value : "";
-        console.log(filteredValue);
+        function checkValue(value) {
+          if (value.length === 3 && value.indexOf(':') === -1) {
+              return false; 
+          }
+          if (value.length > 5) {
+              return false; 
+          }
+          return true; 
+        }
+      
+        const filteredValue = checkValue(value) && filter.test(value) ? value : "";
 
         setFormData((prevFormData) => ({
           ...prevFormData,
@@ -138,7 +146,7 @@ const InputHauling = ({
     setMessage(false);
     // setIsFormValid(false);
     setPostData(true);
-  }, [setPostData]);
+  }, [setPostData,determineShift]);
 
   const handleSubmit = useCallback(async () => {
     try {
@@ -171,7 +179,6 @@ const InputHauling = ({
       };
 
       if (postData) {
-        console.log(1, data);
         const inserted = await insertFormDataHauling(data);
         if (inserted) {
           dbInserted = true;
@@ -270,8 +277,8 @@ const InputHauling = ({
         readOnly: false,
         disabled: false,
         value: formData.tonnage,
-        type: "Input",
-        // options: tonnageOptions,
+        type: "Combobox",
+        options: tonnageOptions,
       },
       {
         name: "seam",
@@ -310,8 +317,7 @@ const InputHauling = ({
         readOnly: false,
         disabled: false,
         value: formData.inrom,
-        type: "Input",
-        placeholder: "Contoh: 12:00",
+        type: "Input"
       },
       {
         name: "outrom",
@@ -320,8 +326,7 @@ const InputHauling = ({
         readOnly: false,
         disabled: false,
         value: formData.outrom,
-        type: "Input",
-        placeholder: "Contoh: 13:00",
+        type: "Input"
       },
     ],
     [
@@ -332,6 +337,7 @@ const InputHauling = ({
       pitOptions,
       shiftOptions,
       unitOptions,
+      tonnageOptions
     ]
   );
 
