@@ -104,7 +104,7 @@ export const unitOptionsData = [
 "HPM1096",
 "HPM1097",
 ];
-export const tonnageOptionsData = ["25", "32", "43", "110", "140", "143", "160", "169"];
+export const tonnageOptionsData = ["43", "143","169"];
 export const loaderOptionsData = [
   "HWL1038",
   "HWL1039",

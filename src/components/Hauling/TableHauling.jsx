@@ -176,7 +176,7 @@ const TableHauling = ({ handleEdit, dataUpdated, setDataupdated }) => {
         return itemDate === dateToday;
       });
 
-      const updatedItems = todayItems.map((itemFromDB) => ({
+      const updatedItems = dts.map((itemFromDB) => ({
         id: itemFromDB.id,
         tanggal: itemFromDB.tanggal,
         shift: itemFromDB.shift,

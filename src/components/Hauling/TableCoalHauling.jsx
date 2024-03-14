@@ -10,7 +10,8 @@ const TableCoalHauling = () => {
   const [columnData] = useState([
     { columnId: "key", headerLabel: "ID", defaultWidth: 100 },
     { columnId: "entryDate", headerLabel: "Entry Date", defaultWidth: 200 },
-    { columnId: "totalTonnage", headerLabel: "Total Hauling", defaultWidth: 200 },
+    { columnId: "totalTonnage", headerLabel: "Total Hauling(TON)", defaultWidth: 200 },
+    { columnId: "ritage", headerLabel: "RITAGE", defaultWidth: 200 },
     { columnId: "actions", headerLabel: "Action:", defaultWidth: 400 },
   ])
 
@@ -33,6 +34,7 @@ const TableCoalHauling = () => {
           key: key + 1,
           entryDate: itemFromDB.tanggal,
           totalTonnage: itemFromDB.totalTonnage,
+          ritage: itemFromDB.ritage,
           actions: <Button
             icon={<ArrowSquareUpRight24Regular />}
             iconPosition="after"
