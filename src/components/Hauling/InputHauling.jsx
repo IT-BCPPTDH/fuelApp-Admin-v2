@@ -317,7 +317,8 @@ const InputHauling = ({
         readOnly: false,
         disabled: false,
         value: formData.inrom,
-        type: "Input"
+        type: "Input",
+        placeholder: "Contoh: 12:00"
       },
       {
         name: "outrom",
@@ -326,7 +327,8 @@ const InputHauling = ({
         readOnly: false,
         disabled: false,
         value: formData.outrom,
-        type: "Input"
+        type: "Input",
+        placeholder: "Contoh: 12:00"
       },
     ],
     [
