@@ -2,18 +2,20 @@ export const menuArrayData = [
     {
         name: 'Data Coal Hauling',
         desc: 'Data Collector for Coal Hauling Entry',
-        link: '/coalhauling'
+        link: '/coalhauling',
+        access: ['MHA', 'MED', 'MOD']
+    },
+    {
+        name: 'Data Time Entry',
+        desc: 'List Time Entry All Date',
+        link: '/time-entry-from-collector',
+        access: ['MED', 'MOD']
     },
     // {
     //   name: 'Coal Hauling Admin',
     //   desc: 'Data Collector for Coal Hauling Entry Admin',
     //   link: '/coalhauling-admin'
     // },
-    {
-        name: 'Data Time Entry',
-        desc: 'List Time Entry All Date',
-        link: '/time-entry-from-collector'
-    },
     // {
     //     name: 'Data Time Entry (FMS)',
     //     desc: 'Template Time Entry model Mines',
@@ -41,22 +43,26 @@ export const formArrayData = [
     {
         name: 'Form Coal Hauling',
         desc: 'Data Collector Coal Hauling',
-        link: '/coalhauling-dataentry-form'
+        link: '/coalhauling-dataentry-form',
+        access: ['MHA', 'MED', 'MOD']
     },
     {
         name: 'Form Time Entry - Unit Support',
         desc: 'Data Collector Time Entry for Unit Support',
-        link: '/time-entry-support-form'
+        link: '/time-entry-support-form',
+        access: ['MED', 'MOD']
     },
     {
         name: 'Form Time Entry - Unit Digger',
         desc: 'Data Collector Time Entry for Unit Digger',
-        link: '/time-entry-digger-form'
+        link: '/time-entry-digger-form',
+        access: ['MED', 'MOD']
     },
     {
         name: 'Form Time Entry - Unit Hauler',
         desc: 'Data Collector Time Entry for Unit Hauler',
-        link: '/time-entry-hauler-form'
+        link: '/time-entry-hauler-form',
+        access: ['MED', 'MOD']
     }
 ]
 

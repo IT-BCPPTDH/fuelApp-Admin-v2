@@ -1,4 +1,6 @@
-import { Home24Regular, Feed24Regular, Open24Regular } from '@fluentui/react-icons';
+import { Home24Regular, 
+  // Feed24Regular, 
+  Open24Regular } from '@fluentui/react-icons';
 import { makeStyles, shorthands, Tab, TabList } from '@fluentui/react-components';
 import { useNavigate } from 'react-router-dom';
 import Cookies from 'js-cookie';
@@ -59,7 +61,7 @@ const Sidebar = () => {
 
   const tabData = [
     { value: 'tab1', icon: <Home24Regular />, label: 'Home', onClick: () => handleTabClick('/') },
-    { value: 'tab2', icon: <Feed24Regular />, label: 'Report', onClick: () => handleTabClick('/data-master') },
+  //  { value: 'tab2', icon: <Feed24Regular />, label: 'Report', onClick: () => handleTabClick('/data-master') },
     { value: 'tab3', icon: <Open24Regular />, label: 'Logout', onClick: handleLogout },
   ];
 

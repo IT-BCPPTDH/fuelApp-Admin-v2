@@ -10,7 +10,6 @@ const TimeSheetPage = lazy(() => import('./pages/TimeSheetPage'));
 const TimeEntryMinesEntryPage = lazy(() => import('./pages/TimeEntryMinesEntryPage'));
 const TimeEntryMinesDetailPage = lazy(() => import('./pages/TimeEntryDetailPage'));
 
-
 // import ProductionEntryPage from './pages/ProductionEntryPage'
 // import MineplanEntryPage from './pages/MineplanEntryPage'
 // import RekapTimeEntryPage from './pages/RekapTimeEntryPage'

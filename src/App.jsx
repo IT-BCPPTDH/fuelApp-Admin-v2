@@ -6,6 +6,7 @@ import Sidebar from './components/Sidebar';
 import Header from './components/Header';
 import RouteApp from './Routes';
 import Cookies from 'js-cookie';
+import UserRoleProvider from './context/UserRoleProvider';
 
 const dh = {
   palette: {
@@ -44,34 +45,36 @@ function App() {
     if (userCookie) {
       setAuthen(true);
     }
-  }, []);  
-  
+  }, []);
+
   return (
     <FluentProvider theme={lightTheme}>
-      <Router>
-        <Routes>
-        {
-            !authen?(
-              <Route path="*" element={<Login />} />
-            ):(
-              <Route
-                path="*"
-                element={
-                  <div style={{ display: 'flex' }}>
-                    <Sidebar />
-                    <div style={{ flex: '1 1 auto' }}>
-                      <Header />
-                      <div className={`container container-overflow`}>
-                        <RouteApp />
+      <UserRoleProvider>
+        <Router>
+          <Routes>
+            {
+              !authen ? (
+                <Route path="*" element={<Login />} />
+              ) : (
+                <Route
+                  path="*"
+                  element={
+                    <div style={{ display: 'flex' }}>
+                      <Sidebar />
+                      <div style={{ flex: '1 1 auto' }}>
+                        <Header />
+                        <div className={`container container-overflow`}>
+                          <RouteApp />
+                        </div>
                       </div>
                     </div>
-                  </div>
-                }
-              />
-            )
-        }
-        </Routes>
-      </Router>
+                  }
+                />
+              )
+            }
+          </Routes>
+        </Router>
+      </UserRoleProvider>
     </FluentProvider>
   );
 }

@@ -1039,6 +1039,21 @@ export const colHelperTimesheetMines = {
   ]
 }
 
+export const colHelperDetailCoalHauling = [
+  { type: 'text', width: '50', title: 'ID' },
+  { type: 'text', width: '110', title: 'Date' },
+  { type: 'text', width: '70', title: 'Shift' },
+  { type: 'text', width: '100', title: 'Unit No' },
+  { type: 'text', width: '150', title: 'Operator' },
+  { type: 'text', width: '70', title: 'Tonnage' },
+  { type: 'text', width: '100', title: 'Loader' },
+  { type: 'text', width: '150', title: 'Pit' },
+  { type: 'text', width: '100', title: 'Seam' },
+  { type: 'text', width: '230', title: 'Dumping Point' },
+  { type: 'text', width: '80', title: 'In-Rom' },
+  { type: 'text', width: '80', title: 'Out-Rom' }
+]
+
 export const colArrayHelper = {
   arrBD: [
     'Breakdown',

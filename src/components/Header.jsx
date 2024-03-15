@@ -23,7 +23,7 @@ const Header = () => {
         <Subtitle2
           style={{ position: 'relative', right: '50px', color: '#555' }}
         >
-          Production Data Collector 
+          Data Collector 
         </Subtitle2>
       </div>
 

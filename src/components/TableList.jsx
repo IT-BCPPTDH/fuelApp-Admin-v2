@@ -34,7 +34,7 @@ const TableList = ({ columnsData, items, backgroundColor }) => {
     const [columnSizingOptions] = useState(() => {
         const options = {};
         columnsData.forEach(({ columnId, defaultWidth }) => {
-            options[columnId] = { defaultWidth };
+            options[columnId] = {  defaultWidth};
         });
         return options;
     });

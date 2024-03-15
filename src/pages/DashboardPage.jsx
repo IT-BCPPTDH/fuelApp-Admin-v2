@@ -1,4 +1,4 @@
-import { useEffect, useCallback } from 'react';
+import { useEffect, useCallback, useContext } from 'react';
 import { makeStyles, shorthands, Divider, Caption1, Body1, Subtitle1, Text, Card, CardHeader } from '@fluentui/react-components';
 import Title from '../components/Title';
 import { useNavigate } from 'react-router-dom';
@@ -10,6 +10,8 @@ import { insertActivity, insertOperator, insertUnit } from '../helpers/indexedDB
 import msgpack from 'msgpack-lite';
 import PropTypes from 'prop-types';
 import { menuArrayData, formArrayData } from '../helpers/menuHelper';
+import UserRoleContext from '../context/UserRoleContext';
+import { HeaderTitle } from '../utils/Wording';
 
 // Constants for localStorage keys
 const TIME_ENTRY_UNIT_KEY = 'timeEntry-unit';
@@ -71,12 +73,14 @@ const Header = ({ title, description }) => {
 const CardMenu = ({ name, desc, link }) => {
   const styles = useStyles();
   const navigate = useNavigate();
+  
 
   const handleClick = () => {
     navigate(link);
   };
 
   return (
+    
     <Card className={styles.card} onClick={handleClick}>
       <CardHeader
         header={<Text weight="semibold">{name}</Text>}
@@ -91,6 +95,7 @@ const DashboardPage = () => {
   const activity = useLiveQuery(() => db.activity.toArray());
   const operator = useLiveQuery(() => db.operator.toArray());
   const unit = useLiveQuery(() => db.unit.toArray());
+  const {userRole} = useContext(UserRoleContext)
 
   const getDataMaster = useCallback(async () => {
     try {
@@ -148,12 +153,12 @@ const DashboardPage = () => {
   }, [activity?.length, operator?.length, unit?.length]);
 
   useEffect(() => {
-    document.title = 'Homepage Production Data Collector - PTDH';
+    document.title = userRole.role === 'MHA' ? HeaderTitle.DASH_TOP_MHA : 'Homepage Production Data Collector - PTDH';
     if (activity && operator && unit) {
       getDataMaster();
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [getDataMaster]);
+  }, [getDataMaster, userRole]);
 
   return (
     <div className={styles.main}>
@@ -170,7 +175,7 @@ const DashboardPage = () => {
 
       <section>
         <Header
-          title="All Data Collection"
+          title={userRole.role === 'MHA' ? HeaderTitle.DASH_TOP_MHA : HeaderTitle.DASH_TOP_DH}
           description="Navigate through the menu link to access a comprehensive overview of all recorded production data collections."
         />
         <div
@@ -182,8 +187,11 @@ const DashboardPage = () => {
             marginTop: '2em',
           }}
         >
+          
           {menuArrayData.map((v, i) => (
-            <CardMenu key={i} name={v.name} desc={v.desc} link={v.link} />
+            v.access.includes(userRole.role) && (
+              <CardMenu key={i} name={v.name} desc={v.desc} link={v.link}/>
+            )
           ))}
         </div>
         <div className={styles.divider}>
@@ -203,7 +211,9 @@ const DashboardPage = () => {
           }}
         >
           {formArrayData.map((v, i) => (
-            <CardMenu key={i} name={v.name} desc={v.desc} link={v.link} />
+              v.access.includes(userRole.role) && (
+                <CardMenu key={i} name={v.name} desc={v.desc} link={v.link}/>
+              )
           ))}
         </div>
       </section>

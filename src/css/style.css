@@ -11,6 +11,9 @@
 .mr-5{
    margin-right: 5px !important;
 }
+.mb-0{
+   margin-bottom: 0;
+}
 .font-button-sm{
    font-size: 14px !important;
    font-weight: 400 !important;

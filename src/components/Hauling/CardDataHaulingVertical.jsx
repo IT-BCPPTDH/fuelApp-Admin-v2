@@ -1,4 +1,4 @@
-import  { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import "./CoalHauling.css";
 import { makeStyles, Card } from "@fluentui/react-components";
 import Transaksi from "../../services/inputCoalHauling";
@@ -56,22 +56,20 @@ const CardDataHaulingVertical = () => {
   }, [value.tanggal]);
 
   return (
-    <div className="form-wrapper" style={{ marginBottom: "0", marginTop: 0 }}>
+    <div className="form-wrapper" style={{ marginBottom: 0, marginTop: 0 }}>
       <div className="card-base">
-        <div className="row">
-          {Object.keys(data).map((type, index) => (
-            <div key={index} className="col-4">
-              <Card className="card-data">
-                <span className={styles.card}>{ type === 'total' ? 'Total Hauling' : type === 'hopper' ? `Total ${type}`:`Hauling To ${type}`}</span>
-                <p className={styles.caption}>
-                  <b>
-                    {data[type]} <small>Ton</small>
-                  </b>
-                </p>
-              </Card>
-            </div>
-          ))}
-        </div>
+        {Object.keys(data).map((type, index) => (
+          <div key={index} className='tes'>
+            <Card className="card-data">
+              <span className={styles.card}>{type === 'total' ? 'Total Hauling' : type === 'hopper' ? `Total ${type}` : `Hauling To ${type}`}</span>
+              <p className={styles.caption}>
+                <b>
+                  {data[type]} <small>Ton</small>
+                </b>
+              </p>
+            </Card>
+          </div>
+        ))}
       </div>
     </div>
   );

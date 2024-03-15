@@ -16,7 +16,6 @@ const TimeEntryMinesDetailPage = () => {
   const [file, setFile] = useState("")
 
   const fetchData = useCallback(async () => {
-
     try {
       const result = await Services.getTimeEntryDetailData(params.tanggal, params.type)
       if (result.status === 200) {
@@ -62,7 +61,9 @@ const TimeEntryMinesDetailPage = () => {
       minDimensions: [5, 15],
       tableHeight: '500px',
       tableWidth: `${(width * 87) / 100}px`,
-      tableOverflow: true
+      tableOverflow: true,
+      allowInsertColumn: false,
+      editable: false
     };
 
     if (!jRef.current.jspreadsheet) {
@@ -84,7 +85,9 @@ const TimeEntryMinesDetailPage = () => {
 
       <div className='form-wrapper'>
         <div className='row'>
-          <div className="col-6"></div>
+          <div className="col-6 flex-row">
+            <h4 className='mb-0'>Detail Data Time Entry</h4>
+          </div>
           <div className='col-6'>
           <Button
             icon={<ArrowDownload24Regular />}

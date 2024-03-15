@@ -190,6 +190,7 @@ export default function TimeSheetPage() {
       tableHeight: '375px',
       tableWidth: `${(width * 86) / 100}px`,
       tableOverflow: true,
+      allowInsertColumn: false,
       onafterchanges: handleChangeSheet,
     }
     if (!jRef.current.jspreadsheet) {
@@ -404,7 +405,7 @@ export default function TimeSheetPage() {
       getDataFirst()
     }
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [totalDuration, isNew]);
 
   const handleEditData = useCallback(async (itemId) => {
@@ -538,9 +539,9 @@ export default function TimeSheetPage() {
       />
       <div className='form-wrapper'>
         <Suspense fallback={<></>}>
-        <FormComponent handleChange={handleChange} components={components} />
+          <FormComponent handleChange={handleChange} components={components} />
         </Suspense>
-        
+
         <div ref={jRef} className='mt1em' />
         <div className='row mt1em'>
           <div className='col-6 flex-row'>
