@@ -171,10 +171,10 @@ const TableHauling = ({ handleEdit, dataUpdated, setDataupdated }) => {
       const dateToday = getTodayDateString();
       const dts = await getDataTableHauling(dateToday);
 
-      const todayItems = dts.filter((itemFromDB) => {
-        const itemDate = formatDate(itemFromDB.tanggal);
-        return itemDate === dateToday;
-      });
+      // const todayItems = dts.filter((itemFromDB) => {
+      //   const itemDate = formatDate(itemFromDB.tanggal);
+      //   return itemDate === dateToday;
+      // });
 
       const updatedItems = dts.map((itemFromDB, index) => ({
         id: index+1,
