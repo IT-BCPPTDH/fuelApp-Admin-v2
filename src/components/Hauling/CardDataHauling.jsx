@@ -17,7 +17,7 @@ const CardDataHauling = ({ dataUpdated }) => {
 
   const [totalData, setTotalData] = useState(0);
   const [dataHopper, setDataHopper] = useState(0);
-  // const [dataOverflow, setDataOverflow] = useState(0);
+  const [dataOverflow, setDataOverflow] = useState(0);
   const [dataECF, setDataECF] = useState(0);
   const [dataMiddleStock, setDataMiddleStock] = useState(0);
   const [dataSekurau, setDataSekurau] = useState(0);
@@ -46,7 +46,7 @@ const CardDataHauling = ({ dataUpdated }) => {
 
     setTotalData(totalTonnage);
     setDataHopper(tonnageByPitAndDumpingPoint[dumpingEnum.HOPPER] ?? 0);
-    // setDataOverflow(tonnageByPitAndDumpingPoint[dumpingEnum.OVERFLOW] ?? 0);
+    setDataOverflow(tonnageByPitAndDumpingPoint[dumpingEnum.OVERFLOW] ?? 0);
     setDataECF(tonnageByPitAndDumpingPoint[dumpingEnum.ECF] ?? 0);
     setDataMiddleStock(tonnageByPitAndDumpingPoint[dumpingEnum.MIDDLE] ?? 0);
     setDataSekurau(tonnageByPitAndDumpingPoint[dumpingEnum.SEKURAU] ?? 0);
@@ -79,6 +79,14 @@ const CardDataHauling = ({ dataUpdated }) => {
             <p className={styles.caption}>
               <b>
                 {dataHopper} <small>Ton</small>
+              </b>
+            </p>
+          </Card>
+          <Card style={{ marginBottom: "10px" }} className="card-data-full">
+            <span className={styles.card}>Total Overflow</span>
+            <p className={styles.caption}>
+              <b>
+                {dataOverflow} <small>Ton</small>
               </b>
             </p>
           </Card>

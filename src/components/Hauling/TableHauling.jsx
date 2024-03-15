@@ -56,7 +56,7 @@ const useStyles = makeStyles({
 const columnsDef = [
   createTableColumn({
     columnId: "id",
-    renderHeaderCell: () => <>Id</>,
+    renderHeaderCell: () => <>No</>,
   }),
   createTableColumn({
     columnId: "tanggal",
@@ -176,8 +176,8 @@ const TableHauling = ({ handleEdit, dataUpdated, setDataupdated }) => {
         return itemDate === dateToday;
       });
 
-      const updatedItems = dts.map((itemFromDB) => ({
-        id: itemFromDB.id,
+      const updatedItems = dts.map((itemFromDB, index) => ({
+        id: index+1,
         tanggal: itemFromDB.tanggal,
         shift: itemFromDB.shift,
         unitno: itemFromDB.unitno,
