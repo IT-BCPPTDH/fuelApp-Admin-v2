@@ -1,3 +1,6 @@
+::-webkit-input-placeholder {
+   color: #bdbfc4;
+ }
 .mt1em {
    margin-top: 1em;
 }
@@ -92,7 +95,7 @@ button:hover {
 }
 
 .jexcel>thead>tr>td {
-   background-color: #f5fad5;
+   background-color: #e5ffc6;
    height: 30px;
    font-weight: 600;
 }

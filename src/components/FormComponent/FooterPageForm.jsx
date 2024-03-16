@@ -21,7 +21,7 @@ export const FooterPageForm = ({ handleSubmit, buttonDisabled }) => {
           >
             Save & Entry Other
           </CompoundButton>
-          {/* <CompoundButton
+          <CompoundButton
             onClick={() => handleSubmit(2)}
             icon={<SaveArrowRight24Regular primaryFill='#ffffff' />}
             iconPosition='after'
@@ -30,16 +30,14 @@ export const FooterPageForm = ({ handleSubmit, buttonDisabled }) => {
               float: 'right',
               marginRight: '0.6em',
               padding: '0 1.5em',
-              backgroundColor: 'green',
+              backgroundColor: 'grey',
               color: '#fff'
             }}
             disabled={buttonDisabled}
           >
-            Save & Entry Other
-          </CompoundButton> */}
+            Save Draft
+          </CompoundButton>
       </>
-        
-    
     )
 }
 

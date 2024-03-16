@@ -34,7 +34,7 @@ const useStyles = makeStyles({
     ...shorthands.margin(0, 0, '12px'),
   },
   card: {
-    width: '360px',
+    width: '280px',
     maxWidth: '100%',
     height: 'fit-content',
   },

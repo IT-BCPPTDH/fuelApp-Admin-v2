@@ -11,21 +11,24 @@ export const menuArrayData = [
         link: '/time-entry-from-collector',
         access: ['MED', 'MOD']
     },
+    {
+        name: 'Data Time Entry (FMS)',
+        desc: 'Data Time Entry from Satnet DB',
+        link: '/time-sheet-fms',
+        access: ['MED', 'MOD', 'Dispatch']
+    },
+    {
+        name: 'Data Monitoring Breakdown',
+        desc: 'Data Collector for Monitoring BD',
+        link: '/monitoring-breakdown',
+        access: ['MED', 'MOD', 'Dispatch']
+    },
     // {
     //   name: 'Coal Hauling Admin',
     //   desc: 'Data Collector for Coal Hauling Entry Admin',
     //   link: '/coalhauling-admin'
     // },
-    // {
-    //     name: 'Data Time Entry (FMS)',
-    //     desc: 'Template Time Entry model Mines',
-    //     link: '/time-sheet-fms'
-    // },
-    // {
-    //     name: 'Data Production',
-    //     desc: 'Data Collector for Production Records',
-    //     link: '/production'
-    // },
+
     // {
     //     name: 'Data Mine Plan',
     //     desc: 'Data Collector for Mine Planning Activity',

@@ -24,7 +24,6 @@ const useStyles = makeStyles({
     display: "flex",
     flexDirection: "column",
     ...shorthands.gap("2px"),
-    // maxWidth: "200px",
   },
   combo: {
     display: "grid",
@@ -34,10 +33,10 @@ const useStyles = makeStyles({
     maxWidth: "180px",
   },
   formName: {
-    color: "#056b99",
-    lineHeight: '15px',
-    // fontSize: "1.2em",
+    color: "#E91E63",
+    lineHeight: '16px',
     marginBottom: "0",
+    fontStyle: 'italic'
   },
   control: {
     maxWidth: "200px",
@@ -180,22 +179,23 @@ const FormElement =  ({
   );
 }
 
-const ComboBoxCustom =  (props) => {
+const ComboBoxCustom = (props) => {
   const { inputId, name, label, options, handleChange, value } = props;
-  const [matchingOptions, setMatchingOptions] = useState([]);
+  const [matchingOptions, setMatchingOptions] = useState(options);
   const styles = useStyles();
   const [itemHeight] = useState(10);
   const [numberOfItems, setNumberofItems] = useState(0);
-  const [inputValue, setInputValue] = useState(null)
+  const [inputValue, setInputValue] = useState(null);
 
   const onChange = (event) => {
     const inputValuen = event.target.value.trim();
 
     handleChange(event, { name, value: inputValuen });
 
-    const matches = matchingOptions.filter(
+    const matches = options.filter(
       (option) => option.toLowerCase().indexOf(inputValuen.toLowerCase()) === 0
     );
+
     setMatchingOptions(matches);
   };
 
@@ -207,7 +207,7 @@ const ComboBoxCustom =  (props) => {
   };
 
   useEffect(() => {
-    setMatchingOptions([...options]);
+    
     setNumberofItems(options.length);
 
     if (typeof value === 'function') {
@@ -230,7 +230,7 @@ const ComboBoxCustom =  (props) => {
       listbox={{ ref: scrollRef, className: styles.listbox }}
       style={{  minWidth: "180px" }}
       freeform
-      placeholder={`Select ${label}`}
+      placeholder={`Type ${label}`}
       onChange={onChange}
       onOptionSelect={onOptionSelect}
       defaultSelectedOptions={inputValue ? [inputValue] : [""]}
@@ -242,7 +242,7 @@ const ComboBoxCustom =  (props) => {
         bufferItems={bufferItems}
         bufferSize={bufferSize}
         itemSize={itemHeight}
-      >
+      >        
         {(index) => {
           const option = matchingOptions[index];
           return (

@@ -2,11 +2,11 @@ import { useRef, useEffect, useCallback, useState, useMemo, lazy, Suspense } fro
 import jspreadsheet from 'jspreadsheet-ce'
 import { Form28Regular } from '@fluentui/react-icons'
 import { DynamicTablistMenu } from '../components/Tablist'
-// import FormComponent from '../components/FormComponent'
 import Cookies from 'js-cookie'
-import { getLocalStorage } from '../helpers/toLocalStorage'
+import { getLocalStorage, sortArray, toLocalStorage } from '../helpers/toLocalStorage'
 import { HeaderPageForm } from '../components/FormComponent/HeaderPageForm'
-import { calculateTotalTimeFromArray, formatTime, calculateTotalTime, calculateAndConvertDuration, convertToAMPM } from '../helpers/timeHelper'
+import { calculateTotalTimeFromArray, formatTime, calculateTotalTime, calculateAndConvertDuration, 
+  convertToAMPM, calculateMidnightTime, calculateDifference, checkValidHMAkhir } from '../helpers/timeHelper'
 import { FooterPageForm } from '../components/FormComponent/FooterPageForm'
 import { useLiveQuery } from 'dexie-react-hooks'
 import { db } from '../models/db'
@@ -14,7 +14,7 @@ import { NavigateUrl } from '../utils/Navigation'
 import { menuTabsTimeEntry } from '../helpers/menuHelper'
 import { shiftOptionsData, materialOptions } from '../helpers/optionHelper'
 import { tabMenuTimeEntryEnum } from '../utils/Enums'
-import { timeEntryFormField } from '../helpers/formFieldHelper'
+import { timeEntryFormField, getShift } from '../helpers/formFieldHelper'
 import { getURLPath, generateID } from '../helpers/commonHelper'
 import Services from '../services/timeEntry'
 import { insertTimeEntry } from '../helpers/indexedDB/insert'
@@ -47,6 +47,7 @@ export default function TimeSheetPage() {
   const [sendingData, setSendingData] = useState(false)
   const navigate = useNavigate()
   const [dataItemId, setDataItemId] = useState(0)
+  const [sortedUnitOptions, setSortedUnitOptions] = useState([])
 
   useLiveQuery(() => db.activity.toArray())
 
@@ -98,7 +99,9 @@ export default function TimeSheetPage() {
     let startTime = null
     let endTime = null
     let arrayTime = []
+    const shift = getLocalStorage('shift')
 
+console.log(shift)
     for (let index = 0; index < 20; index++) {
       const col1Val = spreadSheet.getValueFromCoords(0, index)
       const activity = masterActivity?.find(obj => obj.activityname === col1Val)
@@ -120,11 +123,17 @@ export default function TimeSheetPage() {
       }
 
       if (colStartTime && colEndTime) {
-        const result = calculateTotalTime(startTime, endTime)
+        let result = calculateTotalTime(startTime, endTime)
         if (result !== 'NaN.NaN') {
           if (parseFloat(startTime) > parseFloat(endTime)) {
-            spreadSheet.updateCell(3, index, '', false);
-            spreadSheet.updateCell(4, index, '', false);
+            if (shift === 'Night' && parseFloat(startTime) > 19.00 && parseFloat(startTime) < 23.59) {
+              const resultMidnigth = calculateMidnightTime(startTime, endTime)
+              spreadSheet.updateCell(4, index, resultMidnigth, false)
+              arrayTime[index] = resultMidnigth
+            } else {
+              spreadSheet.updateCell(3, index, '', false);
+              spreadSheet.updateCell(4, index, '', false);
+            }
           } else {
             spreadSheet.updateCell(4, index, result, false)
             arrayTime[index] = result
@@ -135,7 +144,11 @@ export default function TimeSheetPage() {
         if (!validateResult) {
           spreadSheet.updateCell(2, index + 1, endTime, false)
           if (parseFloat(startTime) > parseFloat(endTime)) {
-            spreadSheet.updateCell(2, index + 1, '', false);
+            if (shift === 'Night' && parseFloat(startTime) > 19.00 && parseFloat(startTime) < 23.59) {
+              spreadSheet.updateCell(2, index + 1, endTime, false)
+            } else {
+              spreadSheet.updateCell(2, index + 1, '', false);
+            }
           }
         }
       }
@@ -298,7 +311,8 @@ export default function TimeSheetPage() {
     const { name, value } = data;
 
     if (name === 'hmAwal' || name === 'hmAkhir') {
-      const isValidNumber = /^(\d+(\.\d{0,2})?)?$/.test(value);
+
+      const isValidNumber = /^(\d+(\.\d{0,3})?)?(,\d{0,2})?$/.test(value);
 
       if (isValidNumber) {
         const formattedValue = value !== '' ? value : '';
@@ -308,19 +322,26 @@ export default function TimeSheetPage() {
         }));
 
         if (name === 'hmAkhir') {
-          const hmAwalValue = parseFloat(formData.hmAwal) || 0;
-          const hmAkhirValue = parseFloat(formattedValue) || 0;
-          const totalHmValue = (hmAkhirValue - hmAwalValue).toFixed(2);
+          const totalHmValue = calculateDifference(formData.hmAwal, formattedValue)
+          const check = checkValidHMAkhir(formData.hmAwal, formattedValue)
+          const convertValue = parseFloat(totalHmValue.toString().replace(',', '.'),2)
 
-          if (hmAkhirValue < hmAwalValue) {
+          if (!check) {
             setFormData((prevFormData) => ({ ...prevFormData, hm: 'ERROR' }));
             ev.target.parentElement.classList.add('border-input-error');
           } else {
-            setFormData((prevFormData) => ({ ...prevFormData, hm: totalHmValue }));
-            const inputErrorClassList = ev.target.parentElement.classList;
-            if (inputErrorClassList.contains('border-input-error')) {
-              inputErrorClassList.remove('border-input-error');
+            
+            if(convertValue > 12){
+              setFormData((prevFormData) => ({ ...prevFormData, hm: 'ERR: Should <= 12' }));
+            ev.target.parentElement.classList.add('border-input-error');
+            } else {
+              setFormData((prevFormData) => ({ ...prevFormData, hm: totalHmValue }));
+              const inputErrorClassList = ev.target.parentElement.classList;
+              if (inputErrorClassList.contains('border-input-error')) {
+                inputErrorClassList.remove('border-input-error');
+              }
             }
+           
           }
         }
       } else {
@@ -334,6 +355,9 @@ export default function TimeSheetPage() {
         jdeOperator: value,
       });
     } else {
+      if(name === 'shift'){
+        toLocalStorage('shift', value)
+      }
       setFormData((prevFormData) => ({ ...prevFormData, [name]: value }));
     }
   };
@@ -364,37 +388,27 @@ export default function TimeSheetPage() {
   }
 
   const getDataFirst = useCallback(() => {
-    let user = Cookies.get('user')
-    user = JSON.parse(user)
-
-    const now = new Date()
-    const currentHour = now.getHours()
-
-    let shift = null
-    if (currentHour >= 6 && currentHour < 18) {
-      shift = 'Day'
-    } else {
-      shift = 'Night'
-    }
-
-    let dt = formData
-    dt = {
-      ...dt,
-      shift: shift,
-      tanggal: now,
+    const user = JSON.parse(Cookies.get('user'))
+  
+    setFormData(prevFormData => ({
+      ...prevFormData,
+      // shift: 'Day',
+      tanggal: new Date(),
       site: "BCP",
-      stafEntry: user.fullname,
+      stafEntry: `${user.fullname} (${user.JDE})`,
       formID: randomId
-    }
-    setFormData(dt)
-  }, [formData, setFormData, randomId])
+    }))
+  }, [setFormData, randomId])
+
+  useEffect(() => {
+    const sorted = sortArray(unitOptions)
+    setSortedUnitOptions(sorted)
+  }, [unitOptions]);
 
   useEffect(() => {
     setMenuTabs(menuTabsTimeEntry)
     setFormData(timeEntryFormField)
-  }, []);
 
-  useEffect(() => {
     const disabled =
       parseFloat(totalDuration) > 12 || parseFloat(totalDuration) < 12
         ? true
@@ -403,9 +417,10 @@ export default function TimeSheetPage() {
 
     if (isNew) {
       getDataFirst()
+      toLocalStorage('shift', 'Day')
     }
 
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [totalDuration, isNew]);
 
   const handleEditData = useCallback(async (itemId) => {
@@ -434,6 +449,24 @@ export default function TimeSheetPage() {
   const components = useMemo(
     () => [
       {
+        name: 'formID',
+        grid: 'col-2',
+        label: 'Form ID',
+        value: formData.formID,
+        readOnly: true,
+        disabled: true,
+        type: 'Input'
+      },
+      {
+        name: 'stafEntry',
+        grid: 'col-2',
+        label: 'Staf Entry',
+        value: formData.stafEntry,
+        readOnly: true,
+        disabled: true,
+        type: 'Input'
+      },
+      {
         name: 'site',
         grid: 'col-2',
         label: 'Site',
@@ -459,7 +492,7 @@ export default function TimeSheetPage() {
         value: formData.shift,
         readOnly: false,
         disabled: false,
-        type: 'Combobox',
+        type: 'RadioButton',
         options: shiftOptions
       },
       {
@@ -470,7 +503,7 @@ export default function TimeSheetPage() {
         readOnly: false,
         disabled: false,
         type: 'Combobox',
-        options: unitOptions
+        options: sortedUnitOptions
       },
       {
         name: 'hmAwal',
@@ -479,7 +512,8 @@ export default function TimeSheetPage() {
         value: formData.hmAwal,
         readOnly: false,
         disabled: false,
-        type: 'Input'
+        type: 'Input',
+        placeholder: 'eg: 11.123,10'
       },
       {
         name: 'hmAkhir',
@@ -488,7 +522,8 @@ export default function TimeSheetPage() {
         value: formData.hmAkhir,
         readOnly: false,
         disabled: false,
-        type: 'Input'
+        type: 'Input',
+        placeholder: 'eg: 11.123,10'
       },
       {
         name: 'hm',
@@ -499,33 +534,16 @@ export default function TimeSheetPage() {
         disabled: true,
         type: 'Input'
       },
-      {
-        name: 'formID',
-        grid: 'col-2',
-        label: 'Form ID',
-        value: formData.formID,
-        readOnly: true,
-        disabled: true,
-        type: 'Input'
-      },
-      {
-        name: 'stafEntry',
-        grid: 'col-2',
-        label: 'Staf Entry',
-        value: formData.stafEntry,
-        readOnly: true,
-        disabled: true,
-        type: 'Input'
-      },
+
       {
         name: 'note',
         grid: 'col-6',
         label: 'Note',
-        value: "Mohon lengkapi form berikut, dan pastikan durasi total 12 jam, nilai 'End Time' harus lebih besar dari 'Start Time'",
+        value: "Mohon lengkapi form berikut, dan pastikan durasi total 12 jam, jika durasi < 12 jam, data hanya dapat disimpan sebagai 'Draft'. Dan pastikan nilai 'End Time' > 'Start Time'.",
         type: 'StaticInfo'
       }
     ],
-    [formData, shiftOptions, unitOptions]
+    [formData, shiftOptions, sortedUnitOptions]
   )
 
   return (
