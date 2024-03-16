@@ -42,6 +42,8 @@ import PropTypes from "prop-types";
 import Transaksi from "../../services/inputCoalHauling";
 import { pingServer } from "../../helpers/pingServer";
 import { useNavigate } from "react-router-dom";
+import { useSocket } from "../../context/SocketProvider";
+import { indonesianDate } from "../../helpers/convertDate";
 
 const useStyles = makeStyles({
   messageContainer: {
@@ -117,6 +119,7 @@ const TableHauling = ({ handleEdit, dataUpdated, setDataupdated }) => {
   const [isDialogOpen, setDialogOpen] = useState(false);
   const [isConfirmationOpen, setConfirmationOpen] = useState(false);
   const navigate = useNavigate();
+  const {isConnected} = useSocket()
 
   const [columnSizingOptions] = useState({
     id: {
@@ -154,11 +157,7 @@ const TableHauling = ({ handleEdit, dataUpdated, setDataupdated }) => {
   const rows = getRows();
 
   const formatDate = (date) => {
-    const year = date.getFullYear();
-    const month = (date.getMonth() + 1).toString().padStart(2, "0");
-    const day = date.getDate().toString().padStart(2, "0");
-
-    return `${year}-${month}-${day}`;
+    return indonesianDate(date)
   };
 
   const getTodayDateString = useCallback(() => {
@@ -211,7 +210,6 @@ const TableHauling = ({ handleEdit, dataUpdated, setDataupdated }) => {
 
   const handleDelete = async (id) => {
     try {
-      // await Transaksi.getDeteleTransaction(id.label);
       const deleted = await deleteByIdDataHauling(id);
       if (deleted) {
         fetchData();
@@ -229,15 +227,6 @@ const TableHauling = ({ handleEdit, dataUpdated, setDataupdated }) => {
       });
     }
   };
-
-  // const handleDownload = async () => {
-  //   try {
-  //     const downloadData = await Transaksi.getDownload();
-  //     // const link = document.createElement('a');
-  //   } catch (error) {
-  //     console.error("Error downloading data:", error);
-  //   }
-  // };
 
   const handleConfirmDialog = () => {
     setConfirmationOpen(true);
@@ -286,7 +275,7 @@ const TableHauling = ({ handleEdit, dataUpdated, setDataupdated }) => {
         if (send.status === 200) {
           setDialogOpen(true);
 
-          const deleted = items.map(async (val) => {
+          const deleted = items.map(async () => {
             return await deleteFormDataHauling();
           });
 
@@ -340,6 +329,7 @@ const TableHauling = ({ handleEdit, dataUpdated, setDataupdated }) => {
         <div className="search-box">
           <Button
             onClick={() => handleConfirmDialog()}
+            disabled={!isConnected}
             style={{ backgroundColor: "#28499c", color: "#ffffff" }}>
             Submit Data to Server
           </Button>

@@ -27,7 +27,6 @@ import {
   tonnageOptionsData,
 } from "../../helpers/optionHelper";
 import "./CoalHauling.css";
-// import Transaksi from "../../services/inputCoalHauling";
 
 const useStyles = makeStyles({
   messageContainer: {
@@ -157,6 +156,7 @@ const InputHauling = ({
   const handleSubmit = useCallback(async () => {
     try {
       let dbInserted = false;
+      let message = ""
       const requiredFields = [
         "tanggal",
         "shift",
@@ -184,16 +184,22 @@ const InputHauling = ({
         status: "pending",
       };
 
+      // console.log(postData)
+
       if (postData) {
         const inserted = await insertFormDataHauling(data);
         if (inserted) {
           dbInserted = true;
+          message = "Data berhasil di input"
         }
       } else {
+        // console.log(dataId, data)
         // let dataUpdate = await Transaksi.patchEditTransaction(tid, data);
         const updated = await updateFormDataHauling(dataId, data);
+        // console.log(updated)
         if (updated) {
           dbInserted = true;
+          message = "Data berhasil di perbarui"
         }
       }
 
@@ -205,7 +211,7 @@ const InputHauling = ({
 
       setMessage({
         type: "success",
-        content: "Data berhasil di input",
+        content: message,
       });
     } catch (error) {
       console.error("Error inserting  :", error);

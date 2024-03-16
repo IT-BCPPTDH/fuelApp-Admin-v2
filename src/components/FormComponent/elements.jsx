@@ -88,6 +88,7 @@ const FormElement =  ({
             placeholder={`Select ${label}...`}
             value={value ? new Date(value) : ""}
             name={name}
+            maxDate={new Date()}
             formatDate={onFormatDate}
             onSelectDate={(e) => handleChange(e, { name: name, value: e })}
           />
