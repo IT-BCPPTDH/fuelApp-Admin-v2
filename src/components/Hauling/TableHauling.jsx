@@ -37,7 +37,7 @@ import {
   DismissRegular,
 } from "@fluentui/react-icons";
 import { getDataTableHauling } from "../../helpers/indexedDB/getData";
-import { deleteFormDataHauling } from "../../helpers/indexedDB/deteleData";
+import { deleteByIdDataHauling, deleteFormDataHauling } from "../../helpers/indexedDB/deteleData";
 import PropTypes from "prop-types";
 import Transaksi from "../../services/inputCoalHauling";
 import { pingServer } from "../../helpers/pingServer";
@@ -177,7 +177,8 @@ const TableHauling = ({ handleEdit, dataUpdated, setDataupdated }) => {
       // });
 
       const updatedItems = dts.map((itemFromDB, index) => ({
-        id: index+1,
+        number: index + 1,
+        id: itemFromDB.id,
         tanggal: itemFromDB.tanggal,
         shift: itemFromDB.shift,
         unitno: itemFromDB.unitno,
@@ -211,7 +212,7 @@ const TableHauling = ({ handleEdit, dataUpdated, setDataupdated }) => {
   const handleDelete = async (id) => {
     try {
       // await Transaksi.getDeteleTransaction(id.label);
-      const deleted = await deleteFormDataHauling(id);
+      const deleted = await deleteByIdDataHauling(id);
       if (deleted) {
         fetchData();
         setMessage({
@@ -286,7 +287,7 @@ const TableHauling = ({ handleEdit, dataUpdated, setDataupdated }) => {
           setDialogOpen(true);
 
           const deleted = items.map(async (val) => {
-            return await deleteFormDataHauling(val.id);
+            return await deleteFormDataHauling();
           });
 
           if (deleted) {
@@ -430,9 +431,9 @@ const TableHauling = ({ handleEdit, dataUpdated, setDataupdated }) => {
 
             <TableBody>
               {rows.map(({ item }) => (
-                <TableRow key={item.id}>
+                <TableRow key={item.number}>
                   <TableCell {...columnSizing_unstable.getTableCellProps("id")}>
-                    <TableCellLayout>{item.id}</TableCellLayout>
+                    <TableCellLayout>{item.number}</TableCellLayout>
                   </TableCell>
                   <TableCell
                     {...columnSizing_unstable.getTableCellProps("tanggal")}>
