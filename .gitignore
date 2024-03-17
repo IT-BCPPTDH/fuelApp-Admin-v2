@@ -27,3 +27,4 @@ bun.lockb
 *.sw?
 
 .env
+restart.sh.log

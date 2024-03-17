@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Define paths as variables
-ZIG_COLLECTOR_DIR="path/zig-collector"
+ZIG_COLLECTOR_DIR="/data/utilities/zig-zag/zig-collector"
 BUILD_OUTPUT_DIR="dist"  # Assuming this is the build output directory
 
 # Redirect script output to a log file
@@ -40,7 +40,7 @@ zig build
 # 6. Execute systemctl restart with echo and error handling
 if [[ $? -eq 0 ]]; then
   echo "Zig build successful. Restarting service..."
-  systemctl restart  # Replace with the specific service name
+  systemctl restart zig-collector  # Replace with the specific service name
 else
   echo "zig build failed. Service restart not executed."
 fi
