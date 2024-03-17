@@ -3,22 +3,32 @@ import { getTimeEntryByformTitle } from "../../helpers/indexedDB/getData";
 import PropTypes from "prop-types";
 import { indonesianDate } from "../../helpers/convertDate";
 import { TableButtonDialog } from "../TableButtonDialog";
-import { CompoundButton } from '@fluentui/react-components'
+import { Button } from '@fluentui/react-components'
 import { SaveArrowRight24Regular } from '@fluentui/react-icons'
 import { deleteTimeEntries } from "../../helpers/indexedDB/deteleData";
 import { DialogComponent } from "../Dialog";
 import { tableLocalStoredData } from "../../helpers/tableHelper";
+import { useSocket } from "../../context/SocketProvider";
 const TableList = lazy(() => import('../TableList'))
 
 const TableDataValidated = ({ formTitle, loaded, setLoaded, handleEdit, handleSubmitToServer, sendingData }) => {
     const [columnData] = useState(tableLocalStoredData);
     const [itemsData, setItemData] = useState([]);
     const [open, setOpen] = useState(false);
-    const [button2Disabled, setButton2Disabled] = useState(true)
+    const [button2Disabled, setButton2Disabled] = useState()
     const [localData, setLocalData] = useState([])
     const [openDialog, setOpenDialog] = useState(false)
     const [showButton, setShowButton] = useState(true)
+    const { socket, isConnected } = useSocket();
 
+    useEffect(() => {
+        if(isConnected){
+            setButton2Disabled(false)
+        } else {
+            setButton2Disabled(true)
+        }
+    }, [socket, isConnected]);
+    
     const handleDelete = async (itemId) => {
         await deleteTimeEntries(itemId)
         setOpen(false)
@@ -35,11 +45,12 @@ const TableDataValidated = ({ formTitle, loaded, setLoaded, handleEdit, handleSu
                 shift: val.shift,
                 hmAwal: val.hmAwal,
                 hmAkhir: val.hmAkhir,
-                actions: <TableButtonDialog handleEdit={handleEdit} handleDelete={handleDelete} open={open} setOpen={setOpen} itemId={val.id} />
+                totalHM: val.hm,
+                totalDuration: val.totalDuration,
+                actions: <TableButtonDialog handleEdit={handleEdit} handleDelete={handleDelete} open={open} setOpen={setOpen} itemId={val.id} type={1}/>
             }));
 
             setItemData(dataTable);
-            setButton2Disabled(false)
             setLocalData(data)
         }
     }, [open, handleEdit, formTitle]);
@@ -68,13 +79,15 @@ const TableDataValidated = ({ formTitle, loaded, setLoaded, handleEdit, handleSu
         }
     }, [sendingData]);
 
+
+
     return <>
         <div className="row">
             <div className="col-6 flex-row">
                 <h4 className="text-primary">Time Entry Data Validated (Local DB)</h4>
             </div>
             <div className="col-6">
-                <CompoundButton
+                <Button
                     onClick={() => setOpenDialog(true)}
                     icon={<SaveArrowRight24Regular primaryFill='#ffffff' />}
                     iconPosition='after'
@@ -83,14 +96,15 @@ const TableDataValidated = ({ formTitle, loaded, setLoaded, handleEdit, handleSu
                         float: 'right',
                         marginRight: '0',
                         marginBottom: '1em',
-                        padding: '0 1.5em',
-                        backgroundColor: '#035bb6',
-                        color: '#fff'
+                        padding: '8px 1.5em',
+                        backgroundColor: '#5c9c3e',
+                        color: '#fff',
+                        fontSize: '14px'
                     }}
                     disabled={button2Disabled}
                 >
                     Submit data to server
-                </CompoundButton>
+                </Button>
 
             </div>
         </div>

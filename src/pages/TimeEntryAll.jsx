@@ -11,7 +11,7 @@ import { useNavigate } from "react-router-dom";
 import { getURLPath } from "../helpers/commonHelper";
 const TableList = lazy(() => import('../components/TableList'))
 import { tabMenuTableTimeEntry } from "../utils/Enums";
-import { HeaderTitle } from "../utils/Wording";
+import { HeaderTitle, ButtonText } from "../utils/Wording";
 
 const ActionButtons = ({handleAction, param}) =>{
   return(
@@ -97,6 +97,7 @@ const TimeEntryAll = () => {
         title={formTitle} 
         urlBack={NavigateUrl.HOME} 
         urlCreate={NavigateUrl.TIME_ENTRY_SUPPORT_FORM}
+        buttonText={ButtonText.FRM_DATA_ENTRY}
       />
       <div className="form-wrapper">
         <div className='row'>

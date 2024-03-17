@@ -3,6 +3,7 @@ import CardDataHaulingVertical from "../components/Hauling/CardDataHaulingVertic
 import TableDetailHauling from "../components/Hauling/TableDetailHauling";
 import { NavigateUrl } from "../utils/Navigation";
 import { useParams } from "react-router-dom";
+import { ButtonText } from "../utils/Wording";
 
 const DetailHauling = () => {
   const value = useParams();
@@ -12,6 +13,7 @@ const DetailHauling = () => {
         title={`Detail Data Coal Hauling : ${value.tanggal}`}
         urlCreate={NavigateUrl.COAL_HAULING_DATA_ENTRY_FORM}
         urlBack={NavigateUrl.COAL_HAULING_MAIN_TABLE}
+        buttonText={ButtonText.FRM_COAL_HAULING}
       />
       <div className="row">
         <div className="col-12">

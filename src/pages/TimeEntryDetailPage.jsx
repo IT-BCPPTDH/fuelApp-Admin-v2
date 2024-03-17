@@ -8,6 +8,7 @@ import { NavigateUrl } from '../utils/Navigation'
 import {Button} from "@fluentui/react-components";
 import { ArrowDownload24Regular } from "@fluentui/react-icons";
 import { URL_ENUMS } from '../utils/Enums'
+import { ButtonText } from '../utils/Wording'
 
 const TimeEntryMinesDetailPage = () => {
   const jRef = useRef(null)
@@ -79,8 +80,9 @@ const TimeEntryMinesDetailPage = () => {
     <>
       <HeaderPageForm
         title={formTitle}
-        urlCreate={NavigateUrl.TIME_ENTRY_DIGGER_FORM}
+        urlCreate={NavigateUrl.TIME_ENTRY_SUPPORT_FORM}
         urlBack={NavigateUrl.TIME_ENTRY_MAIN_TABLE}
+        buttonText={ButtonText.FRM_DATA_ENTRY}
       />
 
       <div className='form-wrapper'>

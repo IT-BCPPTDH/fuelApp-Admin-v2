@@ -14,13 +14,13 @@ import {
 } from "@fluentui/react-icons";
 import PropTypes from 'prop-types'
 
-export const TableButtonDialog = ({ handleEdit, itemId, open, setOpen, handleDelete }) => {
+export const TableButtonDialog = ({ handleEdit, itemId, open, setOpen, handleDelete, type }) => {
     return (
         <>
             <Button
                 icon={<EditRegular />}
                 aria-label="Edit"
-                onClick={() => handleEdit(itemId)}
+                onClick={() => handleEdit(itemId, type)}
             />
             <Dialog
                 open={open}
@@ -59,5 +59,6 @@ TableButtonDialog.propTypes = {
     itemId: PropTypes.number,
     open: PropTypes.bool,
     setOpen: PropTypes.any,
-    handleDelete: PropTypes.any
+    handleDelete: PropTypes.any,
+    type: PropTypes.number
 }

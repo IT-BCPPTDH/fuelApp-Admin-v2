@@ -102,3 +102,12 @@ export const getTimeEntryDetailById = async (itemId) => {
   }
 }
 
+export const getTimeEntryDraftDetailById = async (itemId) => {
+  try {
+    return await db.timeEntriesDraft.get(itemId)
+  } catch (error) {
+    console.error(error)
+    return false
+  }
+}
+

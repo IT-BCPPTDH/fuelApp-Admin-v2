@@ -18,12 +18,13 @@ import { hasValuesInNestedArray } from '../helpers/formFieldHelper'
 import { getURLPath, generateID } from '../helpers/commonHelper'
 import Services from '../services/timeEntry'
 import { insertTimeEntry, insertTimeEntryDraft } from '../helpers/indexedDB/insert'
-import { getTimeEntryDetailById, getTimeEntryByUnit, getUnitDataByNo, getOperatorNameById, getTimeEntryDraftByUnit } from '../helpers/indexedDB/getData'
+import { getTimeEntryDetailById, getTimeEntryDraftDetailById, getTimeEntryByUnit, getUnitDataByNo, getOperatorNameById, getTimeEntryDraftByUnit } from '../helpers/indexedDB/getData'
 import { DialogComponent } from '../components/Dialog'
 import { deleteTimeEntries } from '../helpers/indexedDB/deteleData'
 import { useNavigate } from 'react-router-dom'
 import { updateTimeEntry, updateTimeEntryDraft } from '../helpers/indexedDB/editData'
 import { HeaderTitle } from '../utils/Wording'
+
 
 const TableDataValidated = lazy(() => import('../components/TimeSheet/TableDataValidated'))
 const FormComponent = lazy(() => import('../components/FormComponent'))
@@ -55,7 +56,6 @@ export default function TimeSheetPage() {
 
   const [jdeOptions] = useState(() => getLocalStorage('timeEntry-operator'));
   const [unitOptions] = useState(() => getLocalStorage('timeEntry-unit'));
-  const masterOP = useLiveQuery(() => db.operator.toArray());
 
   const transformData = useCallback(
     async (inputData) => {
@@ -114,9 +114,17 @@ export default function TimeSheetPage() {
       const colEndTime = spreadSheet.getValueFromCoords(3, index)
 
       if (colStartTime) {
-        startTime = formatTime(colStartTime)
-        spreadSheet.updateCell(2, index, startTime, false)
-      }
+        const startTime = formatTime(colStartTime); 
+        const parsedStartTime = parseFloat(startTime);
+    
+        if (shift === 'Night' && (parsedStartTime <= 6.0 || parsedStartTime >= 18.0)) {
+            spreadSheet.updateCell(2, index, '', false);
+        } else if (shift === 'Day' && (parsedStartTime >= 18.0 || parsedStartTime < 6.0)) {
+            spreadSheet.updateCell(2, index, '', false);
+        } else {
+            spreadSheet.updateCell(2, index, startTime, false);
+        }
+    }
 
       if (colEndTime) {
         endTime = formatTime(colEndTime)
@@ -127,7 +135,7 @@ export default function TimeSheetPage() {
         let result = calculateTotalTime(startTime, endTime)
         if (result !== 'NaN.NaN') {
           if (parseFloat(startTime) > parseFloat(endTime)) {
-            if (shift === 'Night' && parseFloat(startTime) > 19.00 && parseFloat(startTime) < 23.59) {
+            if (shift === 'Night' && parseFloat(startTime) > 18.00 && parseFloat(startTime) < 23.59) {
               const resultMidnigth = calculateMidnightTime(startTime, endTime)
               spreadSheet.updateCell(4, index, resultMidnigth, false)
               arrayTime[index] = resultMidnigth
@@ -160,7 +168,7 @@ export default function TimeSheetPage() {
     const hasValue = hasValuesInNestedArray(datanya)
     if(hasValue){
       setButtonDraftDisabled(false)
-    }
+    } 
 
     const totalDurationTime = calculateTotalTimeFromArray(arrayTime)
     setTotalDuration(totalDurationTime)
@@ -283,6 +291,15 @@ export default function TimeSheetPage() {
     }
   }, [transformData, navigate]);
 
+  const resetState = useCallback(() => {
+    setLoaded(true);
+    setIsNew(true);
+    setFormData([]);
+    setTotalDuration(0);
+    jRef.current.jspreadsheet.setData([]);
+    setButtonDraftDisabled(true)
+  },[]);
+
   const handleSubmitToLocalDB = useCallback(async (type) => {
    
     const data = {
@@ -292,15 +309,6 @@ export default function TimeSheetPage() {
       totalDuration: totalDuration
     };
 
-    const resetState = () => {
-      setLoaded(true);
-      setIsNew(true);
-      setFormData([]);
-      setTotalDuration(0);
-      jRef.current.jspreadsheet.setData([]);
-    };
-
-    console.log(type, data) 
     // Validated
     if(type === 1){
       const checkExisted = await getTimeEntryByUnit(data.unitNo);
@@ -341,7 +349,7 @@ export default function TimeSheetPage() {
       }
     }
 
-  }, [dataItemId, formData, formTitle, isNew, tableData])
+  }, [dataItemId, formData, formTitle, isNew, tableData, totalDuration, resetState])
 
   const handleChange = (ev, data) => {
     const { name, value } = data;
@@ -383,13 +391,6 @@ export default function TimeSheetPage() {
       } else {
         console.error('Invalid input for HM values');
       }
-    } else if (name === 'jdeOperator' && value.length >= 6) {
-      const mo = masterOP?.find((v) => v.jde === value);
-      setFormData({
-        ...formData,
-        nameOperator: mo?.fullname || '',
-        jdeOperator: value,
-      });
     } else {
       if(name === 'shift'){
         toLocalStorage('shift', value)
@@ -424,11 +425,13 @@ export default function TimeSheetPage() {
   const getDataFirst = useCallback(() => {
     const user = JSON.parse(Cookies.get('user'))
     const genId = generateID()
+    const shift = getLocalStorage('shift')
+    
     setFormData(prevFormData => ({
       ...prevFormData,
       tanggal: new Date(),
       site: "BCP",
-      shift: "Day",
+      shift: shift ? shift : "Day",
       stafEntry: `${user.fullname} (${user.JDE})`,
       formID: genId
     }))
@@ -447,17 +450,27 @@ export default function TimeSheetPage() {
 
     if (isNew) {
       getDataFirst()
-      toLocalStorage('shift', 'Day')
+      const shift = getLocalStorage('shift')
+      if(!shift) toLocalStorage('shift', 'Day')
     }
+
+  
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [totalDuration, isNew, unitOptions]);
 
-  const handleEditData = useCallback(async (itemId) => {
+  const handleEditData = useCallback(async (itemId, type) => {
     setDataItemId(itemId)
     setIsNew(false)
     const spreadSheet = jRef.current.jspreadsheet
-    const dataDetail = await getTimeEntryDetailById(itemId)
+    let dataDetail = null
+
+    if(type === 1){
+       dataDetail = await getTimeEntryDetailById(itemId)
+    } else {
+       dataDetail = await getTimeEntryDraftDetailById(itemId)
+    }
+
     if (dataDetail) {
       setFormData({
         site: dataDetail.site,
@@ -474,6 +487,7 @@ export default function TimeSheetPage() {
       spreadSheet.setData(dataDetail.activity)
       handleChangeSheet()
     }
+   
   }, [handleChangeSheet])
 
   const components = useMemo(
@@ -608,6 +622,7 @@ export default function TimeSheetPage() {
               handleSubmit={handleSubmitToLocalDB}
               buttonDisabled={buttonDisabled}
               buttonDraftDisabled={buttonDraftDisabled}
+              handleReset={resetState}
             />
           </div>
         </div>

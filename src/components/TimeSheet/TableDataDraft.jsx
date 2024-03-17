@@ -28,8 +28,9 @@ const TableDataDraft = ({ formTitle, loaded, setLoaded, handleEdit }) => {
                 shift: val.shift,
                 hmAwal: val.hmAwal,
                 hmAkhir: val.hmAkhir,
-                
-                actions: <TableButtonDialog handleEdit={handleEdit} handleDelete={handleDelete} open={open} setOpen={setOpen} itemId={val.id} />
+                totalHM: val.hm,
+                totalDuration: val.totalDuration,
+                actions: <TableButtonDialog handleEdit={handleEdit} handleDelete={handleDelete} open={open} setOpen={setOpen} itemId={val.id} type={2} />
             }));
             setItemData(dataTable);
         }
@@ -62,7 +63,6 @@ const TableDataDraft = ({ formTitle, loaded, setLoaded, handleEdit }) => {
         <Suspense fallback={<></>}>
             <TableList columnsData={columnData} items={itemsData} backgroundColor={`#ffffff`} />
         </Suspense>
-
     </>
 };
 
