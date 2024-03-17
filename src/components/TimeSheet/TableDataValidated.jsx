@@ -36,7 +36,6 @@ const TableDataValidated = ({ formTitle, loaded, setLoaded, handleEdit, handleSu
 
     const fetchData = useCallback(async () => {
         const data = await getTimeEntryByformTitle(formTitle);
-        console.log(data.length)
         if (data.length > 0) {
             const dataTable = data.map((val) => ({
                 id: val.id,

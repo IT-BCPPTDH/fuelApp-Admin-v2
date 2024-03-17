@@ -115,15 +115,21 @@ export default function TimeSheetPage() {
 
       if (colStartTime) {
         startTime = formatTime(colStartTime); 
-        const parsedStartTime = parseFloat(startTime);
+        spreadSheet.updateCell(2, index, startTime, false);
+
+        /**
+         * Time Shift Logic
+         * TODO: Fixing Bug
+         */
+        // const parsedStartTime = parseFloat(startTime);
     
-        if (shift === 'Night' && (parsedStartTime <= 6.0 || parsedStartTime >= 18.0)) {
-            spreadSheet.updateCell(2, index, '', false);
-        } else if (shift === 'Day' && (parsedStartTime >= 18.0 || parsedStartTime < 6.0)) {
-            spreadSheet.updateCell(2, index, '', false);
-        } else {
-            spreadSheet.updateCell(2, index, startTime, false);
-        }
+        // if (shift === 'Night' && (parsedStartTime >= 6.0 || parsedStartTime < 18.0)) {
+        //     spreadSheet.updateCell(2, index, '', false);
+        // } else if (shift === 'Day' && (parsedStartTime >= 18.0 || parsedStartTime < 6.0)) {
+        //     spreadSheet.updateCell(2, index, '', false);
+        // } else {
+        //     spreadSheet.updateCell(2, index, startTime, false);
+        // }
     }
 
       if (colEndTime) {
