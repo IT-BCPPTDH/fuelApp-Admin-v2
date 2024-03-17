@@ -20,7 +20,7 @@ import Services from '../services/timeEntry'
 import { insertTimeEntry, insertTimeEntryDraft } from '../helpers/indexedDB/insert'
 import { getTimeEntryDetailById, getTimeEntryDraftDetailById, getTimeEntryByUnit, getUnitDataByNo, getOperatorNameById, getTimeEntryDraftByUnit } from '../helpers/indexedDB/getData'
 import { DialogComponent } from '../components/Dialog'
-import { deleteTimeEntries } from '../helpers/indexedDB/deteleData'
+import { deleteTimeEntries, deleteTimeEntriesDRAFT } from '../helpers/indexedDB/deteleData'
 import { useNavigate } from 'react-router-dom'
 import { updateTimeEntry, updateTimeEntryDraft } from '../helpers/indexedDB/editData'
 import { HeaderTitle } from '../utils/Wording'
@@ -323,6 +323,12 @@ export default function TimeSheetPage() {
         if (inserted) {
           resetState();
         }
+
+        const checkDraftData = await getTimeEntryDraftByUnit(data.unitNo)
+        if(checkDraftData.length > 0){
+          await deleteTimeEntriesDRAFT(checkDraftData[0].id)
+          resetState();
+        }
       } else if (isNew) {
         setOpenDialog(true);
         setDialogTitle("Cannot Save Database");
@@ -339,7 +345,6 @@ export default function TimeSheetPage() {
       const checkExisted = await getTimeEntryDraftByUnit(data.unitNo)
       if(checkExisted.length === 0){
         const inserted = await insertTimeEntryDraft(data)
-        console.log(inserted);
         if(inserted){
           resetState()
         }
@@ -459,8 +464,6 @@ export default function TimeSheetPage() {
       const shift = getLocalStorage('shift')
       if(!shift) toLocalStorage('shift', 'Day')
     }
-
-  
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [totalDuration, isNew, unitOptions]);
