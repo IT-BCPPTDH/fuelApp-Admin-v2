@@ -17,7 +17,6 @@ export default defineConfig({
         maximumFileSizeToCacheInBytes: 10 * 1024 * 1024, 
         navigateFallback: '/index.html',
         navigateFallbackAllowlist: [
-          // blacklist url yang tidak ingin dicache
           new RegExp('^/_'),
         ],
         clientsClaim: true,
@@ -61,21 +60,21 @@ export default defineConfig({
     })
   ],
   server: {
-    compress: true, // mengaktifkan gzip compression pada server development
+    compress: true, 
   },
   build: {
-    brotliSize: false, // menonaktifkan brotli compression pada file hasil build
+    brotliSize: false, 
     chunkSizeWarningLimit: 1600, 
-    minify: 'terser', // mengaktifkan minifikasi dengan menggunakan Terser
+    minify: 'terser', 
     terserOptions: {
       compress: {
-        drop_console: true, // menghapus semua console.log pada file hasil build
+        drop_console: true,
       },
     },
     rollupOptions: {
       output: {
         manualChunks: {
-          vendor: ['react', 'react-dom', 'react-router-dom'], // membagi kode menjadi chunk berdasarkan library yang digunakan
+          vendor: ['react', 'react-dom', 'react-router-dom'], 
         },
       },
     },

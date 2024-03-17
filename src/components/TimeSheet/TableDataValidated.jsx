@@ -19,7 +19,7 @@ const TableDataValidated = ({ formTitle, loaded, setLoaded, handleEdit, handleSu
     const [localData, setLocalData] = useState([])
     const [openDialog, setOpenDialog] = useState(false)
     const [showButton, setShowButton] = useState(true)
-    const { socket, isConnected } = useSocket();
+    const { isConnected } = useSocket();
 
     useEffect(() => {
         if(isConnected){
@@ -27,7 +27,7 @@ const TableDataValidated = ({ formTitle, loaded, setLoaded, handleEdit, handleSu
         } else {
             setButton2Disabled(true)
         }
-    }, [socket, isConnected]);
+    }, [isConnected]);
     
     const handleDelete = async (itemId) => {
         await deleteTimeEntries(itemId)
@@ -36,7 +36,7 @@ const TableDataValidated = ({ formTitle, loaded, setLoaded, handleEdit, handleSu
 
     const fetchData = useCallback(async () => {
         const data = await getTimeEntryByformTitle(formTitle);
-
+        console.log(data.length)
         if (data.length > 0) {
             const dataTable = data.map((val) => ({
                 id: val.id,
@@ -49,9 +49,11 @@ const TableDataValidated = ({ formTitle, loaded, setLoaded, handleEdit, handleSu
                 totalDuration: val.totalDuration,
                 actions: <TableButtonDialog handleEdit={handleEdit} handleDelete={handleDelete} open={open} setOpen={setOpen} itemId={val.id} type={1}/>
             }));
-
+            setButton2Disabled(false)
             setItemData(dataTable);
             setLocalData(data)
+        } else {
+            setButton2Disabled(true)
         }
     }, [open, handleEdit, formTitle]);
 

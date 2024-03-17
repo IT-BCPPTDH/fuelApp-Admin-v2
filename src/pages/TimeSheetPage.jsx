@@ -114,7 +114,7 @@ export default function TimeSheetPage() {
       const colEndTime = spreadSheet.getValueFromCoords(3, index)
 
       if (colStartTime) {
-        const startTime = formatTime(colStartTime); 
+        startTime = formatTime(colStartTime); 
         const parsedStartTime = parseFloat(startTime);
     
         if (shift === 'Night' && (parsedStartTime <= 6.0 || parsedStartTime >= 18.0)) {
