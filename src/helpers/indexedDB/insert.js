@@ -44,3 +44,13 @@ export const insertTimeEntry = async (data) => {
     return false
   }
 }
+
+export const insertTimeEntryDraft = async (data) => {
+  try {
+    console.log(data)
+    return await db.timeEntriesDraft.add(data)
+  } catch (error) {
+    console.log(error)
+    return false
+  }
+}

@@ -1,5 +1,6 @@
 import { Subtitle2, makeStyles, Image } from '@fluentui/react-components'
 import Logo from '../images/dewa.png'
+import UserPic from '../images/user-pic.png'
 
 const useStyles = makeStyles({
   root: {
@@ -28,9 +29,9 @@ const Header = () => {
       </div>
 
       <Image
-        alt="Erik's avatar"
+        alt="avatar"
         shape='circular'
-        src='https://fabricweb.azureedge.net/fabric-website/assets/images/avatar/ErikNason.jpg'
+        src={UserPic}
         height={30}
         width={30}
       />

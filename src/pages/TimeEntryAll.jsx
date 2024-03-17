@@ -8,7 +8,10 @@ import { Button } from "@fluentui/react-components";
 import {ContentView24Regular} from '@fluentui/react-icons'
 import PropTypes from 'prop-types'
 import { useNavigate } from "react-router-dom";
+import { getURLPath } from "../helpers/commonHelper";
 const TableList = lazy(() => import('../components/TableList'))
+import { tabMenuTableTimeEntry } from "../utils/Enums";
+import { HeaderTitle } from "../utils/Wording";
 
 const ActionButtons = ({handleAction, param}) =>{
   return(
@@ -33,6 +36,9 @@ const TimeEntryAll = () => {
   const navigate = useNavigate()
 
   const [itemsData, setItemsData] = useState([])
+  const [formTitle, setFormTitle] = useState(HeaderTitle.TIME_ENTRY_COLLECTOR)
+  const [activeTab, setActiveTab] = useState(getURLPath())
+  const [typeTE, setTypeTE] = useState("")
 
   const handleAction = useCallback( async(type, param) => {
     navigate(`/time-entry-detail/${param}/${type}`)
@@ -40,6 +46,8 @@ const TimeEntryAll = () => {
 
   const fetchData = useCallback(async()=>{
     try {
+
+      if(typeTE === "Collector"){
         const data = await Services.getAllTimeEntryData()
         if(data.status === 200){
           const dataRes = data.data
@@ -52,27 +60,51 @@ const TimeEntryAll = () => {
           }))
           setItemsData(dataItems)
         }
+      } else {
+        setItemsData([])
+      }
+      
     } catch (error) {
       console.log(error)
     }
-  },[handleAction])
+  },[handleAction, typeTE])
+
+  const handleTab = useCallback(()=>{
+    const lastPart = getURLPath()
+    switch (lastPart) {
+      case tabMenuTableTimeEntry.TIMEENTY_FMS:
+        setFormTitle(HeaderTitle.TIME_ENTRY_FMS);
+        setActiveTab(tabMenuTableTimeEntry.TIMEENTY_FMS)
+        setTypeTE("FMS")
+        break;
+      case tabMenuTableTimeEntry.TIMEENTY_COLLECTOR:
+        setFormTitle(HeaderTitle.TIME_ENTRY_COLLECTOR)
+        setActiveTab(tabMenuTableTimeEntry.TIMEENTY_COLLECTOR)
+        setTypeTE("Collector")
+        break;
+      default:
+        break;
+    }
+  },[])
 
   useEffect(() => {
+    handleTab()
     fetchData()
-  }, [fetchData]);
+  }, [fetchData, handleTab]);
   return (
     <>
       <HeaderPageForm 
-        title={`Time Entry From Collector`} 
+        title={formTitle} 
         urlBack={NavigateUrl.HOME} 
-        urlCreate={NavigateUrl.TIME_ENTRY_DIGGER_FORM}
+        urlCreate={NavigateUrl.TIME_ENTRY_SUPPORT_FORM}
       />
       <div className="form-wrapper">
         <div className='row'>
           <div className='col-6'>
             <DynamicTablistMenu
               tabs={tabsTimeEntry}
-              active='time-entry-from-collector'
+              active={activeTab}
+              handleTab={handleTab}
             />
           </div>
         </div>

@@ -1,3 +1,5 @@
+import { getUnitByCategory } from "./indexedDB/getData";
+
 export const shiftOptionsData = ["Day", "Night"];
 export const unitOptionsData = [
   "HPM9040",
@@ -220,4 +222,8 @@ export const siteOptions = ["BCP", "ACP", "WKP"]
 
 export const materialOptions = ['-', 'OB Freedig', 'OB Blast', 'Mud Solid (60%)', 'Mud Liquid (40%)', 'NP OB', 'Coal', 'TS Inpit', 'TS Outpit']
 
-
+export const getExcaOptions = async()=>{
+  const unitExa = await getUnitByCategory('Excavator');
+  const res = unitExa.map((val) => val.unitno)
+  return res
+}

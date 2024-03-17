@@ -56,6 +56,7 @@ table {
   --color-darkGrey: #3f4144;
   --color-error: #d43939;
   --color-success: #28bd14;
+  --color-blue: rgb(0, 136, 255);
   --grid-maxWidth: 120rem;
   --grid-gutter: 2rem;
   --font-size: 1.6rem;
@@ -673,6 +674,10 @@ input:disabled {
 
 .text-white {
   color: #fff !important;
+}
+
+.text-blue{
+  color: var(--color-blue) !important
 }
 
 /* Position & alignment */

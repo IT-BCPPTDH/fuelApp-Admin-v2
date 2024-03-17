@@ -47,6 +47,11 @@ export const tabMenuTimeEntryEnum = {
     UNIT_HAULER: "time-entry-hauler-form"
 }
 
+export const tabMenuTableTimeEntry = {
+    TIMEENTY_FMS: "time-entry-from-fms",
+    TIMEENTY_COLLECTOR: "time-entry-from-collector"
+}
+
 export const HTTP_STATUS = {
     OK: "200",
     CREATED: "201",

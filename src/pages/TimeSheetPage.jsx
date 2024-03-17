@@ -12,38 +12,40 @@ import { useLiveQuery } from 'dexie-react-hooks'
 import { db } from '../models/db'
 import { NavigateUrl } from '../utils/Navigation'
 import { menuTabsTimeEntry } from '../helpers/menuHelper'
-import { shiftOptionsData, materialOptions } from '../helpers/optionHelper'
+import { shiftOptionsData, materialOptions, getExcaOptions } from '../helpers/optionHelper'
 import { tabMenuTimeEntryEnum } from '../utils/Enums'
-import { timeEntryFormField, getShift } from '../helpers/formFieldHelper'
+import { hasValuesInNestedArray } from '../helpers/formFieldHelper'
 import { getURLPath, generateID } from '../helpers/commonHelper'
 import Services from '../services/timeEntry'
-import { insertTimeEntry } from '../helpers/indexedDB/insert'
-import { getTimeEntryDetailById, getTimeEntryByUnit, getUnitDataByNo, getOperatorNameById } from '../helpers/indexedDB/getData'
+import { insertTimeEntry, insertTimeEntryDraft } from '../helpers/indexedDB/insert'
+import { getTimeEntryDetailById, getTimeEntryByUnit, getUnitDataByNo, getOperatorNameById, getTimeEntryDraftByUnit } from '../helpers/indexedDB/getData'
 import { DialogComponent } from '../components/Dialog'
 import { deleteTimeEntries } from '../helpers/indexedDB/deteleData'
 import { useNavigate } from 'react-router-dom'
-import { updateTimeEntry } from '../helpers/indexedDB/editData'
+import { updateTimeEntry, updateTimeEntryDraft } from '../helpers/indexedDB/editData'
+import { HeaderTitle } from '../utils/Wording'
 
-const TableDataInputed = lazy(() => import('../components/TimeSheet/TableDataInputed'))
+const TableDataValidated = lazy(() => import('../components/TimeSheet/TableDataValidated'))
 const FormComponent = lazy(() => import('../components/FormComponent'))
+const TableDraft = lazy(() => import('../components/TimeSheet/TableDataDraft'))
 
 export default function TimeSheetPage() {
 
   const jRef = useRef(null)
   const [totalDuration, setTotalDuration] = useState(0)
   const [buttonDisabled, setButtonDisabled] = useState(true)
+  const [buttonDraftDisabled, setButtonDraftDisabled] = useState(true)
   const [formData, setFormData] = useState({});
   const [menuTabs, setMenuTabs] = useState([])
   const [shiftOptions] = useState(shiftOptionsData)
   const [activeTab, setActiveTab] = useState(getURLPath())
-  const [formTitle, setFormTitle] = useState('Unit Digger')
+  const [formTitle, setFormTitle] = useState('')
   const [tableData, setTableData] = useState([])
   const [loaded, setLoaded] = useState(false)
   const [isNew, setIsNew] = useState(true)
   const [openDialog, setOpenDialog] = useState(false)
   const [dialogTitle, setDialogTitle] = useState("")
   const [dialogMessage, setDialogMessage] = useState("")
-  const [randomId] = useState(generateID())
   const [sendingData, setSendingData] = useState(false)
   const navigate = useNavigate()
   const [dataItemId, setDataItemId] = useState(0)
@@ -101,7 +103,6 @@ export default function TimeSheetPage() {
     let arrayTime = []
     const shift = getLocalStorage('shift')
 
-console.log(shift)
     for (let index = 0; index < 20; index++) {
       const col1Val = spreadSheet.getValueFromCoords(0, index)
       const activity = masterActivity?.find(obj => obj.activityname === col1Val)
@@ -153,9 +154,13 @@ console.log(shift)
         }
       }
     }
-
     const datanya = spreadSheet.getData()
     setTableData(datanya)
+
+    const hasValue = hasValuesInNestedArray(datanya)
+    if(hasValue){
+      setButtonDraftDisabled(false)
+    }
 
     const totalDurationTime = calculateTotalTimeFromArray(arrayTime)
     setTotalDuration(totalDurationTime)
@@ -163,54 +168,59 @@ console.log(shift)
   }, [])
 
   useEffect(() => {
-
-    let act = getLocalStorage('timeEntry-activity')
-    const width = screen.width;
-
-    const options = {
-      data: [],
-      columns: [
-        {
-          type: 'dropdown',
-          width: '250',
-          title: 'Activity',
-          source: act,
-          autocomplete: true
-        },
-        { type: 'text', width: '150', title: 'Delay Description' },
-        { type: 'text', width: '100', title: 'Start' },
-        { type: 'text', width: '100', title: 'End' },
-        { type: 'text', width: '100', title: 'Duration' },
-        {
-          type: 'dropdown',
-          width: '130',
-          title: 'Material',
-          source: materialOptions,
-          autocomplete: true
-        },
-        {
-          type: 'dropdown',
-          width: '130',
-          title: 'Operator',
-          source: jdeOptions,
-          autocomplete: true
-        },
-        { type: 'text', width: '100', title: 'Cut Status' },
-        { type: 'text', width: '100', title: 'Digger' },
-        { type: 'text', width: '100', title: 'Lokasi' }
-      ],
-      minDimensions: [9, 14],
-      tableHeight: '375px',
-      tableWidth: `${(width * 86) / 100}px`,
-      tableOverflow: true,
-      allowInsertColumn: false,
-      onafterchanges: handleChangeSheet,
-    }
-    if (!jRef.current.jspreadsheet) {
-      jspreadsheet(jRef.current, options)
-    }
-
-  }, [jdeOptions, handleChangeSheet])
+    const fetchData = async () => {
+      let act = getLocalStorage('timeEntry-activity');
+      const width = screen.width;
+      const excaOptions = await getExcaOptions(); 
+  
+      const options = {
+        data: [],
+        columns: [
+          {
+            type: 'dropdown',
+            width: '250',
+            title: 'Activity',
+            source: act,
+            autocomplete: true
+          },
+          { type: 'text', width: '150', title: 'Delay Description' },
+          { type: 'text', width: '100', title: 'Start' },
+          { type: 'text', width: '100', title: 'End' },
+          { type: 'text', width: '100', title: 'Duration' },
+          {
+            type: 'dropdown',
+            width: '130',
+            title: 'Material',
+            source: materialOptions,
+            autocomplete: true
+          },
+          {
+            type: 'dropdown',
+            width: '130',
+            title: 'Operator',
+            source: jdeOptions,
+            autocomplete: true
+          },
+          { type: 'text', width: '100', title: 'Cut Status' },
+          { type: 'dropdown', width: '100', title: 'Digger', source: excaOptions, autocomplete: true },
+          { type: 'text', width: '100', title: 'Lokasi' }
+        ],
+        minDimensions: [9, 14],
+        tableHeight: '375px',
+        tableWidth: `${(width * 86) / 100}px`,
+        tableOverflow: true,
+        allowInsertColumn: false,
+        onafterchanges: handleChangeSheet,
+      };
+  
+      if (!jRef.current.jspreadsheet) {
+        jspreadsheet(jRef.current, options);
+      }
+    };
+  
+    fetchData();
+  }, [jdeOptions, handleChangeSheet]);
+  
 
   const handleSubmitToServer = useCallback(async (localData) => {
     try {
@@ -273,14 +283,14 @@ console.log(shift)
     }
   }, [transformData, navigate]);
 
-  const handleSubmitToLocalDB = useCallback(async () => {
+  const handleSubmitToLocalDB = useCallback(async (type) => {
+   
     const data = {
       ...formData,
       activity: tableData,
-      formTitle: formTitle
+      formTitle: formTitle,
+      totalDuration: totalDuration
     };
-
-    const checkExisted = await getTimeEntryByUnit(data.unitNo);
 
     const resetState = () => {
       setLoaded(true);
@@ -290,21 +300,47 @@ console.log(shift)
       jRef.current.jspreadsheet.setData([]);
     };
 
-    if (checkExisted.length === 0) {
-      const inserted = await insertTimeEntry(data);
-      if (inserted) {
-        resetState();
+    console.log(type, data) 
+    // Validated
+    if(type === 1){
+      const checkExisted = await getTimeEntryByUnit(data.unitNo);
+      if (checkExisted.length === 0) {
+        const inserted = await insertTimeEntry(data);
+        if (inserted) {
+          resetState();
+        }
+      } else if (isNew) {
+        setOpenDialog(true);
+        setDialogTitle("Cannot Save Database");
+        setDialogMessage(`Please check again Unit No field, Unit No: ${data.unitNo} already existed in Database`);
+      } else {
+        const updated = await updateTimeEntry(dataItemId, data);
+        if (updated) {
+          resetState();
+        }
       }
-    } else if (isNew) {
-      setOpenDialog(true);
-      setDialogTitle("Cannot Save Database");
-      setDialogMessage(`Please check again Unit No field, Unit No: ${data.unitNo} already existed in Database`);
+    
+    // Draft
     } else {
-      const updated = await updateTimeEntry(dataItemId, data);
-      if (updated) {
-        resetState();
+      const checkExisted = await getTimeEntryDraftByUnit(data.unitNo)
+      if(checkExisted.length === 0){
+        const inserted = await insertTimeEntryDraft(data)
+        console.log(inserted);
+        if(inserted){
+          resetState()
+        }
+      } else if (isNew) {
+        setOpenDialog(true);
+        setDialogTitle("Cannot Save Database");
+        setDialogMessage(`Please check again Unit No field, Unit No: ${data.unitNo} already existed in Database`);
+      } else {
+        const updated = await updateTimeEntryDraft(dataItemId, data);
+        if (updated) {
+          resetState();
+        }
       }
     }
+
   }, [dataItemId, formData, formTitle, isNew, tableData])
 
   const handleChange = (ev, data) => {
@@ -363,52 +399,46 @@ console.log(shift)
   };
 
   const handleTab = () => {
-
     const lastPart = getURLPath()
     setActiveTab(lastPart)
-
     switch (lastPart) {
       case tabMenuTimeEntryEnum.UNIT_DIGGER:
-        setFormTitle('Unit Digger')
+        setFormTitle(HeaderTitle.FORM_UNIT_DIGGER)
         break;
       case tabMenuTimeEntryEnum.UNIT_HAULER:
-        setFormTitle("Unit Hauler")
+        setFormTitle(HeaderTitle.FORM_UNIT_HAULER)
         break;
       case tabMenuTimeEntryEnum.UNIT_SUPPORT:
-        setFormTitle("Unit Support")
+        setFormTitle(HeaderTitle.FORM_UNIT_SUPPORT)
         break;
       default:
         break;
     }
 
     setIsNew(true)
-    setFormData([])
+    getDataFirst()
     setTotalDuration(0)
     jRef.current.jspreadsheet.setData([])
   }
 
   const getDataFirst = useCallback(() => {
     const user = JSON.parse(Cookies.get('user'))
-  
+    const genId = generateID()
     setFormData(prevFormData => ({
       ...prevFormData,
-      // shift: 'Day',
       tanggal: new Date(),
       site: "BCP",
+      shift: "Day",
       stafEntry: `${user.fullname} (${user.JDE})`,
-      formID: randomId
+      formID: genId
     }))
-  }, [setFormData, randomId])
+  }, [])
 
   useEffect(() => {
     const sorted = sortArray(unitOptions)
     setSortedUnitOptions(sorted)
-  }, [unitOptions]);
-
-  useEffect(() => {
     setMenuTabs(menuTabsTimeEntry)
-    setFormData(timeEntryFormField)
-
+    setFormTitle(HeaderTitle.FORM_UNIT_SUPPORT)
     const disabled =
       parseFloat(totalDuration) > 12 || parseFloat(totalDuration) < 12
         ? true
@@ -421,7 +451,7 @@ console.log(shift)
     }
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [totalDuration, isNew]);
+  }, [totalDuration, isNew, unitOptions]);
 
   const handleEditData = useCallback(async (itemId) => {
     setDataItemId(itemId)
@@ -549,7 +579,7 @@ console.log(shift)
   return (
     <>
       <HeaderPageForm
-        title={`Form Time Entry - ${formTitle}`}
+        title={formTitle}
         urlCreate={''}
         urlBack={NavigateUrl.TIME_ENTRY_MAIN_TABLE}
         childrenMenu={<DynamicTablistMenu tabs={menuTabs} active={activeTab} handleTab={handleTab} />}
@@ -577,18 +607,27 @@ console.log(shift)
             <FooterPageForm
               handleSubmit={handleSubmitToLocalDB}
               buttonDisabled={buttonDisabled}
+              buttonDraftDisabled={buttonDraftDisabled}
             />
           </div>
         </div>
       </div>
       <div className="mt1em form-wrapper">
         <Suspense fallback={<></>}>
-          <TableDataInputed
+          <TableDataValidated
             formTitle={formTitle}
             loaded={loaded}
             setLoaded={setLoaded}
             handleEdit={handleEditData}
             handleSubmitToServer={handleSubmitToServer}
+            sendingData={sendingData}
+          />
+          
+          <TableDraft 
+            formTitle={formTitle}
+            loaded={loaded}
+            setLoaded={setLoaded}
+            handleEdit={handleEditData}
             sendingData={sendingData}
           />
         </Suspense>

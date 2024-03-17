@@ -1,16 +1,3 @@
-
-export const timeEntryFormField = {
-    formId: "TE-0001",
-    site: 'BCP',
-    stafEntry: 'Nama Lengkap',
-    tanggal: new Date(),
-    // shift: '',
-    unitNo: '',
-    hmAwal: '',
-    hmAkhir: '',
-    hm: ''
-  };
-
   export const getShift = () =>{
     const now = new Date()
     const currentHour = now.getHours()
@@ -25,3 +12,16 @@ export const timeEntryFormField = {
 
     return shift
   }
+
+  export const hasValuesInNestedArray = (arr) => {
+    if (Array.isArray(arr[0]) && arr[0].length > 0) {
+        const nestedArr = arr[0];
+        for (let i = 0; i < 5; i++) {
+            if (!nestedArr[i]) {
+                return false;
+            }
+        }
+        return true;
+    }
+    return false;
+}

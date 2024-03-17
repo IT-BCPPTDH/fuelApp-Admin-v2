@@ -17,3 +17,12 @@ export const updateTimeEntry = async (dataId, data) => {
     return false
   }
 }
+
+export const updateTimeEntryDraft = async (dataId, data) => {
+  try {
+      return await db.timeEntriesDraft.update(dataId, data)
+  } catch (error) {
+    console.error(error)
+    return false
+  }
+}

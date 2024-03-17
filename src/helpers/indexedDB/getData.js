@@ -39,6 +39,15 @@ export const getUnitDataByNo = async (unitNo) => {
   }
 }
 
+export const getUnitByCategory = async (category) => {
+  try {
+      const unit = await db.unit.where("category").equals(category).toArray()
+      return unit ?? []
+  } catch (error) {
+    console.error(error)
+  }
+}
+
 export const getDataTableHauling = async () => {
   try {
     const formdatahaulings = await db.formdatahauling.toArray();
@@ -57,9 +66,27 @@ export const getTimeEntryByUnit = async (unitNo) => {
   }
 }
 
+export const getTimeEntryDraftByUnit = async (unitNo) => {
+  try {
+    const timeEntries = await db.timeEntriesDraft.where('unitNo').equals(unitNo).toArray()
+    return timeEntries;
+  } catch (error) {
+    console.error(error)
+  }
+}
+
 export const getTimeEntryByformTitle = async (formTitle) => {
   try {
     const timeEntries = await db.timeEntries.where('formTitle').equals(formTitle).toArray()
+    return timeEntries;
+  } catch (error) {
+    console.error(error)
+  }
+}
+
+export const getTimeEntryDraftByformTitle = async (formTitle) => {
+  try {
+    const timeEntries = await db.timeEntriesDraft.where('formTitle').equals(formTitle).toArray()
     return timeEntries;
   } catch (error) {
     console.error(error)

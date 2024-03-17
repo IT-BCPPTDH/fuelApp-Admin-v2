@@ -1,24 +1,24 @@
 export const menuArrayData = [
     {
-        name: 'Data Coal Hauling',
+        name: 'Coal Hauling',
         desc: 'Data Collector for Coal Hauling Entry',
         link: '/coalhauling',
         access: ['MHA', 'MED', 'MOD']
     },
     {
-        name: 'Data Time Entry',
+        name: 'Time Entry (Non FMS)',
         desc: 'List Time Entry All Date',
         link: '/time-entry-from-collector',
         access: ['MED', 'MOD']
     },
     {
-        name: 'Data Time Entry (FMS)',
+        name: 'Time Entry (FMS)',
         desc: 'Data Time Entry from Satnet DB',
-        link: '/time-sheet-fms',
+        link: '/time-entry-from-fms',
         access: ['MED', 'MOD', 'Dispatch']
     },
     {
-        name: 'Data Monitoring Breakdown',
+        name: 'Monitoring Breakdown',
         desc: 'Data Collector for Monitoring BD',
         link: '/monitoring-breakdown',
         access: ['MED', 'MOD', 'Dispatch']
@@ -70,7 +70,7 @@ export const formArrayData = [
 ]
 
 export const menuTabsTimeEntry = [
+    { label: 'Time Entry Support', value: 'time-entry-support-form' },
     { label: 'Time Entry Digger', value: 'time-entry-digger-form' },
-    { label: 'Time Entry Hauler', value: 'time-entry-hauler-form' },
-    { label: 'Time Entry Support', value: 'time-entry-support-form' }
+    { label: 'Time Entry Hauler', value: 'time-entry-hauler-form' }
 ]

@@ -28,3 +28,12 @@ export const deleteTimeEntries = async (dataId) => {
     console.log(error)
   }
 }
+
+export const deleteTimeEntriesDRAFT = async (dataId) => {
+  try {
+    await db.timeEntriesDraft.delete(dataId)
+    return true
+  } catch (error) {
+    console.log(error)
+  }
+}

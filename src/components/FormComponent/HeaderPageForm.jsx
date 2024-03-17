@@ -35,7 +35,7 @@ export const HeaderPageForm = ({ title, urlCreate, urlBack, childrenMenu, icon }
         style={{ backgroundColor: '#107c10', color: '#ffffff' }}
         onClick={() => handleClick(urlCreate)}
       >
-        New Data Entry
+        Insert New Data 
       </Button> : <></>}
     </div>
   )

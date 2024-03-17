@@ -181,7 +181,7 @@ const FormElement =  ({
 
 const ComboBoxCustom = (props) => {
   const { inputId, name, label, options, handleChange, value } = props;
-  const [matchingOptions, setMatchingOptions] = useState(options);
+  const [matchingOptions, setMatchingOptions] = useState([...options]);
   const styles = useStyles();
   const [itemHeight] = useState(10);
   const [numberOfItems, setNumberofItems] = useState(0);
@@ -211,7 +211,7 @@ const ComboBoxCustom = (props) => {
     setNumberofItems(options.length);
 
     if (typeof value === 'function') {
-     setInputValue("")
+      setInputValue("")
     } else {
       setInputValue(value)
     }

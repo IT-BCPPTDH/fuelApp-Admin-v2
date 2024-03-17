@@ -158,3 +158,12 @@ button:hover {
  @keyframes l10 {
    100% {background-position: right -40px top 0}
  }
+
+ .divider{
+   display: flex;
+   flex-direction: column;
+   align-items: center;
+   justify-items: center;
+   min-height: 40px;
+   background-color: transparent;
+ }
