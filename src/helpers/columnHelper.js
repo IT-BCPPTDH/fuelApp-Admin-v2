@@ -1006,38 +1006,36 @@ export const colHeaderDistance = {
   ]
 }
 
-export const colHelperTimesheetMines = {
-  columnHeader:[
-    { type: 'text', width: '100', title: 'Unit No' },
-    { type: 'text', width: '200', title: 'Product Model' },
-    { type: 'text', width: '150', title: 'Description' },
-    { type: 'text', width: '100', title: 'Owner' },
-    { type: 'text', width: '150', title: 'Production Date' },
-    { type: 'text', width: '75', title: 'Shift' },
-    { type: 'text', width: '120', title: 'Operator ID' },
-    { type: 'text', width: '200', title: 'Operator Name' },
-    { type: 'text', width: '100', title: 'SMU Start' },
-    { type: 'text', width: '100', title: 'SMU Finish' },
-    { type: 'text', width: '80', title: 'HM' },
-    { type: 'text', width: '250', title: 'Activity' },
-    { type: 'text', width: '100', title: 'Start Time' },
-    { type: 'text', width: '100', title: 'End Time' },
-    { type: 'text', width: '100', title: 'Duration' },
-    { type: 'text', width: '150', title: 'Convert Duration' },
-    { type: 'text', width: '100', title: 'BD Number' },
-    { type: 'text', width: '150', title: 'From Equipment' },
-    { type: 'text', width: '150', title: 'Material' },
-    { type: 'text', width: '100', title: 'Mat Group' },
-    { type: 'text', width: '100', title: 'Distance' },
-    { type: 'text', width: '150', title: 'Loading Location' },
-    { type: 'text', width: '150', title: 'Dumping Location' },
-    { type: 'text', width: '100', title: 'Trip' },
-    { type: 'text', width: '100', title: 'BCM' },
-    { type: 'text', width: '200', title: 'Notes' },
-    { type: 'text', width: '120', title: 'Cutoff Status' },
-    { type: 'text', width: '100', title: 'LOC' }
-  ]
-}
+export const colHelperTimesheetMines = [
+{ type: 'text', width: '100', title: 'Unit No' },
+{ type: 'text', width: '200', title: 'Product Model' },
+{ type: 'text', width: '150', title: 'Description' },
+{ type: 'text', width: '100', title: 'Owner' },
+{ type: 'text', width: '150', title: 'Production Date' },
+{ type: 'text', width: '75', title: 'Shift' },
+{ type: 'text', width: '120', title: 'Operator ID' },
+{ type: 'text', width: '200', title: 'Operator Name' },
+{ type: 'text', width: '100', title: 'SMU Start' },
+{ type: 'text', width: '100', title: 'SMU Finish' },
+{ type: 'text', width: '80', title: 'HM' },
+{ type: 'text', width: '250', title: 'Activity' },
+{ type: 'text', width: '100', title: 'Start Time' },
+{ type: 'text', width: '100', title: 'End Time' },
+{ type: 'text', width: '100', title: 'Duration' },
+{ type: 'text', width: '150', title: 'Convert Duration' },
+{ type: 'text', width: '100', title: 'BD Number' },
+{ type: 'text', width: '150', title: 'From Equipment' },
+{ type: 'text', width: '150', title: 'Material' },
+{ type: 'text', width: '100', title: 'Mat Group' },
+{ type: 'text', width: '100', title: 'Distance' },
+{ type: 'text', width: '150', title: 'Loading Location' },
+{ type: 'text', width: '150', title: 'Dumping Location' },
+{ type: 'text', width: '100', title: 'Trip' },
+{ type: 'text', width: '100', title: 'BCM' },
+{ type: 'text', width: '200', title: 'Notes' },
+{ type: 'text', width: '120', title: 'Cutoff Status' },
+{ type: 'text', width: '100', title: 'LOC' }
+]
 
 export const colHelperDetailCoalHauling = [
   { type: 'text', width: '50', title: 'ID' },
@@ -1267,3 +1265,40 @@ export const colArrayHelper = {
   ],
   arrCheck:['Check', 'Var']
 }
+
+export const colHelperHaulingMHA = [
+  { type: 'text', width: '100', title: 'Tanggal' },
+  { type: 'text', width: '100', title: 'Shift' },
+  { type: 'text', width: '100', title: 'Unit' },
+  { type: 'text', width: '100', title: 'Operator' },
+  { type: 'text', width: '100', title: 'Tonnage' },
+  { type: 'text', width: '100', title: 'Loader' },
+  { type: 'text', width: '100', title: 'PIT' },
+  { type: 'text', width: '100', title: 'Seam' },
+  { type: 'text', width: '100', title: 'In ROM' },
+  { type: 'text', width: '100', title: 'Dump Time' },
+  { type: 'text', width: '100', title: 'Time Hauling' },
+  { type: 'text', width: '100', title: 'Dumping' },
+  { type: 'text', width: '100', title: 'Remark' }
+]
+
+export const colHelperMonitoringDB = [
+  { type: 'text', width: '90', title: 'No Unit', height: "20px" },
+  { type: 'text', width: '100', title: 'Location' },
+  { type: 'text', width: '80', title: 'Date and' },
+  { type: 'text', width: '70', title: 'Shift' },
+  { type: 'text', width: '60', title: 'Report Time' },
+  { type: 'text', width: '60', title: 'Down Time' },
+  { type: 'text', width: '80', title: 'RUN' },
+  { type: 'text', width: '70', title: 'Shift' },
+  { type: 'text', width: '60', title: 'Ready Time' },
+  { type: 'text', width: '300', title: 'Failure Description' },
+  { type: 'text', width: '80', title: 'JDE Reported by' },
+  { type: 'text', width: '80', title: 'HM DOWN' },
+  { type: 'text', width: '80', title: 'HM UP' },
+  { type: 'text', width: '80', title: 'Down Duration' },
+  { type: 'text', width: '100', title: 'Status' },
+  { type: 'text', width: '100', title: 'Ket' },
+  { type: 'text', width: '100', title: 'CN' }
+]
+

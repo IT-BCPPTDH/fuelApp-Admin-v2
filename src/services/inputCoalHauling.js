@@ -90,7 +90,6 @@ const getPingServer = async () => {
 };
 
 
-
 const Transaksi = {
   getAllTransaction,
   getEditTransaction,
@@ -106,7 +105,7 @@ const Transaksi = {
   getDataSekurau,
   getDownload,
   getDataMain,
-  getPingServer,
+  getPingServer
 };
 
 

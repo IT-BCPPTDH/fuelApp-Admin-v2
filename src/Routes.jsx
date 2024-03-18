@@ -9,6 +9,7 @@ const TimeEntryAll = lazy(() => import('./pages/TimeEntryAll'));
 const TimeSheetPage = lazy(() => import('./pages/TimeSheetPage'));
 const TimeEntryMinesEntryPage = lazy(() => import('./pages/TimeEntryMinesEntryPage'));
 const TimeEntryMinesDetailPage = lazy(() => import('./pages/TimeEntryDetailPage'));
+const MonitoringBDPage = lazy(() => import('./pages/MonitoringBDPage'))
 
 // import ProductionEntryPage from './pages/ProductionEntryPage'
 // import MineplanEntryPage from './pages/MineplanEntryPage'
@@ -33,9 +34,9 @@ const RouteApp = () => {
       <Route path='/time-entry-digger-form' element={<Suspense fallback={<div>Loading Time Sheet...</div>}><TimeSheetPage /></Suspense>} />
       <Route path='/time-entry-hauler-form' element={<Suspense fallback={<div>Loading Time Sheet...</div>}><TimeSheetPage /></Suspense>} />
       <Route path='/time-entry-detail/:tanggal/:type' element={<Suspense fallback={<div>Loading Time Entry Detail...</div>}><TimeEntryMinesDetailPage /></Suspense>} />
-      <Route path='/time-sheet-mines' element={<Suspense fallback={<div>Loading Mines Time Sheet...</div>}><TimeEntryMinesEntryPage /></Suspense>} />
-      <Route path='/time-sheet-fms' element={<Suspense fallback={<div>Loading Mines Time Sheet...</div>}><TimeEntryMinesEntryPage /></Suspense>} />
-
+      <Route path='/time-sheet-mines' element={<Suspense fallback={<div>Loading Time Sheet...</div>}><TimeEntryMinesEntryPage /></Suspense>} />
+      <Route path='/time-sheet-fms' element={<Suspense fallback={<div>Loading Time Sheet...</div>}><TimeEntryMinesEntryPage /></Suspense>} />
+      <Route path='/monitoring-breakdown'  element={<Suspense fallback={<div>Loading Monitoring BD Sheet...</div>}><MonitoringBDPage /></Suspense>} />
 
       {/* <Route path='/time-entry-production' element={<RekapTimeEntryPage />}></Route>
       <Route path='/production' element={<ProductionEntryPage />}></Route>

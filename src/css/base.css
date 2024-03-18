@@ -289,6 +289,7 @@ input:disabled {
   flex-direction: row-reverse;
 }
 
+
 .col {
   -webkit-box-flex: 1;
   -ms-flex: 1;
@@ -678,6 +679,9 @@ input:disabled {
 
 .text-blue{
   color: var(--color-blue) !important
+}
+.text-italic{
+  font-style: italic;
 }
 
 /* Position & alignment */

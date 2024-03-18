@@ -58,7 +58,7 @@ const TimeEntryMinesDetailPage = () => {
     const options = {
       lazyLoading: true,
       loadingSpin: true,
-      columns: colHelperTimesheetMines.columnHeader,
+      columns: colHelperTimesheetMines,
       minDimensions: [5, 15],
       tableHeight: '500px',
       tableWidth: `${(width * 87) / 100}px`,
