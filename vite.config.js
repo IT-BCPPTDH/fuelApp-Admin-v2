@@ -21,6 +21,19 @@ export default defineConfig({
         ],
         clientsClaim: true,
         skipWaiting: true,
+        runtimeCaching: [{
+          handler: 'NetworkOnly',
+          urlPattern: /\/api\/.*\/*.json/,
+          method: 'POST',
+          options: {
+            backgroundSync: {
+              name: 'myQueueName',
+              options: {
+                maxRetentionTime: 24 * 60
+              }
+            }
+          }
+        }]
       },
       includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'pwa-maskable-192x192.png'],
       manifest: {

@@ -141,7 +141,7 @@ export default function TimeSheetPage() {
         let result = calculateTotalTime(startTime, endTime)
         if (result !== 'NaN.NaN') {
           if (parseFloat(startTime) > parseFloat(endTime)) {
-            if (shift === 'Night' && parseFloat(startTime) > 18.00 && parseFloat(startTime) < 23.59) {
+            if (shift === 'Night' && parseFloat(startTime) >= 18.00 && parseFloat(startTime) <= 23.59) {
               const resultMidnigth = calculateMidnightTime(startTime, endTime)
               spreadSheet.updateCell(4, index, resultMidnigth, false)
               arrayTime[index] = resultMidnigth
@@ -159,7 +159,7 @@ export default function TimeSheetPage() {
         if (!validateResult) {
           spreadSheet.updateCell(2, index + 1, endTime, false)
           if (parseFloat(startTime) > parseFloat(endTime)) {
-            if (shift === 'Night' && parseFloat(startTime) > 19.00 && parseFloat(startTime) < 23.59) {
+            if (shift === 'Night' && parseFloat(startTime) >= 18.00 && parseFloat(startTime) <= 23.59) {
               spreadSheet.updateCell(2, index + 1, endTime, false)
             } else {
               spreadSheet.updateCell(2, index + 1, '', false);
