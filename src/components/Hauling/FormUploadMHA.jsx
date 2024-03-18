@@ -133,9 +133,9 @@ const FormUploadMHA = () => {
     const handleCloseDialog = useCallback(() => {
         setProgress(0)
         setDisableButton(true)
-        
+
         handleReset()
-    },[handleReset])
+    }, [handleReset])
 
     return (<>
         <div className="row ">
@@ -180,11 +180,11 @@ const FormUploadMHA = () => {
                 {progress > 0 && <p className="is-right">Send data to server: {progress.toFixed(2)}%</p>}
             </div>
         </div>
-        <DialogProgress 
-            open={openDialog}   
-            setOpen={setOpenDialog} 
-            disableButton={disableClose} 
-            valueChecking={valueChecking} 
+        <DialogProgress
+            open={openDialog}
+            setOpen={setOpenDialog}
+            disableButton={disableClose}
+            valueChecking={valueChecking}
             valueStoring={valueStoring}
             closeDialog={handleCloseDialog}
         />
@@ -194,17 +194,17 @@ const FormUploadMHA = () => {
 export default FormUploadMHA
 
 
-export const DialogProgress = ({ open, setOpen, disableButton, valueChecking, valueStoring, closeDialog }) => {
+const DialogProgress = ({ open, setOpen, disableButton, valueChecking, valueStoring, closeDialog }) => {
 
     const [value1, setValue1] = useState(0);
     const [value2, setValue2] = useState(0);
 
-  useEffect(() => {
-    setValue1(valueChecking);
-    setValue2(valueStoring);
+    useEffect(() => {
+        setValue1(valueChecking);
+        setValue2(valueStoring);
 
-    return () => {};
-  },[valueChecking, valueStoring]);
+        return () => { };
+    }, [valueChecking, valueStoring]);
     return (
         <Dialog modalType="alert" open={open} onOpenChange={(event, data) => setOpen(data.open)}>
             <DialogSurface>
@@ -231,7 +231,7 @@ export const DialogProgress = ({ open, setOpen, disableButton, valueChecking, va
                         <DialogTrigger disableButtonEnhancement>
                             <Button appearance="secondary" disabled={disableButton} onClick={closeDialog}>Done</Button>
                         </DialogTrigger>
-                     
+
                     </DialogActions>
                 </DialogBody>
             </DialogSurface>
@@ -250,12 +250,12 @@ DialogProgress.propTypes = {
 
 const ProgressBar = ({ progress }) => {
     return (
-      <div className="progress-bar">
-        <div className="progress" style={{ width: `${progress}%` }}></div>
-      </div>
+        <div className="progress-bar">
+            <div className="progress" style={{ width: `${progress}%` }}></div>
+        </div>
     );
-  };
-  
-  ProgressBar.propTypes = {
+};
+
+ProgressBar.propTypes = {
     progress: PropTypes.number.isRequired,
-  };
+};
