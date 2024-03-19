@@ -227,3 +227,7 @@ export const getExcaOptions = async()=>{
   const res = unitExa.map((val) => val.unitno)
   return res
 }
+
+export const cutStatusOptions = ["Out", "RhndleIn","RhndleOut", "GW","In","Project"]
+export const locationOptions = ["PIT A", "PIT B", "PIT C"]
+export const panelOptions = ["1", "2", "3", "4", "5", "Middle"]

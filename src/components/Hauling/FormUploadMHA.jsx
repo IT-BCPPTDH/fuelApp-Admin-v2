@@ -76,6 +76,7 @@ const FormUploadMHA = () => {
         jRef.current.jspreadsheet.setData([])
         setDataSheet([])
         setFileValue("")
+        setDisableButton(true)
     }, [])
 
     const handleSuccess = useCallback((res) => {
@@ -114,7 +115,7 @@ const FormUploadMHA = () => {
             for (let i = 0; i < transformedData.length; i += chunkSize) {
                 const chunk = transformedData.slice(i, i + chunkSize);
                 chunks.push({ data: chunk, isLast: i + chunkSize >= transformedData.length });
-            }
+            }          
 
             chunks.forEach((chunk, index) => {
                 setTimeout(() => {

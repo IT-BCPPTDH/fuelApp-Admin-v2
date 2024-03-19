@@ -51,6 +51,19 @@ export const formatTime = input => {
   return formattedTime
 }
 
+function calculateDurationInMinutes(startTime, endTime) {
+  const [startHour, startMinute, startSecond] = startTime.split('.').map(Number);
+  const [endHour, endMinute, endSecond] = endTime.split('.').map(Number);
+  
+  // Convert end time to 24-hour format if it's before the start time
+  const endHourAdjusted = endHour < startHour ? endHour + 24 : endHour;
+  
+  const startTimestamp = startHour * 3600 + startMinute * 60 + startSecond;
+  const endTimestamp = endHourAdjusted * 3600 + endMinute * 60 + endSecond;
+  
+  return (endTimestamp - startTimestamp) / 60; // Convert seconds to minutes
+}
+
 export function calculateAndConvertDuration(startTime, endTime) {
 
   const start = new Date(`1970-01-01T${startTime.replace(/\./g, ':')}`);
@@ -64,7 +77,13 @@ export function calculateAndConvertDuration(startTime, endTime) {
     };
   }
 
-  const durationMinutes = (end - start) / (1000 * 60);
+  let durationMinutes = (end - start) / (1000 * 60);
+
+  if(durationMinutes < 0){
+    durationMinutes = calculateDurationInMinutes(startTime, endTime)
+  }
+
+  console.log(durationMinutes)
 
   if (isNaN(durationMinutes)) {
     console.error('Invalid duration calculation');
@@ -130,6 +149,7 @@ function checkNumber(num1, num2) {
 
   const largerNumber = Math.max(number1, number2);
   const smallerNumber = Math.min(number1, number2);
+  
   return {
     largerNumber,
     smallerNumber
@@ -138,9 +158,16 @@ function checkNumber(num1, num2) {
 
 export function checkValidHMAkhir(num1, num2) {
 
-  const tNumber = checkNumber(num1, num2)
+  function convertToNumber(str) {
+    const [integerPart, decimalPart, fractionalPart] = str.split(/[.,]/);
+    const decimal = (decimalPart || '0') + (fractionalPart || '');
+    return parseFloat(`${integerPart}.${decimal}`);
+  }
 
-  return (tNumber.largerNumber > tNumber.smallerNumber) ? true : false
+  const number1 = convertToNumber(num1.replace('.', '').replace(',', '.'));
+  const number2 = convertToNumber(num2.replace('.', '').replace(',', '.'));
+  
+  return (number1 < number2) ? true : false
 
 }
 

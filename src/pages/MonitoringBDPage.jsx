@@ -18,7 +18,7 @@ const MonitoringBDPage = () => {
             tableWidth: `${(width * 90) / 100}px`,
             tableOverflow: true,
             allowInsertColumn: false,
-            editable: false
+            editable: true
         };
 
         if (!jRef.current.jspreadsheet) {
@@ -40,8 +40,6 @@ const MonitoringBDPage = () => {
             element.style.fontWeight = "400"
             element.style.textWrap = "balance"
             element.style.lineHeight = "16px"
-
-
         }
 
         const tBody = jsHeader.table.children[2].children[0].children[0]
