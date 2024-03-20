@@ -1,5 +1,4 @@
 import { useEffect, useRef } from "react";
-import Transaksi from "../../services/inputCoalHauling";
 import { Button } from "@fluentui/react-components";
 import { ArrowDownload24Regular } from "@fluentui/react-icons";
 import { useParams } from "react-router-dom";
@@ -7,6 +6,7 @@ import { URL_ENUMS } from "../../utils/Enums";
 import { indonesianDate } from "../../helpers/convertDate";
 import { colHelperDetailCoalHauling } from "../../helpers/columnHelper";
 import jspreadsheet from 'jspreadsheet-ce'
+import CoalHaulingMHA from "../../services/CoalHaulingMHA";
 
 const TableDetailHauling = () => {
 
@@ -16,20 +16,19 @@ const TableDetailHauling = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const dataAll = await Transaksi.getAllTransaction(params.tanggal);
-        const dataTable = dataAll.data.map((item, index) => ([
-          index + 1,
+        const dataAll = await CoalHaulingMHA.getDataHaulingByDate(params.tanggal);
+        const dataTable = dataAll.data.map((item) => ([
           indonesianDate(new Date(item.tanggal)),
           item.shift,
-          item.unitno,
+          item.unit,
           item.operator,
           item.tonnage,
           item.loader,
           item.pit,
           item.seam,
-          item.dumpingpoint,
-          item.inrom,
-          item.outrom
+          item.dumping,
+          item.in_rom,
+          item.time_hauling
         ]))
         jRef.current.jspreadsheet.setData(dataTable)
       } catch (error) {
@@ -42,7 +41,7 @@ const TableDetailHauling = () => {
 
   const handleDownload = async () => {
     try {
-      const downloadData = await Transaksi.getDownload(params.tanggal);
+      const downloadData = await CoalHaulingMHA.downloadExcel(params.tanggal);
       window.location.href = URL_ENUMS.downloadFile + downloadData.link;
     } catch (error) {
       console.error("Error downloading data:", error);

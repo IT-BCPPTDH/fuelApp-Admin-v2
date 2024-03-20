@@ -10,8 +10,8 @@ const getAllDataHauling = async () => {
     return response.data;
 };
 
-const getDataHaulingByDate = async () => {
-    const response = await api.get(URL_ENUMS.getDataHaulingByDate)
+const getDataHaulingByDate = async (tanggal) => {
+    const response = await api.get(URL_ENUMS.getDataHaulingByDate+tanggal)
     return response.data
 }
 
@@ -45,6 +45,11 @@ const getTotalSekurau = async () => {
     return response.data
 }
 
+const downloadExcel = async (tanggal) => {
+    const response = await api.get(URL_ENUMS.downloadExcelHauling+tanggal);
+    return response.data;
+  };
+
 const CoalHaulingMHA = {
     getAllDataHauling,
     getDataHaulingByDate,
@@ -53,7 +58,8 @@ const CoalHaulingMHA = {
     getTotalOverflow,
     getTotalECF,
     getTotalMiddlestock,
-    getTotalSekurau
+    getTotalSekurau,
+    downloadExcel
 }
 
 export default CoalHaulingMHA

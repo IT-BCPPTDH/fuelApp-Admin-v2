@@ -2,7 +2,7 @@ import { useEffect, useState, useCallback, lazy, Suspense } from "react";
 import { useNavigate } from "react-router-dom";
 import { ArrowSquareUpRight24Regular } from "@fluentui/react-icons";
 import { Button } from "@fluentui/react-components";
-import Transaksi from "../../services/inputCoalHauling";
+import CoalHaulingMHA from "../../services/CoalHaulingMHA";
 const TableList = lazy(() => import('../TableList'))
 
 const TableCoalHauling = () => {
@@ -29,7 +29,7 @@ const TableCoalHauling = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const datamain = await Transaksi.getDataMain();
+        const datamain = await CoalHaulingMHA.getAllDataHauling();
         const updatedItems = datamain.data.map((itemFromDB, key) => ({
           key: key + 1,
           entryDate: itemFromDB.tanggal,

@@ -3,7 +3,6 @@ import react from '@vitejs/plugin-react-swc'
 import million from "million/compiler";
 import { VitePWA } from 'vite-plugin-pwa'; 
 import removeConsole from "vite-plugin-remove-console";
-import { compression } from 'vite-plugin-compression2'
 
 export default defineConfig({
   plugins: [
