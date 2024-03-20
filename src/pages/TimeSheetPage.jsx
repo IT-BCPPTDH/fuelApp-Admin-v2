@@ -296,6 +296,8 @@ export default function TimeSheetPage() {
       const postData = (await Promise.all(localData.map(async (data) => {
         const transformedData = await transformData(data.activity);
         const unitData = await getUnitDataByNo(data.unitNo);
+        const formTitle = data.formTitle.split(" ");
+        const unitType = formTitle[formTitle.length - 1];
 
         return transformedData.map((activity) => ({
           formID: data.formID,
@@ -328,7 +330,7 @@ export default function TimeSheetPage() {
           cutOffStatus: activity.cut_status,
           loc: activity.lokasi,
           site: data.site,
-          unitType: data.formTitle,
+          unitType: unitType,
           stafEntry: data.stafEntry
         }));
       }))).flat();
