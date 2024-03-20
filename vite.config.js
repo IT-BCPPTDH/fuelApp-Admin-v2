@@ -23,20 +23,7 @@ export default defineConfig({
           new RegExp('^/_'),
         ],
         clientsClaim: true,
-        skipWaiting: true,
-        runtimeCaching: [{
-          handler: 'NetworkOnly',
-          urlPattern: /\/api\/.*\/*.json/,
-          method: 'POST',
-          options: {
-            backgroundSync: {
-              name: 'myQueueName',
-              options: {
-                maxRetentionTime: 24 * 60
-              }
-            }
-          }
-        }]
+        skipWaiting: true
       },
       includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'pwa-maskable-192x192.png'],
       manifest: {
@@ -73,8 +60,7 @@ export default defineConfig({
         ]
       },
       injectRegister: 'auto'
-    }),
-    compression()
+    })
   ],
   server: {
     compress: true, 

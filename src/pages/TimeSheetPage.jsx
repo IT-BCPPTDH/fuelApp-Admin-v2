@@ -212,7 +212,7 @@ export default function TimeSheetPage() {
       const getDataLokasi = spreadSheet.getValueFromCoords(9, index -1)
       const getDataPanel = spreadSheet.getValueFromCoords(10, index -1)
 
-      if(getDataAct && getDataOperator){
+      if(getDataAct){
 
         if(getDataOperator && getDataOperator !== "-" && spreadSheet.getValueFromCoords(6, index) !== "-" 
         && spreadSheet.getValueFromCoords(6, index) !== spreadSheet.getValueFromCoords(6, index-1)){
@@ -239,8 +239,8 @@ export default function TimeSheetPage() {
           spreadSheet.updateCell(10, index, getDataPanel, false)
         }
       }
-      
     }
+
     const datanya = spreadSheet.getData()
     setTableData(datanya)
 

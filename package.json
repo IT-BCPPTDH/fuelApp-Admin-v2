@@ -28,7 +28,6 @@
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.21.0",
     "socket.io-client": "^4.7.2",
-    "vite-plugin-compression2": "^1.0.0",
     "vite-plugin-remove-console": "^2.2.0",
     "xlsx": "^0.18.5"
   },
