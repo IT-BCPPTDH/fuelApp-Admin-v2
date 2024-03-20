@@ -23,8 +23,6 @@ const getEditTransaction = async () => {
 };
 
 const patchEditTransaction = async (id,data) => {
-  // console.log(id)
-  // console.log(URL_ENUMS.patchEditData+id)
   const response = await api.patch(URL_ENUMS.patchEditData+id,data);
   return response.data;
 };

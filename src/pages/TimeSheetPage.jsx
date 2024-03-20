@@ -14,7 +14,7 @@ import { useLiveQuery } from 'dexie-react-hooks'
 import { db } from '../models/db'
 import { NavigateUrl } from '../utils/Navigation'
 import { menuTabsTimeEntry } from '../helpers/menuHelper'
-import { shiftOptionsData, materialOptions, getExcaOptions, cutStatusOptions, locationOptions, panelOptions } from '../helpers/optionHelper'
+import { shiftOptionsData, materialOptions, getExcaOptions, cutStatusOptions, locationOptions, panelOptions, getOperatorOptions } from '../helpers/optionHelper'
 import { tabMenuTimeEntryEnum } from '../utils/Enums'
 import { hasValuesInNestedArray } from '../helpers/formFieldHelper'
 import { getURLPath, generateID } from '../helpers/commonHelper'
@@ -55,7 +55,6 @@ export default function TimeSheetPage() {
 
   useLiveQuery(() => db.activity.toArray())
 
-  const [jdeOptions] = useState(() => getLocalStorage('timeEntry-operator'));
   const [unitOptions] = useState(() => getLocalStorage('timeEntry-unit'));
 
   const transformData = useCallback(
@@ -146,7 +145,6 @@ export default function TimeSheetPage() {
       if (colEndTime) {
         endTime = formatTime(colEndTime)
         
-        // spreadSheet.updateCell(3, index, endTime, false)
         const parsedEndTime = parseFloat(endTime);
         if (shift === 'Night') {
           if(parsedEndTime > 6 && parsedEndTime < 18 ){
@@ -156,7 +154,6 @@ export default function TimeSheetPage() {
             spreadSheet.updateCell(2, index + 1, '', false);
             colEndTime = null;
           } else { 
-            // console.log("Night Ok", colEndTime)
             spreadSheet.updateCell(3, index, endTime, false);
           }
          
@@ -168,11 +165,9 @@ export default function TimeSheetPage() {
             spreadSheet.updateCell(2, index + 1, '', false);
             colEndTime = null;
           } else {
-            // console.log("Day OK", endTime)
             spreadSheet.updateCell(3, index, endTime, false);
           }
         }
-      
       }
 
       if (colStartTime && colEndTime) {
@@ -212,9 +207,37 @@ export default function TimeSheetPage() {
 
       const getDataAct = spreadSheet.getValueFromCoords(0, index)
       const getDataOperator = spreadSheet.getValueFromCoords(6, index-1)
+      const getDataCutStatus = spreadSheet.getValueFromCoords(7, index -1)
+      const getDataDigger = spreadSheet.getValueFromCoords(8, index -1)
+      const getDataLokasi = spreadSheet.getValueFromCoords(9, index -1)
+      const getDataPanel = spreadSheet.getValueFromCoords(10, index -1)
 
       if(getDataAct && getDataOperator){
-        spreadSheet.updateCell(6, index, getDataOperator, false)
+
+        if(getDataOperator && getDataOperator !== "-" && spreadSheet.getValueFromCoords(6, index) !== "-" 
+        && spreadSheet.getValueFromCoords(6, index) !== spreadSheet.getValueFromCoords(6, index-1)){
+          spreadSheet.updateCell(6, index, getDataOperator, false)
+        }
+
+        if(getDataCutStatus && getDataCutStatus !== "-" && spreadSheet.getValueFromCoords(7, index) !== "-" 
+        && spreadSheet.getValueFromCoords(7, index) !== spreadSheet.getValueFromCoords(7, index-1)){
+          spreadSheet.updateCell(7, index, getDataCutStatus, false)
+        }
+
+        if(getDataDigger && getDataDigger !== "-" && spreadSheet.getValueFromCoords(8, index) !== "-" 
+        && spreadSheet.getValueFromCoords(8, index) !== spreadSheet.getValueFromCoords(8, index-1)){
+          spreadSheet.updateCell(8, index, getDataDigger, false)
+        }
+
+        if(getDataLokasi && getDataLokasi !== "-" && spreadSheet.getValueFromCoords(9, index) !== "-" 
+        && spreadSheet.getValueFromCoords(9, index) !== spreadSheet.getValueFromCoords(9, index-1)){
+          spreadSheet.updateCell(9, index, getDataLokasi, false)
+        }
+
+        if(getDataPanel && getDataPanel !== "-" && spreadSheet.getValueFromCoords(10, index) !== "-" 
+        && spreadSheet.getValueFromCoords(10, index) !== spreadSheet.getValueFromCoords(10, index-1)){
+          spreadSheet.updateCell(10, index, getDataPanel, false)
+        }
       }
       
     }
@@ -236,6 +259,7 @@ export default function TimeSheetPage() {
       let act = getLocalStorage('timeEntry-activity');
       const width = screen.width;
       const excaOptions = await getExcaOptions();
+      const operatorOptions = await getOperatorOptions()
       const options = {
         data: [],
         columns: [
@@ -245,7 +269,7 @@ export default function TimeSheetPage() {
           { type: 'text', width: '100', title: 'End' },
           { type: 'text', width: '100', title: 'Duration' },
           { type: 'dropdown', width: '130', title: 'Material', source: materialOptions, autocomplete: true },
-          { type: 'dropdown', width: '130', title: 'Operator', source: jdeOptions, autocomplete: true },
+          { type: 'dropdown', width: '130', title: 'Operator', source: operatorOptions, autocomplete: true },
           { type: 'dropdown', width: '100', title: 'Cut Status', source: cutStatusOptions, autocomplete: true },
           { type: 'dropdown', width: '100', title: 'Digger', source: excaOptions, autocomplete: true },
           { type: 'dropdown', width: '100', title: 'Lokasi', source: locationOptions, autocomplete: true },
@@ -265,7 +289,7 @@ export default function TimeSheetPage() {
     };
 
     fetchData();
-  }, [jdeOptions, handleChangeSheet]);
+  }, [ handleChangeSheet]);
 
   const handleSubmitToServer = useCallback(async (localData) => {
     try {

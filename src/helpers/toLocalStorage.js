@@ -6,7 +6,7 @@ export const toLocalStorage = (name,data) =>{
     localStorage.setItem(`${name}`,n)
 }
 
-export const getLocalStorage = (name) =>{
+export const getLocalStorage =  (name) =>{
     let n = localStorage.getItem(`${name}`)
     n = JSON.parse(n)
     // n = msgpack.decode(n)

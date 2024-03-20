@@ -83,8 +83,6 @@ export function calculateAndConvertDuration(startTime, endTime) {
     durationMinutes = calculateDurationInMinutes(startTime, endTime)
   }
 
-  console.log(durationMinutes)
-
   if (isNaN(durationMinutes)) {
     console.error('Invalid duration calculation');
     return {
@@ -93,14 +91,14 @@ export function calculateAndConvertDuration(startTime, endTime) {
     };
   }
 
-  const hours = Math.floor(durationMinutes / 60);
-  const minutes = durationMinutes % 60;
+  const convertDuration = (durationMinutes / 60).toFixed(1);
 
   return {
     duration: durationMinutes,
-    convertDuration: `${hours},${String(minutes).padStart(2, '0')}`
+    convertDuration: convertDuration
   };
 }
+
 
 export function convertToAMPM(time) {
   // eslint-disable-next-line no-unused-vars

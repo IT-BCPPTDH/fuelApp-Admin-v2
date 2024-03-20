@@ -1,12 +1,18 @@
 const link = import.meta.env.VITE_LINK_BACKEND;
 const userLink = import.meta.env.VITE_LINK_BE_USER;
 
-export const URL_ENUMS ={
+export const URL_ENUMS = {
+    /**
+     * General
+     */
     Login : link+'/auth/login',
     masterActivity : link+'/master/activity',
     masterTimeEntryOperator : link+'/master/operator',
     masterTimeEntryUnit : link+'/master/unit',
-    postTimeEntrySupport : link+'/timeentry/timeentry-post',
+
+    /**
+     * Coal Hauling Form Based
+     */
     transactionHoul : link+'/transaction/',
     patchEditData : link+'/transaction/editTrx/',
     getDownload : link+'/transaction/download/',
@@ -22,6 +28,23 @@ export const URL_ENUMS ={
     cardDataECF : link+'/transaction/ecf/',
     cardDataMiddleStcok : link+'/transaction/midlestock/',
     cardDataSekurau : link+'/transaction/sekurau/',
+
+    /**
+     * Coal Hauling MHA Upload Based
+     */
+    getAllDataHauling: link+'/coalhaulingmha/get-all-data',
+    getDataHaulingByDate: link+'/coalhaulingmha/get-data-bydate',
+    getTotalHauling: link+'/coalhaulingmha/get-total-hauling',
+    getTotalHopper: link+'/coalhaulingmha/get-total-hopper',
+    getTotalOverflow: link+'/coalhaulingmha/get-total-overflow',
+    getTotalECF: link+'/coalhaulingmha/get-total-ecf',
+    getTotalMiddlestock: link+'/coalhaulingmha/get-total-middlestock',
+    getTotalSekurau: link+'/coalhaulingmha/get-total-sekurau',
+
+    /**
+     * Time Entry
+     */
+    postTimeEntrySupport : link+'/timeentry/timeentry-post',
     getDataMines : link+'/timeentrymines/',
     getDataFMS : link+'/timeentryfms/',
     getAllTimeEntryData: link+'/timeentry/get-all',

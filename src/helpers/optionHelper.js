@@ -1,5 +1,5 @@
 import { getUnitByCategory } from "./indexedDB/getData";
-
+import { getLocalStorage } from "./toLocalStorage";
 export const shiftOptionsData = ["Day", "Night"];
 export const unitOptionsData = [
   "HPM9040",
@@ -222,12 +222,19 @@ export const siteOptions = ["BCP", "ACP", "WKP"]
 
 export const materialOptions = ['-', 'OB Freedig', 'OB Blast', 'Mud Solid (60%)', 'Mud Liquid (40%)', 'NP OB', 'Coal', 'TS Inpit', 'TS Outpit']
 
-export const getExcaOptions = async()=>{
+export const getExcaOptions = async () => {
   const unitExa = await getUnitByCategory('Excavator');
-  const res = unitExa.map((val) => val.unitno)
-  return res
+  return[ "-", ...unitExa.map(val => val.unitno) ];
+};
+
+export const getOperatorOptions = async () => {
+  let jdeOptions =  getLocalStorage('timeEntry-operator')
+  if(jdeOptions){
+    return [ "-", ...jdeOptions.map(val => val) ]
+  }
+  
 }
 
-export const cutStatusOptions = ["Out", "RhndleIn","RhndleOut", "GW","In","Project"]
-export const locationOptions = ["PIT A", "PIT B", "PIT C"]
-export const panelOptions = ["1", "2", "3", "4", "5", "Middle"]
+export const cutStatusOptions = ["-","Out", "RhndleIn","RhndleOut", "GW","In","Project"]
+export const locationOptions = ["-","PIT A", "PIT B", "PIT C"]
+export const panelOptions = ["-","1", "2", "3", "4", "5", "Middle"]
