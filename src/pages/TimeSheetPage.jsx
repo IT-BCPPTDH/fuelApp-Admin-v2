@@ -52,6 +52,7 @@ export default function TimeSheetPage() {
   const navigate = useNavigate()
   const [dataItemId, setDataItemId] = useState(0)
   const [sortedUnitOptions, setSortedUnitOptions] = useState([])
+  const [checkSheetData, setCheckSheetData] = useState(null)
 
   useLiveQuery(() => db.activity.toArray())
 
@@ -94,6 +95,36 @@ export default function TimeSheetPage() {
     },
     []
   )
+
+  const checkFormCompleted = useCallback(() => {
+    if (
+        Object.prototype.hasOwnProperty.call(formData, 'hmAwal') &&
+        Object.prototype.hasOwnProperty.call(formData, 'hmAkhir') &&
+        Object.prototype.hasOwnProperty.call(formData, 'tanggal') &&
+        Object.prototype.hasOwnProperty.call(formData, 'unitNo')
+    ) {
+        return true;
+    }
+    return false;
+}, [formData]);
+
+
+  // const checkForm = useCallback(() => {
+  //   const formCompleted = checkFormCompleted()
+  //   console.log(checkSheetData, formCompleted)
+  //   if (checkSheetData && formCompleted) {
+  //     setButtonDraftDisabled(false)
+
+  //     const durationValidated =
+  //     parseFloat(totalDuration) > 12 || parseFloat(totalDuration) < 12
+  //       ? true
+  //       : false
+
+  //       setButtonDisabled(durationValidated)
+  //   }
+
+  // // eslint-disable-next-line react-hooks/exhaustive-deps
+  // },[ totalDuration, checkSheetData])
 
   const handleChangeSheet = useCallback(() => {
     const spreadSheet = jRef.current.jspreadsheet
@@ -248,11 +279,22 @@ export default function TimeSheetPage() {
     setTotalDuration(totalDurationTime)
 
     const hasValue = hasValuesInNestedArray(datanya)
-    if (hasValue) {
+    // console.log(hasValue)
+    setCheckSheetData(hasValue)
+    const formCompleted = checkFormCompleted()
+
+    if (hasValue && formCompleted) {
       setButtonDraftDisabled(false)
+
+      const durationValidated =
+      parseFloat(totalDurationTime) > 12 || parseFloat(totalDurationTime) < 12
+        ? true
+        : false
+
+        setButtonDisabled(durationValidated)
     }
 
-  }, [])
+  }, [checkFormCompleted])
 
   useEffect(() => {
     const fetchData = async () => {
@@ -289,6 +331,7 @@ export default function TimeSheetPage() {
     };
 
     fetchData();
+ 
   }, [ handleChangeSheet]);
 
   const handleSubmitToServer = useCallback(async (localData) => {
@@ -481,6 +524,20 @@ export default function TimeSheetPage() {
       }
       setFormData((prevFormData) => ({ ...prevFormData, [name]: value }));
     }
+
+    
+    const formCompleted = checkFormCompleted()
+    console.log(checkSheetData, formCompleted)
+    if (checkSheetData && formCompleted) {
+      setButtonDraftDisabled(false)
+
+      const durationValidated =
+      parseFloat(totalDuration) > 12 || parseFloat(totalDuration) < 12
+        ? true
+        : false
+
+        setButtonDisabled(durationValidated)
+    }
   };
 
   const handleTab = () => {
@@ -513,7 +570,6 @@ export default function TimeSheetPage() {
 
     setFormData(prevFormData => ({
       ...prevFormData,
-      // tanggal: new Date(),
       site: "BCP",
       shift: shift ? shift : "Day",
       stafEntry: `${user.fullname} (${user.JDE})`,
@@ -533,13 +589,15 @@ export default function TimeSheetPage() {
       if (!shift) toLocalStorage('shift', 'Day')
     }
 
-    const disabled =
-    parseFloat(totalDuration) > 12 || parseFloat(totalDuration) < 12
-      ? true
-      : false
-    setButtonDisabled(disabled)
+   setCheckSheetData(false)
+   const durationValidated =
+   parseFloat(totalDuration) > 12 || parseFloat(totalDuration) < 12
+     ? true
+     : false
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps    
+     setButtonDisabled(durationValidated)
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isNew, unitOptions, totalDuration]);
 
   const handleEditData = useCallback(async (itemId, type) => {
