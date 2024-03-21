@@ -513,7 +513,7 @@ export default function TimeSheetPage() {
 
     setFormData(prevFormData => ({
       ...prevFormData,
-      tanggal: new Date(),
+      // tanggal: new Date(),
       site: "BCP",
       shift: shift ? shift : "Day",
       stafEntry: `${user.fullname} (${user.JDE})`,
