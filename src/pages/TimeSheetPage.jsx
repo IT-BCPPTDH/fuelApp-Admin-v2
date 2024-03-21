@@ -403,6 +403,7 @@ export default function TimeSheetPage() {
     setTotalDuration(0);
     jRef.current.jspreadsheet.setData([]);
     setButtonDraftDisabled(true)
+    setButtonDisabled(true)
   }, []);
 
   const clearTime = (spreadSheet) => {
@@ -527,7 +528,7 @@ export default function TimeSheetPage() {
 
     
     const formCompleted = checkFormCompleted()
-    console.log(checkSheetData, formCompleted)
+    
     if (checkSheetData && formCompleted) {
       setButtonDraftDisabled(false)
 
@@ -590,15 +591,9 @@ export default function TimeSheetPage() {
     }
 
    setCheckSheetData(false)
-   const durationValidated =
-   parseFloat(totalDuration) > 12 || parseFloat(totalDuration) < 12
-     ? true
-     : false
-
-     setButtonDisabled(durationValidated)
-
+  
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isNew, unitOptions, totalDuration]);
+  }, [isNew, unitOptions]);
 
   const handleEditData = useCallback(async (itemId, type) => {
     setDataItemId(itemId)
@@ -730,6 +725,7 @@ export default function TimeSheetPage() {
     ],
     [formData, shiftOptions, sortedUnitOptions]
   )
+
 
   return (
     <>
