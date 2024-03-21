@@ -15,12 +15,12 @@ const CardDataHaulingVertical = () => {
   const value = useParams();
   const styles = useStyles();
   const [data, setData] = useState({
-    totalData: 0,
-    dataHopper: 0,
-    dataOverflow: 0,
-    dataECF: 0,
-    dataMiddleStock: 0,
-    dataSekurau: 0,
+    totalHaulong: 0,
+    totalHopper: 0,
+    totalOverflow: 0,
+    totalECF: 0,
+    totalMiddlestock: 0,
+    totalSekurau: 0,
   });
 
   useEffect(() => {
@@ -61,7 +61,7 @@ const CardDataHaulingVertical = () => {
         {Object.keys(data).map((type, index) => (
           <div key={index} className='tes'>
             <Card className="card-data">
-              <span className={styles.card}>{type === 'total' ? 'Total Hauling' : type === 'hopper' ? `Total ${type}` : `Hauling To ${type}`}</span>
+              <span className={styles.card}>{type === 'hauling' ? 'Total Hauling' : type === 'hopper' ? `Total ${type}` : `Hauling To ${type}`}</span>
               <p className={styles.caption}>
                 <b>
                   {data[type]} <small>Ton</small>
