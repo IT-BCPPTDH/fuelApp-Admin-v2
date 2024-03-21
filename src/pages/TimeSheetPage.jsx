@@ -396,6 +396,7 @@ export default function TimeSheetPage() {
     }
   }
   
+
   const handleSubmitToLocalDB = useCallback(async (type) => {
 
     const data = {
@@ -452,7 +453,7 @@ export default function TimeSheetPage() {
 
   }, [dataItemId, formData, formTitle, isNew, tableData, totalDuration, resetState])
 
-  const handleChange = (ev, data) => {
+  const handleChange = useCallback((ev, data) => {
     const { name, value } = data;
 
     if (name === 'hmAwal' || name === 'hmAkhir') {
@@ -507,6 +508,7 @@ export default function TimeSheetPage() {
       }
       setFormData((prevFormData) => ({ ...prevFormData, [name]: value }));
     }
+   
 
     const formCompleted = checkFormCompleted()
     
@@ -520,7 +522,9 @@ export default function TimeSheetPage() {
 
         setButtonDisabled(durationValidated)
     }
-  };
+    
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  },[checkFormCompleted, checkSheetData, totalDuration])
 
   const handleTab = () => {
     const lastPart = getURLPath()
@@ -572,9 +576,21 @@ export default function TimeSheetPage() {
     }
 
    setCheckSheetData(false)
+   const formCompleted = checkFormCompleted()
+    
+   if (checkSheetData && formCompleted) {
+     setButtonDraftDisabled(false)
+
+     const durationValidated =
+     parseFloat(totalDuration) > 12 || parseFloat(totalDuration) < 12
+       ? true
+       : false
+
+       setButtonDisabled(durationValidated)
+   }
   
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isNew, unitOptions]);
+  }, [isNew, unitOptions, totalDuration]);
 
   const handleEditData = useCallback(async (itemId, type) => {
     setDataItemId(itemId)

@@ -27,7 +27,7 @@ const ActionButtons = ({handleAction, param}) =>{
 const TimeEntryAll = () => {
   const [columnData] = useState([
     { columnId: "key", headerLabel: "ID", defaultWidth: 100 },
-    { columnId: "entryDate", headerLabel: "Entry Date", defaultWidth: 200 },
+    { columnId: "entryDate", headerLabel: "Production Date", defaultWidth: 200 },
     { columnId: "totalUnit", headerLabel: "Total Unit", defaultWidth: 200 },
     { columnId: "totalOperator", headerLabel: "Total Operator", defaultWidth: 200 },
     { columnId: "actions", headerLabel: "Action View By:", defaultWidth: 400 },
