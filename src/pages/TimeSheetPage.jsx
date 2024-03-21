@@ -27,6 +27,7 @@ import { useNavigate } from 'react-router-dom'
 import { updateTimeEntry, updateTimeEntryDraft } from '../helpers/indexedDB/editData'
 import { HeaderTitle } from '../utils/Wording'
 
+
 const TableDataValidated = lazy(() => import('../components/TimeSheet/TableDataValidated'))
 const FormComponent = lazy(() => import('../components/FormComponent'))
 const TableDraft = lazy(() => import('../components/TimeSheet/TableDataDraft'))
@@ -261,7 +262,6 @@ export default function TimeSheetPage() {
     setTotalDuration(totalDurationTime)
 
     const hasValue = hasValuesInNestedArray(datanya)
-    // console.log(hasValue)
     setCheckSheetData(hasValue)
     const formCompleted = checkFormCompleted()
 
@@ -396,7 +396,6 @@ export default function TimeSheetPage() {
     }
   }
   
-
   const handleSubmitToLocalDB = useCallback(async (type) => {
 
     const data = {
@@ -431,7 +430,7 @@ export default function TimeSheetPage() {
         }
       }
 
-      // Draft
+    // Draft
     } else {
       const checkExisted = await getTimeEntryDraftByUnit(data.unitNo)
       if (checkExisted.length === 0) {
@@ -453,7 +452,7 @@ export default function TimeSheetPage() {
 
   }, [dataItemId, formData, formTitle, isNew, tableData, totalDuration, resetState])
 
-  const handleChange = useCallback((ev, data) => {
+  const handleChange = useCallback(async (ev, data) => {
     const { name, value } = data;
 
     if (name === 'hmAwal' || name === 'hmAkhir') {
@@ -492,11 +491,11 @@ export default function TimeSheetPage() {
       } else {
         console.error('Invalid input for HM values');
       }
-    } else {
+    } 
+    else {
       if (name === 'shift') {
         toLocalStorage('shift', value)
         const spreadSheet = jRef.current.jspreadsheet
-
        
         if (value === "Day") {
           spreadSheet.updateCell(2, 0, '06.00.00', false);
@@ -505,7 +504,19 @@ export default function TimeSheetPage() {
           spreadSheet.updateCell(2, 0, '18.00.00', false);
           clearTime(spreadSheet)
         }
+      } 
+
+      if(name === 'unitNo'){
+        if(value.length > 5){
+          const unit =  await getUnitDataByNo(value)
+          const unitModel = `${unit?.merk}-${unit?.type}`
+          console.log(unitModel)
+          setFormData((prevFormData) => ({ ...prevFormData, ['model']: unitModel }));
+        } else {
+          setFormData((prevFormData) => ({ ...prevFormData, ['model']: '' }));
+        }
       }
+
       setFormData((prevFormData) => ({ ...prevFormData, [name]: value }));
     }
    
@@ -714,15 +725,23 @@ export default function TimeSheetPage() {
 
       {
         name: 'note',
-        grid: 'col-6',
+        grid: 'col-4',
         label: 'Note',
-        value: "Mohon lengkapi form berikut, dan pastikan durasi total 12 jam, jika durasi < 12 jam, data hanya dapat disimpan sebagai 'Draft'. Dan pastikan nilai 'End Time' > 'Start Time'.",
+        value: `"Mohon isi form tervalidasi 12 jam, simpan sebagai 'Draft' jika kurang. Pastikan 'End Time' > 'Start Time'."`,
         type: 'StaticInfo'
-      }
+      },
+      {
+        name: 'model',
+        grid: 'col-2',
+        label: 'Model',
+        value: formData.model,
+        readOnly: true,
+        disabled: true,
+        type: 'Input'
+      },
     ],
     [formData, shiftOptions, sortedUnitOptions]
   )
-
 
   return (
     <>
