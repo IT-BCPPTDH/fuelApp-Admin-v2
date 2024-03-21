@@ -108,24 +108,6 @@ export default function TimeSheetPage() {
     return false;
 }, [formData]);
 
-
-  // const checkForm = useCallback(() => {
-  //   const formCompleted = checkFormCompleted()
-  //   console.log(checkSheetData, formCompleted)
-  //   if (checkSheetData && formCompleted) {
-  //     setButtonDraftDisabled(false)
-
-  //     const durationValidated =
-  //     parseFloat(totalDuration) > 12 || parseFloat(totalDuration) < 12
-  //       ? true
-  //       : false
-
-  //       setButtonDisabled(durationValidated)
-  //   }
-
-  // // eslint-disable-next-line react-hooks/exhaustive-deps
-  // },[ totalDuration, checkSheetData])
-
   const handleChangeSheet = useCallback(() => {
     const spreadSheet = jRef.current.jspreadsheet
     const masterActivity = getLocalStorage('timeEntry-masterAct')
@@ -526,7 +508,6 @@ export default function TimeSheetPage() {
       setFormData((prevFormData) => ({ ...prevFormData, [name]: value }));
     }
 
-    
     const formCompleted = checkFormCompleted()
     
     if (checkSheetData && formCompleted) {

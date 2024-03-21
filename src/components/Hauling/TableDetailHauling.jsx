@@ -28,7 +28,9 @@ const TableDetailHauling = () => {
           item.seam,
           item.dumping,
           item.in_rom,
-          item.time_hauling
+          item.dump_time,
+          item.time_hauling,
+          item.remark
         ]))
         jRef.current.jspreadsheet.setData(dataTable)
       } catch (error) {

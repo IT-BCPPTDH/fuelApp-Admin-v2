@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import "./CoalHauling.css";
 import { makeStyles, Card } from "@fluentui/react-components";
-import Transaksi from "../../services/inputCoalHauling";
+import CoalHaulingMHA from '../../services/CoalHaulingMHA';
 import { useParams } from "react-router-dom";
 
 const useStyles = makeStyles({
@@ -27,21 +27,21 @@ const CardDataHaulingVertical = () => {
     const fetchData = async () => {
       try {
         const dataTypes = [
-          "getDataTotal",
-          "getDataHopper",
-          "getDataOverflow",
-          "getDataECF",
-          "getDataMiddleStock",
-          "getDataSekurau",
+          "getTotalHauling",
+          "getTotalHopper",
+          "getTotalOverflow",
+          "getTotalECF",
+          "getTotalMiddlestock",
+          "getTotalSekurau"
         ];
 
         const fetchedData = await Promise.all(
-          dataTypes.map(type => Transaksi[type](value.tanggal))
+          dataTypes.map(type => CoalHaulingMHA[type](value.tanggal))
         );
 
         const newData = Object.fromEntries(
           fetchedData.map((result, index) => [
-            dataTypes[index].replace('getData', '').toLowerCase(),
+            dataTypes[index].replace('getTotal', '').toLowerCase(),
             result.result[0].total ?? 0,
           ])
         );
