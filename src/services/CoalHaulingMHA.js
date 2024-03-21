@@ -15,33 +15,33 @@ const getDataHaulingByDate = async (tanggal) => {
     return response.data
 }
 
-const getTotalHauling = async () => {
-    const response = await api.get(URL_ENUMS.getTotalHauling)
+const getTotalHauling = async (tanggal) => {
+    const response = await api.get(URL_ENUMS.getTotalHauling+tanggal)
     return response.data
 }
 
-const getTotalHopper = async () => {
-    const response = await api.get(URL_ENUMS.getTotalHopper)
+const getTotalHopper = async (tanggal) => {
+    const response = await api.get(URL_ENUMS.getTotalHopper+tanggal)
     return response.data
 }
 
-const getTotalOverflow = async () => {
-    const response = await api.get(URL_ENUMS.getTotalOverflow)
+const getTotalOverflow = async (tanggal) => {
+    const response = await api.get(URL_ENUMS.getTotalOverflow+tanggal)
     return response.data
 }
 
-const getTotalECF = async () => {
-    const response = await api.get(URL_ENUMS.getTotalECF)
+const getTotalECF = async (tanggal) => {
+    const response = await api.get(URL_ENUMS.getTotalECF+tanggal)
     return response.data
 }
 
-const getTotalMiddlestock = async () => {
-    const response = await api.get(URL_ENUMS.getTotalMiddlestock)
+const getTotalMiddlestock = async (tanggal) => {
+    const response = await api.get(URL_ENUMS.getTotalMiddlestock+tanggal)
     return response.data
 }
 
-const getTotalSekurau = async () => {
-    const response = await api.get(URL_ENUMS.getTotalSekurau)
+const getTotalSekurau = async (tanggal) => {
+    const response = await api.get(URL_ENUMS.getTotalSekurau+tanggal)
     return response.data
 }
 

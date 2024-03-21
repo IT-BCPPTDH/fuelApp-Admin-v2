@@ -34,12 +34,12 @@ export const URL_ENUMS = {
      */
     getAllDataHauling: link+'/coalhaulingmha/get-all-data',
     getDataHaulingByDate: link+'/coalhaulingmha/get-data-by-date/',
-    getTotalHauling: link+'/coalhaulingmha/get-total-hauling',
-    getTotalHopper: link+'/coalhaulingmha/get-total-hopper',
-    getTotalOverflow: link+'/coalhaulingmha/get-total-overflow',
-    getTotalECF: link+'/coalhaulingmha/get-total-ecf',
-    getTotalMiddlestock: link+'/coalhaulingmha/get-total-middlestock',
-    getTotalSekurau: link+'/coalhaulingmha/get-total-sekurau',
+    getTotalHauling: link+'/coalhaulingmha/get-total-hauling/',
+    getTotalHopper: link+'/coalhaulingmha/get-total-hopper/',
+    getTotalOverflow: link+'/coalhaulingmha/get-total-overflow/',
+    getTotalECF: link+'/coalhaulingmha/get-total-ecf/',
+    getTotalMiddlestock: link+'/coalhaulingmha/get-total-middlestock/',
+    getTotalSekurau: link+'/coalhaulingmha/get-total-sekurau/',
     downloadExcelHauling: link+'/coalhaulingmha/download/',
 
     /**

@@ -28,7 +28,7 @@ const FormUploadMHA = () => {
     const [disableClose, setDisableCLose] = useState(true)
     const [valueChecking, setValueChecking] = useState(0)
     const [valueStoring, setValueStoring] = useState(0)
-    const [fileValue, setFileValue] = useState("")
+    // const [fileValue, setFileValue] = useState("")
 
     useEffect(() => {
         const width = screen.width;
@@ -75,7 +75,7 @@ const FormUploadMHA = () => {
     const handleReset = useCallback(() => {
         jRef.current.jspreadsheet.setData([])
         setDataSheet([])
-        setFileValue("")
+        // setFileValue("")
         setDisableButton(true)
     }, [])
 
@@ -144,11 +144,12 @@ const FormUploadMHA = () => {
                 <Label htmlFor={inputId} >
                     Upload File Excel
                 </Label>
-                <Input type="file"
+                <Input 
+                    type="file"
                     name="file"
                     id={inputId}
                     required
-                    value={fileValue}
+                    // value={fileValue}
                     onChange={handleImport}
                     accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
                 />
@@ -194,7 +195,6 @@ const FormUploadMHA = () => {
 
 export default FormUploadMHA
 
-
 const DialogProgress = ({ open, setOpen, disableButton, valueChecking, valueStoring, closeDialog }) => {
 
     const [value1, setValue1] = useState(0);
@@ -232,7 +232,6 @@ const DialogProgress = ({ open, setOpen, disableButton, valueChecking, valueStor
                         <DialogTrigger disableButtonEnhancement>
                             <Button appearance="secondary" disabled={disableButton} onClick={closeDialog}>Done</Button>
                         </DialogTrigger>
-
                     </DialogActions>
                 </DialogBody>
             </DialogSurface>
