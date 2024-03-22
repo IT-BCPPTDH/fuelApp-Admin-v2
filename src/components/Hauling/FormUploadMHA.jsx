@@ -16,7 +16,6 @@ import Cookies from 'js-cookie'
 import { useSocket } from "../../context/SocketProvider";
 import PropTypes from 'prop-types'
 import { insertCoalHaulingDraft } from "../../helpers/indexedDB/insert";
-// const TableCoalHaulingMHADraft = lazy(() => import('../../components/TableButtonDialog'))
 import TableCoalHaulingMHADraft from "../TableCoalhaulingMHADraft";
 import { generateID, generateIDByDate } from "../../helpers/commonHelper";
 import { getCoalHaulingMHAById } from "../../helpers/indexedDB/getData";
@@ -26,7 +25,7 @@ const FormUploadMHA = () => {
     const jRef = useRef(null)
     const [dataSheet, setDataSheet] = useState([])
     const inputId = useId()
-    const { socket } = useSocket();
+    const { socket, isConnected } = useSocket();
     const [progress, setProgress] = useState(0);
     const [chunkSize] = useState(1000);
     const [disableButton, setDisableButton] = useState(true)
@@ -40,6 +39,15 @@ const FormUploadMHA = () => {
     const [batchNo] = useState(generateID())
     const [sendingData, setSendingData] = useState(false)
 
+
+    const handlePaste = () => {
+  
+        const spreadSheet = jRef.current.jspreadsheet
+        const dataPasted = spreadSheet.getData()
+        setDataSheet(dataPasted)
+        setDisableButton(false)
+    }
+
     useEffect(() => {
         const width = screen.width;
         const options = {
@@ -47,11 +55,12 @@ const FormUploadMHA = () => {
             loadingSpin: true,
             columns: colHelperHaulingMHA,
             minDimensions: [5, 15],
-            tableHeight: '500px',
+            tableHeight: '400px',
             tableWidth: `${(width * 90) / 100}px`,
             tableOverflow: true,
             allowInsertColumn: false,
-            editable: true
+            editable: true,
+            onpaste: handlePaste
         };
 
         if (!jRef.current.jspreadsheet) {
@@ -101,10 +110,7 @@ const FormUploadMHA = () => {
     const handleSubmitToServer = useCallback(async (datanya) => {
 
         const user = JSON.parse(Cookies.get('user'))
-
-
         const dataToSave = dataSheet.length > 0 ? dataSheet : datanya
-        console.log(dataToSave)
 
         if (dataToSave.length > 0) {
             const transformedData = dataToSave.map((val) => (
@@ -128,7 +134,7 @@ const FormUploadMHA = () => {
 
             if (!socket || transformedData.length === 0) return;
 
-            setSendingData(false)
+            if(sendingData) setSendingData(false)
 
             const chunks = [];
             for (let i = 0; i < transformedData.length; i += chunkSize) {
@@ -148,7 +154,7 @@ const FormUploadMHA = () => {
             socket.on('insert_progress', (res) => setValueStoring(res))
             socket.on("data_received", (res) => handleSuccess(res))
         }
-    }, [dataSheet, chunkSize, socket, handleSuccess])
+    }, [dataSheet, chunkSize, socket, handleSuccess, sendingData])
 
     const handleCloseDialog = useCallback(() => {
         setProgress(0)
@@ -172,6 +178,7 @@ const FormUploadMHA = () => {
                 jRef.current.jspreadsheet.setData([])
                 setDataSheet([])
                 setFileValue("")
+                setDisableButton(true)
             }
             // console.log("DB Inserted", inserted)
         }
@@ -181,6 +188,8 @@ const FormUploadMHA = () => {
         const spreadSheet = jRef.current.jspreadsheet
         const dataDetail = await getCoalHaulingMHAById(itemId)
         spreadSheet.setData(dataDetail.dataSheet)
+        setDisableButton(false)
+        setDataSheet(dataDetail.dataSheet)
 
     }
 
@@ -215,14 +224,14 @@ const FormUploadMHA = () => {
                     onClick={handleSaveDraft}
                     disabled={disableButton}
                 >Save as Draft</Button>
-                {/* <Button
+                <Button
                     className="is-right"
                     icon={<Save24Regular />}
                     iconPosition="after"
                     style={{ backgroundColor: "#6aa146", color: "#ffffff" }}
                     onClick={handleSubmitToServer}
                     disabled={!isConnected || disableButton}
-                >Save data to server</Button> */}
+                >Save to PTDH server</Button> 
             </div>
         </div>
 
