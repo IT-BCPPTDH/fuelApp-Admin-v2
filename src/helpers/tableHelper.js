@@ -9,3 +9,11 @@ export const tableLocalStoredData=[
     { columnId: "timeDuration", headerLabel: "Time Duration", defaultWidth: 100 },
     { columnId: "action", headerLabel: "Actions", defaultWidth: 200 },
 ]
+
+
+export const tableDraftCoalhaulig=[
+    { columnId: "id", headerLabel: "ID", defaultWidth: 50 },
+    { columnId: "timestamp", headerLabel: "Time Stamp", defaultWidth: 200 },
+    { columnId: "totalData", headerLabel: "Total Row Data", defaultWidth: 200 },
+    { columnId: "action", headerLabel: "Actions", defaultWidth: 200 },
+]

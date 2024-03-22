@@ -47,8 +47,18 @@ export const insertTimeEntry = async (data) => {
 
 export const insertTimeEntryDraft = async (data) => {
   try {
-    console.log(data)
+    
     return await db.timeEntriesDraft.add(data)
+  } catch (error) {
+    console.log(error)
+    return false
+  }
+}
+
+export const insertCoalHaulingDraft = async (data) => {
+  try {
+    
+    return await db.coalHaulingMHA.add(data)
   } catch (error) {
     console.log(error)
     return false
