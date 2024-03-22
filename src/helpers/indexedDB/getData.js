@@ -111,3 +111,26 @@ export const getTimeEntryDraftDetailById = async (itemId) => {
   }
 }
 
+export const getAllDataCoalHauling = async () => {
+  try {
+    return await db.coalHaulingMHA.toArray();
+  } catch (error) {
+    console.error(error);
+  }
+}
+export const getCoalHaulingMHAByTimestamp = async (timestamp) => {
+  try {
+    return await db.coalHaulingMHA.where('timestamp').equals(timestamp).toArray()
+  } catch (error) {
+    console.error(error)
+  }
+}
+
+export const getCoalHaulingMHAById = async (itemId) => {
+  try {
+    return await db.coalHaulingMHA.get(itemId)
+  } catch (error) {
+    console.error(error)
+    return false
+  }
+}

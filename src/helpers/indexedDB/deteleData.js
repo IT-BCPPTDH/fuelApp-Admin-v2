@@ -37,3 +37,22 @@ export const deleteTimeEntriesDRAFT = async (dataId) => {
     console.log(error)
   }
 }
+
+export const deleteCoalHaulingDRAFT = async (dataId) => {
+  try {
+    await db.coalHaulingMHA.delete(dataId)
+    return true
+  } catch (error) {
+    console.log(error)
+  }
+}
+
+export const deleteAllCoalHaulingDraft = async () => {
+  try {
+    await db.coalHaulingMHA.clear();
+    return true
+  } catch (error) {
+    console.error('Gagal menghapus data dari IndexedDB', error);
+    return false
+  }
+};

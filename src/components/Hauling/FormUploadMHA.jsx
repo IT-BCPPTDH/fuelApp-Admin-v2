@@ -15,12 +15,18 @@ import { Save24Regular, ArrowReset24Regular } from "@fluentui/react-icons";
 import Cookies from 'js-cookie'
 import { useSocket } from "../../context/SocketProvider";
 import PropTypes from 'prop-types'
+import { insertCoalHaulingDraft } from "../../helpers/indexedDB/insert";
+// const TableCoalHaulingMHADraft = lazy(() => import('../../components/TableButtonDialog'))
+import TableCoalHaulingMHADraft from "../TableCoalhaulingMHADraft";
+import { generateID, generateIDByDate } from "../../helpers/commonHelper";
+import { getCoalHaulingMHAById } from "../../helpers/indexedDB/getData";
+import { deleteAllCoalHaulingDraft } from "../../helpers/indexedDB/deteleData";
 
 const FormUploadMHA = () => {
     const jRef = useRef(null)
     const [dataSheet, setDataSheet] = useState([])
     const inputId = useId()
-    const { socket, isConnected } = useSocket();
+    const { socket } = useSocket();
     const [progress, setProgress] = useState(0);
     const [chunkSize] = useState(1000);
     const [disableButton, setDisableButton] = useState(true)
@@ -28,7 +34,11 @@ const FormUploadMHA = () => {
     const [disableClose, setDisableCLose] = useState(true)
     const [valueChecking, setValueChecking] = useState(0)
     const [valueStoring, setValueStoring] = useState(0)
-    // const [fileValue, setFileValue] = useState("")
+    const [fileValue, setFileValue] = useState("")
+    const [loaded, setLoaded] = useState(false)
+    const [timestamp] = useState(generateIDByDate())
+    const [batchNo] = useState(generateID())
+    const [sendingData, setSendingData] = useState(false)
 
     useEffect(() => {
         const width = screen.width;
@@ -41,12 +51,14 @@ const FormUploadMHA = () => {
             tableWidth: `${(width * 90) / 100}px`,
             tableOverflow: true,
             allowInsertColumn: false,
-            editable: false
+            editable: true
         };
 
         if (!jRef.current.jspreadsheet) {
             jspreadsheet(jRef.current, options);
         }
+
+        
     }, []);
 
     const handleImport = ($event) => {
@@ -75,22 +87,27 @@ const FormUploadMHA = () => {
     const handleReset = useCallback(() => {
         jRef.current.jspreadsheet.setData([])
         setDataSheet([])
-        // setFileValue("")
+        setFileValue("")
         setDisableButton(true)
     }, [])
 
-    const handleSuccess = useCallback((res) => {
+    const handleSuccess = useCallback(async(res) => {
         if (res.status === 200) {
             setDisableCLose(false)
+            await deleteAllCoalHaulingDraft()
         }
     }, [])
 
-    const handleSubmitToServer = useCallback(async () => {
+    const handleSubmitToServer = useCallback(async (datanya) => {
 
         const user = JSON.parse(Cookies.get('user'))
 
-        if (dataSheet.length > 0) {
-            const transformedData = dataSheet.map((val) => (
+
+        const dataToSave = dataSheet.length > 0 ? dataSheet : datanya
+        console.log(dataToSave)
+
+        if (dataToSave.length > 0) {
+            const transformedData = dataToSave.map((val) => (
                 {
                     tanggal: val[0],
                     shift: val[1],
@@ -110,6 +127,8 @@ const FormUploadMHA = () => {
             ));
 
             if (!socket || transformedData.length === 0) return;
+
+            setSendingData(false)
 
             const chunks = [];
             for (let i = 0; i < transformedData.length; i += chunkSize) {
@@ -134,9 +153,36 @@ const FormUploadMHA = () => {
     const handleCloseDialog = useCallback(() => {
         setProgress(0)
         setDisableButton(true)
-
         handleReset()
     }, [handleReset])
+
+    const handleSaveDraft = useCallback(async() => {
+        if(dataSheet.length > 0){
+           
+            const numericDate = parseInt(timestamp.replace(/-/g, ''));
+            
+            const inserted = await insertCoalHaulingDraft({
+                timestamp: numericDate,
+                batch: String(batchNo),
+                dataSheet
+            })
+
+            if(inserted){
+                setLoaded(true)
+                jRef.current.jspreadsheet.setData([])
+                setDataSheet([])
+                setFileValue("")
+            }
+            // console.log("DB Inserted", inserted)
+        }
+    },[dataSheet, timestamp, batchNo])
+
+    const handleEditData = async (itemId) => {
+        const spreadSheet = jRef.current.jspreadsheet
+        const dataDetail = await getCoalHaulingMHAById(itemId)
+        spreadSheet.setData(dataDetail.dataSheet)
+
+    }
 
     return (<>
         <div className="row ">
@@ -149,7 +195,7 @@ const FormUploadMHA = () => {
                     name="file"
                     id={inputId}
                     required
-                    // value={fileValue}
+                    value={fileValue}
                     onChange={handleImport}
                     accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
                 />
@@ -162,14 +208,21 @@ const FormUploadMHA = () => {
                     onClick={handleReset}
                     disabled={disableButton}
                 >Reset Form</Button>
-                <Button
+                       <Button
+                    icon={<Save24Regular />}
+                    iconPosition="after"
+                    style={{ backgroundColor: "blue", color: "#ffffff", marginRight: "10px" }}
+                    onClick={handleSaveDraft}
+                    disabled={disableButton}
+                >Save as Draft</Button>
+                {/* <Button
                     className="is-right"
                     icon={<Save24Regular />}
                     iconPosition="after"
                     style={{ backgroundColor: "#6aa146", color: "#ffffff" }}
                     onClick={handleSubmitToServer}
                     disabled={!isConnected || disableButton}
-                >Save data to server</Button>
+                >Save data to server</Button> */}
             </div>
         </div>
 
@@ -181,6 +234,16 @@ const FormUploadMHA = () => {
             <div className="col-4 is-right">
                 {progress > 0 && <p className="is-right">Send data to server: {progress.toFixed(2)}%</p>}
             </div>
+        </div>
+        <div className="form-wrapper">
+            <TableCoalHaulingMHADraft 
+                timestamp={parseInt(timestamp.replace(/-/g, ''))}
+                loaded={loaded}
+                setLoaded={setLoaded}
+                handleEdit={handleEditData}
+                handleSubmitToServer={handleSubmitToServer}
+                sendingData={sendingData}
+            />
         </div>
         <DialogProgress
             open={openDialog}
