@@ -46,7 +46,6 @@ const TableCoalHaulingMHADraft = ({ timestamp, loaded, setLoaded, handleEdit, ha
             }));
             setItemData(dataTable);
             setButton2Disabled(false)
-            console.log(data[0])
             setLocalData(data[0].dataSheet)
         } else {
             setButton2Disabled(true)
@@ -104,7 +103,7 @@ const TableCoalHaulingMHADraft = ({ timestamp, loaded, setLoaded, handleEdit, ha
                     }}
                     disabled={button2Disabled}
                 >
-                    Submit data to server
+                    Save to PTDH server
                 </Button>
             </div>
         </div>
