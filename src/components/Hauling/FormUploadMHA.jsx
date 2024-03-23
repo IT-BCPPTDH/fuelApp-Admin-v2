@@ -41,10 +41,8 @@ const FormUploadMHA = () => {
 
 
     const handlePaste = () => {
-  
         const spreadSheet = jRef.current.jspreadsheet
         const dataPasted = spreadSheet.getData()
-        // console.log(dataPasted)
         setDataSheet(dataPasted)
         setDisableButton(false)
     }
@@ -186,7 +184,7 @@ const FormUploadMHA = () => {
                 setFileValue("")
                 setDisableButton(true)
             }
-            // console.log("DB Inserted", inserted)
+            
         }
     },[dataSheet, timestamp, batchNo])
 
@@ -198,10 +196,6 @@ const FormUploadMHA = () => {
         setDataSheet(dataDetail.dataSheet)
 
     }
-
-    // useEffect(() => {
-    //     console.log(dataSheet)
-    // }, [dataSheet]);
 
     return (<>
         <div className="row ">
