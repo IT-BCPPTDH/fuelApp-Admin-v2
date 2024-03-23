@@ -44,6 +44,7 @@ const FormUploadMHA = () => {
   
         const spreadSheet = jRef.current.jspreadsheet
         const dataPasted = spreadSheet.getData()
+        // console.log(dataPasted)
         setDataSheet(dataPasted)
         setDisableButton(false)
     }
@@ -112,8 +113,11 @@ const FormUploadMHA = () => {
         const user = JSON.parse(Cookies.get('user'))
         const dataToSave = dataSheet.length > 0 ? dataSheet : datanya
 
+        const dataArray = dataToSave.filter(arr => arr.some(item => item !== ''));
+        console.log(dataSheet, dataArray)
+
         if (dataToSave.length > 0) {
-            const transformedData = dataToSave.map((val) => (
+            const transformedData = dataArray.map((val) => (
                 {
                     tanggal: val[0],
                     shift: val[1],
@@ -131,6 +135,8 @@ const FormUploadMHA = () => {
                     sentBy: user.fullname
                 }
             ));
+
+            // console.log(transformedData)
 
             if (!socket || transformedData.length === 0) return;
 
@@ -192,6 +198,10 @@ const FormUploadMHA = () => {
         setDataSheet(dataDetail.dataSheet)
 
     }
+
+    // useEffect(() => {
+    //     console.log(dataSheet)
+    // }, [dataSheet]);
 
     return (<>
         <div className="row ">
