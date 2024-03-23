@@ -99,15 +99,27 @@ export default function TimeSheetPage() {
 
   const checkFormCompleted = useCallback(() => {
     if (
-        Object.prototype.hasOwnProperty.call(formData, 'hmAwal') &&
-        Object.prototype.hasOwnProperty.call(formData, 'hmAkhir') &&
-        Object.prototype.hasOwnProperty.call(formData, 'tanggal') &&
-        Object.prototype.hasOwnProperty.call(formData, 'unitNo')
+      Object.prototype.hasOwnProperty.call(formData, 'hmAwal') &&
+      Object.prototype.hasOwnProperty.call(formData, 'hmAkhir') &&
+      Object.prototype.hasOwnProperty.call(formData, 'tanggal') &&
+      Object.prototype.hasOwnProperty.call(formData, 'unitNo')
     ) {
-        return true;
+      return true;
     }
     return false;
-}, [formData]);
+  }, [formData]);
+
+  const updateSpreadsheet = (dataPrev, dataCurr, rowIndex, columnIndex, spreadSheet) => {
+    if (dataPrev && dataCurr && dataPrev !== '-' && dataCurr !== '-') {
+        if (dataCurr === dataPrev) {
+            spreadSheet.updateCell(rowIndex, columnIndex, dataPrev, false);
+        } else {
+            spreadSheet.updateCell(rowIndex, columnIndex, dataCurr, false);
+        }
+    } else {
+        spreadSheet.updateCell(rowIndex, columnIndex, dataCurr || dataPrev, false);
+    }
+}
 
   const handleChangeSheet = useCallback(() => {
     const spreadSheet = jRef.current.jspreadsheet
@@ -133,18 +145,18 @@ export default function TimeSheetPage() {
         parsedStartTime = parseFloat(startTime);
 
         if (shift === 'Night') {
-          if(parsedStartTime >= 6 && parsedStartTime < 18 ){
+          if (parsedStartTime >= 6 && parsedStartTime < 18) {
             spreadSheet.updateCell(2, index, '', false);
             spreadSheet.updateCell(3, index, '', false);
             spreadSheet.updateCell(4, index, '', false);
             spreadSheet.updateCell(2, index + 1, '', false);
             colEndTime = null;
-          } else { 
+          } else {
             spreadSheet.updateCell(2, index, startTime, false);
           }
-         
+
         } else if (shift === 'Day') {
-          if (parsedStartTime > 17.59 || parsedStartTime < 6){
+          if (parsedStartTime > 17.59 || parsedStartTime < 6) {
             spreadSheet.updateCell(2, index, '', false);
             spreadSheet.updateCell(3, index, '', false);
             spreadSheet.updateCell(4, index, '', false);
@@ -158,21 +170,21 @@ export default function TimeSheetPage() {
 
       if (colEndTime) {
         endTime = formatTime(colEndTime)
-        
+
         const parsedEndTime = parseFloat(endTime);
         if (shift === 'Night') {
-          if(parsedEndTime > 6 && parsedEndTime < 18 ){
+          if (parsedEndTime > 6 && parsedEndTime < 18) {
             spreadSheet.updateCell(2, index, '', false);
             spreadSheet.updateCell(3, index, '', false);
             spreadSheet.updateCell(4, index, '', false);
             spreadSheet.updateCell(2, index + 1, '', false);
             colEndTime = null;
-          } else { 
+          } else {
             spreadSheet.updateCell(3, index, endTime, false);
           }
-         
+
         } else if (shift === 'Day') {
-          if (parsedEndTime > 18 || parsedEndTime < 6){
+          if (parsedEndTime > 18 || parsedEndTime < 6) {
             spreadSheet.updateCell(2, index, '', false);
             spreadSheet.updateCell(3, index, '', false);
             spreadSheet.updateCell(4, index, '', false);
@@ -187,7 +199,7 @@ export default function TimeSheetPage() {
       if (colStartTime && colEndTime) {
         let result = calculateTotalTime(startTime, endTime)
         if (result !== 'NaN.NaN') {
-        
+
           if (parseFloat(startTime) > parseFloat(endTime)) {
             if (shift === 'Night' && parsedStartTime >= 18.00 && parsedStartTime <= 23.59) {
               const resultMidnigth = calculateMidnightTime(startTime, endTime)
@@ -198,7 +210,7 @@ export default function TimeSheetPage() {
               spreadSheet.updateCell(4, index, '', false);
             }
           } else {
-     
+
             spreadSheet.updateCell(4, index, result, false)
             arrayTime[index] = result
           }
@@ -220,38 +232,29 @@ export default function TimeSheetPage() {
       }
 
       const getDataAct = spreadSheet.getValueFromCoords(0, index)
-      // const getDataOperator = spreadSheet.getValueFromCoords(6, index-1)
-      // const getDataCutStatus = spreadSheet.getValueFromCoords(7, index -1)
-      // const getDataDigger = spreadSheet.getValueFromCoords(8, index -1)
-      // const getDataLokasi = spreadSheet.getValueFromCoords(9, index -1)
-      // const getDataPanel = spreadSheet.getValueFromCoords(10, index -1)
 
-      if(getDataAct){
+      const getDataMaterialPrev = spreadSheet.getValueFromCoords(5, index - 1)
+      const getDataOperatorPrev = spreadSheet.getValueFromCoords(6, index - 1)
+      const getDataCutStatusPrev = spreadSheet.getValueFromCoords(7, index - 1)
+      const getDataDiggerPrev = spreadSheet.getValueFromCoords(8, index - 1)
+      const getDataLokasiPrev = spreadSheet.getValueFromCoords(9, index - 1)
+      const getDataPanelPrev = spreadSheet.getValueFromCoords(10, index - 1)
+      const getDataMaterialCurr = spreadSheet.getValueFromCoords(5, index)
+      const getDataOperatorCurr = spreadSheet.getValueFromCoords(6, index)
+      const getDataCutStatusCurr = spreadSheet.getValueFromCoords(7, index)
+      const getDataDiggerCurr = spreadSheet.getValueFromCoords(8, index)
+      const getDataLokasiCurr = spreadSheet.getValueFromCoords(9, index)
+      const getDataPanelCurr = spreadSheet.getValueFromCoords(10, index)
 
-        // if(getDataOperator && getDataOperator !== "-" && spreadSheet.getValueFromCoords(6, index) !== "-" 
-        // && spreadSheet.getValueFromCoords(6, index) !== spreadSheet.getValueFromCoords(6, index-1)){
-        //   spreadSheet.updateCell(6, index, getDataOperator, false)
-        // }
+      if (getDataAct) {
 
-        // if(getDataCutStatus && getDataCutStatus !== "-" && spreadSheet.getValueFromCoords(7, index) !== "-" 
-        // && spreadSheet.getValueFromCoords(7, index) !== spreadSheet.getValueFromCoords(7, index-1)){
-        //   spreadSheet.updateCell(7, index, getDataCutStatus, false)
-        // }
+        updateSpreadsheet(getDataMaterialPrev, getDataMaterialCurr, 5, index, spreadSheet);
+        updateSpreadsheet(getDataOperatorPrev, getDataOperatorCurr, 6, index, spreadSheet);
+        updateSpreadsheet(getDataCutStatusPrev, getDataCutStatusCurr, 7, index, spreadSheet);
+        updateSpreadsheet(getDataDiggerPrev, getDataDiggerCurr, 8, index, spreadSheet);
+        updateSpreadsheet(getDataLokasiPrev, getDataLokasiCurr, 9, index, spreadSheet);
+        updateSpreadsheet(getDataPanelPrev, getDataPanelCurr, 10, index,spreadSheet);
 
-        // if(getDataDigger && getDataDigger !== "-" && spreadSheet.getValueFromCoords(8, index) !== "-" 
-        // && spreadSheet.getValueFromCoords(8, index) !== spreadSheet.getValueFromCoords(8, index-1)){
-        //   spreadSheet.updateCell(8, index, getDataDigger, false)
-        // }
-
-        // if(getDataLokasi && getDataLokasi !== "-" && spreadSheet.getValueFromCoords(9, index) !== "-" 
-        // && spreadSheet.getValueFromCoords(9, index) !== spreadSheet.getValueFromCoords(9, index-1)){
-        //   spreadSheet.updateCell(9, index, getDataLokasi, false)
-        // }
-
-        // if(getDataPanel && getDataPanel !== "-" && spreadSheet.getValueFromCoords(10, index) !== "-" 
-        // && spreadSheet.getValueFromCoords(10, index) !== spreadSheet.getValueFromCoords(10, index-1)){
-        //   spreadSheet.updateCell(10, index, getDataPanel, false)
-        // }
       }
     }
 
@@ -269,11 +272,11 @@ export default function TimeSheetPage() {
       setButtonDraftDisabled(false)
 
       const durationValidated =
-      parseFloat(totalDurationTime) > 12 || parseFloat(totalDurationTime) < 12
-        ? true
-        : false
+        parseFloat(totalDurationTime) > 12 || parseFloat(totalDurationTime) < 12
+          ? true
+          : false
 
-        setButtonDisabled(durationValidated)
+      setButtonDisabled(durationValidated)
     }
 
   }, [checkFormCompleted])
@@ -313,8 +316,8 @@ export default function TimeSheetPage() {
     };
 
     fetchData();
- 
-  }, [ handleChangeSheet]);
+
+  }, [handleChangeSheet]);
 
   const handleSubmitToServer = useCallback(async (localData) => {
     try {
@@ -395,7 +398,7 @@ export default function TimeSheetPage() {
       spreadSheet.getValueFromCoords(4, index) && spreadSheet.updateCell(4, index, '', false);
     }
   }
-  
+
   const handleSubmitToLocalDB = useCallback(async (type) => {
 
     const data = {
@@ -430,7 +433,7 @@ export default function TimeSheetPage() {
         }
       }
 
-    // Draft
+      // Draft
     } else {
       const checkExisted = await getTimeEntryDraftByUnit(data.unitNo)
       if (checkExisted.length === 0) {
@@ -457,7 +460,7 @@ export default function TimeSheetPage() {
 
     if (name === 'hmAwal' || name === 'hmAkhir') {
 
-      const isValidNumber = /^(\d+(\.\d{0,3})?)?(,\d{0,2})?$/.test(value);
+      const isValidNumber = /^(\d+(\.\d{0,3})?)?(.\d{0,2})?$/.test(value);
 
       if (isValidNumber) {
         const formattedValue = value !== '' ? value : '';
@@ -491,12 +494,12 @@ export default function TimeSheetPage() {
       } else {
         console.error('Invalid input for HM values');
       }
-    } 
+    }
     else {
       if (name === 'shift') {
         toLocalStorage('shift', value)
         const spreadSheet = jRef.current.jspreadsheet
-       
+
         if (value === "Day") {
           spreadSheet.updateCell(2, 0, '06.00.00', false);
           clearTime(spreadSheet)
@@ -504,13 +507,12 @@ export default function TimeSheetPage() {
           spreadSheet.updateCell(2, 0, '18.00.00', false);
           clearTime(spreadSheet)
         }
-      } 
+      }
 
-      if(name === 'unitNo'){
-        if(value.length > 5){
-          const unit =  await getUnitDataByNo(value)
+      if (name === 'unitNo') {
+        if (value.length > 5) {
+          const unit = await getUnitDataByNo(value)
           const unitModel = `${unit?.merk}-${unit?.type}`
-          console.log(unitModel)
           setFormData((prevFormData) => ({ ...prevFormData, ['model']: unitModel }));
         } else {
           setFormData((prevFormData) => ({ ...prevFormData, ['model']: '' }));
@@ -519,23 +521,23 @@ export default function TimeSheetPage() {
 
       setFormData((prevFormData) => ({ ...prevFormData, [name]: value }));
     }
-   
+
 
     const formCompleted = checkFormCompleted()
-    
+
     if (checkSheetData && formCompleted) {
       setButtonDraftDisabled(false)
 
       const durationValidated =
-      parseFloat(totalDuration) > 12 || parseFloat(totalDuration) < 12
-        ? true
-        : false
+        parseFloat(totalDuration) > 12 || parseFloat(totalDuration) < 12
+          ? true
+          : false
 
-        setButtonDisabled(durationValidated)
+      setButtonDisabled(durationValidated)
     }
-    
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  },[checkFormCompleted, checkSheetData, totalDuration])
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [checkFormCompleted, checkSheetData, totalDuration])
 
   const handleTab = () => {
     const lastPart = getURLPath()
@@ -586,21 +588,21 @@ export default function TimeSheetPage() {
       if (!shift) toLocalStorage('shift', 'Day')
     }
 
-   setCheckSheetData(false)
-   const formCompleted = checkFormCompleted()
-    
-   if (checkSheetData && formCompleted) {
-     setButtonDraftDisabled(false)
+    setCheckSheetData(false)
+    const formCompleted = checkFormCompleted()
 
-     const durationValidated =
-     parseFloat(totalDuration) > 12 || parseFloat(totalDuration) < 12
-       ? true
-       : false
+    if (checkSheetData && formCompleted) {
+      setButtonDraftDisabled(false)
 
-       setButtonDisabled(durationValidated)
-   }
-  
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+      const durationValidated =
+        parseFloat(totalDuration) > 12 || parseFloat(totalDuration) < 12
+          ? true
+          : false
+
+      setButtonDisabled(durationValidated)
+    }
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isNew, unitOptions, totalDuration]);
 
   const handleEditData = useCallback(async (itemId, type) => {
@@ -763,7 +765,7 @@ export default function TimeSheetPage() {
             {parseFloat(totalDuration) > 12 ||
               parseFloat(totalDuration) < 12 ? (
               <div className='status-element status-invalidated'>
-                 12 hours (INVALIDATED)
+                12 hours (INVALIDATED)
               </div>
             ) : (
               <div className='status-element status-validated'> 12 hours (Validated)</div>

@@ -193,7 +193,7 @@ const ComboBoxCustom = (props) => {
     handleChange(event, { name, value: inputValuen });
 
     const matches = options.filter(
-      (option) => option.toLowerCase().indexOf(inputValuen.toLowerCase()) === 0
+      (option) => option && inputValuen && option.includes(inputValuen)
     );
 
     setMatchingOptions(matches);
