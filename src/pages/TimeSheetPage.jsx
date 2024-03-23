@@ -232,6 +232,7 @@ export default function TimeSheetPage() {
       }
 
       const getDataAct = spreadSheet.getValueFromCoords(0, index)
+
       const getDataMaterialPrev = spreadSheet.getValueFromCoords(5, index - 1)
       const getDataOperatorPrev = spreadSheet.getValueFromCoords(6, index - 1)
       const getDataCutStatusPrev = spreadSheet.getValueFromCoords(7, index - 1)
@@ -253,6 +254,7 @@ export default function TimeSheetPage() {
         updateSpreadsheet(getDataDiggerPrev, getDataDiggerCurr, 8, index, spreadSheet);
         updateSpreadsheet(getDataLokasiPrev, getDataLokasiCurr, 9, index, spreadSheet);
         updateSpreadsheet(getDataPanelPrev, getDataPanelCurr, 10, index,spreadSheet);
+
       }
     }
 

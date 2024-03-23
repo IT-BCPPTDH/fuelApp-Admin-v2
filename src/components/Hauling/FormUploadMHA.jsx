@@ -27,7 +27,9 @@ const FormUploadMHA = () => {
     const inputId = useId()
     const { socket, isConnected } = useSocket();
     const [progress, setProgress] = useState(0);
+
     const [chunkSize] = useState(250);
+
     const [disableButton, setDisableButton] = useState(true)
     const [openDialog, setOpenDialog] = useState(false)
     const [disableClose, setDisableCLose] = useState(true)
@@ -38,7 +40,6 @@ const FormUploadMHA = () => {
     const [timestamp] = useState(generateIDByDate())
     const [batchNo] = useState(generateID())
     const [sendingData, setSendingData] = useState(false)
-
 
     const handlePaste = () => {
         const spreadSheet = jRef.current.jspreadsheet
@@ -66,7 +67,6 @@ const FormUploadMHA = () => {
             jspreadsheet(jRef.current, options);
         }
 
-        
     }, []);
 
     const handleImport = ($event) => {
@@ -106,6 +106,7 @@ const FormUploadMHA = () => {
         }
     }, [])
 
+
     const handleSubmitToServer = useCallback(async (datanya) => {
 
         const user = JSON.parse(Cookies.get('user'))
@@ -132,7 +133,6 @@ const FormUploadMHA = () => {
                 }
             ));
 
-            // console.log(transformedData)
 
             if (!socket || transformedData.length === 0) return;
 
