@@ -27,7 +27,7 @@ const FormUploadMHA = () => {
     const inputId = useId()
     const { socket, isConnected } = useSocket();
     const [progress, setProgress] = useState(0);
-    const [chunkSize] = useState(1000);
+    const [chunkSize] = useState(100);
     const [disableButton, setDisableButton] = useState(true)
     const [openDialog, setOpenDialog] = useState(false)
     const [disableClose, setDisableCLose] = useState(true)
@@ -39,12 +39,9 @@ const FormUploadMHA = () => {
     const [batchNo] = useState(generateID())
     const [sendingData, setSendingData] = useState(false)
 
-
     const handlePaste = () => {
-  
         const spreadSheet = jRef.current.jspreadsheet
         const dataPasted = spreadSheet.getData()
-        // console.log(dataPasted)
         setDataSheet(dataPasted)
         setDisableButton(false)
     }
@@ -68,7 +65,6 @@ const FormUploadMHA = () => {
             jspreadsheet(jRef.current, options);
         }
 
-        
     }, []);
 
     const handleImport = ($event) => {
@@ -108,15 +104,14 @@ const FormUploadMHA = () => {
         }
     }, [])
 
+
     const handleSubmitToServer = useCallback(async (datanya) => {
 
         const user = JSON.parse(Cookies.get('user'))
         const dataToSave = dataSheet.length > 0 ? dataSheet : datanya
-
         const dataArray = dataToSave.filter(arr => arr.some(item => item !== ''));
-        console.log(dataSheet, dataArray)
 
-        if (dataToSave.length > 0) {
+        if (dataArray.length > 0) {
             const transformedData = dataArray.map((val) => (
                 {
                     tanggal: val[0],
@@ -136,7 +131,6 @@ const FormUploadMHA = () => {
                 }
             ));
 
-            // console.log(transformedData)
 
             if (!socket || transformedData.length === 0) return;
 

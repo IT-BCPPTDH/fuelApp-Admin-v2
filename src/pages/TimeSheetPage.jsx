@@ -220,38 +220,38 @@ export default function TimeSheetPage() {
       }
 
       const getDataAct = spreadSheet.getValueFromCoords(0, index)
-      const getDataOperator = spreadSheet.getValueFromCoords(6, index-1)
-      const getDataCutStatus = spreadSheet.getValueFromCoords(7, index -1)
-      const getDataDigger = spreadSheet.getValueFromCoords(8, index -1)
-      const getDataLokasi = spreadSheet.getValueFromCoords(9, index -1)
-      const getDataPanel = spreadSheet.getValueFromCoords(10, index -1)
+      // const getDataOperator = spreadSheet.getValueFromCoords(6, index-1)
+      // const getDataCutStatus = spreadSheet.getValueFromCoords(7, index -1)
+      // const getDataDigger = spreadSheet.getValueFromCoords(8, index -1)
+      // const getDataLokasi = spreadSheet.getValueFromCoords(9, index -1)
+      // const getDataPanel = spreadSheet.getValueFromCoords(10, index -1)
 
       if(getDataAct){
 
-        if(getDataOperator && getDataOperator !== "-" && spreadSheet.getValueFromCoords(6, index) !== "-" 
-        && spreadSheet.getValueFromCoords(6, index) !== spreadSheet.getValueFromCoords(6, index-1)){
-          spreadSheet.updateCell(6, index, getDataOperator, false)
-        }
+        // if(getDataOperator && getDataOperator !== "-" && spreadSheet.getValueFromCoords(6, index) !== "-" 
+        // && spreadSheet.getValueFromCoords(6, index) !== spreadSheet.getValueFromCoords(6, index-1)){
+        //   spreadSheet.updateCell(6, index, getDataOperator, false)
+        // }
 
-        if(getDataCutStatus && getDataCutStatus !== "-" && spreadSheet.getValueFromCoords(7, index) !== "-" 
-        && spreadSheet.getValueFromCoords(7, index) !== spreadSheet.getValueFromCoords(7, index-1)){
-          spreadSheet.updateCell(7, index, getDataCutStatus, false)
-        }
+        // if(getDataCutStatus && getDataCutStatus !== "-" && spreadSheet.getValueFromCoords(7, index) !== "-" 
+        // && spreadSheet.getValueFromCoords(7, index) !== spreadSheet.getValueFromCoords(7, index-1)){
+        //   spreadSheet.updateCell(7, index, getDataCutStatus, false)
+        // }
 
-        if(getDataDigger && getDataDigger !== "-" && spreadSheet.getValueFromCoords(8, index) !== "-" 
-        && spreadSheet.getValueFromCoords(8, index) !== spreadSheet.getValueFromCoords(8, index-1)){
-          spreadSheet.updateCell(8, index, getDataDigger, false)
-        }
+        // if(getDataDigger && getDataDigger !== "-" && spreadSheet.getValueFromCoords(8, index) !== "-" 
+        // && spreadSheet.getValueFromCoords(8, index) !== spreadSheet.getValueFromCoords(8, index-1)){
+        //   spreadSheet.updateCell(8, index, getDataDigger, false)
+        // }
 
-        if(getDataLokasi && getDataLokasi !== "-" && spreadSheet.getValueFromCoords(9, index) !== "-" 
-        && spreadSheet.getValueFromCoords(9, index) !== spreadSheet.getValueFromCoords(9, index-1)){
-          spreadSheet.updateCell(9, index, getDataLokasi, false)
-        }
+        // if(getDataLokasi && getDataLokasi !== "-" && spreadSheet.getValueFromCoords(9, index) !== "-" 
+        // && spreadSheet.getValueFromCoords(9, index) !== spreadSheet.getValueFromCoords(9, index-1)){
+        //   spreadSheet.updateCell(9, index, getDataLokasi, false)
+        // }
 
-        if(getDataPanel && getDataPanel !== "-" && spreadSheet.getValueFromCoords(10, index) !== "-" 
-        && spreadSheet.getValueFromCoords(10, index) !== spreadSheet.getValueFromCoords(10, index-1)){
-          spreadSheet.updateCell(10, index, getDataPanel, false)
-        }
+        // if(getDataPanel && getDataPanel !== "-" && spreadSheet.getValueFromCoords(10, index) !== "-" 
+        // && spreadSheet.getValueFromCoords(10, index) !== spreadSheet.getValueFromCoords(10, index-1)){
+        //   spreadSheet.updateCell(10, index, getDataPanel, false)
+        // }
       }
     }
 
