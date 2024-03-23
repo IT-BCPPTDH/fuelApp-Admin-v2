@@ -31,18 +31,29 @@ export const calculateTotalTime = (startTime, endTime) => {
   return formattedTotalTime
 }
 
+// export const formatTime = input => {
+//   const parts = input.split('.')
+
+//   let hours = parseInt(parts[0], 10) || 0
+//   let minutes = parseInt(parts[1], 10) || 0
+
+//   if (minutes < 10 && parts[1] && parts[1].length === 1) {
+//     minutes *= 10
+//   }
+
+//   hours = Math.min(23, Math.max(0, hours))
+//   minutes = Math.min(59, Math.max(0, minutes))
+
+//   const formattedTime = `${String(hours).padStart(2, '0')}.${String(
+//     minutes
+//   ).padStart(2, '0')}.00`
+
+//   return formattedTime
+// }
+
 export const formatTime = input => {
-  const parts = input.split('.')
-
-  let hours = parseInt(parts[0], 10) || 0
-  let minutes = parseInt(parts[1], 10) || 0
-
-  if (minutes < 10 && parts[1] && parts[1].length === 1) {
-    minutes *= 10
-  }
-
-  hours = Math.min(23, Math.max(0, hours))
-  minutes = Math.min(59, Math.max(0, minutes))
+  const hours = parseInt(input.slice(0, 2), 10) || 0
+  const minutes = parseInt(input.slice(2, 4), 10) || 0
 
   const formattedTime = `${String(hours).padStart(2, '0')}.${String(
     minutes
@@ -50,6 +61,7 @@ export const formatTime = input => {
 
   return formattedTime
 }
+
 
 function calculateDurationInMinutes(startTime, endTime) {
   const [startHour, startMinute, startSecond] = startTime.split('.').map(Number);
@@ -142,8 +154,12 @@ function checkNumber(num1, num2) {
     return parseFloat(`${integerPart}.${decimal}`);
   }
 
-  const number1 = convertToNumber(num1.replace('.', '').replace(',', '.'));
-  const number2 = convertToNumber(num2.replace('.', '').replace(',', '.'));
+  // const number1 = convertToNumber(num1.replace('.', '').replace(',', '.'));
+  // const number2 = convertToNumber(num2.replace('.', '').replace(',', '.'));
+
+  const number1 = convertToNumber(num1);
+  const number2 = convertToNumber(num2);
+
 
   const largerNumber = Math.max(number1, number2);
   const smallerNumber = Math.min(number1, number2);
@@ -162,8 +178,11 @@ export function checkValidHMAkhir(num1, num2) {
     return parseFloat(`${integerPart}.${decimal}`);
   }
 
-  const number1 = convertToNumber(num1.replace('.', '').replace(',', '.'));
-  const number2 = convertToNumber(num2.replace('.', '').replace(',', '.'));
+  // const number1 = convertToNumber(num1.replace('.', '').replace(',', '.'));
+  // const number2 = convertToNumber(num2.replace('.', '').replace(',', '.'));
+
+  const number1 = convertToNumber(num1);
+  const number2 = convertToNumber(num2);
   
   return (number1 < number2) ? true : false
 
@@ -175,7 +194,8 @@ export function calculateDifference(num1, num2) {
 
   const difference = tNumber.largerNumber - tNumber.smallerNumber;
   const roundedDifference = Math.round(difference * 1000) / 1000;
-  const formattedDifference = roundedDifference.toString().replace('.', ',');
+  // const formattedDifference = roundedDifference.toString().replace('.', ',');
+  const formattedDifference = roundedDifference.toString();
 
   return formattedDifference;
 }
