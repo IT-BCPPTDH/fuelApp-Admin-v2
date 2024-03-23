@@ -27,7 +27,7 @@ const FormUploadMHA = () => {
     const inputId = useId()
     const { socket, isConnected } = useSocket();
     const [progress, setProgress] = useState(0);
-    const [chunkSize] = useState(1000);
+    const [chunkSize] = useState(100);
     const [disableButton, setDisableButton] = useState(true)
     const [openDialog, setOpenDialog] = useState(false)
     const [disableClose, setDisableCLose] = useState(true)
@@ -110,11 +110,9 @@ const FormUploadMHA = () => {
 
         const user = JSON.parse(Cookies.get('user'))
         const dataToSave = dataSheet.length > 0 ? dataSheet : datanya
-
         const dataArray = dataToSave.filter(arr => arr.some(item => item !== ''));
-        console.log(dataSheet, dataArray)
 
-        if (dataToSave.length > 0) {
+        if (dataArray.length > 0) {
             const transformedData = dataArray.map((val) => (
                 {
                     tanggal: val[0],
