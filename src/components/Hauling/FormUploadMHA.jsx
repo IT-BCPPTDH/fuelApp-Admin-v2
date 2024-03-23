@@ -27,7 +27,7 @@ const FormUploadMHA = () => {
     const inputId = useId()
     const { socket, isConnected } = useSocket();
     const [progress, setProgress] = useState(0);
-    const [chunkSize] = useState(100);
+    const [chunkSize] = useState(250);
     const [disableButton, setDisableButton] = useState(true)
     const [openDialog, setOpenDialog] = useState(false)
     const [disableClose, setDisableCLose] = useState(true)
@@ -291,7 +291,7 @@ const DialogProgress = ({ open, setOpen, disableButton, valueChecking, valueStor
                             validationMessage={`There have been ${valueChecking}% data checked`}
                             validationState="none"
                         >
-                            <ProgressBar progress={value1} />
+                            <CustomProgressBar progress={value1} />
                         </Field>
 
                         <p className="mt1em">Saving Data...</p>
@@ -299,7 +299,7 @@ const DialogProgress = ({ open, setOpen, disableButton, valueChecking, valueStor
                             validationMessage={`There have been ${valueStoring}% data saved`}
                             validationState="none"
                         >
-                            <ProgressBar progress={value2} />
+                            <CustomProgressBar progress={value2} />
                         </Field>
                     </DialogContent>
                     <DialogActions>
@@ -322,7 +322,7 @@ DialogProgress.propTypes = {
     closeDialog: PropTypes.func
 }
 
-const ProgressBar = ({ progress }) => {
+const CustomProgressBar = ({ progress }) => {
     return (
         <div className="progress-bar">
             <div className="progress" style={{ width: `${progress}%` }}></div>
@@ -330,6 +330,6 @@ const ProgressBar = ({ progress }) => {
     );
 };
 
-ProgressBar.propTypes = {
+CustomProgressBar.propTypes = {
     progress: PropTypes.number.isRequired,
 };
