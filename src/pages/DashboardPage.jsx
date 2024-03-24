@@ -99,58 +99,74 @@ const DashboardPage = () => {
 
   const getDataMaster = useCallback(async () => {
     try {
-      const [
-        dataMasterActivity,
-        dataMasterOp,
-        dataMasterUnit,
-      ] = await Promise.all([
-        Services.getMasterActivity(),
-        Services.getMasterTimeEntryOperator(),
-        Services.getMasterTimeEntryUnit(),
-      ]);
 
-      const decodedDataActivity = msgpack.decode(dataMasterActivity);
-      const decodeDataOperator = msgpack.decode(dataMasterOp);
-      const decodeDataUnit = msgpack.decode(dataMasterUnit);
+      console.log(activity, operator)
+      let dataActivities = null
+      let allActivities = null
+      let dataOperators = null
+      let dataUnits = null
 
-      const unitLength = unit?.length || 0;
-      const activityLength = activity?.length || 0;
-      const operatorLength = operator?.length || 0;
+      if(activity && operator && unit){
+        allActivities = activity
+        dataActivities = activity?.map((v) => v.activityname) || [];
+        dataOperators = operator
+        dataUnits = unit
+      } else {
+        const [
+          dataMasterActivity,
+          dataMasterOp,
+          dataMasterUnit,
+        ] = await Promise.all([
+          Services.getMasterActivity(),
+          Services.getMasterTimeEntryOperator(),
+          Services.getMasterTimeEntryUnit(),
+        ]);
+        const decodedDataActivity = msgpack.decode(dataMasterActivity);
+        const decodeDataOperator = msgpack.decode(dataMasterOp);
+        const decodeDataUnit = msgpack.decode(dataMasterUnit);
 
-      if (unitLength !== undefined && decodeDataUnit.totalRow !== unitLength) {
-        db.activity.clear();
-        insertUnit(decodeDataUnit.data);
+        const unitLength = unit?.length || 0;
+        const activityLength = activity?.length || 0;
+        const operatorLength = operator?.length || 0;
+
+        if (unitLength !== undefined && decodeDataUnit.totalRow !== unitLength) {
+          db.activity.clear();
+          insertUnit(decodeDataUnit.data);
+        }
+  
+        if (
+          activityLength !== undefined &&
+          decodedDataActivity.totalRow !== activityLength
+        ) {
+          db.activity.clear();
+          insertActivity(decodedDataActivity.data);
+        }
+  
+        if (
+          operatorLength !== undefined &&
+          decodeDataOperator.totalRow !== operatorLength
+        ) {
+          db.operator.clear();
+          insertOperator(decodeDataOperator.data);
+        }
+
+        dataActivities = decodedDataActivity?.data?.map((v) => v.activityname) || [];
+        dataOperators= decodeDataOperator?.data?.map((v) => v.jde) || [];
+        dataUnits = decodeDataUnit?.data?.map((v) => v.unitno) || [];
+        allActivities = decodeDataOperator?.data
       }
 
-      if (
-        activityLength !== undefined &&
-        decodedDataActivity.totalRow !== activityLength
-      ) {
-        db.activity.clear();
-        insertActivity(decodedDataActivity.data);
-      }
-
-      if (
-        operatorLength !== undefined &&
-        decodeDataOperator.totalRow !== operatorLength
-      ) {
-        db.operator.clear();
-        insertOperator(decodeDataOperator.data);
-      }
-
-      const act = decodedDataActivity?.data?.map((v) => v.activityname) || [];
-      const op = decodeDataOperator?.data?.map((v) => v.jde) || [];
-      const unt = decodeDataUnit?.data?.map((v) => v.unitno) || [];
-
-      toLocalStorage(TIME_ENTRY_UNIT_KEY, unt);
-      toLocalStorage(TIME_ENTRY_ACTIVITY_KEY, act);
-      toLocalStorage(TIME_ENTRY_MASTER_ACT_KEY, decodedDataActivity.data);
-      toLocalStorage(TIME_ENTRY_OPERATOR_KEY, op);
+      toLocalStorage(TIME_ENTRY_UNIT_KEY, dataUnits);
+      toLocalStorage(TIME_ENTRY_ACTIVITY_KEY, dataActivities);
+      toLocalStorage(TIME_ENTRY_MASTER_ACT_KEY, allActivities);
+      toLocalStorage(TIME_ENTRY_OPERATOR_KEY, dataOperators);
       
     } catch (err) {
       console.log(err);
     }
-  }, [activity?.length, operator?.length, unit?.length]);
+    
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
     document.title = userRole.role === 'MHA' ? HeaderTitle.DASH_TOP_MHA : 'Homepage Production Data Collector - PTDH';

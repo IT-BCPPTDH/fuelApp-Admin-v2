@@ -2,8 +2,7 @@ import { useEffect, useRef, useState, useCallback } from "react"
 import jspreadsheet from 'jspreadsheet-ce'
 import { colHelperHaulingMHA } from "../../helpers/columnHelper"
 import { read, utils } from 'xlsx';
-import {
-    Input, Label, useId, Button, Dialog,
+import { Input, Label, useId, Button, Dialog,
     DialogTrigger,
     DialogSurface,
     DialogTitle,
@@ -13,13 +12,15 @@ import {
 } from "@fluentui/react-components";
 import { Save24Regular, ArrowReset24Regular } from "@fluentui/react-icons";
 import Cookies from 'js-cookie'
-import { useSocket } from "../../context/SocketProvider";
+import { useSocket } from "../../context/useSocket";
 import PropTypes from 'prop-types'
 import { insertCoalHaulingDraft } from "../../helpers/indexedDB/insert";
 import TableCoalHaulingMHADraft from "../TableCoalhaulingMHADraft";
 import { generateID, generateIDByDate } from "../../helpers/commonHelper";
 import { getCoalHaulingMHAById } from "../../helpers/indexedDB/getData";
 import { deleteAllCoalHaulingDraft } from "../../helpers/indexedDB/deteleData";
+import Worker from '../../worker/workerCoalHauling'
+import WorkerBuilder from "../../worker/worker-builder";
 
 const FormUploadMHA = () => {
     const jRef = useRef(null)
@@ -27,7 +28,7 @@ const FormUploadMHA = () => {
     const inputId = useId()
     const { socket, isConnected } = useSocket();
     const [progress, setProgress] = useState(0);
-    const [chunkSize] = useState(250);
+    // const [chunkSize] = useState(250);
     const [disableButton, setDisableButton] = useState(true)
     const [openDialog, setOpenDialog] = useState(false)
     const [disableClose, setDisableCLose] = useState(true)
@@ -38,7 +39,7 @@ const FormUploadMHA = () => {
     const [timestamp] = useState(generateIDByDate())
     const [batchNo] = useState(generateID())
     const [sendingData, setSendingData] = useState(false)
-
+    const [instanceWorker, setInstanceWorker] = useState()
 
     const handlePaste = () => {
         const spreadSheet = jRef.current.jspreadsheet
@@ -66,7 +67,11 @@ const FormUploadMHA = () => {
             jspreadsheet(jRef.current, options);
         }
 
-        
+
+    }, []);
+
+    useEffect(() => {
+        setInstanceWorker(new WorkerBuilder(Worker))
     }, []);
 
     const handleImport = ($event) => {
@@ -99,64 +104,102 @@ const FormUploadMHA = () => {
         setDisableButton(true)
     }, [])
 
-    const handleSuccess = useCallback(async(res) => {
+    const handleSuccess = useCallback(async (res) => {
         if (res.status === 200) {
             setDisableCLose(false)
             await deleteAllCoalHaulingDraft()
         }
     }, [])
 
-    const handleSubmitToServer = useCallback(async (datanya) => {
+    const handleWorkerSubmitToServer = useCallback(async (datanya) => {
 
-        const user = JSON.parse(Cookies.get('user'))
+        const user = JSON.parse(Cookies.get('user'));
         const dataToSave = dataSheet.length > 0 ? dataSheet : datanya
-        const dataArray = dataToSave.filter(arr => arr.some(item => item !== ''));
 
-        if (dataArray.length > 0) {
-            const transformedData = dataArray.map((val) => (
-                {
-                    tanggal: val[0],
-                    shift: val[1],
-                    unit: val[2],
-                    operator: val[3],
-                    tonnage: val[4],
-                    loader: val[5],
-                    pit: val[6],
-                    seam: val[7],
-                    in_rom: val[8],
-                    dump_time: val[9],
-                    time_hauling: val[10],
-                    dumping: val[11],
-                    remark: val[12],
-                    sentBy: user.fullname
-                }
-            ));
+        instanceWorker.postMessage({ data: dataToSave, user });
 
-            // console.log(transformedData)
+        const handleMessageFromWorker = (event) => {
+            const { eventName, eventData } = event.data;
+            switch (eventName) {
+                case 'emitSocket':
+                    // socket.emit(eventData.event, eventData.data);
+                    if (sendingData) setSendingData(false)
+                    console.log("start sending")
+                    break;
+                case 'updateProgress':
+                    setProgress(eventData);
+                    break;
+                case 'openDialog':
+                    setOpenDialog(eventData);
+                    break;
+                case 'checking_progress':
+                    setValueChecking(eventData)
+                    break;
+                case 'insert_progress':
+                    setValueStoring(eventData)
+                    break
+                case 'data_received':
+                    handleSuccess()
+                    break;
+                default:
+                    break;
+            }
+        };
 
-            if (!socket || transformedData.length === 0) return;
+        // Listen for messages from worker
+        instanceWorker.onmessage = handleMessageFromWorker;
 
-            if(sendingData) setSendingData(false)
+    }, [dataSheet, handleSuccess, sendingData, instanceWorker])
 
-            const chunks = [];
-            for (let i = 0; i < transformedData.length; i += chunkSize) {
-                const chunk = transformedData.slice(i, i + chunkSize);
-                chunks.push({ data: chunk, isLast: i + chunkSize >= transformedData.length });
-            }          
+    // const handleSubmitToServer = useCallback(async (datanya) => {
 
-            chunks.forEach((chunk, index) => {
-                setTimeout(() => {
-                    socket.emit('data-hauling-mha', chunk);
-                    setProgress((index + 1) / chunks.length * 100);
-                }, index * 100);
-            });
+    //     const user = JSON.parse(Cookies.get('user'))
+    //     const dataToSave = dataSheet.length > 0 ? dataSheet : datanya
+    //     const dataArray = dataToSave.filter(arr => arr.some(item => item !== ''));
 
-            setOpenDialog(true)
-            socket.on('checking_progress', (res) => setValueChecking(res))
-            socket.on('insert_progress', (res) => setValueStoring(res))
-            socket.on("data_received", (res) => handleSuccess(res))
-        }
-    }, [dataSheet, chunkSize, socket, handleSuccess, sendingData])
+    //     if (dataArray.length > 0) {
+    //         const transformedData = dataArray.map((val) => (
+    //             {
+    //                 tanggal: val[0],
+    //                 shift: val[1],
+    //                 unit: val[2],
+    //                 operator: val[3],
+    //                 tonnage: val[4],
+    //                 loader: val[5],
+    //                 pit: val[6],
+    //                 seam: val[7],
+    //                 in_rom: val[8],
+    //                 dump_time: val[9],
+    //                 time_hauling: val[10],
+    //                 dumping: val[11],
+    //                 remark: val[12],
+    //                 sentBy: user.fullname
+    //             }
+    //         ));
+
+    //         if (!socket || transformedData.length === 0) return;
+
+    //         if(sendingData) setSendingData(false)
+
+    //         const chunks = [];
+    //         for (let i = 0; i < transformedData.length; i += chunkSize) {
+    //             const chunk = transformedData.slice(i, i + chunkSize);
+    //             chunks.push({ data: chunk, isLast: i + chunkSize >= transformedData.length });
+    //         }          
+
+    //         chunks.forEach((chunk, index) => {
+    //             setTimeout(() => {
+    //                 socket.emit('data-hauling-mha', chunk);
+    //                 setProgress((index + 1) / chunks.length * 100);
+    //             }, index * 100);
+    //         });
+
+    //         setOpenDialog(true)
+    //         socket.on('checking_progress', (res) => setValueChecking(res))
+    //         socket.on('insert_progress', (res) => setValueStoring(res))
+    //         socket.on("data_received", (res) => handleSuccess(res))
+    //     }
+    // }, [dataSheet, chunkSize, socket, handleSuccess, sendingData])
 
     const handleCloseDialog = useCallback(() => {
         setProgress(0)
@@ -164,27 +207,27 @@ const FormUploadMHA = () => {
         handleReset()
     }, [handleReset])
 
-    const handleSaveDraft = useCallback(async() => {
-        if(dataSheet.length > 0){
-           
+    const handleSaveDraft = useCallback(async () => {
+        if (dataSheet.length > 0) {
+
             const numericDate = parseInt(timestamp.replace(/-/g, ''));
-            
+
             const inserted = await insertCoalHaulingDraft({
                 timestamp: numericDate,
                 batch: String(batchNo),
                 dataSheet
             })
 
-            if(inserted){
+            if (inserted) {
                 setLoaded(true)
                 jRef.current.jspreadsheet.setData([])
                 setDataSheet([])
                 setFileValue("")
                 setDisableButton(true)
             }
-            
+
         }
-    },[dataSheet, timestamp, batchNo])
+    }, [dataSheet, timestamp, batchNo])
 
     const handleEditData = async (itemId) => {
         const spreadSheet = jRef.current.jspreadsheet
@@ -192,7 +235,6 @@ const FormUploadMHA = () => {
         spreadSheet.setData(dataDetail.dataSheet)
         setDisableButton(false)
         setDataSheet(dataDetail.dataSheet)
-
     }
 
     return (<>
@@ -201,7 +243,7 @@ const FormUploadMHA = () => {
                 <Label htmlFor={inputId} >
                     Upload File Excel
                 </Label>
-                <Input 
+                <Input
                     type="file"
                     name="file"
                     id={inputId}
@@ -219,7 +261,7 @@ const FormUploadMHA = () => {
                     onClick={handleReset}
                     disabled={disableButton}
                 >Reset Form</Button>
-                       <Button
+                <Button
                     icon={<Save24Regular />}
                     iconPosition="after"
                     style={{ backgroundColor: "blue", color: "#ffffff", marginRight: "10px" }}
@@ -231,13 +273,14 @@ const FormUploadMHA = () => {
                     icon={<Save24Regular />}
                     iconPosition="after"
                     style={{ backgroundColor: "#6aa146", color: "#ffffff" }}
-                    onClick={handleSubmitToServer}
+                    onClick={handleWorkerSubmitToServer}
                     disabled={!isConnected || disableButton}
-                >Save to PTDH server</Button> 
+                >Save to PTDH server</Button>
             </div>
         </div>
 
         <div ref={jRef} className='mt1em' />
+
         <div className="row flex-row">
             <div className="col-8">
                 <p className="mt1em text-error text-italic">Note: *Pilih file excel, jika data sudah tampil di dalam tabel, klik tombol {`'Save data to server'`} untuk mengirim data ke server PTDH.</p>
@@ -246,13 +289,14 @@ const FormUploadMHA = () => {
                 {progress > 0 && <p className="is-right">Send data to server: {progress.toFixed(2)}%</p>}
             </div>
         </div>
+
         <div className="form-wrapper">
-            <TableCoalHaulingMHADraft 
+            <TableCoalHaulingMHADraft
                 timestamp={parseInt(timestamp.replace(/-/g, ''))}
                 loaded={loaded}
                 setLoaded={setLoaded}
                 handleEdit={handleEditData}
-                handleSubmitToServer={handleSubmitToServer}
+                handleSubmitToServer={handleWorkerSubmitToServer}
                 sendingData={sendingData}
             />
         </div>
