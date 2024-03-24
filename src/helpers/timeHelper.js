@@ -31,7 +31,7 @@ export const calculateTotalTime = (startTime, endTime) => {
   return formattedTotalTime
 }
 
-// export const formatTime = input => {
+// export const formatTimeParse = input => {
 //   const parts = input.split('.')
 
 //   let hours = parseInt(parts[0], 10) || 0
@@ -51,13 +51,30 @@ export const calculateTotalTime = (startTime, endTime) => {
 //   return formattedTime
 // }
 
+export const convertTime = (timeString) => {
+  // Check if the time string matches the expected format
+  // if (!/^\d{2}\.\d{2}\.\d{2}$/.test(timeString)) {
+  //   return "Invalid time format";
+  // }
+  
+  // Remove periods from the time string
+  let strippedTime = timeString.replace(/\./g, '');
+  
+  // Keep only the first four digits
+  let formattedTime = strippedTime.slice(0, 4);
+  
+  return formattedTime;
+}
+
 export const formatTime = input => {
-  const hours = parseInt(input.slice(0, 2), 10) || 0
+  let hours = parseInt(input.slice(0, 2), 10) || 0
   const minutes = parseInt(input.slice(2, 4), 10) || 0
 
-  const formattedTime = `${String(hours).padStart(2, '0')}.${String(
-    minutes
-  ).padStart(2, '0')}.00`
+  if (hours >= 24) {
+    hours = 0;
+  }
+
+  const formattedTime = `${String(hours).padStart(2, '0')}.${String(minutes).padStart(2, '0')}.00`
 
   return formattedTime
 }

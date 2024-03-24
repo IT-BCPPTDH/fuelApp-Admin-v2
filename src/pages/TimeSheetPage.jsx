@@ -7,7 +7,7 @@ import { getLocalStorage, sortArray, toLocalStorage } from '../helpers/toLocalSt
 import { HeaderPageForm } from '../components/FormComponent/HeaderPageForm'
 import {
   calculateTotalTimeFromArray, formatTime, calculateTotalTime, calculateAndConvertDuration,
-  convertToAMPM, calculateMidnightTime, calculateDifference, checkValidHMAkhir
+  convertToAMPM, calculateMidnightTime, calculateDifference, checkValidHMAkhir, convertTime
 } from '../helpers/timeHelper'
 import { FooterPageForm } from '../components/FormComponent/FooterPageForm'
 import { useLiveQuery } from 'dexie-react-hooks'
@@ -119,7 +119,7 @@ export default function TimeSheetPage() {
     } else {
         spreadSheet.updateCell(rowIndex, columnIndex, dataCurr || dataPrev, false);
     }
-}
+  }
 
   const handleChangeSheet = useCallback(() => {
     const spreadSheet = jRef.current.jspreadsheet
@@ -140,6 +140,10 @@ export default function TimeSheetPage() {
       const colStartTime = spreadSheet.getValueFromCoords(2, index)
       let colEndTime = spreadSheet.getValueFromCoords(3, index)
 
+      if(colEndTime){ 
+        colEndTime = convertTime(colEndTime)
+      }
+     
       if (colStartTime) {
         startTime = formatTime(colStartTime);
         parsedStartTime = parseFloat(startTime);
@@ -169,9 +173,10 @@ export default function TimeSheetPage() {
       }
 
       if (colEndTime) {
-        endTime = formatTime(colEndTime)
 
-        const parsedEndTime = parseFloat(endTime);
+        endTime = formatTime(colEndTime)
+        let parsedEndTime = parseFloat(endTime);
+      
         if (shift === 'Night') {
           if (parsedEndTime > 6 && parsedEndTime < 18) {
             spreadSheet.updateCell(2, index, '', false);
@@ -191,7 +196,7 @@ export default function TimeSheetPage() {
             spreadSheet.updateCell(2, index + 1, '', false);
             colEndTime = null;
           } else {
-            spreadSheet.updateCell(3, index, endTime, false);
+            spreadSheet.updateCell(3, index, colEndTime, false);
           }
         }
       }
@@ -218,21 +223,21 @@ export default function TimeSheetPage() {
 
         const validateResult = parseFloat(calculateTotalTimeFromArray(arrayTime)) == 12 ? true : false
         if (!validateResult) {
-          spreadSheet.updateCell(2, index + 1, endTime, false)
+          spreadSheet.updateCell(2, index + 1, colEndTime, false)
           if (parseFloat(startTime) > parseFloat(endTime)) {
             if (shift === 'Night' && parsedStartTime >= 18.00 && parsedStartTime <= 23.59) {
-              spreadSheet.updateCell(2, index + 1, endTime, false)
+             
+              spreadSheet.updateCell(2, index + 1, colEndTime, false)
             } else {
               spreadSheet.updateCell(2, index + 1, '', false);
             }
           } else {
-            spreadSheet.updateCell(2, index + 1, endTime, false)
+            spreadSheet.updateCell(2, index + 1, colEndTime, false)
           }
         }
       }
 
       const getDataAct = spreadSheet.getValueFromCoords(0, index)
-
       const getDataMaterialPrev = spreadSheet.getValueFromCoords(5, index - 1)
       const getDataOperatorPrev = spreadSheet.getValueFromCoords(6, index - 1)
       const getDataCutStatusPrev = spreadSheet.getValueFromCoords(7, index - 1)
