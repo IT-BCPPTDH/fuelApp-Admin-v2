@@ -26,13 +26,12 @@ const FormUploadMHA = () => {
     const jRef = useRef(null)
     const [dataSheet, setDataSheet] = useState([])
     const inputId = useId()
-    const { socket, isConnected } = useSocket();
-    const [progress, setProgress] = useState(0);
-    // const [chunkSize] = useState(250);
+    const {isConnected } = useSocket();
+    // const [progress, setProgress] = useState(0);
     const [disableButton, setDisableButton] = useState(true)
     const [openDialog, setOpenDialog] = useState(false)
     const [disableClose, setDisableCLose] = useState(true)
-    const [valueChecking, setValueChecking] = useState(0)
+    // const [valueChecking, setValueChecking] = useState(0)
     const [valueStoring, setValueStoring] = useState(0)
     const [fileValue, setFileValue] = useState("")
     const [loaded, setLoaded] = useState(false)
@@ -71,7 +70,12 @@ const FormUploadMHA = () => {
     }, []);
 
     useEffect(() => {
-        setInstanceWorker(new WorkerBuilder(Worker))
+        const workerInstance = new WorkerBuilder(Worker);
+        setInstanceWorker(workerInstance);
+
+        return () => {
+            workerInstance.terminate();
+        };
     }, []);
 
     const handleImport = ($event) => {
@@ -122,24 +126,25 @@ const FormUploadMHA = () => {
             const { eventName, eventData } = event.data;
             switch (eventName) {
                 case 'emitSocket':
-                    // socket.emit(eventData.event, eventData.data);
                     if (sendingData) setSendingData(false)
-                    console.log("start sending")
                     break;
-                case 'updateProgress':
-                    setProgress(eventData);
-                    break;
+                // case 'updateProgress':
+                //     setProgress(eventData);
+                //     break;
                 case 'openDialog':
                     setOpenDialog(eventData);
                     break;
-                case 'checking_progress':
-                    setValueChecking(eventData)
-                    break;
-                case 'insert_progress':
-                    setValueStoring(eventData)
+                // case 'checking_progress':
+                //     setValueChecking(eventData)
+                //     break;
+                case 'savingProgress':
+                    setValueStoring(Math.round(eventData))
                     break
-                case 'data_received':
-                    handleSuccess()
+                case 'dataReceived':
+                    handleSuccess(eventData)
+                    break;
+                case 'disconnected':
+                    console.log('disconnected')
                     break;
                 default:
                     break;
@@ -202,7 +207,7 @@ const FormUploadMHA = () => {
     // }, [dataSheet, chunkSize, socket, handleSuccess, sendingData])
 
     const handleCloseDialog = useCallback(() => {
-        setProgress(0)
+        // setProgress(0)
         setDisableButton(true)
         handleReset()
     }, [handleReset])
@@ -286,7 +291,7 @@ const FormUploadMHA = () => {
                 <p className="mt1em text-error text-italic">Note: *Pilih file excel, jika data sudah tampil di dalam tabel, klik tombol {`'Save data to server'`} untuk mengirim data ke server PTDH.</p>
             </div>
             <div className="col-4 is-right">
-                {progress > 0 && <p className="is-right">Send data to server: {progress.toFixed(2)}%</p>}
+            
             </div>
         </div>
 
@@ -304,7 +309,7 @@ const FormUploadMHA = () => {
             open={openDialog}
             setOpen={setOpenDialog}
             disableButton={disableClose}
-            valueChecking={valueChecking}
+            // valueChecking={valueChecking}
             valueStoring={valueStoring}
             closeDialog={handleCloseDialog}
         />
@@ -315,11 +320,11 @@ export default FormUploadMHA
 
 const DialogProgress = ({ open, setOpen, disableButton, valueChecking, valueStoring, closeDialog }) => {
 
-    const [value1, setValue1] = useState(0);
+    // const [value1, setValue1] = useState(0);
     const [value2, setValue2] = useState(0);
 
     useEffect(() => {
-        setValue1(valueChecking);
+        // setValue1(valueChecking);
         setValue2(valueStoring);
 
         return () => { };
@@ -330,13 +335,14 @@ const DialogProgress = ({ open, setOpen, disableButton, valueChecking, valueStor
                 <DialogBody>
                     <DialogTitle>Saving Data Progress..</DialogTitle>
                     <DialogContent>
-                        <p>CHecking Duplicate Data...</p>
+                   
+                        {/* <p>CHecking Duplicate Data...</p>
                         <Field
                             validationMessage={`There have been ${valueChecking}% data checked`}
                             validationState="none"
                         >
                             <CustomProgressBar progress={value1} />
-                        </Field>
+                        </Field> */}
 
                         <p className="mt1em">Saving Data...</p>
                         <Field
@@ -348,7 +354,7 @@ const DialogProgress = ({ open, setOpen, disableButton, valueChecking, valueStor
                     </DialogContent>
                     <DialogActions>
                         <DialogTrigger disableButtonEnhancement>
-                            <Button appearance="secondary" disabled={disableButton} onClick={closeDialog}>Done</Button>
+                            <Button appearance="secondary" disabled={disableButton} onClick={closeDialog}>Done & Close</Button>
                         </DialogTrigger>
                     </DialogActions>
                 </DialogBody>
