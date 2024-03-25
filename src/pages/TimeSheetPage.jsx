@@ -110,14 +110,14 @@ export default function TimeSheetPage() {
   }, [formData]);
 
   const updateSpreadsheet = (dataPrev, dataCurr, rowIndex, columnIndex, spreadSheet) => {
-    if (dataPrev && dataCurr && dataPrev !== '-' && dataCurr !== '-') {
-        if (dataCurr === dataPrev) {
-            spreadSheet.updateCell(rowIndex, columnIndex, dataPrev, false);
-        } else {
-            spreadSheet.updateCell(rowIndex, columnIndex, dataCurr, false);
-        }
-    } else {
-        spreadSheet.updateCell(rowIndex, columnIndex, dataCurr || dataPrev, false);
+    if (dataCurr === '' && dataPrev !== '') {
+      spreadSheet.updateCell(rowIndex, columnIndex, dataPrev, false);
+    }
+    else if (dataCurr !== '' && dataCurr !== dataPrev) {
+      spreadSheet.updateCell(rowIndex, columnIndex, dataCurr, false);
+    }
+    else if (dataCurr == '' && dataCurr !== dataPrev) {
+      spreadSheet.updateCell(rowIndex, columnIndex, '', false);
     }
   }
 
@@ -147,8 +147,6 @@ export default function TimeSheetPage() {
       if (colStartTime) {
         startTime = formatTime(colStartTime);
         parsedStartTime = parseFloat(startTime);
-
-        console.log(startTime, parsedStartTime)
 
         if (shift === 'Night') {
           if (parsedStartTime >= 6 && parsedStartTime < 18) {
@@ -181,7 +179,7 @@ export default function TimeSheetPage() {
       
         if (shift === 'Night') {
           if (parsedEndTime > 6 && parsedEndTime < 18) {
-            spreadSheet.updateCell(2, index, '', false);
+            // spreadSheet.updateCell(2, index, '', false);
             spreadSheet.updateCell(3, index, '', false);
             spreadSheet.updateCell(4, index, '', false);
             spreadSheet.updateCell(2, index + 1, '', false);
@@ -238,7 +236,7 @@ export default function TimeSheetPage() {
           }
         }
       }
-
+      // const getDataActPrev = spreadSheet.getValueFromCoords(0, index-1)
       const getDataAct = spreadSheet.getValueFromCoords(0, index)
       const getDataMaterialPrev = spreadSheet.getValueFromCoords(5, index - 1)
       const getDataOperatorPrev = spreadSheet.getValueFromCoords(6, index - 1)
@@ -262,10 +260,15 @@ export default function TimeSheetPage() {
         updateSpreadsheet(getDataLokasiPrev, getDataLokasiCurr, 9, index, spreadSheet);
         updateSpreadsheet(getDataPanelPrev, getDataPanelCurr, 10, index,spreadSheet);
 
+      } else {
+       // console.log(getDataActPrev)
+  
+        
       }
     }
 
     const datanya = spreadSheet.getData()
+
     setTableData(datanya)
 
     const totalDurationTime = calculateTotalTimeFromArray(arrayTime)
@@ -315,6 +318,8 @@ export default function TimeSheetPage() {
         tableOverflow: true,
         allowInsertColumn: false,
         onafterchanges: handleChangeSheet,
+        allowExport: false,
+        about: false
       };
 
       if (!jRef.current.jspreadsheet) {

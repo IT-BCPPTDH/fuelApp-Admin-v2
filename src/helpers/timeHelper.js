@@ -56,9 +56,12 @@ export const convertTime = (timeString) => {
 
 export const formatTime = input => {
   let hours = parseInt(input.slice(0, 2), 10) || 0
-  const minutes = parseInt(input.slice(2, 4), 10) || 0
+  let minutes = parseInt(input.slice(2, 4), 10) || 0
   if (hours >= 24) {
     hours = 0;
+  }
+  if(minutes > 59){
+    minutes = 59
   }
   const formattedTime = `${String(hours).padStart(2, '0')}.${String(minutes).padStart(2, '0')}.00`
   return formattedTime
@@ -180,7 +183,7 @@ export function checkValidHMAkhir(num1, num2) {
   const number1 = convertToNumber(num1);
   const number2 = convertToNumber(num2);
   
-  return (number1 < number2) ? true : false
+  return (number1 <= number2) ? true : false
 
 }
 
