@@ -188,16 +188,16 @@ const ComboBoxCustom = (props) => {
   const [inputValue, setInputValue] = useState(null);
 
   const onChange = (event) => {
-    const inputValuen = event.target.value.trim();
+    const inputValue = event.target.value.trim().toLowerCase(); 
 
-    handleChange(event, { name, value: inputValuen });
+    handleChange(event, { name, value: inputValue });
 
     const matches = options.filter(
-      (option) => option && inputValuen && option.includes(inputValuen)
+      (option) => option && inputValue && option.toLowerCase().includes(inputValue) 
     );
 
     setMatchingOptions(matches);
-  };
+  }
 
   const onOptionSelect = (event, data) => {
     const isOptionMatching = data.optionText && matchingOptions.includes(data.optionText);
