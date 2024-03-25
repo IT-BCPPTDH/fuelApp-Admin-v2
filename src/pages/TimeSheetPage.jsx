@@ -7,7 +7,7 @@ import { getLocalStorage, sortArray, toLocalStorage } from '../helpers/toLocalSt
 import { HeaderPageForm } from '../components/FormComponent/HeaderPageForm'
 import {
   calculateTotalTimeFromArray, formatTime, calculateTotalTime, calculateAndConvertDuration,
-  convertToAMPM, calculateMidnightTime, calculateDifference, checkValidHMAkhir, convertTime
+  convertToAMPM, calculateMidnightTime, calculateDifference, checkValidHMAkhir, convertTime, convertToUTC
 } from '../helpers/timeHelper'
 import { FooterPageForm } from '../components/FormComponent/FooterPageForm'
 import { useLiveQuery } from 'dexie-react-hooks'
@@ -148,6 +148,8 @@ export default function TimeSheetPage() {
         startTime = formatTime(colStartTime);
         parsedStartTime = parseFloat(startTime);
 
+        console.log(startTime, parsedStartTime)
+
         if (shift === 'Night') {
           if (parsedStartTime >= 6 && parsedStartTime < 18) {
             spreadSheet.updateCell(2, index, '', false);
@@ -196,7 +198,7 @@ export default function TimeSheetPage() {
             spreadSheet.updateCell(2, index + 1, '', false);
             colEndTime = null;
           } else {
-            spreadSheet.updateCell(3, index, colEndTime, false);
+            spreadSheet.updateCell(3, index, endTime, false);
           }
         }
       }
@@ -331,6 +333,7 @@ export default function TimeSheetPage() {
         const unitData = await getUnitDataByNo(data.unitNo);
         const formTitle = data.formTitle.split(" ");
         const unitType = formTitle[formTitle.length - 1];
+        const productionDate = convertToUTC(data.tanggal)
 
         return transformedData.map((activity) => ({
           formID: data.formID,
@@ -338,7 +341,7 @@ export default function TimeSheetPage() {
           productModel: unitData.type ?? '-',
           description: unitData.merk ? `${unitData.merk} ${unitData.category} ${unitData.type}` : '-',
           owner: unitData.owner ?? '-',
-          productionDate: data.tanggal,
+          productionDate: productionDate,
           shift: data.shift,
           operatorId: activity.operatorId,
           operatorName: activity.operatorName,
@@ -526,7 +529,6 @@ export default function TimeSheetPage() {
 
       setFormData((prevFormData) => ({ ...prevFormData, [name]: value }));
     }
-
 
     const formCompleted = checkFormCompleted()
 
