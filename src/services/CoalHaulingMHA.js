@@ -10,43 +10,43 @@ const getAllDataHauling = async () => {
     return response.data;
 };
 
-const getDataHaulingByDate = async (tanggal) => {
-    const response = await api.get(URL_ENUMS.getDataHaulingByDate+tanggal)
+const getDataHaulingByDate = async (tanggal, sentAt) => {
+    const response = await api.get(URL_ENUMS.getDataHaulingByDate+tanggal+'/'+sentAt)
     return response.data
 }
 
-const getTotalHauling = async (tanggal) => {
-    const response = await api.get(URL_ENUMS.getTotalHauling+tanggal)
+const getTotalHauling = async (tanggal, sentAt) => {
+    const response = await api.get(URL_ENUMS.getTotalHauling+tanggal+'/'+sentAt)
     return response.data
 }
 
-const getTotalHopper = async (tanggal) => {
-    const response = await api.get(URL_ENUMS.getTotalHopper+tanggal)
+const getTotalHopper = async (tanggal, sentAt) => {
+    const response = await api.get(URL_ENUMS.getTotalHopper+tanggal+'/'+sentAt)
     return response.data
 }
 
-const getTotalOverflow = async (tanggal) => {
-    const response = await api.get(URL_ENUMS.getTotalOverflow+tanggal)
+const getTotalOverflow = async (tanggal, sentAt) => {
+    const response = await api.get(URL_ENUMS.getTotalOverflow+tanggal+'/'+sentAt)
     return response.data
 }
 
-const getTotalECF = async (tanggal) => {
-    const response = await api.get(URL_ENUMS.getTotalECF+tanggal)
+const getTotalECF = async (tanggal, sentAt) => {
+    const response = await api.get(URL_ENUMS.getTotalECF+tanggal+'/'+sentAt)
     return response.data
 }
 
-const getTotalMiddlestock = async (tanggal) => {
-    const response = await api.get(URL_ENUMS.getTotalMiddlestock+tanggal)
+const getTotalMiddlestock = async (tanggal, sentAt) => {
+    const response = await api.get(URL_ENUMS.getTotalMiddlestock+tanggal+'/'+sentAt)
     return response.data
 }
 
-const getTotalSekurau = async (tanggal) => {
-    const response = await api.get(URL_ENUMS.getTotalSekurau+tanggal)
+const getTotalSekurau = async (tanggal, sentAt) => {
+    const response = await api.get(URL_ENUMS.getTotalSekurau+tanggal+'/'+sentAt)
     return response.data
 }
 
-const downloadExcel = async (tanggal) => {
-    const response = await api.get(URL_ENUMS.downloadExcelHauling+tanggal);
+const downloadExcel = async (tanggal, sentAt) => {
+    const response = await api.get(URL_ENUMS.downloadExcelHauling+tanggal+'/'+sentAt);
     return response.data;
   };
 

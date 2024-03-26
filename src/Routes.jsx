@@ -26,7 +26,7 @@ const RouteApp = () => {
 
       <Route path='/' element={<Suspense fallback={<div>Loading Dashboard...</div>}><DashboardPage /></Suspense>} />
       <Route path='/coalhauling' element={<Suspense fallback={<div>Loading Coal Hauling...</div>}><CoalHauling /></Suspense>} />
-      <Route path='/coalhauling-dataentry-detail/:tanggal' element={<Suspense fallback={<div>Loading Detail Hauling...</div>}><DetailHauling /></Suspense>} />
+      <Route path='/coalhauling-dataentry-detail/:tanggal/:sentAt' element={<Suspense fallback={<div>Loading Detail Hauling...</div>}><DetailHauling /></Suspense>} />
       <Route path='/coalhauling-dataentry-form' element={<Suspense fallback={<div>Loading Coal Hauling Data Entry...</div>}><CoalHaulingDataEntry /></Suspense>} />
       <Route path='/time-entry-from-fms' element={<Suspense fallback={<div>Loading Time Entry from FMS...</div>}><TimeEntryAll /></Suspense>} />
       <Route path='/time-entry-from-collector' element={<Suspense fallback={<div>Loading Time Entry from FMS...</div>}><TimeEntryAll /></Suspense>} />
