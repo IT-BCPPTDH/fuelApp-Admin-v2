@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { ArrowSquareUpRight24Regular } from "@fluentui/react-icons";
 import { Button } from "@fluentui/react-components";
 import CoalHaulingMHA from "../../services/CoalHaulingMHA";
+import {convertDateFormatTime} from "../../helpers/convertDate"
 const TableList = lazy(() => import('../TableList'))
 
 const TableCoalHauling = () => {
@@ -12,6 +13,7 @@ const TableCoalHauling = () => {
     { columnId: "entryDate", headerLabel: "Production Date", defaultWidth: 200 },
     { columnId: "totalTonnage", headerLabel: "Total Hauling(TON)", defaultWidth: 200 },
     { columnId: "ritage", headerLabel: "RITAGE", defaultWidth: 200 },
+    { columnId: "lastUpdate", headerLabel: "Last Update", defaultWidth: 200 },
     { columnId: "actions", headerLabel: "Action:", defaultWidth: 400 },
   ])
 
@@ -35,6 +37,7 @@ const TableCoalHauling = () => {
           entryDate: itemFromDB.tanggal,
           totalTonnage: itemFromDB.totalTonnage,
           ritage: itemFromDB.ritage,
+          lastUpdate: convertDateFormatTime(itemFromDB.sent_at) ?? '-',
           actions: <Button
             icon={<ArrowSquareUpRight24Regular />}
             iconPosition="after"

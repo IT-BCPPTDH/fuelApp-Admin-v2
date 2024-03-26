@@ -109,16 +109,22 @@ export default function TimeSheetPage() {
     return false;
   }, [formData]);
 
-  const updateSpreadsheet = (dataPrev, dataCurr, rowIndex, columnIndex, spreadSheet) => {
+  const updateSpreadsheet = (dataPrev, dataCurr,  columnIndex, rowIndex,spreadSheet) => {
 
     if (dataCurr === '' && dataPrev !== '' && dataPrev !== null && dataPrev !== undefined) {
-      spreadSheet.updateCell(rowIndex, columnIndex, dataPrev, false);
-    }
-    else if (dataCurr !== '' && dataCurr !== dataPrev) {
-      spreadSheet.updateCell(rowIndex, columnIndex, dataCurr, false);
+      spreadSheet.updateCell(columnIndex, rowIndex, dataPrev, false);
+    } else if (dataCurr !== '' && dataCurr !== dataPrev) {
+      console.log("changed")
+      spreadSheet.updateCell(columnIndex, rowIndex, dataCurr, false);
+      const sizeLeft = rowIndex + 1
+      console.log(sizeLeft)
+      const next = spreadSheet.getValueFromCoords(columnIndex, sizeLeft)
+      if(next !== ''){
+        spreadSheet.updateCell(columnIndex, sizeLeft, dataCurr, false);
+      }
     }
     else if (dataCurr == '' && dataCurr !== dataPrev) {
-      spreadSheet.updateCell(rowIndex, columnIndex, '', false);
+      spreadSheet.updateCell(columnIndex, rowIndex, '', false);
     }
 
   }
@@ -271,7 +277,6 @@ export default function TimeSheetPage() {
     }
 
     const datanya = spreadSheet.getData()
-
     setTableData(datanya)
 
     const totalDurationTime = calculateTotalTimeFromArray(arrayTime)
