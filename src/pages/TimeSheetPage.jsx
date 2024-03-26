@@ -110,7 +110,8 @@ export default function TimeSheetPage() {
   }, [formData]);
 
   const updateSpreadsheet = (dataPrev, dataCurr, rowIndex, columnIndex, spreadSheet) => {
-    if (dataCurr === '' && dataPrev !== '') {
+
+    if (dataCurr === '' && dataPrev !== '' && dataPrev !== null && dataPrev !== undefined) {
       spreadSheet.updateCell(rowIndex, columnIndex, dataPrev, false);
     }
     else if (dataCurr !== '' && dataCurr !== dataPrev) {
@@ -119,6 +120,7 @@ export default function TimeSheetPage() {
     else if (dataCurr == '' && dataCurr !== dataPrev) {
       spreadSheet.updateCell(rowIndex, columnIndex, '', false);
     }
+
   }
 
   const handleChangeSheet = useCallback(() => {
@@ -236,6 +238,7 @@ export default function TimeSheetPage() {
           }
         }
       }
+
       // const getDataActPrev = spreadSheet.getValueFromCoords(0, index-1)
       const getDataAct = spreadSheet.getValueFromCoords(0, index)
       const getDataMaterialPrev = spreadSheet.getValueFromCoords(5, index - 1)
