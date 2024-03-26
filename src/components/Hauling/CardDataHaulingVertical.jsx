@@ -36,7 +36,7 @@ const CardDataHaulingVertical = () => {
         ];
 
         const fetchedData = await Promise.all(
-          dataTypes.map(type => CoalHaulingMHA[type](value.tanggal))
+          dataTypes.map(type => CoalHaulingMHA[type](value.tanggal, value.sentAt))
         );
 
         const newData = Object.fromEntries(
@@ -53,7 +53,7 @@ const CardDataHaulingVertical = () => {
     };
 
     fetchData();
-  }, [value.tanggal]);
+  }, [value]);
 
   return (
     <div className="form-wrapper" style={{ marginBottom: 0, marginTop: 0 }}>

@@ -28,7 +28,7 @@ const FormUploadMHA = () => {
     const { socket, isConnected } = useSocket();
     const [progress, setProgress] = useState(0);
 
-    const [chunkSize] = useState(250);
+    const [chunkSize] = useState(200);
 
     const [disableButton, setDisableButton] = useState(true)
     const [openDialog, setOpenDialog] = useState(false)
@@ -284,7 +284,7 @@ const DialogProgress = ({ open, setOpen, disableButton, valueChecking, valueStor
         <Dialog modalType="alert" open={open} onOpenChange={(event, data) => setOpen(data.open)}>
             <DialogSurface>
                 <DialogBody>
-                    <DialogTitle>Saving Data Progress..</DialogTitle>
+                    <DialogTitle action={``}>Saving Data Progress..</DialogTitle>
                     <DialogContent>
                         <p>CHecking Duplicate Data...</p>
                         <Field
