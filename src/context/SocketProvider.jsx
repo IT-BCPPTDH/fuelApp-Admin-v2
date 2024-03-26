@@ -15,7 +15,6 @@ export const SocketProvider = ({ children }) => {
       // if(newSocket){
       //   newSocket.close();
       // }
-
     };
   }, []);
 

@@ -128,15 +128,9 @@ const FormUploadMHA = () => {
                 case 'emitSocket':
                     if (sendingData) setSendingData(false)
                     break;
-                // case 'updateProgress':
-                //     setProgress(eventData);
-                //     break;
                 case 'openDialog':
                     setOpenDialog(eventData);
                     break;
-                // case 'checking_progress':
-                //     setValueChecking(eventData)
-                //     break;
                 case 'savingProgress':
                     setValueStoring(Math.round(eventData))
                     break
@@ -146,12 +140,14 @@ const FormUploadMHA = () => {
                 case 'disconnected':
                     console.log('disconnected')
                     break;
+                case 'data-inserted':
+                    console.log('data-inserted')
+                break;
                 default:
                     break;
             }
         };
 
-        // Listen for messages from worker
         instanceWorker.onmessage = handleMessageFromWorker;
 
     }, [dataSheet, handleSuccess, sendingData, instanceWorker])
@@ -210,6 +206,7 @@ const FormUploadMHA = () => {
         // setProgress(0)
         setDisableButton(true)
         handleReset()
+        setValueStoring(0)
     }, [handleReset])
 
     const handleSaveDraft = useCallback(async () => {
@@ -333,7 +330,7 @@ const DialogProgress = ({ open, setOpen, disableButton, valueChecking, valueStor
         <Dialog modalType="alert" open={open} onOpenChange={(event, data) => setOpen(data.open)}>
             <DialogSurface>
                 <DialogBody>
-                    <DialogTitle>Saving Data Progress..</DialogTitle>
+                    <DialogTitle action={<Button onClick={closeDialog}>X</Button>}>Saving Data Progress..</DialogTitle>
                     <DialogContent>
                    
                         {/* <p>CHecking Duplicate Data...</p>

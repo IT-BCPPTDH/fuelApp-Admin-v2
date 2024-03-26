@@ -1,5 +1,23 @@
-
 export default () => {
+    let socket = null;
+
+    const connect = () => {
+        const link = 'ws://127.0.0.1:9002/websocket';
+        socket = new WebSocket(link);
+
+        socket.onopen = () => {
+            console.log('WebSocket connected successfully.');
+        };
+
+        socket.onerror = (error) => {
+            console.error('WebSocket error:', error);
+        };
+
+        socket.onclose = () => {
+            console.log('WebSocket connection closed.');
+            // Reconnect logic can be implemented here if needed
+        };
+    };
 
     const transformData = (val, user) => ({
         tanggal: val[0],
@@ -27,68 +45,68 @@ export default () => {
     };
 
     const handleSubmitToServer = async (dataArray, user) => {
-
-        const link = 'ws://127.0.0.1:9002/websocket';
-        const socket = new WebSocket(link);
-
-        const dataToSave = dataArray.filter(arr => arr.some(item => item !== ''));
-
-        if (!socket || dataToSave.length === 0) {
-            self.postMessage({ eventName: 'disconnected', eventData: true });
+        if (!socket || socket.readyState !== WebSocket.OPEN) {
+            connect();
+            setTimeout(() => {
+                handleSubmitToServer(dataArray, user);
+            }, 1000); // Retry after 1 second
+            return;
         }
-
+    
+        const dataToSave = dataArray.filter(arr => arr.some(item => item !== ''));
+    
+        if (dataToSave.length === 0) {
+            self.postMessage({ eventName: 'disconnected', eventData: true });
+            return;
+        }
+    
         const transformedData = dataToSave.map(val => transformData(val, user));
-        const chunkSize = 250;
+        const chunkSize = 200;
         const chunks = chunkArray(transformedData, chunkSize);
-
-        chunks.map((chunk, index) => {
-            const isLastChunk = index === chunks.length - 1;
-
+    
+        chunks.forEach((chunk, index) => {
             setTimeout(() => {
                 self.postMessage({ eventName: 'emitSocket', eventData: true });
                 const payload = { event: 'data-hauling-mha', data: chunk };
-                if (isLastChunk) {
+                if (index === chunks.length - 1) {
                     payload.lastChunk = true;
                 }
-                socket.send(JSON.stringify(payload));
-
-                // self.postMessage({ eventName: 'updateProgress', eventData: (index + 1) / chunks.length * 100 });
+                if (socket.readyState === WebSocket.OPEN) {
+                    socket.send(JSON.stringify(payload));
+                } else {
+                    console.error('WebSocket connection not open.');
+                }
             }, index * 100);
         });
-
-        // console.log("Proses Mulai")
-        // Post message to main thread to open dialog and handle socket events
+    
         self.postMessage({ eventName: 'openDialog', eventData: true });
-
+    
         socket.onmessage = (event) => {
-            const data = JSON.parse(event.data)
-            console.log(data);
+            const data = JSON.parse(event.data);
             switch (data.event) {
                 case 'dataReceived':
-                    self.postMessage({ eventName: 'dataReceived', eventData: data.message })
+                    self.postMessage({ eventName: 'dataReceived', eventData: data.message });
                     break;
                 case 'savingProgress':
-                    console.log(chunks.length)
-                    self.postMessage({ eventName: 'savingProgress', eventData: parseFloat((data.message + 1) / chunks.length * 100) })
+                    self.postMessage({ eventName: 'savingProgress', eventData: parseFloat((data.message) / chunks.length * 100) });
                     break;
                 case 'error':
-                    console.log(data)
+                    console.error('Server error:', data);
                     break;
-
+                case 'data-inserted':
+                    console.log('Data inserted successfully.');
+                    self.postMessage({ eventName: 'data-inserted', eventData: 'data inserted' });
+                    break;
                 default:
                     break;
             }
-
         };
-
-        // socket.close()
-
     };
+    
 
     // Listen for messages from main thread
     self.onmessage = (event) => {
         const { data, user } = event.data;
         handleSubmitToServer(data, user);
     };
-
-}
+};
