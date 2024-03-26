@@ -152,56 +152,6 @@ const FormUploadMHA = () => {
 
     }, [dataSheet, handleSuccess, sendingData, instanceWorker])
 
-    // const handleSubmitToServer = useCallback(async (datanya) => {
-
-    //     const user = JSON.parse(Cookies.get('user'))
-    //     const dataToSave = dataSheet.length > 0 ? dataSheet : datanya
-    //     const dataArray = dataToSave.filter(arr => arr.some(item => item !== ''));
-
-    //     if (dataArray.length > 0) {
-    //         const transformedData = dataArray.map((val) => (
-    //             {
-    //                 tanggal: val[0],
-    //                 shift: val[1],
-    //                 unit: val[2],
-    //                 operator: val[3],
-    //                 tonnage: val[4],
-    //                 loader: val[5],
-    //                 pit: val[6],
-    //                 seam: val[7],
-    //                 in_rom: val[8],
-    //                 dump_time: val[9],
-    //                 time_hauling: val[10],
-    //                 dumping: val[11],
-    //                 remark: val[12],
-    //                 sentBy: user.fullname
-    //             }
-    //         ));
-
-    //         if (!socket || transformedData.length === 0) return;
-
-    //         if(sendingData) setSendingData(false)
-
-    //         const chunks = [];
-    //         for (let i = 0; i < transformedData.length; i += chunkSize) {
-    //             const chunk = transformedData.slice(i, i + chunkSize);
-    //             chunks.push({ data: chunk, isLast: i + chunkSize >= transformedData.length });
-    //         }          
-
-    //         chunks.forEach((chunk, index) => {
-    //             setTimeout(() => {
-    //                 socket.emit('data-hauling-mha', chunk);
-    //                 setProgress((index + 1) / chunks.length * 100);
-    //             }, index * 100);
-    //         });
-
-    //         setOpenDialog(true)
-    //         socket.on('checking_progress', (res) => setValueChecking(res))
-    //         socket.on('insert_progress', (res) => setValueStoring(res))
-    //         socket.on("data_received", (res) => handleSuccess(res))
-    //     }
-    // }, [dataSheet, chunkSize, socket, handleSuccess, sendingData])
-
     const handleCloseDialog = useCallback(() => {
         // setProgress(0)
         setDisableButton(true)

@@ -7,7 +7,7 @@ import { getLocalStorage, sortArray, toLocalStorage } from '../helpers/toLocalSt
 import { HeaderPageForm } from '../components/FormComponent/HeaderPageForm'
 import {
   calculateTotalTimeFromArray, formatTime, calculateTotalTime, calculateAndConvertDuration,
-  convertToAMPM, calculateMidnightTime, calculateDifference, checkValidHMAkhir
+  convertToAMPM, calculateMidnightTime, calculateDifference, checkValidHMAkhir, convertTime, convertToUTC
 } from '../helpers/timeHelper'
 import { FooterPageForm } from '../components/FormComponent/FooterPageForm'
 import { useLiveQuery } from 'dexie-react-hooks'
@@ -109,17 +109,25 @@ export default function TimeSheetPage() {
     return false;
   }, [formData]);
 
-  const updateSpreadsheet = (dataPrev, dataCurr, rowIndex, columnIndex, spreadSheet) => {
-    if (dataPrev && dataCurr && dataPrev !== '-' && dataCurr !== '-') {
-        if (dataCurr === dataPrev) {
-            spreadSheet.updateCell(rowIndex, columnIndex, dataPrev, false);
-        } else {
-            spreadSheet.updateCell(rowIndex, columnIndex, dataCurr, false);
-        }
-    } else {
-        spreadSheet.updateCell(rowIndex, columnIndex, dataCurr || dataPrev, false);
+  const updateSpreadsheet = (dataPrev, dataCurr,  columnIndex, rowIndex,spreadSheet) => {
+
+    if (dataCurr === '' && dataPrev !== '' && dataPrev !== null && dataPrev !== undefined) {
+      spreadSheet.updateCell(columnIndex, rowIndex, dataPrev, false);
+    } else if (dataCurr !== '' && dataCurr !== dataPrev) {
+      console.log("changed")
+      spreadSheet.updateCell(columnIndex, rowIndex, dataCurr, false);
+      const sizeLeft = rowIndex + 1
+      console.log(sizeLeft)
+      const next = spreadSheet.getValueFromCoords(columnIndex, sizeLeft)
+      if(next !== ''){
+        spreadSheet.updateCell(columnIndex, sizeLeft, dataCurr, false);
+      }
     }
-}
+    else if (dataCurr == '' && dataCurr !== dataPrev) {
+      spreadSheet.updateCell(columnIndex, rowIndex, '', false);
+    }
+
+  }
 
   const handleChangeSheet = useCallback(() => {
     const spreadSheet = jRef.current.jspreadsheet
@@ -140,6 +148,10 @@ export default function TimeSheetPage() {
       const colStartTime = spreadSheet.getValueFromCoords(2, index)
       let colEndTime = spreadSheet.getValueFromCoords(3, index)
 
+      if(colEndTime){ 
+        colEndTime = convertTime(colEndTime)
+      }
+     
       if (colStartTime) {
         startTime = formatTime(colStartTime);
         parsedStartTime = parseFloat(startTime);
@@ -169,12 +181,13 @@ export default function TimeSheetPage() {
       }
 
       if (colEndTime) {
-        endTime = formatTime(colEndTime)
 
-        const parsedEndTime = parseFloat(endTime);
+        endTime = formatTime(colEndTime)
+        let parsedEndTime = parseFloat(endTime);
+      
         if (shift === 'Night') {
           if (parsedEndTime > 6 && parsedEndTime < 18) {
-            spreadSheet.updateCell(2, index, '', false);
+            // spreadSheet.updateCell(2, index, '', false);
             spreadSheet.updateCell(3, index, '', false);
             spreadSheet.updateCell(4, index, '', false);
             spreadSheet.updateCell(2, index + 1, '', false);
@@ -218,19 +231,21 @@ export default function TimeSheetPage() {
 
         const validateResult = parseFloat(calculateTotalTimeFromArray(arrayTime)) == 12 ? true : false
         if (!validateResult) {
-          spreadSheet.updateCell(2, index + 1, endTime, false)
+          spreadSheet.updateCell(2, index + 1, colEndTime, false)
           if (parseFloat(startTime) > parseFloat(endTime)) {
             if (shift === 'Night' && parsedStartTime >= 18.00 && parsedStartTime <= 23.59) {
-              spreadSheet.updateCell(2, index + 1, endTime, false)
+             
+              spreadSheet.updateCell(2, index + 1, colEndTime, false)
             } else {
               spreadSheet.updateCell(2, index + 1, '', false);
             }
           } else {
-            spreadSheet.updateCell(2, index + 1, endTime, false)
+            spreadSheet.updateCell(2, index + 1, colEndTime, false)
           }
         }
       }
 
+      // const getDataActPrev = spreadSheet.getValueFromCoords(0, index-1)
       const getDataAct = spreadSheet.getValueFromCoords(0, index)
       const getDataMaterialPrev = spreadSheet.getValueFromCoords(5, index - 1)
       const getDataOperatorPrev = spreadSheet.getValueFromCoords(6, index - 1)
@@ -253,6 +268,11 @@ export default function TimeSheetPage() {
         updateSpreadsheet(getDataDiggerPrev, getDataDiggerCurr, 8, index, spreadSheet);
         updateSpreadsheet(getDataLokasiPrev, getDataLokasiCurr, 9, index, spreadSheet);
         updateSpreadsheet(getDataPanelPrev, getDataPanelCurr, 10, index,spreadSheet);
+
+      } else {
+       // console.log(getDataActPrev)
+  
+        
       }
     }
 
@@ -306,6 +326,8 @@ export default function TimeSheetPage() {
         tableOverflow: true,
         allowInsertColumn: false,
         onafterchanges: handleChangeSheet,
+        allowExport: false,
+        about: false
       };
 
       if (!jRef.current.jspreadsheet) {
@@ -324,6 +346,7 @@ export default function TimeSheetPage() {
         const unitData = await getUnitDataByNo(data.unitNo);
         const formTitle = data.formTitle.split(" ");
         const unitType = formTitle[formTitle.length - 1];
+        const productionDate = convertToUTC(data.tanggal)
 
         return transformedData.map((activity) => ({
           formID: data.formID,
@@ -331,7 +354,7 @@ export default function TimeSheetPage() {
           productModel: unitData.type ?? '-',
           description: unitData.merk ? `${unitData.merk} ${unitData.category} ${unitData.type}` : '-',
           owner: unitData.owner ?? '-',
-          productionDate: data.tanggal,
+          productionDate: productionDate,
           shift: data.shift,
           operatorId: activity.operatorId,
           operatorName: activity.operatorName,
@@ -519,7 +542,6 @@ export default function TimeSheetPage() {
 
       setFormData((prevFormData) => ({ ...prevFormData, [name]: value }));
     }
-
 
     const formCompleted = checkFormCompleted()
 

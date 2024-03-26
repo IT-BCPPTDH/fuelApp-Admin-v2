@@ -31,49 +31,49 @@ export const calculateTotalTime = (startTime, endTime) => {
   return formattedTotalTime
 }
 
-// export const formatTime = input => {
-//   const parts = input.split('.')
+export function convertToUTC(localTimestamp) {
+  const sourceTimeZone = 'Asia/Makassar';
+  const localDateTime = new Date(localTimestamp);
+  const utcDateTime = new Date(localDateTime.toLocaleString('en-US', { timeZone: 'UTC' }));
+  const sourceOffset = localDateTime.getTimezoneOffset() * 60000; 
+  const targetOffset = new Date(localDateTime.toLocaleString('en-US', { timeZone: sourceTimeZone })).getTimezoneOffset() * 60000; // Offset in milliseconds
+  const offsetDifference = sourceOffset - targetOffset;
 
-//   let hours = parseInt(parts[0], 10) || 0
-//   let minutes = parseInt(parts[1], 10) || 0
-
-//   if (minutes < 10 && parts[1] && parts[1].length === 1) {
-//     minutes *= 10
-//   }
-
-//   hours = Math.min(23, Math.max(0, hours))
-//   minutes = Math.min(59, Math.max(0, minutes))
-
-//   const formattedTime = `${String(hours).padStart(2, '0')}.${String(
-//     minutes
-//   ).padStart(2, '0')}.00`
-
-//   return formattedTime
-// }
-
-export const formatTime = input => {
-  const hours = parseInt(input.slice(0, 2), 10) || 0
-  const minutes = parseInt(input.slice(2, 4), 10) || 0
-
-  const formattedTime = `${String(hours).padStart(2, '0')}.${String(
-    minutes
-  ).padStart(2, '0')}.00`
-
-  return formattedTime
+  return addOneDay(new Date(utcDateTime.getTime() + offsetDifference))
 }
 
+function addOneDay(inputDate){
+  const nextDay = new Date(inputDate);
+  nextDay.setDate(nextDay.getDate() + 1);
+  return nextDay.toString()
+}
+
+export const convertTime = (timeString) => {
+  let strippedTime = timeString.replace(/\./g, '');
+  let formattedTime = strippedTime.slice(0, 4);
+  return formattedTime;
+}
+
+export const formatTime = input => {
+  let hours = parseInt(input.slice(0, 2), 10) || 0
+  let minutes = parseInt(input.slice(2, 4), 10) || 0
+  if (hours >= 24) {
+    hours = 0;
+  }
+  if(minutes > 59){
+    minutes = 59
+  }
+  const formattedTime = `${String(hours).padStart(2, '0')}.${String(minutes).padStart(2, '0')}.00`
+  return formattedTime
+}
 
 function calculateDurationInMinutes(startTime, endTime) {
   const [startHour, startMinute, startSecond] = startTime.split('.').map(Number);
   const [endHour, endMinute, endSecond] = endTime.split('.').map(Number);
-  
-  // Convert end time to 24-hour format if it's before the start time
   const endHourAdjusted = endHour < startHour ? endHour + 24 : endHour;
-  
   const startTimestamp = startHour * 3600 + startMinute * 60 + startSecond;
   const endTimestamp = endHourAdjusted * 3600 + endMinute * 60 + endSecond;
-  
-  return (endTimestamp - startTimestamp) / 60; // Convert seconds to minutes
+  return (endTimestamp - startTimestamp) / 60; 
 }
 
 export function calculateAndConvertDuration(startTime, endTime) {
@@ -110,7 +110,6 @@ export function calculateAndConvertDuration(startTime, endTime) {
     convertDuration: convertDuration
   };
 }
-
 
 export function convertToAMPM(time) {
   // eslint-disable-next-line no-unused-vars
@@ -184,7 +183,7 @@ export function checkValidHMAkhir(num1, num2) {
   const number1 = convertToNumber(num1);
   const number2 = convertToNumber(num2);
   
-  return (number1 < number2) ? true : false
+  return (number1 <= number2) ? true : false
 
 }
 
