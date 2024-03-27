@@ -44,7 +44,7 @@ const TableDetailHauling = () => {
 
   const handleDownload = async () => {
     try {
-      const downloadData = await CoalHaulingMHA.downloadExcel(params.tanggal);
+      const downloadData = await CoalHaulingMHA.downloadExcel(params.tanggal, params.sentAt);
       window.location.href = URL_ENUMS.downloadFile + downloadData.link;
     } catch (error) {
       console.error("Error downloading data:", error);
