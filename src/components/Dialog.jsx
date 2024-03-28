@@ -42,7 +42,6 @@ export const DialogComponent = ({ open, setOpen, title, message, handleAction, s
             {!hideButton ? <DialogTrigger disableButtonEnhancement>
               <Button appearance="secondary">{buttonText ? 'Batal' : 'Tutup'}</Button>
             </DialogTrigger> : <></> }
-          
           {showButton ?
            <Button style={{backgroundColor: '#4caf50', color: "white"}} icon={<CalendarMonthRegular />} onClick={handleButtonAction}>
               Simpan

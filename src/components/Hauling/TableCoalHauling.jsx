@@ -19,9 +19,11 @@ const TableCoalHauling = () => {
 
   const [items, setItems] = useState([]);
   const Navigate = useNavigate();
-  const handleDetail = useCallback(async (tanggal) => {
+  const handleDetail = useCallback(async (tanggal, sent_at) => {
     try {
-      Navigate(`/coalhauling-dataentry-detail/${tanggal}`);
+      
+      const sentAt = btoa(sent_at)
+      Navigate(`/coalhauling-dataentry-detail/${tanggal}/${sentAt}`);
 
     } catch (error) {
       console.error("Error fetching data:", error);
@@ -41,7 +43,7 @@ const TableCoalHauling = () => {
           actions: <Button
             icon={<ArrowSquareUpRight24Regular />}
             iconPosition="after"
-            onClick={() => handleDetail(itemFromDB.tanggal)}>
+            onClick={() => handleDetail(itemFromDB.tanggal, convertDateFormatTime(itemFromDB.sent_at))}>
             View Detail Data
           </Button>
         }));

@@ -16,7 +16,8 @@ const TableDetailHauling = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const dataAll = await CoalHaulingMHA.getDataHaulingByDate(params.tanggal);
+        
+        const dataAll = await CoalHaulingMHA.getDataHaulingByDate(params.tanggal, params.sentAt);
         const dataTable = dataAll.data.map((item) => ([
           indonesianDate(new Date(item.tanggal)),
           item.shift,
@@ -39,11 +40,11 @@ const TableDetailHauling = () => {
     };
 
     fetchData();
-  }, [params.tanggal]);
+  }, [params]);
 
   const handleDownload = async () => {
     try {
-      const downloadData = await CoalHaulingMHA.downloadExcel(params.tanggal);
+      const downloadData = await CoalHaulingMHA.downloadExcel(params.tanggal, params.sentAt);
       window.location.href = URL_ENUMS.downloadFile + downloadData.link;
     } catch (error) {
       console.error("Error downloading data:", error);

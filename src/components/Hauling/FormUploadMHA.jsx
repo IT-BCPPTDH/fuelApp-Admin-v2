@@ -1,5 +1,8 @@
 import { useEffect, useRef, useState, useCallback } from "react"
 import jspreadsheet from 'jspreadsheet-ce'
+import Cookies from 'js-cookie'
+import PropTypes from 'prop-types'
+import TableCoalHaulingMHADraft from "../TableCoalhaulingMHADraft";
 import { colHelperHaulingMHA } from "../../helpers/columnHelper"
 import { read, utils } from 'xlsx';
 import { Input, Label, useId, Button, Dialog,
@@ -11,11 +14,8 @@ import { Input, Label, useId, Button, Dialog,
     DialogActions
 } from "@fluentui/react-components";
 import { Save24Regular, ArrowReset24Regular } from "@fluentui/react-icons";
-import Cookies from 'js-cookie'
 import { useSocket } from "../../context/useSocket";
-import PropTypes from 'prop-types'
 import { insertCoalHaulingDraft } from "../../helpers/indexedDB/insert";
-import TableCoalHaulingMHADraft from "../TableCoalhaulingMHADraft";
 import { generateID, generateIDByDate } from "../../helpers/commonHelper";
 import { getCoalHaulingMHAById } from "../../helpers/indexedDB/getData";
 import { deleteAllCoalHaulingDraft } from "../../helpers/indexedDB/deteleData";
@@ -24,10 +24,11 @@ import WorkerBuilder from "../../worker/worker-builder";
 
 const FormUploadMHA = () => {
     const jRef = useRef(null)
-    const [dataSheet, setDataSheet] = useState([])
     const inputId = useId()
-    const {isConnected } = useSocket();
+    const [dataSheet, setDataSheet] = useState([])
+    const { isConnected } = useSocket();
     // const [progress, setProgress] = useState(0);
+    // const [chunkSize] = useState(200);
     const [disableButton, setDisableButton] = useState(true)
     const [openDialog, setOpenDialog] = useState(false)
     const [disableClose, setDisableCLose] = useState(true)
@@ -89,9 +90,11 @@ const FormUploadMHA = () => {
 
                 if (sheets.length) {
                     const rows = utils.sheet_to_json(wb.Sheets[sheets[0]], { raw: false });
+                    console.log(rows)
                     const keysToExtract = ["HAULING DATA ENTRY", "__EMPTY", "__EMPTY_1", "__EMPTY_2", "__EMPTY_3", "__EMPTY_4", "__EMPTY_5", "__EMPTY_6", "__EMPTY_7", "__EMPTY_8", "__EMPTY_9", "__EMPTY_10", "__EMPTY_11"];
                     const valuesArray = rows.map(entry => keysToExtract.map(key => entry[key] ?? ""));
                     const resultArray = valuesArray.slice(1);
+                    console.log(resultArray)
                     setDataSheet(resultArray)
                     jRef.current.jspreadsheet.setData(resultArray)
                 }
