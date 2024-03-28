@@ -27,7 +27,6 @@ import { useNavigate } from 'react-router-dom'
 import { updateTimeEntry, updateTimeEntryDraft } from '../helpers/indexedDB/editData'
 import { HeaderTitle } from '../utils/Wording'
 
-
 const TableDataValidated = lazy(() => import('../components/TimeSheet/TableDataValidated'))
 const FormComponent = lazy(() => import('../components/FormComponent'))
 const TableDraft = lazy(() => import('../components/TimeSheet/TableDataDraft'))
