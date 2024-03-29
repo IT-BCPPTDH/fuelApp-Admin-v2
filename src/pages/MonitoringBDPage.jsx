@@ -4,8 +4,8 @@ import { colHelperMonitoringDB } from "../helpers/columnHelper"
 import { HeaderPageForm } from "../components/FormComponent/HeaderPageForm"
 import { Label, Button, useId, Input } from "@fluentui/react-components"
 import { Save24Regular, ArrowReset24Regular } from "@fluentui/react-icons";
-import { useSocket } from "../context/SocketProvider"
 import { read, utils } from 'xlsx';
+import { useSocket } from "../context/useSocket"
 
 const MonitoringBDPage = () => {
     const jRef = useRef(null)
@@ -52,7 +52,7 @@ const MonitoringBDPage = () => {
 
         const tBody = jsHeader.table.children[2].children[0].children[0]
         tBody.style.fontSize = "10px"
-        console.log(tBody)
+        // console.log(tBody)
     }, []);
 
     const handleImport = ($event) => {
@@ -72,10 +72,8 @@ const MonitoringBDPage = () => {
                     for (let index = 0; index < valuesArray.length; index++) {
                         const element = valuesArray[index];
                         if(element[0] !== "" && element[0] !== '1' && element[0] !== 'No Unit' && element[0] !== 'PITC'){
-                        
                             newArray.push(element)
                         }
-                        
                     }
               
                    setDataSheet(newArray)
