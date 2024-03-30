@@ -2,6 +2,7 @@ import { FluentProvider, createLightTheme } from '@fluentui/react-components';
 import RouteApp from './Routes';
 import UserRoleProvider from './context/UserRoleProvider';
 import { AuthProvider } from './context/AuthProvider';
+import ErrorBoundary from './components/ErrorBoundary';
 
 const dh = {
   palette: {
@@ -34,7 +35,9 @@ function App() {
     <FluentProvider theme={lightTheme}>
       <AuthProvider>
         <UserRoleProvider>
+          <ErrorBoundary>
             <RouteApp />
+          </ErrorBoundary>
         </UserRoleProvider>
       </AuthProvider>
     </FluentProvider>

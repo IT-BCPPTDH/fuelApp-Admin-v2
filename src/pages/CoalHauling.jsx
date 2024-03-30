@@ -62,7 +62,7 @@ export default function CoalHauling() {
     const handleMessageFromWorker = async(event) => {
       const datanya = event.data.data.data
       updateTableItem(datanya)
-      await insertAllDataTable(datanya)
+      //await insertAllDataTable(datanya)
     }
 
     if(allDataTable.length === 0){

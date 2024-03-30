@@ -73,7 +73,6 @@ const Header = ({ title, description }) => {
 const CardMenu = ({ name, desc, link }) => {
   const styles = useStyles();
   const navigate = useNavigate();
-  
 
   const handleClick = () => {
     navigate(link);
@@ -121,6 +120,7 @@ const DashboardPage = () => {
           Services.getMasterTimeEntryOperator(),
           Services.getMasterTimeEntryUnit(),
         ]);
+
         const decodedDataActivity = msgpack.decode(dataMasterActivity);
         const decodeDataOperator = msgpack.decode(dataMasterOp);
         const decodeDataUnit = msgpack.decode(dataMasterUnit);
@@ -130,7 +130,7 @@ const DashboardPage = () => {
         const operatorLength = operator?.length || 0;
 
         if (unitLength !== undefined && decodeDataUnit.totalRow !== unitLength) {
-          db.activity.clear();
+          db.unit.clear();
           insertUnit(decodeDataUnit.data);
         }
   

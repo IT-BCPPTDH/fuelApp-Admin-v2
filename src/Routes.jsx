@@ -1,6 +1,6 @@
 
 import { lazy, Suspense } from 'react';
-import { createHashRouter, RouterProvider } from "react-router-dom";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import LayoutTemplate from './components/Layout';
 import { useAuth } from './context/useAuth';
 
@@ -30,6 +30,8 @@ const FleetUnitPage = lazy(() => import('./pages/FleetUnitPage'))
 
 const WeatherPage = lazy(() => import('./pages/WeatherPage'))
 
+import FallbackUI from './components/FallbackUI';
+
 const RouteApp = () => {
 
   const { isLogged } = useAuth()
@@ -42,6 +44,7 @@ const RouteApp = () => {
         </LayoutTemplate>
       ),
       path: "/",
+      errorElement: <FallbackUI />
     },
     {
       element: (
@@ -185,7 +188,7 @@ const RouteApp = () => {
           <Suspense fallback={<div>Loading Breakdown Detail Page...</div>}><MonitoringBDPage /></Suspense>
         </LayoutTemplate>
       ),
-      path: '/breakdowm-detail'
+      path: '/breakdown-detail'
     }
   ] : [
     {
@@ -196,7 +199,7 @@ const RouteApp = () => {
     }
   ];
 
-  const router = createHashRouter(routes);
+  const router = createBrowserRouter(routes);
 
   return  <RouterProvider router={router} />
 }
