@@ -2,23 +2,30 @@ import { lazy, Suspense } from 'react';
 import { Route, Routes } from 'react-router-dom'
 
 const DashboardPage = lazy(() => import('./pages/DashboardPage'));
+
+// Coal Hauling
 const CoalHauling = lazy(() => import('./pages/CoalHauling'));
 const CoalHaulingDataEntry = lazy(() => import('./pages/CoalHaulingDataEntry'));
 const DetailHauling = lazy(() => import('./pages/DetailHauling'));
+
+// Time Entry
 const TimeEntryAll = lazy(() => import('./pages/TimeEntryAll'));
 const TimeSheetPage = lazy(() => import('./pages/TimeSheetPage'));
 const TimeEntryMinesEntryPage = lazy(() => import('./pages/TimeEntryMinesEntryPage'));
 const TimeEntryMinesDetailPage = lazy(() => import('./pages/TimeEntryDetailPage'));
-const MonitoringBDPage = lazy(() => import('./pages/MonitoringBDPage'))
 
-// import ProductionEntryPage from './pages/ProductionEntryPage'
-// import MineplanEntryPage from './pages/MineplanEntryPage'
-// import RekapTimeEntryPage from './pages/RekapTimeEntryPage'
-// import DistanceEntryPage from './pages/DistanceEntryPage';
-// import { HomePage } from './pages/HomePage'
-// import AdminCoalHauling from './pages/AdminCoalHauling';
-// import InputUnit from './pages/AdminCoalHauling/InputUnit';
-// import InputOperator from './pages/AdminCoalHauling/InputOperator';
+// Breakdown
+const MonitoringBDPage = lazy(() => import('./pages/MonitoringBDPage'))
+const BreakdownPage = lazy(() => import('./pages/BreakdownPage'))
+
+
+const ProductionEntryPage = lazy(() => import('./pages/ProductionEntryPage'))
+const DistanceEntryPage = lazy(() => import('./pages/DistanceEntryPage'))
+const MineplanEntryPage = lazy(() => import('./pages/MineplanEntryPage'))
+const HourMeterPage = lazy(() => import('./pages/HoursMeterPage'))
+const FleetUnitPage = lazy(() => import('./pages/FleetUnitPage'))
+
+const WeatherPage = lazy(() => import('./pages/WeatherPage'))
 
 const RouteApp = () => {
   return (
@@ -36,16 +43,14 @@ const RouteApp = () => {
       <Route path='/time-entry-detail/:tanggal/:type' element={<Suspense fallback={<div>Loading Time Entry Detail...</div>}><TimeEntryMinesDetailPage /></Suspense>} />
       <Route path='/time-sheet-mines' element={<Suspense fallback={<div>Loading Time Sheet...</div>}><TimeEntryMinesEntryPage /></Suspense>} />
       <Route path='/time-sheet-fms' element={<Suspense fallback={<div>Loading Time Sheet...</div>}><TimeEntryMinesEntryPage /></Suspense>} />
-      <Route path='/monitoring-breakdown'  element={<Suspense fallback={<div>Loading Monitoring BD Sheet...</div>}><MonitoringBDPage /></Suspense>} />
-
-      {/* <Route path='/time-entry-production' element={<RekapTimeEntryPage />}></Route>
-      <Route path='/production' element={<ProductionEntryPage />}></Route>
-      <Route path='/mineplan' element={<MineplanEntryPage />}></Route>
-      <Route path='/distance-data-entry' element={<DistanceEntryPage />}></Route> */}
-      {/* <Route path='/collector/:id' element={<HomePage />} />
-      <Route path='/coalhauling-admin' element={<AdminCoalHauling />}></Route>
-      <Route path='/coalhaulig-admin/nounit/' element={<InputUnit />}></Route>
-      <Route path='/coalhaulig-admin/operator/' element={<InputOperator />}></Route> */}
+      <Route path='/breakdown'  element={<Suspense fallback={<div>Loading Breakdown Page...</div>}><BreakdownPage /></Suspense>} />
+      <Route path='/production' element={<Suspense fallback={<div>Loading Production Page...</div>}><ProductionEntryPage /></Suspense>} />
+      <Route path='/distance' element={<Suspense fallback={<div>Loading Distance Page...</div>}><DistanceEntryPage /></Suspense>} />
+      <Route path='/mine-plan' element={<Suspense fallback={<div>Loading Mineplan Page...</div>}><MineplanEntryPage /></Suspense>} />
+      <Route path='/hour-meter' element={<Suspense fallback={<div>Loading Hour Meter Page...</div>}><HourMeterPage /></Suspense>} />
+      <Route path='/fleet-unit' element={<Suspense fallback={<div>Loading Fleet Unit Page...</div>}><FleetUnitPage /></Suspense>} />
+      <Route path='/weather' element={<Suspense fallback={<div>Loading Weather Page...</div>}><WeatherPage /></Suspense>} />
+      <Route path='/breakdowm-detail' element={<Suspense fallback={<div>Loading Breakdown Detail Page...</div>}><MonitoringBDPage /></Suspense>} />
     </Routes>
   )
 }

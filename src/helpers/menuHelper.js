@@ -11,34 +11,48 @@ export const menuArrayData = [
         link: '/time-entry-from-collector',
         access: ['MED', 'MOD']
     },
-    {
-        name: 'Time Entry (FMS)',
-        desc: 'Data Time Entry from Satnet DB',
-        link: '/time-entry-from-fms',
-        access: ['MED', 'MOD', 'Dispatch']
-    },
-    {
-        name: 'Monitoring Breakdown',
-        desc: 'Data Collector for Monitoring BD',
-        link: '/monitoring-breakdown',
-        access: ['MED', 'MOD', 'Dispatch']
-    },
     // {
-    //   name: 'Coal Hauling Admin',
-    //   desc: 'Data Collector for Coal Hauling Entry Admin',
-    //   link: '/coalhauling-admin'
+    //     name: 'Time Entry (FMS)',
+    //     desc: 'Data Time Entry from Satnet DB',
+    //     link: '/time-entry-from-fms',
+    //     access: ['MED', 'MOD', 'Dispatch']
     // },
-
+    {
+        name: 'Breakdown',
+        desc: 'Data Collector for Unit Breakdown',
+        link: '/breakdown',
+        access: ['MED', 'MOD', 'Dispatch']
+    },
+    {
+        name: 'Weather',
+        desc: 'Data Collector for Weather Delay',
+        link: '/weather',
+        access: ['MED', 'MOD', 'Dispatch']
+    },
+    {
+        name: 'Hours Meter',
+        desc: 'Data Setup Hours Meter Unit per shift',
+        link: '/hour-meter',
+        access: ['MED', 'MOD', 'Dispatch']
+    },
+    {
+        name: 'Fleet Unit',
+        desc: 'Data Setup Fleet Unit per shift',
+        link: '/fleet-unit',
+        access: ['MED', 'MOD', 'Dispatch']
+    },
     // {
-    //     name: 'Data Mine Plan',
+    //     name: 'Mine Plan',
     //     desc: 'Data Collector for Mine Planning Activity',
-    //     link: '/mineplan'
+    //     link: '/mine-plan',
+    //     access: ['MED', 'MOD', 'Dispatch']
     // },
 
     // {
-    //     name: 'Data Distance',
+    //     name: 'Distance',
     //     desc: 'Template Data Entry for Distance',
-    //     link: '/distance-data-entry'
+    //     link: '/distance',
+    //     access: ['MED', 'MOD', 'Dispatch']
     // }
 ]
 

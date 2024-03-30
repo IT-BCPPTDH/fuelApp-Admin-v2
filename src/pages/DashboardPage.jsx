@@ -100,7 +100,7 @@ const DashboardPage = () => {
   const getDataMaster = useCallback(async () => {
     try {
 
-      console.log(activity, operator)
+      // console.log(activity, operator)
       let dataActivities = null
       let allActivities = null
       let dataOperators = null
@@ -169,7 +169,7 @@ const DashboardPage = () => {
   }, []);
 
   useEffect(() => {
-    document.title = userRole.role === 'MHA' ? HeaderTitle.DASH_TOP_MHA : 'Homepage Production Data Collector - PTDH';
+    document.title = userRole.role === 'MHA' ? HeaderTitle.DASH_TOP_MHA : 'Homepage Data Collector - PTDH';
     if (activity && operator && unit) {
       getDataMaster();
     }
