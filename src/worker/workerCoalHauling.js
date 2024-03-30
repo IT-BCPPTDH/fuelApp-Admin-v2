@@ -1,8 +1,9 @@
 export default () => {
     let socket = null;
+    let urlSocket = ''
 
     const connect = () => {
-        const link = 'ws://127.0.0.1:9002/websocket';
+        const link = urlSocket; //'ws://127.0.0.1:3939/websocket';
         socket = new WebSocket(link);
 
         socket.onopen = () => {
@@ -106,7 +107,8 @@ export default () => {
 
     // Listen for messages from main thread
     self.onmessage = (event) => {
-        const { data, user } = event.data;
+        const { data, user, socketUrl } = event.data;
+        urlSocket = socketUrl
         handleSubmitToServer(data, user);
     };
 };

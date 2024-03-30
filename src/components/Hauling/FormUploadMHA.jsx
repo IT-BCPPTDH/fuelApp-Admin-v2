@@ -21,6 +21,7 @@ import { getCoalHaulingMHAById } from "../../helpers/indexedDB/getData";
 import { deleteAllCoalHaulingDraft } from "../../helpers/indexedDB/deteleData";
 import Worker from '../../worker/workerCoalHauling'
 import WorkerBuilder from "../../worker/worker-builder";
+import { URL_ENUMS } from "../../utils/Enums"; 
 
 const FormUploadMHA = () => {
     const jRef = useRef(null)
@@ -87,11 +88,11 @@ const FormUploadMHA = () => {
 
                 if (sheets.length) {
                     const rows = utils.sheet_to_json(wb.Sheets[sheets[0]], { raw: false });
-                    console.log(rows)
+                    
                     const keysToExtract = ["HAULING DATA ENTRY", "__EMPTY", "__EMPTY_1", "__EMPTY_2", "__EMPTY_3", "__EMPTY_4", "__EMPTY_5", "__EMPTY_6", "__EMPTY_7", "__EMPTY_8", "__EMPTY_9", "__EMPTY_10", "__EMPTY_11"];
                     const valuesArray = rows.map(entry => keysToExtract.map(key => entry[key] ?? ""));
                     const resultArray = valuesArray.slice(1);
-                    console.log(resultArray)
+                    
                     setDataSheet(resultArray)
                     jRef.current.jspreadsheet.setData(resultArray)
                 }
@@ -119,8 +120,9 @@ const FormUploadMHA = () => {
 
         const user = JSON.parse(Cookies.get('user'));
         const dataToSave = dataSheet.length > 0 ? dataSheet : datanya
+        const socketUrl = URL_ENUMS.linkWebSocket
 
-        instanceWorker.postMessage({ data: dataToSave, user });
+        instanceWorker.postMessage({ data: dataToSave, user, socketUrl });
 
         const handleMessageFromWorker = (event) => {
             const { eventName, eventData } = event.data;

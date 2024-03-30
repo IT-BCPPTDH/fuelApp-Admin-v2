@@ -1,7 +1,9 @@
 const link = import.meta.env.VITE_LINK_BACKEND;
 const userLink = import.meta.env.VITE_LINK_BE_USER;
+const linkSocket = import.meta.env.VITE_SOCKET_USER
 
 export const URL_ENUMS = {
+    linkWebSocket: linkSocket,
     /**
      * General
      */
