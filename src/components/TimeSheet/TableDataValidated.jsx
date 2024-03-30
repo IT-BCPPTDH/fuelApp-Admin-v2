@@ -8,7 +8,8 @@ import { SaveArrowRight24Regular } from '@fluentui/react-icons'
 import { deleteTimeEntries } from "../../helpers/indexedDB/deteleData";
 import { DialogComponent } from "../Dialog";
 import { tableLocalStoredData } from "../../helpers/tableHelper";
-import { useSocket } from "../../context/SocketProvider";
+import { useSocket } from "../../context/useSocket"; 
+
 const TableList = lazy(() => import('../TableList'))
 
 const TableDataValidated = ({ formTitle, loaded, setLoaded, handleEdit, handleSubmitToServer, sendingData }) => {

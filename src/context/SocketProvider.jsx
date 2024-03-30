@@ -1,43 +1,45 @@
-import { createContext, useContext, useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import initializedSocket from '../socket';
-import PropTypes from 'prop-types'
-
-const SocketContext = createContext();
-
-// eslint-disable-next-line react-refresh/only-export-components
-export const useSocket = () => useContext(SocketContext);
+import PropTypes from 'prop-types';
+import SocketContext from './useSocketContext';
 
 export const SocketProvider = ({ children }) => {
   const [isConnected, setIsConnected] = useState(false);
   const [socket, setSocket] = useState(null);
 
   useEffect(() => {
-    const newSocket = initializedSocket(); 
+    const newSocket = initializedSocket();
     setSocket(newSocket);
 
     return () => {
-      newSocket.disconnect();
+      // if(newSocket){
+      //   newSocket.close();
+      // }
     };
   }, []);
 
   const onConnect = useCallback(() => {
     setIsConnected(true);
+    // console.log("Connected")
   }, []);
 
   const onDisconnect = useCallback(() => {
     setIsConnected(false);
+    console.log('WebSocket connection closed unexpectedly. Attempting to reconnect...');
+    setTimeout(() => {
+      const newSocket = initializedSocket();
+      setSocket(newSocket);
+    }, 3000);
   }, []);
 
   useEffect(() => {
     if (socket) {
-      socket.on('connect', onConnect);
-      socket.on('disconnect', onDisconnect);
-        // socket.on('update', onFooEvent);
+      socket.addEventListener('open', onConnect);
+      socket.addEventListener('close', onDisconnect);
 
       return () => {
-        socket.off('connect', onConnect);
-        socket.off('disconnect', onDisconnect);
-        // socket.off('update', onFooEvent);
+        socket.removeEventListener('open', onConnect);
+        socket.removeEventListener('close', onDisconnect);
       };
     }
   }, [socket, onConnect, onDisconnect]);
@@ -54,6 +56,6 @@ export const SocketProvider = ({ children }) => {
   );
 };
 
-SocketProvider.propTypes={
-    children: PropTypes.any
-}
+SocketProvider.propTypes = {
+  children: PropTypes.node
+};

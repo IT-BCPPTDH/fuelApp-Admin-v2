@@ -6,7 +6,8 @@ import { tableDraftCoalhaulig } from "../helpers/tableHelper";
 import { Divider, Button } from '@fluentui/react-components'
 import { getCoalHaulingMHAByTimestamp } from "../helpers/indexedDB/getData";
 import { SaveArrowRight24Regular } from '@fluentui/react-icons'
-import { useSocket } from "../context/SocketProvider";
+// import { useSocket } from "../context/SocketProvider";
+import { useSocket } from "../context/useSocket";
 import { DialogComponent } from "./Dialog";
 const TableList = lazy(() => import('./TableList'))
 

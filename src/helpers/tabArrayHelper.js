@@ -11,5 +11,5 @@ export const tabsRekapTimeEntry = [
 
 export const tabsTimeEntry = [
   { label: 'Time Entry From Collector', value: 'time-entry-from-collector' },
-  { label: 'Time Entry From FMS', value: 'time-entry-from-fms' },
+  // { label: 'Time Entry From FMS', value: 'time-entry-from-fms' },
 ]

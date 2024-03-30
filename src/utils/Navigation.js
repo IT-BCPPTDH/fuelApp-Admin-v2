@@ -8,4 +8,8 @@ export const NavigateUrl = {
     TIME_ENTRY_SUPPORT_FORM: '/time-entry-support-form',
     TIME_ENTRY_DIGGER_FORM: '/time-entry-digger-form',
     TIME_ENTRY_HAULER_FORM: '/time-entry-hauler-form',
+    HOUR_METER_DATA_ENTRY: '/hour-meter-dataentry',
+    BREAKDOWN_DATA_ENTRY: '/breakdown-dataentry',
+    FLEET_UNIT_DATA_ENTRY: '/fleet-unit-dataentry',
+    WEATHER_DATA_ENTRY: '/weather-dataentry',
 }

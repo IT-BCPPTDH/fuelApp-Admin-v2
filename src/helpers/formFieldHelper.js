@@ -17,7 +17,7 @@
   
     if (Array.isArray(arr[0]) && arr[0].length > 0) {
         const nestedArr = arr[0];
-        for (let i = 0; i < 5; i++) {
+        for (let i = 0; i < 4; i++) {
             if (!nestedArr[i]) {
                 return false;
             }
