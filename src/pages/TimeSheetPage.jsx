@@ -56,7 +56,18 @@ export default function TimeSheetPage() {
 
   useLiveQuery(() => db.activity.toArray())
 
-  const [unitOptions] = useState(() => getLocalStorage('timeEntry-unit'));
+  const [unitOptions, setUnitOptions] = useState([]);
+
+  useEffect(() => {
+
+    const getDataUnit = () => {
+      const units = getLocalStorage('timeEntry-unit')
+      setUnitOptions(units)
+    }
+
+    getDataUnit()
+  
+  }, []);
 
   const transformData = useCallback(
     async (inputData) => {
@@ -113,10 +124,10 @@ export default function TimeSheetPage() {
     if (dataCurr === '' && dataPrev !== '' && dataPrev !== null && dataPrev !== undefined) {
       spreadSheet.updateCell(columnIndex, rowIndex, dataPrev, false);
     } else if (dataCurr !== '' && dataCurr !== dataPrev) {
-      console.log("changed")
+      // console.log("changed")
       spreadSheet.updateCell(columnIndex, rowIndex, dataCurr, false);
       const sizeLeft = rowIndex + 1
-      console.log(sizeLeft)
+      // console.log(sizeLeft)
       const next = spreadSheet.getValueFromCoords(columnIndex, sizeLeft)
       if(next !== ''){
         spreadSheet.updateCell(columnIndex, sizeLeft, dataCurr, false);
@@ -125,7 +136,6 @@ export default function TimeSheetPage() {
     else if (dataCurr == '' && dataCurr !== dataPrev) {
       spreadSheet.updateCell(columnIndex, rowIndex, '', false);
     }
-
   }
 
   const handleChangeSheet = useCallback(() => {
@@ -270,8 +280,6 @@ export default function TimeSheetPage() {
 
       } else {
        // console.log(getDataActPrev)
-  
-        
       }
     }
 
@@ -284,7 +292,7 @@ export default function TimeSheetPage() {
     const hasValue = hasValuesInNestedArray(datanya)
     setCheckSheetData(hasValue)
     const formCompleted = checkFormCompleted()
-
+  console.log(hasValue, formCompleted)
     if (hasValue && formCompleted) {
       setButtonDraftDisabled(false)
 
@@ -301,6 +309,7 @@ export default function TimeSheetPage() {
   useEffect(() => {
     const fetchData = async () => {
       let act = getLocalStorage('timeEntry-activity');
+    
       const width = screen.width;
       const excaOptions = await getExcaOptions();
       const operatorOptions = await getOperatorOptions()
@@ -543,6 +552,7 @@ export default function TimeSheetPage() {
     }
 
     const formCompleted = checkFormCompleted()
+    console.log(formCompleted, checkSheetData)
 
     if (checkSheetData && formCompleted) {
       setButtonDraftDisabled(false)
@@ -596,6 +606,7 @@ export default function TimeSheetPage() {
   }, [])
 
   useEffect(() => {
+    
     const sorted = sortArray(unitOptions)
     setSortedUnitOptions(sorted)
     setMenuTabs(menuTabsTimeEntry)

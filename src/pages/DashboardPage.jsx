@@ -5,13 +5,14 @@ import { useNavigate } from 'react-router-dom';
 import Services from '../services/timeEntry';
 import { toLocalStorage } from '../helpers/toLocalStorage';
 import { db } from '../models/db';
-import { useLiveQuery } from 'dexie-react-hooks';
+// import { useLiveQuery } from 'dexie-react-hooks';
 import { insertActivity, insertOperator, insertUnit } from '../helpers/indexedDB/insert';
 import msgpack from 'msgpack-lite';
 import PropTypes from 'prop-types';
 import { menuArrayData, formArrayData } from '../helpers/menuHelper';
 import UserRoleContext from '../context/UserRoleContext';
 import { HeaderTitle } from '../utils/Wording';
+import { getActivity, getOperator, getUnits } from '../helpers/indexedDB/getData';
 
 // Constants for localStorage keys
 const TIME_ENTRY_UNIT_KEY = 'timeEntry-unit';
@@ -91,15 +92,16 @@ const CardMenu = ({ name, desc, link }) => {
 
 const DashboardPage = () => {
   const styles = useStyles();
-  const activity = useLiveQuery(() => db.activity.toArray());
-  const operator = useLiveQuery(() => db.operator.toArray());
-  const unit = useLiveQuery(() => db.unit.toArray());
+
   const {userRole} = useContext(UserRoleContext)
 
   const getDataMaster = useCallback(async () => {
     try {
 
-      // console.log(activity, operator)
+      const activity = await getActivity()
+      const operator = await getOperator()
+      const unit = await getUnits()
+
       let dataActivities = null
       let allActivities = null
       let dataOperators = null
@@ -107,9 +109,11 @@ const DashboardPage = () => {
 
       if(activity && operator && unit){
         allActivities = activity
+
         dataActivities = activity?.map((v) => v.activityname) || [];
-        dataOperators = operator
-        dataUnits = unit
+        dataOperators= operator?.map((v) => v.jde) || [];
+        dataUnits = unit?.map((v) => v.unitno) || [];
+        
       } else {
         const [
           dataMasterActivity,
@@ -165,15 +169,11 @@ const DashboardPage = () => {
       console.log(err);
     }
     
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
     document.title = userRole.role === 'MHA' ? HeaderTitle.DASH_TOP_MHA : 'Homepage Data Collector - PTDH';
-    if (activity && operator && unit) {
       getDataMaster();
-    }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [getDataMaster, userRole]);
 
   return (

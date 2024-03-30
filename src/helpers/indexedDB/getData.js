@@ -18,6 +18,15 @@ export const getOperator = async () => {
   }
 }
 
+export const getUnits = async () => {
+  try {
+    const units = await db.unit.toArray();
+    return units
+  } catch (error) {
+    console.error(error);
+  }
+}
+
 export const getOperatorNameById = async (operatorId) => {
   try {
     return await db.operator.get({
