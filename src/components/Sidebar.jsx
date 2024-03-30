@@ -1,9 +1,9 @@
 import { Home24Regular, Open24Regular, DataArea24Regular } from '@fluentui/react-icons';
 import { makeStyles, shorthands, Tab, TabList } from '@fluentui/react-components';
 import { useNavigate } from 'react-router-dom';
-import Cookies from 'js-cookie';
 import { useSocket } from '../context/useSocket';
 import { useEffect, useState } from 'react'
+import { useAuth } from '../context/useAuth';
 
 const useStyles = makeStyles({
   root: {
@@ -28,25 +28,17 @@ const Sidebar = () => {
   const navigate = useNavigate();
   const { socket, isConnected } = useSocket();
   const [online, setOnline] = useState(true)
+  const { logout } = useAuth()
 
   const handleTabClick = (route) => {
     navigate(route);
   };
 
   const handleLogout = () => {
-    deleteAllCookies();
+    // deleteAllCookies();
+    logout()
     navigate('/');
     window.location.reload();
-  };
-
-  const deleteAllCookies = () => {
-    const cookieNames = Cookies.get();
-
-    for (const cookieName in cookieNames) {
-      Cookies.remove(cookieName);
-    }
-
-    localStorage.clear();
   };
 
   useEffect(() => {
@@ -59,7 +51,7 @@ const Sidebar = () => {
 
   const tabData = [
     { value: 'tab1', icon: <Home24Regular />, label: 'Home', onClick: () => handleTabClick('/') },
-    { value: 'tab2', icon: <DataArea24Regular />, label: 'Master', onClick: () => handleTabClick('/master-data') },
+    // { value: 'tab2', icon: <DataArea24Regular />, label: 'Master', onClick: () => handleTabClick('/master-data') },
     { value: 'tab3', icon: <Open24Regular />, label: 'Logout', onClick: handleLogout },
   ];
 

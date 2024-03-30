@@ -1,12 +1,7 @@
-import { useEffect, useState } from 'react';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import { FluentProvider, createLightTheme } from '@fluentui/react-components';
-import Login from './pages/Login';
-import Sidebar from './components/Sidebar';
-import Header from './components/Header';
 import RouteApp from './Routes';
-import Cookies from 'js-cookie';
 import UserRoleProvider from './context/UserRoleProvider';
+import { AuthProvider } from './context/AuthProvider';
 
 const dh = {
   palette: {
@@ -35,46 +30,13 @@ const lightTheme = {
 };
 
 function App() {
-  const [authen, setAuthen] = useState(() => {
-    const userCookie = Cookies.get('token');
-    return Boolean(userCookie);
-  });
-
-  useEffect(() => {
-    const userCookie = Cookies.get('token');
-    if (userCookie) {
-      setAuthen(true);
-    }
-  }, []);
-
   return (
     <FluentProvider theme={lightTheme}>
-      <UserRoleProvider>
-        <Router>
-          <Routes>
-            {
-              !authen ? (
-                <Route path="*" element={<Login />} />
-              ) : (
-                <Route
-                  path="*"
-                  element={
-                    <div style={{ display: 'flex' }}>
-                      <Sidebar />
-                      <div style={{ flex: '1 1 auto' }}>
-                        <Header />
-                        <div className={`container container-overflow`}>
-                          <RouteApp />
-                        </div>
-                      </div>
-                    </div>
-                  }
-                />
-              )
-            }
-          </Routes>
-        </Router>
-      </UserRoleProvider>
+      <AuthProvider>
+        <UserRoleProvider>
+            <RouteApp />
+        </UserRoleProvider>
+      </AuthProvider>
     </FluentProvider>
   );
 }

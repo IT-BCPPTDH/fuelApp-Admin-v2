@@ -23,24 +23,24 @@ export const menuArrayData = [
         link: '/breakdown',
         access: ['MED', 'MOD', 'Dispatch']
     },
-    {
-        name: 'Weather',
-        desc: 'Data Collector for Weather Delay',
-        link: '/weather',
-        access: ['MED', 'MOD', 'Dispatch']
-    },
-    {
-        name: 'Hours Meter',
-        desc: 'Data Setup Hours Meter Unit per shift',
-        link: '/hour-meter',
-        access: ['MED', 'MOD', 'Dispatch']
-    },
-    {
-        name: 'Fleet Unit',
-        desc: 'Data Setup Fleet Unit per shift',
-        link: '/fleet-unit',
-        access: ['MED', 'MOD', 'Dispatch']
-    },
+    // {
+    //     name: 'Weather',
+    //     desc: 'Data Collector for Weather Delay',
+    //     link: '/weather',
+    //     access: ['MED', 'MOD', 'Dispatch']
+    // },
+    // {
+    //     name: 'Hours Meter',
+    //     desc: 'Data Setup Hours Meter Unit per shift',
+    //     link: '/hour-meter',
+    //     access: ['MED', 'MOD', 'Dispatch']
+    // },
+    // {
+    //     name: 'Fleet Unit',
+    //     desc: 'Data Setup Fleet Unit per shift',
+    //     link: '/fleet-unit',
+    //     access: ['MED', 'MOD', 'Dispatch']
+    // },
     // {
     //     name: 'Mine Plan',
     //     desc: 'Data Collector for Mine Planning Activity',

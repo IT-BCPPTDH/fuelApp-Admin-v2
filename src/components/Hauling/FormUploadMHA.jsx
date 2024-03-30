@@ -27,12 +27,9 @@ const FormUploadMHA = () => {
     const inputId = useId()
     const [dataSheet, setDataSheet] = useState([])
     const { isConnected } = useSocket();
-    // const [progress, setProgress] = useState(0);
-    // const [chunkSize] = useState(200);
     const [disableButton, setDisableButton] = useState(true)
     const [openDialog, setOpenDialog] = useState(false)
     const [disableClose, setDisableCLose] = useState(true)
-    // const [valueChecking, setValueChecking] = useState(0)
     const [valueStoring, setValueStoring] = useState(0)
     const [fileValue, setFileValue] = useState("")
     const [loaded, setLoaded] = useState(false)
@@ -156,7 +153,6 @@ const FormUploadMHA = () => {
     }, [dataSheet, handleSuccess, sendingData, instanceWorker])
 
     const handleCloseDialog = useCallback(() => {
-        // setProgress(0)
         setDisableButton(true)
         handleReset()
         setValueStoring(0)

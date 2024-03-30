@@ -10,9 +10,9 @@ import {
   Button,
 } from "@fluentui/react-components";
 import Logo from "../../images/dewa.png";
-import Cookies from "js-cookie";
 import UserService from "../../services/UserService";
 import { HTTP_STATUS, STATUS_MESSAGE } from "../../utils/Enums";
+import { useAuth } from "../../context/useAuth";
 
 const {
   spacingVerticalXXS,
@@ -84,6 +84,7 @@ export const InputForm = () => {
   const styles = useStyles();
   const passwordRef = useRef(null);
   const inputReference = useRef(null);
+  const {login } = useAuth()
 
   useEffect(() => {
     inputReference.current.focus();
@@ -103,9 +104,8 @@ export const InputForm = () => {
 
       if (response.status === HTTP_STATUS.OK || response.status === HTTP_STATUS.CREATED) {
 
-        Cookies.set("token", response.session_token, { expires: 1 });
-        Cookies.set("user", JSON.stringify(response.data), { expires: 1 });
-       window.location.reload();
+        login(response.session_token, response.data)
+        window.location.reload();
 
       } else if (response.status === HTTP_STATUS.NO_CONTENT) {
 
