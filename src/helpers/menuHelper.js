@@ -17,12 +17,12 @@ export const menuArrayData = [
     //     link: '/time-entry-from-fms',
     //     access: ['MED', 'MOD', 'Dispatch']
     // },
-    {
-        name: 'Breakdown',
-        desc: 'Data Collector for Unit Breakdown',
-        link: '/breakdown',
-        access: ['MED', 'MOD', 'Dispatch']
-    },
+    // {
+    //     name: 'Breakdown',
+    //     desc: 'Data Collector for Unit Breakdown',
+    //     link: '/breakdown',
+    //     access: ['MED', 'MOD', 'Dispatch']
+    // },
     // {
     //     name: 'Weather',
     //     desc: 'Data Collector for Weather Delay',
