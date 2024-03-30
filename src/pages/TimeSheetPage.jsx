@@ -292,8 +292,9 @@ export default function TimeSheetPage() {
     const hasValue = hasValuesInNestedArray(datanya)
     setCheckSheetData(hasValue)
     const formCompleted = checkFormCompleted()
-  console.log(hasValue, formCompleted)
-    if (hasValue && formCompleted) {
+  
+    // if (hasValue && formCompleted) {
+    if (formCompleted) {
       setButtonDraftDisabled(false)
 
       const durationValidated =
@@ -552,9 +553,9 @@ export default function TimeSheetPage() {
     }
 
     const formCompleted = checkFormCompleted()
-    console.log(formCompleted, checkSheetData)
-
-    if (checkSheetData && formCompleted) {
+    
+    // if (checkSheetData && formCompleted) {
+    if (formCompleted) {
       setButtonDraftDisabled(false)
 
       const durationValidated =
