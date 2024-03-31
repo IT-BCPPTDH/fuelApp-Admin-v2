@@ -41,21 +41,43 @@ export function convertDateFormat(inputDate) {
   return `${day}-${month}-${year}`;
 }
 
+// export function convertDateFormatTime(inputDate) {
+//   // Parse the input date string
+//   const date = new Date(inputDate);
+
+//   // Extract date components
+//   const day = String(date.getDate()).padStart(2, '0');
+//   const month = String(date.getMonth() + 1).padStart(2, '0');
+//   const year = date.getFullYear();
+//   const hours = String(date.getHours()).padStart(2, '0');
+//   const minutes = String(date.getMinutes()).padStart(2, '0');
+//   const seconds = String(date.getSeconds()).padStart(2, '0');
+
+//   // Format the date string
+//   const formattedDate = `${day}-${month}-${year} ${hours}:${minutes}:${seconds}`;
+
+//   return formattedDate;
+// }
+
 export function convertDateFormatTime(inputDate) {
   // Parse the input date string
   const date = new Date(inputDate);
 
+  // Convert to UTC
+  const utcDate = new Date(date.toUTCString());
+
   // Extract date components
-  const day = String(date.getDate()).padStart(2, '0');
-  const month = String(date.getMonth() + 1).padStart(2, '0');
-  const year = date.getFullYear();
-  const hours = String(date.getHours()).padStart(2, '0');
-  const minutes = String(date.getMinutes()).padStart(2, '0');
-  const seconds = String(date.getSeconds()).padStart(2, '0');
+  const day = String(utcDate.getUTCDate()).padStart(2, '0');
+  const month = String(utcDate.getUTCMonth() + 1).padStart(2, '0');
+  const year = utcDate.getUTCFullYear();
+  const hours = String(utcDate.getUTCHours()).padStart(2, '0');
+  const minutes = String(utcDate.getUTCMinutes()).padStart(2, '0');
+  const seconds = String(utcDate.getUTCSeconds()).padStart(2, '0');
 
   // Format the date string
   const formattedDate = `${day}-${month}-${year} ${hours}:${minutes}:${seconds}`;
 
   return formattedDate;
 }
+
 
