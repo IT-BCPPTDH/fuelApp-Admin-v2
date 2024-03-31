@@ -30,7 +30,6 @@ export default function CoalHauling() {
   const handleDetail = useCallback(async (tanggal, sent_at) => {
     try {
       const timezone = await getTimezone()
-      console.log(timezone)
       const convertSentAt = sent_at.replace(' ', '+')
       Navigate(`/coalhauling-dataentry-detail/${tanggal}/${convertSentAt}`);
 

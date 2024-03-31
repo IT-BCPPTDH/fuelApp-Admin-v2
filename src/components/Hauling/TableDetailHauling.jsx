@@ -12,6 +12,7 @@ const TableDetailHauling = () => {
 
   const params = useParams();
   const jRef = useRef(null)
+  
 
   useEffect(() => {
     const fetchData = async () => {
