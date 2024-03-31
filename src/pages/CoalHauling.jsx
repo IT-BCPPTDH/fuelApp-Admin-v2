@@ -29,9 +29,13 @@ export default function CoalHauling() {
 
   const handleDetail = useCallback(async (tanggal, sent_at) => {
     try {
-      const timezone = await getTimezone()
+      let zona = 7
+      const timezone = getTimezone()
+      if(timezone === "Asia/Makassar"){
+        zona = 8
+      }
       const convertSentAt = sent_at.replace(' ', '+')
-      Navigate(`/coalhauling-dataentry-detail/${tanggal}/${convertSentAt}`);
+      Navigate(`/coalhauling-dataentry-detail/${zona}+${tanggal}/${convertSentAt}`);
 
     } catch (error) {
       console.error("Error fetching data:", error);
