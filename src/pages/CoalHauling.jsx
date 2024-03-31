@@ -4,7 +4,7 @@ import { HeaderTitle, ButtonText } from '../utils/Wording';
 import { useNavigate } from "react-router-dom";
 import { ArrowSquareUpRight24Regular } from "@fluentui/react-icons";
 import { Button } from "@fluentui/react-components";
-import { convertDateFormatTime } from '../helpers/convertDate';
+import { convertDateFormatTime, getTimezone } from '../helpers/convertDate';
 // import CoalHaulingMHA from '../services/CoalHaulingMHA';
 import { HeaderPageForm } from "../components/FormComponent/HeaderPageForm";
 const TableList = lazy(() => import('../components/TableList'))
@@ -29,7 +29,8 @@ export default function CoalHauling() {
 
   const handleDetail = useCallback(async (tanggal, sent_at) => {
     try {
-
+      const timezone = await getTimezone()
+      console.log(timezone)
       const convertSentAt = sent_at.replace(' ', '+')
       Navigate(`/coalhauling-dataentry-detail/${tanggal}/${convertSentAt}`);
 
@@ -44,8 +45,7 @@ export default function CoalHauling() {
       entryDate: itemFromDB.tanggal,
       totalTonnage: itemFromDB.totalTonnage,
       ritage: itemFromDB.ritage,
-      // lastUpdate: convertDateFormatTime(itemFromDB.sent_at) ?? '-',
-      lastUpdate: itemFromDB.sent_at ?? '-',
+      lastUpdate: convertDateFormatTime(itemFromDB.sent_at) ?? '-',
       actions: <Button
         icon={<ArrowSquareUpRight24Regular />}
         iconPosition="after"
