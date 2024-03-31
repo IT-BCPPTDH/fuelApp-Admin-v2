@@ -15,8 +15,6 @@ const getDataHaulingByDate = async (tanggal, sentAt) => {
     return response.data
 }
 
-
-
 const getTotalStatistic = async (tanggal, sentAt) => {
     const response = await api.get(URL_ENUMS.getTotalStatistic+tanggal+'/'+sentAt)
     return response.data
