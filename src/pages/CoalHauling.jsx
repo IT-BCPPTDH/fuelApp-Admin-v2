@@ -44,7 +44,8 @@ export default function CoalHauling() {
       entryDate: itemFromDB.tanggal,
       totalTonnage: itemFromDB.totalTonnage,
       ritage: itemFromDB.ritage,
-      lastUpdate: convertDateFormatTime(itemFromDB.sent_at) ?? '-',
+      // lastUpdate: convertDateFormatTime(itemFromDB.sent_at) ?? '-',
+      lastUpdate: itemFromDB.sent_at ?? '-',
       actions: <Button
         icon={<ArrowSquareUpRight24Regular />}
         iconPosition="after"
