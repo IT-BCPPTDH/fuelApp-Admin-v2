@@ -1,5 +1,7 @@
 import { useNavigate } from "react-router-dom"
-import { Button } from "@fluentui/react-components"
+
+import { EuiButton } from '@elastic/eui';
+
 
 const FallbackUI = () => {
 
@@ -8,16 +10,14 @@ const FallbackUI = () => {
     const handle = () => {
         navigate('/')
     }
-    return(
+    return (
         <div className="row">
             <div className="col-12">
-            <div className="mt2em text-center">
-            <h1>Mohon maaf halaman yang anda cari tidak ditemukan</h1>
-            <Button onClick={handle}>Kembali ke Halaman Utama</Button>
+                <div className="mt2em text-center">
+                    <h1>Mohon maaf halaman yang anda cari tidak ditemukan</h1>
+                    <EuiButton onClick={handle}>Kembali ke Halaman Utama</EuiButton>
+                </div>
             </div>
-            </div>
-        
-            
         </div>
     )
 }

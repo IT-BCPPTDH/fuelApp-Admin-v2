@@ -2,9 +2,9 @@
 
 bun run build
 
-pm2 stop fe-collector
-pm2 delete fe-collector
+pm2 stop new-fuel-app
+pm2 delete new-fuel-app
 pm2 save
 
-pm2 start --name=fe-collector bun -- run preview
+pm2 start --name=new-fuel-app bun -- run preview
 pm2 save
