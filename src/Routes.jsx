@@ -1,41 +1,61 @@
-
 import { lazy, Suspense } from 'react';
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import LayoutTemplate from './components/Layout';
 import { useAuth } from './context/useAuth';
 
 
-import LoginUser from "./pages/Login"
+const LoginUser = lazy(() => import('./pages/Login'));
+const HomePage = lazy(() => import('./pages/Home'));
+const Details = lazy(() => import('./pages/DetailTrasactionDashboard'));
+
 
 import FallbackUI from './components/FallbackUI';
 
 const RouteApp = () => {
+  const { isLogged } = useAuth();
 
-  const { isLogged } = useAuth()
-
+ 
   const routes = isLogged ? [
     {
       element: (
         <LayoutTemplate>
-          <Suspense fallback={<div>Loading Homepage...</div>}><HomePage /></Suspense>
+          <Suspense fallback={<FallbackUI />}>
+            <LoginUser />
+          </Suspense>
         </LayoutTemplate>
       ),
       path: "/",
       errorElement: <FallbackUI />
     },
+    {
+      element: (
+        <LayoutTemplate>
+          <Suspense fallback={<FallbackUI />}>
+            <LoginUser />
+          </Suspense>
+        </LayoutTemplate>
+      ),
+      path: "/details",
+      errorElement: <FallbackUI />
+    },
   ] : [
     {
       element: (
-        <Suspense fallback={<div>Loading ...</div>}><LoginUser /></Suspense>
+        <Suspense fallback={<FallbackUI />}>
+          <LoginUser/>
+        </Suspense>
       ),
       path: '/',
       errorElement: <FallbackUI />
     }
   ];
 
+
   const router = createBrowserRouter(routes);
 
-  return  <RouterProvider router={router} />
+  return (
+    <RouterProvider router={router} />
+  );
 }
 
-export default RouteApp
+export default RouteApp;

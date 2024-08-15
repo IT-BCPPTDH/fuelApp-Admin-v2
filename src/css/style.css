@@ -132,4 +132,24 @@ button:hover {
    width: 0%;
    transition: width 0.3s ease;
  }
- 
+ .logo{
+   width: 200px;
+ }
+ .content-padding{
+   padding: 15px;
+ }
+ .date{
+   font-size: 12px;
+ }
+ .mt20{
+   margin-top: 20px;
+ }
+ .summary{
+   font-size: 24px;
+ }
+ .note-summary{
+   font-size: 12px;
+ }
+ .padding-content{
+   padding: 15px;
+ }

@@ -1,8 +1,10 @@
+import Navtop from "./NavTop"
+
 const Layout = () => {
 
     return(
         <>
-<h1>Testing</h1>        
+           <Navtop/>
         </>
     )
 }
