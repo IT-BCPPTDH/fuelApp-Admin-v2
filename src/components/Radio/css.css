@@ -1,0 +1,17 @@
+.horizontal-radio-group .euiRadioGroup {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+  }
+  
+  .horizontal-radio-group .euiRadio {
+    margin-right: 16px; 
+    display: contents;
+  }
+  
+  .horizontal-radio-group .euiFormLabel {
+    margin-right: 8px; 
+  }
+
+  
+  

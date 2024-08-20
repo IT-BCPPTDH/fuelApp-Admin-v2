@@ -74,7 +74,7 @@ const DetailPage = () => {
 
   return (
     <>
-      <NavTop></NavTop>
+     
       <div className="padding-content">
         <div style={{ marginTop: "20px" }}>
           <EuiText>

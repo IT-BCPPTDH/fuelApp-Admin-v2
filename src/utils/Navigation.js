@@ -1,6 +1,7 @@
 export const NavigateUrl = {
     HOME: '/',
     DETAIL_PAGE: '/details',
+    REPORT_PAGE:'/report-fuel'
     // COAL_HAULING_TABLE_DETAIL: '/coalhauling-dataentry-detail',
     // COAL_HAULING_DATA_ENTRY_FORM: '/coalhauling-dataentry-form',
     // TIME_ENTRY_MAIN_TABLE: '/time-entry-from-collector',

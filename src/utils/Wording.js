@@ -1,5 +1,5 @@
 export const HeaderTitle = {
-    DASH_TOP_DH: "All Data Collection",
+    FUEL_SUMMARY: "Fuel Summary",
     DASH_TOP_MHA: "Coal Hauling Data Collection", 
     TIME_ENTRY_FMS: "Time Entry From FMS (Satnet)",
     TIME_ENTRY_COLLECTOR: "Time Entry From Collector",

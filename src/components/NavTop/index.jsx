@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
   EuiHeader,
   EuiHeaderBreadcrumbs,
@@ -18,9 +19,12 @@ import HeaderMasterDataMenu from './dropdown';
 
 const NavTop = () => {
   const [activeItem, setActiveItem] = useState(null);
+  const navigate = useNavigate();
 
   const handleItemClick = (itemLabel) => {
     setActiveItem(itemLabel);
+    navigate('/report-fuel');
+
   };
   const dropdownContent = (
     <div style={{ width: 300 }}>
@@ -34,7 +38,8 @@ const NavTop = () => {
           onClick={(e) => {
             e.preventDefault();
             handleItemClick("Report LKF");
-            console.log("Report LKF clicked");
+
+            
           }}
         />
       </EuiListGroup>

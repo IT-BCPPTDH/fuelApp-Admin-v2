@@ -1,56 +1,62 @@
 import { lazy, Suspense } from 'react';
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import LayoutTemplate from './components/Layout';
-import { useAuth } from './context/useAuth';
+import FallbackUI from './components/FallbackUI';
 
-
+// Lazy-loaded components
 const LoginUser = lazy(() => import('./pages/Login'));
 const HomePage = lazy(() => import('./pages/Home'));
 const Details = lazy(() => import('./pages/DetailTrasactionDashboard'));
-
-
-import FallbackUI from './components/FallbackUI';
+const ReportFuel = lazy(() => import('./pages/Reports'));
 
 const RouteApp = () => {
-  const { isLogged } = useAuth();
-
- 
-  const routes = isLogged ? [
+  // Define routes directly without authentication check
+  const routes = [
     {
       element: (
-        <LayoutTemplate>
-          <Suspense fallback={<FallbackUI />}>
-            <LoginUser />
+      
+          <Suspense fallback={<div>Loading Dashboard...</div>}>
+            <HomePage />
           </Suspense>
-        </LayoutTemplate>
+      
       ),
       path: "/",
       errorElement: <FallbackUI />
     },
     {
       element: (
-        <LayoutTemplate>
-          <Suspense fallback={<FallbackUI />}>
-            <LoginUser />
+      
+          <Suspense fallback={<div>Loading Detail Transaction...</div>}>
+            <Details />
           </Suspense>
-        </LayoutTemplate>
+       
       ),
       path: "/details",
       errorElement: <FallbackUI />
     },
-  ] : [
+    {
+      element: (
+     
+          <Suspense fallback={<div>Loading Report Fuel...</div>}>
+            <ReportFuel />
+          </Suspense>
+      
+      ),
+      path: "/report-fuel",
+      errorElement: <FallbackUI />
+    },
     {
       element: (
         <Suspense fallback={<FallbackUI />}>
-          <LoginUser/>
+          <LoginUser />
         </Suspense>
       ),
-      path: '/',
+      path: '/login',
       errorElement: <FallbackUI />
     }
   ];
 
-
+  // Create and return the router
   const router = createBrowserRouter(routes);
 
   return (

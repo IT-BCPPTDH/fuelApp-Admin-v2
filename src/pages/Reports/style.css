@@ -1,0 +1,68 @@
+.customLabel {
+    font-size: 14px;
+  }
+  .formRowContainer {
+    display: flex;
+    gap: 20px; 
+  }
+  
+  .formRowItem {
+    flex:0.2;
+  }
+  .st-check{
+    text-align: start;
+   
+  }
+
+  .css-1i7f7gp-euiCheckbox {
+    display: flex;
+    background: #8aad4373;
+    border-radius: 4px;
+    width: 148px;
+    height: 30px;
+    justify-content: start;
+}
+/* .euiCheckbox__input{
+    margin-left: 15px;
+} */
+
+  
+.checkbox-content {
+    display: flex;
+    flex-wrap: wrap; 
+    gap: 5px; 
+    font-size: 16px;
+    font-weight: 400;
+    margin-top: 20px;
+  }
+  
+  /* .checkbox-content .euiFormRow {
+    margin: 0; 
+  } */
+  .checkboxLabel {
+    color: rgb(35, 35, 39);
+    font-weight: bold;
+    font-size: 14px; 
+    margin-left: 5px; 
+  }
+  .checkall{
+    color: rgb(35, 35, 39);
+    font-weight: bold;
+    font-size: 14px; 
+    margin-left: 5px;
+
+
+  }
+  .euiCheckbox__label{
+    margin-top: 2px;
+  }
+  .all{
+    font-size: 16px;
+  
+    margin-left: 5px;
+    font-weight: 600;
+    position: absolute;
+  }
+  .euiCheckbox__input{
+    margin-left: 15px;
+  }

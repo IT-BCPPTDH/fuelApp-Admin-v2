@@ -1,11 +1,14 @@
+import React from 'react';
 import Navtop from "./NavTop"
-
 const Layout = () => {
 
     return(
-        <>
-           <Navtop/>
-        </>
+        <div>
+        <Navtop />
+        <main>
+          {children}
+        </main>
+      </div>
     )
 }
 

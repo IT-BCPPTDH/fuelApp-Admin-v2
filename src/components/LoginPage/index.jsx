@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import './login.css';
 import { EuiCard, EuiFieldText, EuiButton, EuiImage, EuiIcon} from "@elastic/eui";
 import Logo from "../../images/logo_darma_henwa.png";
+import ModalForm from "../ModalForm"
 
 
 const LoginUser = () => {
@@ -56,8 +57,11 @@ const LoginUser = () => {
           >
             Sign In
           </EuiButton>
+          <ModalForm/>
         </div>
+        
       </EuiCard>
+     
     </div>
   );
 };
