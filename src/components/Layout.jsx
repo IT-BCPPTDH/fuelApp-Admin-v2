@@ -1,15 +1,15 @@
 import React from 'react';
-import Navtop from "./NavTop"
-const Layout = () => {
+import Navtop from "./NavTop"; 
 
-    return(
-        <div>
-        <Navtop />
-        <main>
-          {children}
-        </main>
-      </div>
-    )
+const Layout = ({ children }) => { 
+  return (
+    <div>
+      <Navtop />
+      <main>
+        {children} 
+      </main>
+    </div>
+  );
 }
 
-export default Layout
+export default Layout;

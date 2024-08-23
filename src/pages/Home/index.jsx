@@ -13,7 +13,6 @@ import TableData from "./table";
 const HomePage = () => {
   return (
     <>
-      <Navtop />
       <div className="content-padding">
         <EuiFlexGrid columns={4}>
           <EuiFlexItem>
@@ -76,6 +75,7 @@ const HomePage = () => {
         </EuiFlexGrid>
         </div>
         <div className="mt20">
+          
             <TableData/>
         </div>
       </div>

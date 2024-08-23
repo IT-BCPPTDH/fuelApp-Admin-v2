@@ -1,38 +1,39 @@
-import { lazy, Suspense } from 'react';
+// App.jsx or RouteApp.jsx
+import React, { lazy, Suspense } from 'react';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
-import LayoutTemplate from './components/Layout';
+import Layout from './components/Layout'; // Ensure correct import path
 import FallbackUI from './components/FallbackUI';
 
-// Lazy-loaded components
-const LoginUser = lazy(() => import('./pages/Login'));
+
+const LoginPage = lazy(() => import('./pages/Login'));
 const HomePage = lazy(() => import('./pages/Home'));
 const Details = lazy(() => import('./pages/DetailTrasactionDashboard'));
 const ReportFuel = lazy(() => import('./pages/Reports'));
-
 const RouteApp = () => {
-  // Define routes directly without authentication check
+  const isLogged = true; // Simulated authentication check
+
   const routes = [
     {
       element: (
-      
-          <Suspense fallback={<div>Loading Dashboard...</div>}>
+        <Layout>
+          <Suspense fallback={<div>Loading Homepage...</div>}>
             <HomePage />
           </Suspense>
-      
+        </Layout>
       ),
-      path: "/",
-      errorElement: <FallbackUI />
+      path: '/',
+      errorElement: <FallbackUI />,
     },
     {
       element: (
-      
-          <Suspense fallback={<div>Loading Detail Transaction...</div>}>
+        <Layout>
+          <Suspense fallback={<div>Loading Homepage...</div>}>
             <Details />
           </Suspense>
-       
+        </Layout>
       ),
-      path: "/details",
-      errorElement: <FallbackUI />
+      path: '/details/:station',
+      errorElement: <FallbackUI />,
     },
     {
       element: (
@@ -45,23 +46,21 @@ const RouteApp = () => {
       path: "/report-fuel",
       errorElement: <FallbackUI />
     },
+    
     {
       element: (
-        <Suspense fallback={<FallbackUI />}>
-          <LoginUser />
+        <Suspense fallback={<div>Loading ...</div>}>
+          <LoginPage />
         </Suspense>
       ),
       path: '/login',
-      errorElement: <FallbackUI />
-    }
+      errorElement: <FallbackUI />,
+    },
   ];
 
-  // Create and return the router
   const router = createBrowserRouter(routes);
 
-  return (
-    <RouterProvider router={router} />
-  );
-}
+  return <RouterProvider router={router} />;
+};
 
 export default RouteApp;

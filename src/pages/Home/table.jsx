@@ -3,16 +3,18 @@ import {
   EuiBasicTable,
   EuiButton,
   EuiFieldSearch,
-  EuiFieldText,
-  EuiLink
+  EuiText,
+  EuiLink,
 } from '@elastic/eui';
-import { Data } from './data';
+import { Data } from './data'; // Ensure this path is correct
 import { useNavigate } from 'react-router-dom'; 
-
 
 const TableData = () => {
   const navigate = useNavigate(); 
   const [searchValue, setSearchValue] = useState('');
+  const [pageIndex, setPageIndex] = useState(0);
+  const [pageSize, setPageSize] = useState(10);
+  const [showPerPageOptions, setShowPerPageOptions] = useState(true);
 
   const columns = [
     {
@@ -74,10 +76,12 @@ const TableData = () => {
     },
   ];
 
+ 
+
   const handleRowClick = (item) => {
  
-    // navigate(`/details/${item.station}`); 
-    navigate('/details'); 
+    navigate(`/details/${item.station}`); 
+    
   };
 
   const getRowProps = (item) => ({
@@ -100,36 +104,70 @@ const TableData = () => {
     item.station.toLowerCase().includes(searchValue.toLowerCase())
   );
 
-  const renderHeader = () => (
-    <EuiButton
-      style={{ background: "#73A33F", color: "white" }}
-      color="primary"
-      onClick={() => alert('Export button clicked')}
-    >
-      Export
-    </EuiButton>
-  );
+  const findPageItems = (items, pageIndex, pageSize) => {
+    const startIndex = pageIndex * pageSize;
+    return {
+      pageOfItems: items.slice(startIndex, startIndex + pageSize),
+      totalItemCount: items.length,
+    };
+  };
+
+  const { pageOfItems, totalItemCount } = findPageItems(filteredItems, pageIndex, pageSize);
+
+  const pagination = {
+    pageIndex,
+    pageSize,
+    totalItemCount,
+    pageSizeOptions: [10, 20, 50, 100],
+    showPerPageOptions,
+  };
+
+  const resultsCount =
+    pageSize === 0 ? (
+      <strong>All</strong>
+    ) : (
+      <>
+        <strong>
+          {pageSize * pageIndex + 1}-{Math.min(pageSize * (pageIndex + 1), totalItemCount)}
+        </strong>{' '}
+        of {totalItemCount}
+      </>
+    );
 
   return (
     <>
-      <div style={{ marginBottom: '10px', float: "inline-end", display: "flex", gap: "10px" }}>
-        <EuiFieldText
-          placeholder="Search data"
+      <div style={{ marginBottom: '10px', display: "flex", justifyContent: "flex-end",gap:"15px",alignItems: "center" }}>
+        <EuiFieldSearch
+          placeholder="Search data" 
           value={searchValue}
           onChange={(e) => handleSearchChange(e.target.value)}
           aria-label="Search data"
+          style={{ marginRight: '10px' }}
         />
-        {renderHeader()}
+        <EuiButton
+          style={{ background: "#73A33F", color: "white" }}
+          color="primary"
+          onClick={() => alert('Export button clicked')}
+        >
+          Export
+        </EuiButton>
       </div>
-      <div style={{ marginBottom: '10px' }}>
-        {/* Additional content if needed */}
-      </div>
-      <EuiBasicTable
+      <EuiText size="xs">
+        Showing {resultsCount} <strong>Data</strong>
+      </EuiText>
+      <EuiBasicTable style={{marginTop:"20px"}}
         tableCaption="Demo of EuiBasicTable"
-        items={filteredItems}
+        items={pageOfItems}
         columns={columns}
         rowProps={getRowProps}
         cellProps={getCellProps}
+        pagination={pagination}
+        onChange={({ page }) => {
+          if (page) {
+            setPageIndex(page.index);
+            setPageSize(page.size);
+          }
+        }}
       />
     </>
   );
