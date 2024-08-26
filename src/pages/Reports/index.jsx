@@ -1,14 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import NavTop from "../../components/NavTop";
 import DynamicPageHeader from "../../components/Breadcrumbs";
-import { EuiCard, EuiSpacer, EuiText, EuiFormRow, EuiFieldText, EuiCheckbox, EuiFlexGrid, EuiRadio, EuiFlexItem } from "@elastic/eui";
+import { EuiCard, EuiSpacer, EuiText, EuiFormRow, EuiFieldText, EuiCheckbox, EuiFlexGrid, EuiRadio, EuiFlexItem, EuiDatePicker, EuiButton, EuiFieldSearch, EuiSelect } from "@elastic/eui";
 import DynamicTabs from "../../components/Tablist";
 import './style.css';
 import DynamicRadioGroup from '../../components/Radio';
+import moment from "moment";
 
 const ReportFuel = () => {
   const [checkedItems, setCheckedItems] = useState({});
   const [isAllChecked, setIsAllChecked] = useState(false);
+  const [startDate, setStartDate] = useState(moment());
+  const [endDate, setEndDate] = useState(moment());
 
   const dummyData = [
     { id: 'checkboxId__1', label: 'TK1037-1' },
@@ -63,6 +66,14 @@ const ReportFuel = () => {
     }, {});
     setCheckedItems(updatedCheckedItems);
   };
+  const handleStartDateChange = (date) => {
+    setStartDate(date);
+  };
+
+  const handleEndDateChange = (date) => {
+    setEndDate(date);
+  };
+
 
   const breadcrumbs = [
     {
@@ -71,7 +82,7 @@ const ReportFuel = () => {
       onClick: (e) => e.preventDefault(),
     },
     {
-      text: 'Report LKF',
+      text: '',
       href: '#',
       onClick: (e) => e.preventDefault(),
     },
@@ -97,24 +108,14 @@ const ReportFuel = () => {
         <div className='mt20'>
         <EuiCard className="cardContainer">
             <div className="formRowContainer">
-              <div className="formRowItem">
-                <EuiFormRow 
-                  label={<span className="customLabel">From Date</span>}
-                >
-                  <EuiFieldText
-                    placeholder="Start Date"
-                  />
-                </EuiFormRow>
-              </div>
-              <div className="formRowItem">
-                <EuiFormRow
-                  label={<span className="customLabel">To Date</span>}
-                >
-                  <EuiFieldText
-                    placeholder="End Date"
-                  />
-                </EuiFormRow>
-              </div>
+                <EuiDatePicker   fullWidth 
+                  selected={startDate}
+                  onChange={handleStartDateChange}
+                />
+                <EuiDatePicker  fullWidth
+              selected={endDate}
+                  onChange={handleEndDateChange}
+                />
             </div>
             <EuiFlexGrid className='mt20'>
               <EuiFormRow>
@@ -149,9 +150,22 @@ const ReportFuel = () => {
               </EuiFlexGrid>
             </div>
             <div className='checkbox-content'>
-              <EuiFieldText></EuiFieldText>
+              <EuiSelect fullWidth></EuiSelect>
             </div>
-           
+            <EuiButton
+                  size="s"
+                  style={{
+                    background: "#73A33F",
+                    color: "white",
+                    width: "100px",
+                    textAlign:"center",
+                    float:"inline-end",
+                    marginTop:"40px"
+                  }}
+                 
+                >
+                  <div>Create Report</div>
+                </EuiButton>
           </EuiCard>
           
         </div>
@@ -176,6 +190,7 @@ const ReportFuel = () => {
       ),
     },
   ];
+  
 
   return (
     <>
@@ -184,6 +199,7 @@ const ReportFuel = () => {
         <DynamicPageHeader
           pageTitle="Report LFK"
           breadcrumbs={breadcrumbs}
+          pageTitleStyle={{ color: '#6a6a6a', fontSize: '24px' }}
         />
         <DynamicTabs
           tabs={tabs}

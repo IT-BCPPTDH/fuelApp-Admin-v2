@@ -66,3 +66,43 @@
   .euiCheckbox__input{
     margin-left: 15px;
   }
+
+.date-picker-long{
+  width: 450px;
+}
+
+/* style.css */
+
+.checkbox-content {
+  margin-top: 20px;
+}
+
+.euiFormRow {
+  margin-bottom: 10px;
+}
+
+.checkboxLabel {
+  font-size: 14px;
+  margin-left: 8px;
+}
+
+.cardContainer {
+  padding: 20px;
+}
+
+.formRowContainer {
+  display: flex;
+
+  margin-bottom: 20px;
+}
+
+.all {
+  font-weight: bold;
+}
+
+.mt20 {
+  margin-top: 20px;
+}
+.css-1ylwq6x-euiFormRow +.euiFormRow {
+  margin-block-start: 0px;
+}

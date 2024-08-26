@@ -5,10 +5,12 @@ import Layout from './components/Layout'; // Ensure correct import path
 import FallbackUI from './components/FallbackUI';
 
 
+
 const LoginPage = lazy(() => import('./pages/Login'));
 const HomePage = lazy(() => import('./pages/Home'));
 const Details = lazy(() => import('./pages/DetailTrasactionDashboard'));
 const ReportFuel = lazy(() => import('./pages/Reports'));
+const AddQouta = lazy(()=>import('./pages/RequestQouta'))
 const RouteApp = () => {
   const isLogged = true; // Simulated authentication check
 
@@ -35,6 +37,7 @@ const RouteApp = () => {
       path: '/details/:station',
       errorElement: <FallbackUI />,
     },
+    
     {
       element: (
      
@@ -45,6 +48,18 @@ const RouteApp = () => {
       ),
       path: "/report-fuel",
       errorElement: <FallbackUI />
+    },
+
+    {
+      element: (
+        <Layout>
+          <Suspense fallback={<div>Loading Homepage...</div>}>
+            <AddQouta />
+          </Suspense>
+        </Layout>
+      ),
+      path: '/add-data-qouta',
+      errorElement: <FallbackUI />,
     },
     
     {
