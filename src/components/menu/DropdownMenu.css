@@ -1,0 +1,39 @@
+/* DropdownMenu.css */
+.dropdown {
+    position: relative;
+    display: inline-block;
+  }
+  
+  .dropdown-button {
+    background-color: white;
+    padding: 10px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+  }
+  
+  .dropdown-button .arrow-down {
+    margin-left: 8px;
+  }
+  
+  .dropdown-menu {
+    display: block;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 150px;
+    background-color: white;
+
+  }
+  
+  .dropdown-menu a {
+    display: block;
+    padding: 10px;
+    text-decoration: none;
+    color: black;
+  }
+  
+  .dropdown-menu a:hover {
+    background-color: #f1f1f1;
+  }
+  

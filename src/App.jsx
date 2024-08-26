@@ -16,6 +16,9 @@ import {icon as EuiIconSearch} from '@elastic/eui/es/components/icon/assets/sear
 import {icon as EuiIconArrowRigth} from '@elastic/eui/es/components/icon/assets/arrow_right';
 import {icon as EuiIconDot} from '@elastic/eui/es/components/icon/assets/dot';
 import {icon as EuiIconEmpty} from '@elastic/eui/es/components/icon/assets/empty';
+import {icon as EuiIconCalender} from '@elastic/eui/es/components/icon/assets/calendar';
+import {icon as EuiIconSortRigth} from '@elastic/eui/es/components/icon/assets/sortRight';
+import {icon as EuiIconSortLeft} from '@elastic/eui/es/components/icon/assets/sortLeft';
 
 
 
@@ -28,7 +31,10 @@ appendIconComponentCache({
   user: EuiIconUser,
   search:EuiIconSearch,
   dot:EuiIconDot,
-  empty:EuiIconEmpty
+  empty:EuiIconEmpty,
+  calendar:EuiIconCalender,
+  sortRight:EuiIconSortRigth,
+  sortLeft:EuiIconSortLeft,
 });
 
 

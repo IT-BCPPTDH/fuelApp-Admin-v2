@@ -16,6 +16,7 @@ import {
 } from '@elastic/eui';
 import Logo from "../../images/logo_darma_henwa.png";
 import HeaderMasterDataMenu from './dropdown';
+import MenuDropdown from '../menu/dropdown';
 
 const NavTop = () => {
   const [activeItem, setActiveItem] = useState(null);
@@ -26,97 +27,54 @@ const NavTop = () => {
     navigate('/report-fuel');
 
   };
-  const dropdownContent = (
-    <div style={{ width: 300 }}>
-      <EuiListGroup>
-        <EuiListGroupItem
-          style={{
-            background: activeItem === "Report LKF" ? "#73a440" : "transparent",
-            color: activeItem === "Report LKF" ? "white" : "black"
-          }}
-          label="Report LKF"
-          onClick={(e) => {
-            e.preventDefault();
-            handleItemClick("Report LKF");
 
-            
-          }}
-        />
-      </EuiListGroup>
-    </div>
-  );
+  const handlebackHome = () => {
+    navigate('/');
 
-  const dropdownContentKouta = (
-    <div style={{ width: 300 }}>
-      <EuiListGroup>
-        <EuiListGroupItem
-          style={{
-            background: activeItem === "List Monitoring" ? "#73a440" : "transparent",
-            color: activeItem === "List Monitoring" ? "white" : "black"
-          }}
-          label="List Monitoring"
-          onClick={(e) => {
-            e.preventDefault();
-            handleItemClick("List Monitoring");
-            console.log("List Monitoring clicked");
-          }}
-        />
-      </EuiListGroup>
-    </div>
-  );
+  };
+  const handleQouta = () => {
+    navigate('/add-data-qouta');
 
-  const dropdownContentMaster = (
-    <div style={{ width: 300 }}>
-      <EuiListGroup>
-        <EuiListGroupItem
-          style={{
-            background: activeItem === "Add Master Equipment" ? "#73a440" : "transparent",
-            color: activeItem === "Add Master Equipment" ? "white" : "black"
-          }}
-          label="Add Master Equipment"
-          onClick={(e) => {
-            e.preventDefault();
-            handleItemClick("Add Master Equipment");
-            console.log("Add Master Equipment clicked");
-          }}
-        />
-        <EuiListGroupItem
-          style={{
-            background: activeItem === "Add Master Operator" ? "#73a440" : "transparent",
-            color: activeItem === "Add Master Operator" ? "white" : "black"
-          }}
-          label="Add Master Operator"
-          onClick={(e) => {
-            e.preventDefault();
-            handleItemClick("Add Master Operator");
-            console.log("Add Master Operator clicked");
-          }}
-        />
-      </EuiListGroup>
-    </div>
-  );
+  };
+
+  
+  
+
+  const menuItems = [
+    { label: 'Report Lkf', action: () => navigate('/report-lkf') },
+
+  ];
+
+  const menuItemstMaster = [
+    { label: 'Station', action: () => navigate('/master-station') },
+    { label: 'Equipment', action: () => navigate('/another-item') },
+    { label: 'Stock System', action: () => navigate('/another-item') },
+    { label: 'Master Data Elipse', action: () => navigate('/another-item') },
+    { label: 'User', action: () => navigate('/another-item') },
+  ];
+
 
   return (
     <EuiHeader>
       <div className='logo'>
         <EuiImage src={Logo} alt='' />
-      </div>
-      <HeaderMasterDataMenu
-        buttonLabel="Fuel History"
-        dropdownContent={<div>Fuel History Content</div>} 
-      />
-      <HeaderMasterDataMenu
+      </div >
+      <div className='nav-lf'><EuiButton color="light" onClick={handlebackHome}>Fuel History</EuiButton>
+      <MenuDropdown
+        items={menuItems}
         buttonLabel="LKF"
-        dropdownContent={dropdownContent}
+        onItemClick={handleItemClick}
       />
-      <HeaderMasterDataMenu
-        buttonLabel="Tambah Kouta"
-        dropdownContent={dropdownContentKouta}
+            <EuiButton color="light" onClick={handleQouta}>Tambah Kouta</EuiButton>
+      <MenuDropdown
+        items={menuItemstMaster}
+        buttonLabel="Master"
+        onItemClick={handleItemClick}
       />
-      <HeaderMasterDataMenu
-        buttonLabel="Master Data"
-        dropdownContent={dropdownContentMaster}
-      />
+      <EuiButton color="light">Change Password</EuiButton>
+      
+
+      </div>
       <EuiHeaderSection side="right">
         <EuiHeaderSectionItem>
           <HeaderUserMenu />

@@ -11,8 +11,9 @@ import {
 } from "@elastic/eui";
 import moment from "moment";
 import TableData from "./table";
+import CardContentQouta from "./widget";
 
-const HomePage = () => {
+const RequestPage = () => {
   const [startDate, setStartDate] = useState(moment());
   const [endDate, setEndDate] = useState(moment());
   const [dueDate, setDueDate] = useState(moment());
@@ -42,7 +43,7 @@ const HomePage = () => {
         <EuiFlexGrid columns={4}>
           <EuiFlexItem>
             <EuiText paddingSize="l">
-              <div className="summary">Fuel Summary</div>
+              <div className="summary">Dashboard Unit Request</div>
               <div className="date">Tuesday, 26-April-2024</div>
             </EuiText>
           </EuiFlexItem>
@@ -53,19 +54,12 @@ const HomePage = () => {
             <EuiText paddingSize="l"></EuiText>
           </EuiFlexItem>
           <EuiFlexItem>
-            <EuiFlexGrid columns={3}>
+            <EuiFlexGrid columns={2}>
               <EuiFlexItem>
                 <EuiDatePicker
                   className="date-picker"
                   selected={startDate}
                   onChange={handleStartDateChange}
-                />
-              </EuiFlexItem>
-              <EuiFlexItem>
-                <EuiDatePicker
-                  className="date-picker"
-                  selected={endDate}
-                  onChange={handleEndDateChange}
                 />
               </EuiFlexItem>
               <EuiFlexItem>
@@ -93,7 +87,7 @@ const HomePage = () => {
           </EuiFlexItem>
         </EuiFlexGrid>
         <div style={{ marginTop: "20px" }}>
-          <CardContent />
+          <CardContentQouta/>
         </div>
         <div className="mt20">
           <EuiFlexGrid columns={2}>
@@ -120,4 +114,4 @@ const HomePage = () => {
   );
 };
 
-export default HomePage;
+export default RequestPage;

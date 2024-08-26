@@ -132,7 +132,7 @@ const TableData = () => {
       <div style={{ marginBottom: '10px', float: "inline-end", display: "flex", gap: "10px" }}>
       
         {renderHeader()}
-        <EuiFieldText
+        <EuiFieldSearch
           placeholder="Search data"
           value={searchValue}
           onChange={(e) => handleSearchChange(e.target.value)}
