@@ -5,10 +5,13 @@ import {
   EuiFieldSearch,
   EuiText,
   EuiLink,
+  EuiButtonIcon,
 } from '@elastic/eui';
 import { Data } from './data'; // Ensure this path is correct
 import { useNavigate } from 'react-router-dom'; 
 import ModalForm from '../../components/ModalForm';
+import ModalFormStation from '../../components/ModalForm/ModalAddStation';
+import ModalFormStock from '../../components/ModalForm/ModalStockSystem';
 
 const TableData = () => {
   const navigate = useNavigate(); 
@@ -19,60 +22,70 @@ const TableData = () => {
 
   const columns = [
     {
-      field: 'station',
-      name: 'Station',
-      'data-test-subj': 'stationCell',
-      mobileOptions: {
-        render: (item) => (
-          <EuiLink
-            href={`#${item.station}`}
+      field: 'no',
+      name: 'No',
+      truncateText: true,
+    },
+    {
+      field: 'unit_no',
+      name: 'No Unit',
+      truncateText: true,
+    },
+    {
+      field: 'item',
+      name: 'Item Name',
+      truncateText: true,
+    },
+    {
+      field: 'owner',
+      name: 'Owner',
+      truncateText: true,
+    },
+    {
+      field: 'capacity',
+      name: 'Tank Capacity (L)',
+      truncateText: true,
+    },
+    {
+      field: 'eq_type',
+      name: 'Eq Type',
+      truncateText: true,
+    },
+    {
+      field: 'eq_groupId',
+      name: 'Eq Group Id',
+      truncateText: true,
+    },
+    {
+      field: 'district_code',
+      name: 'District Code',
+      truncateText: true,
+    },
+    {
+      field: 'action',
+      name: 'Action',
+      render: (item) => (
+        <div className='action-buttons'>
+          <EuiButtonIcon
+            iconType="pencil"
+            aria-label="Edit"
+            color="success"
             onClick={(e) => {
-              e.preventDefault();
-              handleRowClick(item); // Handle row click action
+              e.stopPropagation(); // Prevent row click
+              handleEdit(item);
             }}
-          >
-            {item.station}
-          </EuiLink>
-        ),
-        header: false,
-        truncateText: false,
-        enlarge: true,
-        width: '100%',
-      },
-    },
-    {
-      field: 'open_stock',
-      name: 'Open Stock',
-      truncateText: true,
-    },
-    {
-      field: 'receipt_kpc',
-      name: 'Receipt Kpc',
-      truncateText: true,
-    },
-    {
-      field: 'issued',
-      name: 'Issued',
-      truncateText: true,
-    },
-    {
-      field: 'transfer',
-      name: 'Transfer',
-      truncateText: true,
-    },
-    {
-      field: 'close_sonding',
-      name: 'Close Sonding',
-      truncateText: true,
-    },
-    {
-      field: 'close_data',
-      name: 'Close Data',
-      truncateText: true,
-    },
-    {
-      field: 'variant',
-      name: 'Variant',
+          />
+          <EuiButtonIcon
+            iconType="trash"
+            aria-label="Delete"
+            color="danger"
+            onClick={(e) => {
+              e.stopPropagation(); // Prevent row click
+              handleDelete(item);
+            }}
+          />
+        </div>
+      ),
       truncateText: true,
     },
   ];
@@ -139,15 +152,36 @@ const TableData = () => {
     <>
       <div style={{ marginBottom: '10px', display: "flex", justifyContent: "flex-end",gap:"15px",alignItems: "center" }}>
     
-        <ModalForm/>
-        
-      <EuiButton
+        {/* <ModalFormStock/> */}
+        <EuiButton
+          style={{ background: "#1B46D9", color: "white" }}
+          color="primary"
+          onClick={() => alert('Export button clicked')}
+        >
+          Import Equpiment
+        </EuiButton>
+        <EuiButton
+          style={{ background: "#FEC514", color: "white" }}
+          color="primary"
+          onClick={() => alert('Export button clicked')}
+        >
+          Import Maste Elipse
+        </EuiButton>
+        <EuiButton
+          style={{ background: "#E16104", color: "white" }}
+          color="primary"
+          onClick={() => alert('Export button clicked')}
+        >
+          Import Unit Banlaw
+        </EuiButton>
+        <EuiButton
           style={{ background: "#73A33F", color: "white" }}
           color="primary"
           onClick={() => alert('Export button clicked')}
         >
           Export
         </EuiButton>
+      
         <EuiFieldSearch
           placeholder="Search data" 
           value={searchValue}

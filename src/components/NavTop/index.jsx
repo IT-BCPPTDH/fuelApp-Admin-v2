@@ -28,6 +28,14 @@ const NavTop = () => {
 
   };
 
+  const handleClickMaster = (itemLabel) => {
+    setActiveItem(itemLabel);
+    navigate('/master-station');
+    navigate('/master-stock-system');
+    navigate('/master-elipse');
+
+  };
+
   const handlebackHome = () => {
     navigate('/');
 
@@ -48,8 +56,8 @@ const NavTop = () => {
   const menuItemstMaster = [
     { label: 'Station', action: () => navigate('/master-station') },
     { label: 'Equipment', action: () => navigate('/another-item') },
-    { label: 'Stock System', action: () => navigate('/another-item') },
-    { label: 'Master Data Elipse', action: () => navigate('/another-item') },
+    { label: 'Stock System', action: () => navigate('/master-stock-system') },
+    { label: 'Master Data Elipse', action: () => navigate('/master-elipse') },
     { label: 'User', action: () => navigate('/another-item') },
   ];
 
@@ -69,7 +77,7 @@ const NavTop = () => {
       <MenuDropdown
         items={menuItemstMaster}
         buttonLabel="Master"
-        onItemClick={handleItemClick}
+        onItemClick={handleClickMaster}
       />
       <EuiButton color="light">Change Password</EuiButton>
       

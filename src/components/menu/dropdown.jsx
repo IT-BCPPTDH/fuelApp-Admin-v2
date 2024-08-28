@@ -1,9 +1,11 @@
-import React, { useState } from 'react';
-import './DropdownMenu.css'; // Ensure to create this CSS file
+import React, { useState, useRef, useEffect } from 'react';
+import PropTypes from 'prop-types';
 import { EuiButton, EuiIcon } from '@elastic/eui';
+import './DropdownMenu.css';
 
-const DropdownMenu = ({ items = [], buttonLabel = 'Dropdown', onItemClick }) => {
+const MenuDropdown = ({ items, buttonLabel, onItemClick }) => {
   const [isOpen, setIsOpen] = useState(false);
+  const dropdownRef = useRef(null);
 
   const toggleDropdown = () => {
     setIsOpen(!isOpen);
@@ -13,33 +15,46 @@ const DropdownMenu = ({ items = [], buttonLabel = 'Dropdown', onItemClick }) => 
     setIsOpen(false);
   };
 
-  const handleItemClick = (item) => {
-    if (onItemClick) {
-      onItemClick(item);
+  const handleClickOutside = (event) => {
+    if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+      closeDropdown();
     }
-    closeDropdown();
   };
 
+  useEffect(() => {
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+
   return (
-    <div className="dropdown">
-      <EuiButton color="light" className="dropdown-button" onClick={toggleDropdown}>
-        {buttonLabel} <span>
-          <EuiIcon type="arrowDown" size="xs" />
-        </span>
+    <div className="dropdown" ref={dropdownRef}>
+      <EuiButton
+        color="light"
+        className="dropdown-button"
+        onClick={toggleDropdown}
+        aria-haspopup="true"
+        aria-expanded={isOpen}
+      >
+        {buttonLabel} <EuiIcon type="arrowDown" size="s" />
       </EuiButton>
       {isOpen && (
-        <div className="dropdown-menu">
+        <div className="dropdown-menu" role="menu">
           {items.map((item, index) => (
             <a
               key={index}
               href="#"
               onClick={(e) => {
                 e.preventDefault();
-                handleItemClick(item);
+                item.action();
+                closeDropdown();
               }}
               className="dropdown-menu-item"
+              role="menuitem"
+              aria-label={item.label}
             >
-              <span style={{ fontSize: '14px' }}>{item.label}</span>
+              {item.label}
             </a>
           ))}
         </div>
@@ -48,4 +63,18 @@ const DropdownMenu = ({ items = [], buttonLabel = 'Dropdown', onItemClick }) => 
   );
 };
 
-export default DropdownMenu;
+MenuDropdown.propTypes = {
+  items: PropTypes.arrayOf(
+    PropTypes.shape({
+      label: PropTypes.string.isRequired,
+      action: PropTypes.func.isRequired,
+    })
+  ).isRequired,
+  buttonLabel: PropTypes.string,
+};
+
+MenuDropdown.defaultProps = {
+  buttonLabel: 'Dropdown',
+};
+
+export default MenuDropdown;

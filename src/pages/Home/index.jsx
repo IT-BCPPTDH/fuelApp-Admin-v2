@@ -8,6 +8,7 @@ import {
   EuiText,
   EuiButton,
   EuiDatePicker,
+  EuiSelect,
 } from "@elastic/eui";
 import moment from "moment";
 import TableData from "./table";
@@ -16,6 +17,7 @@ const HomePage = () => {
   const [startDate, setStartDate] = useState(moment());
   const [endDate, setEndDate] = useState(moment());
   const [dueDate, setDueDate] = useState(moment());
+  const [selectedOption, setSelectedOption] = useState('');
 
   // Handle date range changes
   const handleStartDateChange = (date) => {
@@ -34,6 +36,21 @@ const HomePage = () => {
   // Function to check if the date range is valid
   const isDateRangeValid = () => {
     return startDate.isBefore(endDate) && endDate.isBefore(dueDate);
+  };
+
+  // Options for the select dropdown
+  const options = [
+    { value: '', text: 'Select' }, // Placeholder option
+    { value: 'daily', text: 'Daily' },
+    { value: 'weekly', text: 'Weekly' },
+    { value: 'Montly', text: 'Montly' },
+    { value: 'YTD', text: 'YTD' },
+  ];
+  
+
+  // Handle selection change
+  const handleChange = (event) => {
+    setSelectedOption(event.target.value);
   };
 
   return (
@@ -62,11 +79,14 @@ const HomePage = () => {
                 />
               </EuiFlexItem>
               <EuiFlexItem>
-                <EuiDatePicker
-                  className="date-picker"
-                  selected={endDate}
-                  onChange={handleEndDateChange}
-                />
+                <div>
+                  <EuiSelect style={{width:"200px"}}
+                    options={options}
+                    value={selectedOption}
+                    onChange={handleChange}
+                    aria-label="Select "
+                  />
+                </div>
               </EuiFlexItem>
               <EuiFlexItem>
                 <EuiButton
