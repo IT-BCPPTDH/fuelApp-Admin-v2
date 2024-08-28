@@ -76,14 +76,14 @@ const TableData = () => {
     },
   ];
 
+ 
   const handleRowClick = (item) => {
  
-    // navigate(`/details/${item.station}`); 
-    navigate('/details'); 
+    navigate(`/details`); 
+    
   };
-
   const getRowProps = (item) => ({
-    'data-test-subj': `row-${item.station}`,
+    'data-test-subj': `row-${item.lkf}`,
     className: 'customRowClass',
     onClick: () => handleRowClick(item), 
   });
@@ -104,22 +104,6 @@ const TableData = () => {
 
   const renderHeader = () => (
     <>
-     <EuiButton
-      style={{ background: "#0077CC", color: "white" }}
-      color="primary"
-      onClick={() => alert('Export button clicked')}
-    >
-      Upload Data
-    </EuiButton>
-    <EuiButton  
-      style={{ background: "#00BFB3", color: "white" }}
-      onClick={() => alert('Export button clicked')}
-    >Add Data
-    </EuiButton>
-    <EuiButton   style={{ background: "#F04E98", color: "white" }}
-      onClick={() => alert('Export button clicked')} >Print LKF</EuiButton>
-    <EuiButton   style={{ background: "#FBBA6D", color: "white", width:"350px"}}
-      onClick={() => alert('Export button clicked')}>Export to Ellipse </EuiButton>
     <EuiButton   style={{ background: "#73A33F", color: "white" }}
       onClick={() => alert('Export button clicked')}>Export </EuiButton>
     </>

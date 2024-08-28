@@ -187,3 +187,18 @@ button:hover {
    font-weight: 600;
    color: #646a77;
  }
+ .dropdown-menu {
+  display: block;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 150px;
+  background-color: white;
+  font-size: 14px;
+}
+.css-4rroty-euiFlexGrid-l-row-stretch-2-responsive {
+  display: grid;
+  gap: 15px;
+  align-items: stretch;
+  grid-template-columns: repeat(2, 1fr);
+}

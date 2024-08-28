@@ -19,6 +19,13 @@ import {icon as EuiIconEmpty} from '@elastic/eui/es/components/icon/assets/empty
 import {icon as EuiIconCalender} from '@elastic/eui/es/components/icon/assets/calendar';
 import {icon as EuiIconSortRigth} from '@elastic/eui/es/components/icon/assets/sortRight';
 import {icon as EuiIconSortLeft} from '@elastic/eui/es/components/icon/assets/sortLeft';
+import {icon as EuiIconCross} from '@elastic/eui/es/components/icon/assets/cross';
+import {icon as EuiIconCheck} from '@elastic/eui/es/components/icon/assets/check';
+import {icon as EuiIconClock} from '@elastic/eui/es/components/icon/assets/clock';
+import {icon as EuiIconImport} from '@elastic/eui/es/components/icon/assets/import';
+import {icon as EuiIconCopyClipboard} from '@elastic/eui/es/components/icon/assets/copy_clipboard';
+import {icon as EuiIconTrash} from '@elastic/eui/es/components/icon/assets/trash';
+import {icon as EuiIconPen} from '@elastic/eui/es/components/icon/assets/pencil';
 
 
 
@@ -35,6 +42,13 @@ appendIconComponentCache({
   calendar:EuiIconCalender,
   sortRight:EuiIconSortRigth,
   sortLeft:EuiIconSortLeft,
+  cross:EuiIconCross,
+  check:EuiIconCheck,
+  clock:EuiIconClock,
+  import:EuiIconImport,
+  copy_clipboard:EuiIconCopyClipboard,
+  trash:EuiIconTrash,
+  pencil:EuiIconPen,
 });
 
 

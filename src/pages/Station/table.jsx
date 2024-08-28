@@ -4,11 +4,11 @@ import {
   EuiButton,
   EuiFieldSearch,
   EuiText,
-  EuiLink,
+  EuiButtonIcon,
 } from '@elastic/eui';
 import { Data } from './data'; // Ensure this path is correct
 import { useNavigate } from 'react-router-dom'; 
-import ModalForm from '../../components/ModalForm';
+import ModalFormStation from '../../components/ModalForm/ModalAddStation';
 
 const TableData = () => {
   const navigate = useNavigate(); 
@@ -19,76 +19,67 @@ const TableData = () => {
 
   const columns = [
     {
+      field: 'no',
+      name: 'No',
+      truncateText: true,
+    },
+    {
       field: 'station',
-      name: 'Station',
-      'data-test-subj': 'stationCell',
-      mobileOptions: {
-        render: (item) => (
-          <EuiLink
-            href={`#${item.station}`}
+      name: 'FS/FT',
+      truncateText: true,
+    },
+    {
+      field: 'type',
+      name: 'Type',
+      truncateText: true,
+    },
+    {
+      field: 'capacity',
+      name: 'Capacity/L',
+      truncateText: true,
+    },
+    {
+      field: 'nozel',
+      name: 'Nozel Qty',
+      truncateText: true,
+    },
+    {
+      field: 'action',
+      name: 'Action',
+      render: (item) => (
+        <div className='action-buttons'>
+          <EuiButtonIcon
+            iconType="pencil"
+            aria-label="Edit"
+            color="success"
             onClick={(e) => {
-              e.preventDefault();
-              handleRowClick(item); // Handle row click action
+              e.stopPropagation(); // Prevent row click
+              handleEdit(item);
             }}
-          >
-            {item.station}
-          </EuiLink>
-        ),
-        header: false,
-        truncateText: false,
-        enlarge: true,
-        width: '100%',
-      },
-    },
-    {
-      field: 'open_stock',
-      name: 'Open Stock',
-      truncateText: true,
-    },
-    {
-      field: 'receipt_kpc',
-      name: 'Receipt Kpc',
-      truncateText: true,
-    },
-    {
-      field: 'issued',
-      name: 'Issued',
-      truncateText: true,
-    },
-    {
-      field: 'transfer',
-      name: 'Transfer',
-      truncateText: true,
-    },
-    {
-      field: 'close_sonding',
-      name: 'Close Sonding',
-      truncateText: true,
-    },
-    {
-      field: 'close_data',
-      name: 'Close Data',
-      truncateText: true,
-    },
-    {
-      field: 'variant',
-      name: 'Variant',
+          />
+          <EuiButtonIcon
+            iconType="trash"
+            aria-label="Delete"
+            color="danger"
+            onClick={(e) => {
+              e.stopPropagation(); // Prevent row click
+              handleDelete(item);
+            }}
+          />
+        </div>
+      ),
       truncateText: true,
     },
   ];
 
- 
-
   const handleRowClick = (item) => {
- 
     navigate(`/details/${item.station}`); 
-    
   };
 
   const getRowProps = (item) => ({
     'data-test-subj': `row-${item.station}`,
     className: 'customRowClass',
-    onClick: () => handleRowClick(item), 
+    onClick: () => handleRowClick(item),
   });
 
   const getCellProps = (item, column) => ({
@@ -135,13 +126,27 @@ const TableData = () => {
       </>
     );
 
+  const handleEdit = (item) => {
+    // Implement your edit logic here
+    console.log('Edit:', item);
+    // Example: navigate to an edit page or show a modal
+    navigate(`/edit/${item.station}`);
+  };
+
+  const handleDelete = (item) => {
+    // Implement your delete logic here
+    console.log('Delete:', item);
+    // Example: show a confirmation dialog and make an API call
+    if (window.confirm(`Are you sure you want to delete ${item.station}?`)) {
+      // Call API to delete item and refresh table
+    }
+  };
+
   return (
     <>
-      <div style={{ marginBottom: '10px', display: "flex", justifyContent: "flex-end",gap:"15px",alignItems: "center" }}>
-    
-        <ModalForm/>
-        
-      <EuiButton
+      <div style={{ marginBottom: '10px', display: "flex", justifyContent: "flex-end", gap: "15px", alignItems: "center" }}>
+        <ModalFormStation />
+        <EuiButton
           style={{ background: "#73A33F", color: "white" }}
           color="primary"
           onClick={() => alert('Export button clicked')}
@@ -155,12 +160,12 @@ const TableData = () => {
           aria-label="Search data"
           style={{ marginRight: '10px' }}
         />
-        
       </div>
       <EuiText size="xs">
         Showing {resultsCount} <strong>Data</strong>
       </EuiText>
-      <EuiBasicTable style={{marginTop:"20px"}}
+      <EuiBasicTable
+        style={{ marginTop: "20px" }}
         tableCaption="Demo of EuiBasicTable"
         items={pageOfItems}
         columns={columns}

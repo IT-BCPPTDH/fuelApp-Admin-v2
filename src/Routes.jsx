@@ -3,6 +3,9 @@ import React, { lazy, Suspense } from 'react';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import Layout from './components/Layout'; // Ensure correct import path
 import FallbackUI from './components/FallbackUI';
+import StockSystemPage from './pages/StockSystem';
+
+
 
 
 
@@ -10,7 +13,13 @@ const LoginPage = lazy(() => import('./pages/Login'));
 const HomePage = lazy(() => import('./pages/Home'));
 const Details = lazy(() => import('./pages/DetailTrasactionDashboard'));
 const ReportFuel = lazy(() => import('./pages/Reports'));
-const AddQouta = lazy(()=>import('./pages/RequestQouta'))
+const AddQouta = lazy(()=>import('./pages/RequestQouta'));
+const StationPage = lazy(()=>import('./pages/Station/index'));
+const StockSystem = lazy(()=>import('./pages/StockSystem'));
+
+const DetailsPageTransaction = lazy(()=>import('./pages/DetailTrasactionDashboard/detailTransaction'));
+const ElipsePage = lazy(()=>import('./pages/Elipse'));
+
 const RouteApp = () => {
   const isLogged = true; // Simulated authentication check
 
@@ -37,6 +46,18 @@ const RouteApp = () => {
       path: '/details/:station',
       errorElement: <FallbackUI />,
     },
+
+    {
+      element: (
+        <Layout>
+          <Suspense fallback={<div>Loading Homepage...</div>}>
+            <DetailsPageTransaction />
+          </Suspense>
+        </Layout>
+      ),
+      path: '/details',
+      errorElement: <FallbackUI />,
+    },
     
     {
       element: (
@@ -46,7 +67,7 @@ const RouteApp = () => {
           </Suspense>
       
       ),
-      path: "/report-fuel",
+      path: "/report-lkf",
       errorElement: <FallbackUI />
     },
 
@@ -59,6 +80,39 @@ const RouteApp = () => {
         </Layout>
       ),
       path: '/add-data-qouta',
+      errorElement: <FallbackUI />,
+    },
+    {
+      element: (
+        <Layout>
+          <Suspense fallback={<div>Loading Station...</div>}>
+            <StationPage />
+          </Suspense>
+        </Layout>
+      ),
+      path: '/master-station',
+      errorElement: <FallbackUI />,
+    },
+    {
+      element: (
+        <Layout>
+          <Suspense fallback={<div>Loading Station...</div>}>
+            <StockSystemPage/>
+          </Suspense>
+        </Layout>
+      ),
+      path: '/master-stock-system',
+      errorElement: <FallbackUI />,
+    },
+    {
+      element: (
+        <Layout>
+          <Suspense fallback={<div>Loading Station...</div>}>
+            <ElipsePage/>
+          </Suspense>
+        </Layout>
+      ),
+      path: '/master-elipse',
       errorElement: <FallbackUI />,
     },
     
