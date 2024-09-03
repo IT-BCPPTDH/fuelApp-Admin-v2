@@ -4,10 +4,7 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import Layout from './components/Layout'; // Ensure correct import path
 import FallbackUI from './components/FallbackUI';
 import StockSystemPage from './pages/StockSystem';
-
-
-
-
+import { useAuth } from './context/useAuth';
 
 const LoginPage = lazy(() => import('./pages/Login'));
 const HomePage = lazy(() => import('./pages/Home'));
@@ -21,9 +18,10 @@ const DetailsPageTransaction = lazy(()=>import('./pages/DetailTrasactionDashboar
 const ElipsePage = lazy(()=>import('./pages/Elipse'));
 
 const RouteApp = () => {
-  const isLogged = true; // Simulated authentication check
+  const {isLogged}=useAuth()
 
-  const routes = [
+
+  const routes = isLogged ? [
     {
       element: (
         <Layout>
@@ -32,7 +30,7 @@ const RouteApp = () => {
           </Suspense>
         </Layout>
       ),
-      path: '/',
+      path: "/",
       errorElement: <FallbackUI />,
     },
     {
@@ -115,17 +113,19 @@ const RouteApp = () => {
       path: '/master-elipse',
       errorElement: <FallbackUI />,
     },
-    
+  ]:[
+        
     {
       element: (
         <Suspense fallback={<div>Loading ...</div>}>
           <LoginPage />
         </Suspense>
       ),
-      path: '/login',
+      path: "/",
       errorElement: <FallbackUI />,
     },
-  ];
+    
+  ]
 
   const router = createBrowserRouter(routes);
 
