@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   EuiHeader,
@@ -13,13 +13,18 @@ import {
   EuiPopover,
   EuiText,
   EuiLink,
+  EuiAvatar,
 } from '@elastic/eui';
 import Logo from "../../images/logo_darma_henwa.png";
 import HeaderMasterDataMenu from './dropdown';
 import MenuDropdown from '../menu/dropdown';
+import Cookies from 'js-cookie';
+
 
 const NavTop = () => {
   const [activeItem, setActiveItem] = useState(null);
+ 
+
   const navigate = useNavigate();
 
   const handleItemClick = (itemLabel) => {
@@ -46,6 +51,8 @@ const NavTop = () => {
   };
 
   
+ 
+
   
 
   const menuItems = [
@@ -65,7 +72,7 @@ const NavTop = () => {
   return (
     <EuiHeader>
       <div className='logo'>
-        <EuiImage src={Logo} alt='' />
+        <EuiImage src={Logo} alt='' style={{width:"120",height:"50px",padding:"10px"}} />
       </div >
       <div className='nav-lf'><EuiButton color="light" onClick={handlebackHome}>Fuel History</EuiButton>
       <MenuDropdown
@@ -95,8 +102,41 @@ const NavTop = () => {
   );
 };
 
+
+const getInitials = (fullname) => {
+  if (!fullname) return '';
+  
+  const names = fullname.split(' ');
+  if (names.length === 1) return names[0].charAt(0).toUpperCase();
+  
+  return names.map(name => name.charAt(0).toUpperCase()).join('');
+};
+
 const HeaderUserMenu = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const [userData, setUserData] = useState({ fullname: '', position: '' });
+
+  useEffect(() => {
+    // Fetch user data from localStorage when the component mounts
+    const user = localStorage.getItem('user_data'); // Fetch from localStorage
+
+    if (user) {
+      try {
+        // Parse the JSON data
+        const parsedUser = JSON.parse(user);
+
+        // Set the state with the user data
+        setUserData({
+          fullname: parsedUser.fullname || 'Unknown',
+          position: parsedUser.position || 'Unknown'
+        });
+      } catch (error) {
+        console.error('Error parsing user data from localStorage:', error);
+        // Handle the case where parsing fails
+        setUserData({ fullname: 'Unknown', position: 'Unknown' });
+      }
+    }
+  }, []);
 
   const onMenuButtonClick = () => {
     setIsOpen(!isOpen);
@@ -117,7 +157,16 @@ const HeaderUserMenu = () => {
           aria-label="Account menu"
           onClick={onMenuButtonClick}
         >
-          <EuiButton name="John Username" size="s" />
+         <EuiAvatar
+            name={userData.fullname}
+            size="s"
+            style={{
+              width: 30,
+              height: 30,
+            }}
+          >
+            {getInitials(userData.fullname)}
+          </EuiAvatar>
         </EuiHeaderSectionItemButton>
       }
       isOpen={isOpen}
@@ -127,13 +176,17 @@ const HeaderUserMenu = () => {
     >
       <div style={{ width: 300 }}>
         <EuiText>
-          <p>John Username</p>
+          <p>Name: {userData.fullname}</p>
         </EuiText>
         <EuiText>
-          <EuiLink>Edit profile</EuiLink>
+          <p>Position: {userData.position}</p>
         </EuiText>
         <EuiText>
-          <EuiLink>Log out</EuiLink>
+          <EuiLink onClick={() => {
+          
+            localStorage.removeItem('user_data'); 
+           
+          }}>Log out</EuiLink>
         </EuiText>
       </div>
     </EuiPopover>

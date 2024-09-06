@@ -1,28 +1,36 @@
-const link = import.meta.env.LINK_BACKEND;
-const userLink = import.meta.env.BE_USER;
-const linkSocket = import.meta.env.VITE_SOCKET_USER
+// Configuration file
 
+// URLs from environment variables
+const link = import.meta.env.BACKEND; // Use correct env variable
+const userLink = import.meta.env.VITE_BE_USER;
+const linkSocket = import.meta.env.VITE_SOCKET_USER;
+const linkBe= import.meta.env.VITE_API_BASE_URL; 
+// Export URL Enums
 export const URL_ENUMS = {
     linkWebSocket: linkSocket,
     /**
      * General
      */
-    Login : link+'/api/login',
+    Login: `${link}/auth/login`,
+    // Add other general URLs as needed
+};
 
-
-    /**
-     * Coal Hauling Form Based
-     */
-  
-}
-
+// Export User API URLs
 export const URL_USER_API = {
-    Auth : `${userLink}/api/login`,
-    Logout: `${userLink}/api-user/logout` 
-}
+    Auth: `${userLink}/api-user/auth`,
+    Logout: `${userLink}/api-user/logout`,
+    getallUser: `${userLink}/api-user/get-all`,
+    updateUser: `${userLink}/api-user/update-data`,
+    resetPswd: `${userLink}/api-user/reset-password`,
+    getAllRoles: `${userLink}/api-user/get-all-roles`,
+};
 
+// Export Admin API URLs
+export const URL_API = {
+    postHome: `${linkBe}api/admin/get-dashboard`,
+};
 
-
+// HTTP Status Codes
 export const HTTP_STATUS = {
     OK: "200",
     CREATED: "201",
@@ -36,10 +44,11 @@ export const HTTP_STATUS = {
     SERVICE_UNAVAILABLE: "503",
 };
 
+// Status Messages
 export const STATUS_MESSAGE = {
-    CRED_NOT_FOUND : "No user credentials found for the provided JDE.",
-    USER_LOGGEDIN : "User has logged in.",
-    SUCCESS_LOGIN: "Login successfull",
+    CRED_NOT_FOUND: "No user credentials found for the provided JDE.",
+    USER_LOGGEDIN: "User has logged in.",
+    SUCCESS_LOGIN: "Login successful",
     ERR_AUTH: "Error authenticating user: ",
     INVALID_JDE: "Invalid JDE or Password",
     SUCCESS_LOGOUT: "User logged out successfully",
@@ -47,16 +56,16 @@ export const STATUS_MESSAGE = {
     ERR_LOGOUT: "Error logging out user:",
     SUCCESS_RESET_PASS: "Password reset successful",
     ERR_RESET_PASS: "Error resetting password:",
-    SUCCESS_CREATE_USER: "User Created Successfully",
+    SUCCESS_CREATE_USER: "User created successfully",
     ERR_CREATE_USER: "Failed to create user",
     FAILED_GET_USER: "Failed to retrieve user",
     FAILED_GET_ALL_USER: "Error getting all users:",
     FAILED_PAGINATED_USER: "Error getting users paginated:",
-    SUCCESS_UPDATE_USER : "User updated successfully.",
+    SUCCESS_UPDATE_USER: "User updated successfully.",
     ERR_UPDATE_USER: "Error updating user:",
     SUCCESS_DEL_USER: "User deleted from database",
-    ERR_DEL_USER: "Deleting user error: ",
-    JDE_REQ : "JDE is required.",
-    PASS_REQ : "Password is required.",
+    ERR_DEL_USER: "Error deleting user:",
+    JDE_REQ: "JDE is required.",
+    PASS_REQ: "Password is required.",
     INVALID_CHAR: "Invalid characters. Alphanumeric only."
-}
+};

@@ -14,29 +14,17 @@ import moment from "moment";
 import TableData from "./table";
 
 const HomePage = () => {
-  const [startDate, setStartDate] = useState(moment());
-  const [endDate, setEndDate] = useState(moment());
-  const [dueDate, setDueDate] = useState(moment());
+  const [selectDate, setSelectDate] = useState(moment());
   const [selectedOption, setSelectedOption] = useState('');
 
-  // Handle date range changes
-  const handleStartDateChange = (date) => {
-    setStartDate(date);
-  };
-
-  const handleEndDateChange = (date) => {
-    setEndDate(date);
-  };
 
   // Handle due date change
-  const handleDueDateChange = (date) => {
-    setDueDate(date);
+  const handleChageDate = (date) => {
+    setSelectDate(date);
   };
 
   // Function to check if the date range is valid
-  const isDateRangeValid = () => {
-    return startDate.isBefore(endDate) && endDate.isBefore(dueDate);
-  };
+ 
 
   // Options for the select dropdown
   const options = [
@@ -74,8 +62,8 @@ const HomePage = () => {
               <EuiFlexItem>
                 <EuiDatePicker
                   className="date-picker"
-                  selected={startDate}
-                  onChange={handleStartDateChange}
+                  selected={selectDate}
+                  onChange={handleChageDate}
                 />
               </EuiFlexItem>
               <EuiFlexItem>
@@ -97,13 +85,7 @@ const HomePage = () => {
                     width: "100px",
                   }}
                   onClick={() => {
-                    if (isDateRangeValid()) {
-                      // Implement what should happen when the date range is valid
-                      console.log("Date Range is valid.");
-                    } else {
-                      // Handle invalid date range
-                      console.log("Invalid Date Range.");
-                    }
+                  
                   }}
                 >
                   <div>Select</div>
