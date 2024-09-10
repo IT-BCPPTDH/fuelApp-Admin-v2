@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   EuiBasicTable,
   EuiButton,
@@ -9,27 +9,32 @@ import {
 
 import { DataTrx } from './data';
 import { useNavigate } from 'react-router-dom'; 
+import { useParams } from "react-router-dom";
+import stationService from '../../services/stationDashboard';
 
 
 const TableData = () => {
   const navigate = useNavigate(); 
   const [searchValue, setSearchValue] = useState('');
+  const [formLkf, setFormLkf] = useState([]);
+  const {station} = useParams()
+  const date = JSON.parse(localStorage.getItem('tanggal'));
 
   const columns = [
     {
-      field: 'lkf',
+      field: 'lkf_id',
       name: 'LKF No',
       'data-test-subj': 'stationCell',
       mobileOptions: {
         render: (item) => (
           <EuiLink
-            href={`#${item.lkf}`}
+            href={`#${item.lkf_id}`}
             onClick={(e) => {
               e.preventDefault();
               handleRowClick(item); 
             }}
           >
-            {item.lkf}
+            {item.lkf_id}
           </EuiLink>
         ),
         header: false,
@@ -39,13 +44,13 @@ const TableData = () => {
       },
     },
     {
-      field: 'tanggal',
+      field: 'date',
       name: 'Date',
       truncateText: true,
     },
     {
-      field: 'fuelman',
-      name: 'Fuelman',
+      field: 'fuelman_id',
+      name: 'Employee ID',
       truncateText: true,
     },
     {
@@ -60,7 +65,7 @@ const TableData = () => {
       truncateText: true,
     },
     {
-      field: 'stored_time',
+      field: 'time_opening',
       name: 'Stored Time',
       truncateText: true,
     },
@@ -79,11 +84,11 @@ const TableData = () => {
  
   const handleRowClick = (item) => {
  
-    navigate(`/details`); 
+    navigate(`/form-data/${item.lkf_id}`); 
     
   };
   const getRowProps = (item) => ({
-    'data-test-subj': `row-${item.lkf}`,
+    'data-test-subj': `row-${item.lkf_id}`,
     className: 'customRowClass',
     onClick: () => handleRowClick(item), 
   });
@@ -98,8 +103,8 @@ const TableData = () => {
     setSearchValue(value);
   };
 
-  const filteredItems = DataTrx.filter(item =>
-    item.lkf.toLowerCase().includes(searchValue.toLowerCase())
+  const filteredItems = formLkf.filter(item =>
+    item.lkf_id.toLowerCase().includes(searchValue.toLowerCase())
   );
 
   const renderHeader = () => (
@@ -110,6 +115,23 @@ const TableData = () => {
    
 
   );
+
+  useEffect(() => {
+    const fetchTable = async () => {
+      try {
+        const res = await stationService.tableStation({tanggal: `${date}`, station:station})
+        if (res.status != 200) {
+          throw new Error('Network response was not ok');
+        }
+        setFormLkf(res.data);
+      } catch (error) {
+        console.log(error)
+        // setError(error);
+      } 
+    };
+    fetchTable()
+  }, []);
+
 
   return (
     <>

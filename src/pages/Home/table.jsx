@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   EuiBasicTable,
   EuiButton,
@@ -6,7 +6,8 @@ import {
   EuiText,
   EuiLink,
 } from '@elastic/eui';
-import { Data } from './data'; // Ensure this path is correct
+import { Data } from './data'; 
+import MainService from '../../services/HomeData';
 import { useNavigate } from 'react-router-dom'; 
 
 const TableData = () => {
@@ -15,6 +16,7 @@ const TableData = () => {
   const [pageIndex, setPageIndex] = useState(0);
   const [pageSize, setPageSize] = useState(10);
   const [showPerPageOptions, setShowPerPageOptions] = useState(true);
+  const [tables, setTables] = useState([])
 
   const columns = [
     {
@@ -40,7 +42,7 @@ const TableData = () => {
       },
     },
     {
-      field: 'open_stock',
+      field: 'total_opening',
       name: 'Open Stock',
       truncateText: true,
     },
@@ -50,33 +52,41 @@ const TableData = () => {
       truncateText: true,
     },
     {
-      field: 'issued',
+      field: 'total_receive',
+      name: 'Receipt',
+      truncateText: true,
+    },
+    {
+      field: 'total_issued',
       name: 'Issued',
       truncateText: true,
     },
     {
-      field: 'transfer',
+      field: 'total_transfer',
       name: 'Transfer',
       truncateText: true,
     },
     {
-      field: 'close_sonding',
+      field: 'total_closing',
       name: 'Close Sonding',
       truncateText: true,
     },
     {
-      field: 'close_data',
+      field: 'closeDataPrev',
       name: 'Close Data',
       truncateText: true,
     },
     {
-      field: 'variant',
+      field: 'variants',
       name: 'Variant',
       truncateText: true,
     },
+    {
+      field: 'interShift',
+      name: 'Intershift',
+      truncateText: true,
+    },
   ];
-
- 
 
   const handleRowClick = (item) => {
  
@@ -100,7 +110,7 @@ const TableData = () => {
     setSearchValue(value);
   };
 
-  const filteredItems = Data.filter(item =>
+  const filteredItems = tables.filter(item =>
     item.station.toLowerCase().includes(searchValue.toLowerCase())
   );
 
@@ -134,6 +144,29 @@ const TableData = () => {
       </>
     );
 
+  const date = JSON.parse(localStorage.getItem('tanggal'));
+
+  useEffect(() => {
+    const fetchTable = async (date) => {
+      try {
+        const res = await MainService.tableDashboard({tanggal: `${date}`})
+        if (res.status != 200) {
+          throw new Error('Network response was not ok');
+        }else if(res.status == 404){
+          setTables([]);
+        }else{
+          setTables(res.data);
+        }
+      } catch (error) {
+        console.log(error)
+        // setError(error);
+      } 
+    };
+    if (date) {  
+      fetchTable(date);
+    }
+  }, [date, tables]);
+  
   return (
     <>
       <div style={{ marginBottom: '10px', display: "flex", justifyContent: "flex-end",gap:"15px",alignItems: "center" }}>

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   EuiBasicTable,
   EuiButton,
@@ -9,6 +9,7 @@ import {
 import { Data } from './data'; // Ensure this path is correct
 import { useNavigate } from 'react-router-dom'; 
 import ModalFormStation from '../../components/ModalForm/ModalAddStation';
+import stationService from '../../services/stationDashboard';
 
 const TableData = () => {
   const navigate = useNavigate(); 
@@ -16,30 +17,31 @@ const TableData = () => {
   const [pageIndex, setPageIndex] = useState(0);
   const [pageSize, setPageSize] = useState(10);
   const [showPerPageOptions, setShowPerPageOptions] = useState(true);
+  const [tables, setTables] = useState([])
 
   const columns = [
     {
-      field: 'no',
+      field: 'id',
       name: 'No',
       truncateText: true,
     },
     {
-      field: 'station',
+      field: 'fuel_station_name',
       name: 'FS/FT',
       truncateText: true,
     },
     {
-      field: 'type',
+      field: 'fuel_station_type',
       name: 'Type',
       truncateText: true,
     },
     {
-      field: 'capacity',
+      field: 'fuel_capacity',
       name: 'Capacity/L',
       truncateText: true,
     },
     {
-      field: 'nozel',
+      field: 'fuel_nozel',
       name: 'Nozel Qty',
       truncateText: true,
     },
@@ -53,7 +55,7 @@ const TableData = () => {
             aria-label="Edit"
             color="success"
             onClick={(e) => {
-              e.stopPropagation(); // Prevent row click
+              e.stopPropagation(); 
               handleEdit(item);
             }}
           />
@@ -62,8 +64,8 @@ const TableData = () => {
             aria-label="Delete"
             color="danger"
             onClick={(e) => {
-              e.stopPropagation(); // Prevent row click
-              handleDelete(item);
+              e.stopPropagation();
+              handleDelete(item, e);
             }}
           />
         </div>
@@ -73,18 +75,18 @@ const TableData = () => {
   ];
 
   const handleRowClick = (item) => {
-    navigate(`/details/${item.station}`); 
+    navigate(`/details/${item.id}`); 
   };
 
   const getRowProps = (item) => ({
-    'data-test-subj': `row-${item.station}`,
+    'data-test-subj': `row-${item.id}`,
     className: 'customRowClass',
     onClick: () => handleRowClick(item),
   });
 
   const getCellProps = (item, column) => ({
     className: 'customCellClass',
-    'data-test-subj': `cell-${item.station}-${String(column.field)}`,
+    'data-test-subj': `cell-${item.id}-${String(column.field)}`,
     textOnly: true,
   });
 
@@ -92,8 +94,8 @@ const TableData = () => {
     setSearchValue(value);
   };
 
-  const filteredItems = Data.filter(item =>
-    item.station.toLowerCase().includes(searchValue.toLowerCase())
+  const filteredItems = tables.filter(item =>
+    item.fuel_station_name.toLowerCase().includes(searchValue.toLowerCase())
   );
 
   const findPageItems = (items, pageIndex, pageSize) => {
@@ -133,14 +135,34 @@ const TableData = () => {
     navigate(`/edit/${item.station}`);
   };
 
-  const handleDelete = (item) => {
+  const handleDelete = (item, e) => {
     // Implement your delete logic here
-    console.log('Delete:', item);
+    console.log('Delete:', e.target.value, item);
     // Example: show a confirmation dialog and make an API call
-    if (window.confirm(`Are you sure you want to delete ${item.station}?`)) {
+    if (window.confirm(`Are you sure you want to delete ${item.id}?`)) {
       // Call API to delete item and refresh table
     }
   };
+
+  useEffect(() => {
+    const fetchStation = async () => {
+      try {
+        const res = await stationService.getStation()
+        if (res.status != 200) {
+          throw new Error('Network response was not ok');
+        }else if(res.status == 404){
+          setTables([]);
+        }else{
+          setTables(res.data);
+        }
+      } catch (error) {
+        console.log(error)
+        // setError(error);
+      } 
+    };
+    fetchStation()
+  }, []);
+ 
 
   return (
     <>

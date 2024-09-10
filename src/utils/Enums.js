@@ -4,7 +4,8 @@
 const link = import.meta.env.BACKEND; // Use correct env variable
 const userLink = import.meta.env.VITE_BE_USER;
 const linkSocket = import.meta.env.VITE_SOCKET_USER;
-const linkBe= import.meta.env.VITE_API_BASE_URL; 
+const linkBe = import.meta.env.VITE_API_BASE_URL; 
+const linkMasterData = import.meta.env.VITE_MASTER_DATA; 
 // Export URL Enums
 export const URL_ENUMS = {
     linkWebSocket: linkSocket,
@@ -27,7 +28,27 @@ export const URL_USER_API = {
 
 // Export Admin API URLs
 export const URL_API = {
-    postHome: `${linkBe}api/admin/get-dashboard`,
+    summaryHome: `${linkBe}/api/admin/get-dashboard`,
+    tableHome: `${linkBe}/api/admin/get-dashboard-table`,
+    stationHome: `${linkBe}/api/admin/get-dashboard-station`,
+    stationTable:`${linkBe}/api/admin/get-dashboard-table-station`,
+    formDashboard: `${linkBe}/api/admin/get-dashboard-data/`,
+    formTable:`${linkBe}/api/admin/get-dashboard-table-data/`,
+    summaryReq: `${linkBe}/api/admin/get-request-summary`,
+    tableReq:`${linkBe}/api/admin/get-request-table`,
+    addData:`${linkBe}/api/admin/add-quota`,
+};
+
+export const URL_MASTER_DATA = {
+    getAllStation: `${linkMasterData}/master/station`,
+    insertStation: `${linkMasterData}/master/station/insert`,
+    updateStation: `${linkMasterData}/master/station/edit`,
+    delStation:`${linkMasterData}/master/station/delete/`,
+    detailStation: `${linkMasterData}/master/station/detail`,
+    getAllBanlaws:`${linkMasterData}/master/unit-banlaws`,
+    getDetailBanlaws: `${linkMasterData}/master/unit-banlaws/detail/`,
+    insertBanlaws:`${linkMasterData}/master/unit-banlaws/insert`,
+    updateBanlaws:`${linkMasterData}/master/unit-banlaws/edit`,
 };
 
 // HTTP Status Codes

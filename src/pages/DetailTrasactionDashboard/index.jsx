@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from 'react';
 import Icon1 from "../../images/icon1.png";
 import Icon2 from "../../images/chart.png";
 import Icon3 from "../../images/circle.png";
@@ -8,8 +8,15 @@ import { EuiText } from "@elastic/eui";
 import NavTop from "../../components/NavTop";
 import TableData from "./table";
 import FormModal from "../../components/ModalForm";
+import { useParams } from "react-router-dom";
+import stationService from '../../services/stationDashboard';
 
 const DetailPage = () => {
+  const {station} = useParams()
+  const [summaryAll, setSummaryAll] = useState(0)
+  const date = JSON.parse(localStorage.getItem('tanggal'));
+  const dates= JSON.parse(localStorage.getItem('formattedDate'));
+
   const cardsDataAll = [
     {
       title: "4,368 Ltrs",
@@ -72,6 +79,23 @@ const DetailPage = () => {
     },
   ];
 
+  useEffect(() => {
+    const fetchTable = async () => {
+      try {
+        const res = await stationService.summaryStation({tanggal:`${date}`, station:station})
+        if (res.status != 200) {
+          throw new Error('Network response was not ok');
+        }
+        // console.log(res)
+        setSummaryAll(res.data);
+      } catch (error) {
+        console.log(error)
+        // setError(error);
+      } 
+    };
+    fetchTable()
+  }, []);
+
   return (
     <>
      
@@ -79,7 +103,7 @@ const DetailPage = () => {
         <div style={{ marginTop: "20px" }}>
           <EuiText>
             <div className="summary">Dashboard T112</div>
-            <div className="date">Tuesday, 26-April-2024</div>
+            <div className="date">{dates}</div>
           </EuiText>
         </div>
         <EuiText style={{ marginTop: "20px" }}>

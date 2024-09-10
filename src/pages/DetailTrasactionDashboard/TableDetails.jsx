@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   EuiBasicTable,
   EuiButton,
@@ -10,28 +10,30 @@ import {
 import { useNavigate } from 'react-router-dom'; 
 import { DataTrxDetails } from './datadetails';
 import ModalFormAddIssued from '../../components/ModalForm/ModalAddTransaction';
+import formService from '../../services/formDashboard';
 
-const TableDataDetails = () => {
+const TableDataDetails = ({lkfId}) => {
   const navigate = useNavigate(); 
   const [searchValue, setSearchValue] = useState('');
+  const [formData, setformData] = useState([])
+  const date = JSON.parse(localStorage.getItem('tanggal'));
 
-  // Ensure DataTrxDetails and its Details property are defined
   const data = DataTrxDetails || [];
 
   const columns = [
 
     {
-        field: 'noUnit',
+        field: 'no_unit',
         name: 'Unit No',
         truncateText: true,
       },
     {
-      field: 'model',
+      field: 'model_unit',
       name: 'Model Unit',
       truncateText: true,
     },
     {
-      field: 'hmkm',
+      field: 'hm_km',
       name: 'HM/KM',
       truncateText: true,
     },
@@ -46,38 +48,38 @@ const TableDataDetails = () => {
       truncateText: true,
     },
     {
-      field: 'fm__start',
+      field: 'flow_start',
       name: 'FM Start',
       truncateText: true,
     },
     {
-      field: 'fm__close',
+      field: 'flow_end',
       name: 'FM Close',
       truncateText: true,
     },
     {
-      field: 'jde',
+      field: 'jde_operator',
       name: 'ID Operator',
       truncateText: true,
     },
     {
-      field: 'fullname',
+      field: 'name_operator',
       name: 'Name',
       truncateText: true,
     },
     {
-      field: 'start_time',
+      field: 'start',
       name: 'Start Time',
       truncateText: true,
     },
     {
-      field: 'stop_time',
+      field: 'end',
       name: 'Stop Time',
       truncateText: true,
     },
     {
       field: 'signature',
-      name: 'Sig',
+      name: 'Sign',
       truncateText: true,
     },
     {
@@ -121,16 +123,6 @@ const TableDataDetails = () => {
     },
   ];
 
-//   const handleRowClick = (item) => {
-//     navigate(`/details/${item.station}`); 
-//   };
-
-//   const getRowProps = (item) => ({
-//     'data-test-subj': `row-${item.station}`,
-//     className: 'customRowClass',
-//     onClick: () => handleRowClick(item), 
-//   });
-
   const getCellProps = (item, column) => ({
     className: 'customCellClass',
     'data-test-subj': `cell-${item.station}-${String(column.field)}`,
@@ -141,8 +133,8 @@ const TableDataDetails = () => {
     setSearchValue(e.target.value);
   };
 
-  const filteredItems = data.filter(item =>
-    item.noUnit.toLowerCase().includes(searchValue.toLowerCase())
+  const filteredItems = formData.filter(item =>
+    item.no_unit.toLowerCase().includes(searchValue.toLowerCase())
   );
 
   const renderHeader = () => (
@@ -176,6 +168,22 @@ const TableDataDetails = () => {
       </EuiButton>
     </>
   );
+
+  useEffect(() => {
+    const fetchTable = async () => {
+      try {
+        const res = await formService.tableForm(lkfId)
+        if (res.status != 200) {
+          throw new Error('Network response was not ok');
+        }
+        setformData(res.data);
+      } catch (error) {
+        console.log(error)
+        // setError(error);
+      } 
+    };
+    fetchTable()
+  }, []);
 
   return (
     <>

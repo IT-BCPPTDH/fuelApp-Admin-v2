@@ -28,7 +28,6 @@ const HomePage = () => {
 
   // Options for the select dropdown
   const options = [
-    { value: '', text: 'Select' }, // Placeholder option
     { value: 'daily', text: 'Daily' },
     { value: 'weekly', text: 'Weekly' },
     { value: 'Montly', text: 'Montly' },
@@ -41,6 +40,11 @@ const HomePage = () => {
     setSelectedOption(event.target.value);
   };
 
+  const formattedDate = moment(selectDate).format('dddd, DD-MM-YYYY');
+  const formattedDates = moment(selectDate).format('YYYY-MM-DD');
+  localStorage.setItem("tanggal", JSON.stringify(formattedDates))
+  localStorage.setItem("formattedDate", JSON.stringify(formattedDate))
+
   return (
     <>
       <div className="content-padding">
@@ -48,7 +52,7 @@ const HomePage = () => {
           <EuiFlexItem>
             <EuiText paddingSize="l">
               <div className="summary">Fuel Summary</div>
-              <div className="date">Tuesday, 26-April-2024</div>
+              <div className="date">{formattedDate}</div>
             </EuiText>
           </EuiFlexItem>
           <EuiFlexItem>
@@ -64,6 +68,8 @@ const HomePage = () => {
                   className="date-picker"
                   selected={selectDate}
                   onChange={handleChageDate}
+                  dateFormat="DD/MM/YYYY"  
+                  locale="en-gb" 
                 />
               </EuiFlexItem>
               <EuiFlexItem>
