@@ -1,10 +1,8 @@
 import React, { useState } from 'react';
 import {
   EuiButton,
-  EuiDatePicker,
   EuiFieldText,
   EuiFlexGrid,
-  EuiFlexItem,
   EuiForm,
   EuiFormRow,
   EuiModal,
@@ -12,26 +10,73 @@ import {
   EuiModalFooter,
   EuiModalHeader,
   EuiModalHeaderTitle,
-  EuiSelect,
-  EuiTextArea,
   useGeneratedHtmlId,
+  EuiOverlayMask
 } from '@elastic/eui';
 import moment from 'moment';
+import stationService from '../../services/stationDashboard';
 
 const ModalFormStation = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const closeModal = () => setIsModalVisible(false);
+  // const closeModal = () => setIsModalVisible(false);
   const showModal = () => setIsModalVisible(true);
   const modalFormId = useGeneratedHtmlId({ prefix: 'modalForm' });
   const modalTitleId = useGeneratedHtmlId();
   const [selectedDate, setSelectedDate] = useState(moment());
   const [selectedTime, setSelectedTime] = useState(moment());
   const [selectedFile, setSelectedFile] = useState(null);
+  const [stationName, setStationName] = useState("")
+  const [stationType, setStationType] = useState("")
+  const [capacity, setCapacity] = useState(0)
+  const [nozel, setNozel] = useState(0)
+  const [modalType, setModalType] = useState('');
+  const [modalMessage, setModalMessage] = useState('');
+  
+  const user = JSON.parse(localStorage.getItem('user_data'))
 
   // Handle file selection
   const onFileChange = (event) => {
     const file = event.target.files[0];
     setSelectedFile(file);
+  };
+
+  const closeModal = () => {
+    setIsModalVisible(false);
+    setModalType('');      // Reset modal type
+    setModalMessage('');   // Reset modal message
+  };
+
+  const handleSubmit = async() => {
+    const data = {
+      fuel_station_name: stationName,
+      fuel_station_type: stationType,
+      fuel_capacity: capacity,
+      fuel_nozel: nozel,
+      site: 'BCP',
+      creation_by: user.JDE
+    };
+
+    try {
+      if (data.fuel_station_name && data.fuel_station_type) {
+        await stationService.insertStation(data).then((res) =>{
+          if(res.status == 200){
+            setModalType('Success!');
+            setModalMessage('Data successfully saved!');
+            closeModal();
+          }else
+            setModalType('Failed');
+            setModalMessage('Data not saved!');
+            closeModal();
+        })
+      } else {
+        throw new Error('Failed to save data. Missing required fields.');
+      }
+    } catch (error) {
+      setModalType('error');
+      setModalMessage(error.message);
+    }
+
+    setIsModalVisible(true); 
   };
 
   return (
@@ -54,24 +99,28 @@ const ModalFormStation = () => {
                   <EuiFieldText 
                   name='station'
                   placeholder='Input'
+                  onChange={(e) => setStationName(e.target.value)}
                />
                 </EuiFormRow>
                 <EuiFormRow  style={{marginTop:"0px"}} label="Capacity/L">
                   <EuiFieldText 
-                   name='capacity'
+                  name='capacity'
                   placeholder='Input'
+                  onChange={(e) => setCapacity(e.target.value)}
                   />
                 </EuiFormRow>
                 <EuiFormRow label="Type">
                   <EuiFieldText 
-                    name='type'
+                  name='type'
                   placeholder='Input'
+                  onChange={(e) => setStationType(e.target.value)}
                   />
                 </EuiFormRow>
                 <EuiFormRow label="Nozal Qty">
                   <EuiFieldText 
                   name='qty'
                   placeholder='Input'
+                  onChange={(e) => setNozel(e.target.value)}
                   />
                 </EuiFormRow>
               </EuiFlexGrid>
@@ -101,8 +150,12 @@ const ModalFormStation = () => {
             }}
               type="button" 
               onClick={() => {
-                document.getElementById(modalFormId)?.dispatchEvent(new Event('submit')); // Trigger form submission
-                closeModal(); 
+                const formElement = document.getElementById(modalFormId);
+                if (formElement) {
+                  formElement.dispatchEvent(new Event('submit')); 
+                }
+                closeModal();  
+                handleSubmit(); 
               }}
               fill
             >
@@ -110,6 +163,30 @@ const ModalFormStation = () => {
             </EuiButton>
           </EuiModalFooter>
         </EuiModal>
+      )}
+
+      {modalType && (
+        <EuiOverlayMask>
+          <EuiModal onClose={closeModal}>
+            <EuiModalHeader>
+              <EuiModalHeaderTitle>{modalType === 'success' ? 'Success' : 'Error'}</EuiModalHeaderTitle>
+            </EuiModalHeader>
+            <EuiModalBody>
+              <p>{modalMessage}</p>
+            </EuiModalBody>
+            <EuiModalFooter>
+              <EuiButton 
+              style={{
+                background: "#73A33F",
+                color: "white",
+                width: "100px",
+              }}
+              onClick={closeModal} fill>
+                Close
+              </EuiButton>
+            </EuiModalFooter>
+          </EuiModal>
+        </EuiOverlayMask>
       )}
     </>
   );

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from 'react';
 import Icon1 from "../../images/icon1.png";
 import Icon2 from "../../images/chart.png";
 import Icon3 from "../../images/circle.png";
@@ -9,65 +9,71 @@ import NavTop from "../../components/NavTop";
 import TableData from "./table";
 import FormModal from "../../components/ModalForm";
 import TableDataDetails from "./TableDetails";
+import { useParams } from "react-router-dom";
+import formService from '../../services/formDashboard';
 
 const DetailsPageTransaction = () => {
+  const {lkfId} = useParams()
+  const [formTotal, setFormTotal] = useState(0)
+  const date = JSON.parse(localStorage.getItem('formattedDate'));
+
   const cardsDataAll = [
     {
-      title: "4,368 Ltrs",
+      title: formTotal.openStock ? formTotal.openStock : 0,
       description1: "Opening Stock",
       description2: "(Opening Dip)",
       icon: Icon1,
     },
     {
-      title: "119,271 Ltrs",
-      description1: "Recept",
+      title: formTotal.receipt ? formTotal.receipt : 0,
+      description1: "Receipt",
       description2: "(From Other FS or FT)",
       icon: Icon1,
     },
     {
-      title: "119,271 Ltrs",
+      title: formTotal.stock ? formTotal.stock : 0,
       description1: "Stock",
       description2: "( onHand )",
       icon: Icon1,
     },
     {
-        title: "119,271 Ltrs",
+        title: formTotal.issued ? formTotal.issued : 0,
         description1: "Issued",
         description2: "( Issued + Transfer )",
         icon: Icon2,
       },
       {
-        title: "119,271 Ltrs",
+        title: formTotal.totalBalance ? formTotal.totalBalance : 0,
         description1: "Total Balance",
         description2: "( Stock - Issued )",
         icon: Icon2,
       },
       {
-        title: "119,271 Ltrs",
+        title: formTotal.closingStock ? formTotal.closingStock : 0,
         description1: "Closing Stock",
         description2: "( Closing Dip)",
         icon: Icon2,
       },
       {
-        title: "271 Ltrs",
+        title: formTotal.dailyVarience ? formTotal.dailyVarience : 0,
         description1: "Daily Variance",
         description2: "( Closing Dip - Balance)",
         icon: Icon3,
       },
       {
-        title: "1000",
+        title: formTotal.startMeter ? formTotal.startMeter : 0,
         description1: "Start Meter",
         description2: "( Flow Meter Start",
         icon: Icon3,
       },
       {
-        title: "1200",
+        title: formTotal.closeMeter ? formTotal.closeMeter : 0,
         description1: "Close Meter",
         description2: "( Flow Meter End",
         icon: Icon3,
       },
       {
-        title: "1200",
+        title:formTotal.totalMeter ? formTotal.totalMeter : 0,
         description1: "Total Meter",
         description2: "( Close Meter - Start Meter",
         icon: Icon1,
@@ -94,7 +100,21 @@ const DetailsPageTransaction = () => {
     },
   ];
 
- 
+  useEffect(() => {
+    const fetchTable = async () => {
+      try {
+        const res = await formService.summaryForm(lkfId)
+        if (res.status != 200) {
+          throw new Error('Network response was not ok');
+        }
+        setFormTotal(res.data);
+      } catch (error) {
+        console.log(error)
+        // setError(error);
+      } 
+    };
+    fetchTable()
+  }, []);
 
   return (
     <>
@@ -102,8 +122,8 @@ const DetailsPageTransaction = () => {
       <div className="padding-content">
         <div style={{ marginTop: "20px" }}>
           <EuiText>
-            <div className="summary">Dashboard T112</div>
-            <div className="date">Tuesday, 26-April-2024</div>
+            <div className="summary">Dashboard Form Number : {lkfId}</div>
+            <div className="date">{date}</div>
           </EuiText>
         </div>
         <EuiText style={{ marginTop: "20px" }}>
@@ -117,7 +137,7 @@ const DetailsPageTransaction = () => {
        
     
         <div className="mt20">
-          <TableDataDetails />
+          <TableDataDetails lkfId = {lkfId}/>
         </div>
        
       </div>

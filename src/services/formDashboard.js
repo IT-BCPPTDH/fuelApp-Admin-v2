@@ -5,9 +5,9 @@ const api = axios.create({
   maxBodyLength: Infinity
 });
 
-const summaryDashboard = async (requestBody) => {
+const summaryForm = async (requestBody) => {
     try {
-        const response = await api.post(URL_API.summaryHome, requestBody, {
+        const response = await api.get(URL_API.formDashboard+requestBody, {
             headers: {
                 'Content-Type': 'application/json',
             },
@@ -19,9 +19,9 @@ const summaryDashboard = async (requestBody) => {
     }
 };
 
-const tableDashboard = async (requestBody) => {
+const tableForm = async (requestBody) => {
     try {
-        const response = await api.post(URL_API.tableHome, requestBody, {
+        const response = await api.get(URL_API.formTable+requestBody, {
             headers: {
                 'Content-Type': 'application/json',
             },
@@ -33,9 +33,9 @@ const tableDashboard = async (requestBody) => {
     }
 };
 
-const MainService = {
-    summaryDashboard,
-    tableDashboard
+const formService = {
+    summaryForm,
+    tableForm
 };
 
-export default MainService;
+export default formService;

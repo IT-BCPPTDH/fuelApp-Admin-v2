@@ -53,7 +53,7 @@ const RouteApp = () => {
           </Suspense>
         </Layout>
       ),
-      path: '/details',
+      path: '/form-data/:lkfId',
       errorElement: <FallbackUI />,
     },
     
