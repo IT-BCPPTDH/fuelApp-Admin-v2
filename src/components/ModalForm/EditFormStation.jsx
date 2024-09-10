@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import {
   EuiButton,
   EuiFieldText,
@@ -11,61 +11,59 @@ import {
   EuiModalHeader,
   EuiModalHeaderTitle,
   useGeneratedHtmlId,
-  EuiOverlayMask
+  EuiOverlayMask,
+  EuiButtonIcon
 } from '@elastic/eui';
+import moment from 'moment';
 import stationService from '../../services/stationDashboard';
+import ActionButtons from '../Action';
 
-const EditModalFormStation = ({ stationData, onClose }) => {
-  const [isModalVisible, setIsModalVisible] = useState(true);
+const ModalFormStationEdit = () => {
+  const [isModalVisible, setIsModalVisible] = useState(false);
   const [stationName, setStationName] = useState("");
   const [stationType, setStationType] = useState("");
   const [capacity, setCapacity] = useState(0);
   const [nozel, setNozel] = useState(0);
   const [modalType, setModalType] = useState('');
   const [modalMessage, setModalMessage] = useState('');
+  const user = JSON.parse(localStorage.getItem('user_data'));
 
   const modalFormId = useGeneratedHtmlId({ prefix: 'modalForm' });
   const modalTitleId = useGeneratedHtmlId();
 
-  useEffect(() => {
-    // Populate form with existing data
-    if (stationData) {
-      setStationName(stationData.fuel_station_name || "");
-      setStationType(stationData.fuel_station_type || "");
-      setCapacity(stationData.fuel_capacity || 0);
-      setNozel(stationData.fuel_nozel || 0);
-    }
-  }, [stationData]);
+
 
   const closeModal = () => {
     setIsModalVisible(false);
-    onClose(); // Notify parent component to close the modal
-    setModalType('');
-    setModalMessage('');
+    setModalType(''); // Reset modal type
+    setModalMessage(''); // Reset modal message
   };
 
-  const handleSubmit = async() => {
+  const handleSubmit = async () => {
     const data = {
       fuel_station_name: stationName,
       fuel_station_type: stationType,
       fuel_capacity: capacity,
       fuel_nozel: nozel,
+      site: 'BCP',
+      creation_by: user.JDE
     };
 
     try {
       if (data.fuel_station_name && data.fuel_station_type) {
-        await stationService.updateStation(stationData.id, data).then((res) =>{
-          if(res.status === 200){
+        await stationService.insertStation(data).then((res) => {
+          if (res.status === 200) {
             setModalType('Success!');
-            setModalMessage('Data successfully updated!');
+            setModalMessage('Data successfully saved!');
+            closeModal();
           } else {
             setModalType('Failed');
-            setModalMessage('Data not updated!');
+            setModalMessage('Data not saved!');
+            closeModal();
           }
-          closeModal();
         });
       } else {
-        throw new Error('Failed to update data. Missing required fields.');
+        throw new Error('Failed to save data. Missing required fields.');
       }
     } catch (error) {
       setModalType('Error');
@@ -75,6 +73,7 @@ const EditModalFormStation = ({ stationData, onClose }) => {
 
   return (
     <>
+     <EuiButtonIcon iconType="pencil"  onClick={() => setIsModalVisible(true)}>Edit</EuiButtonIcon>
       {isModalVisible && (
         <EuiModal
           aria-labelledby={modalTitleId}
@@ -89,34 +88,30 @@ const EditModalFormStation = ({ stationData, onClose }) => {
             <EuiForm id={modalFormId} component="form">
               <EuiFlexGrid columns={2}>
                 <EuiFormRow label="Fuel Station Name">
-                  <EuiFieldText 
+                  <EuiFieldText
                     name='station'
                     placeholder='Input'
-                    value={stationName}
                     onChange={(e) => setStationName(e.target.value)}
                   />
                 </EuiFormRow>
-                <EuiFormRow label="Capacity/L">
-                  <EuiFieldText 
+                <EuiFormRow style={{ marginTop: "0px" }} label="Capacity/L">
+                  <EuiFieldText
                     name='capacity'
                     placeholder='Input'
-                    value={capacity}
                     onChange={(e) => setCapacity(e.target.value)}
                   />
                 </EuiFormRow>
                 <EuiFormRow label="Type">
-                  <EuiFieldText 
+                  <EuiFieldText
                     name='type'
                     placeholder='Input'
-                    value={stationType}
                     onChange={(e) => setStationType(e.target.value)}
                   />
                 </EuiFormRow>
-                <EuiFormRow label="Nozal Qty">
-                  <EuiFieldText 
+                <EuiFormRow label="Nozel Qty">
+                  <EuiFieldText
                     name='qty'
                     placeholder='Input'
-                    value={nozel}
                     onChange={(e) => setNozel(e.target.value)}
                   />
                 </EuiFormRow>
@@ -131,7 +126,10 @@ const EditModalFormStation = ({ stationData, onClose }) => {
                 color: "#73A33F",
                 width: "100px",
               }}
-              onClick={closeModal}
+              onClick={() => {
+                document.getElementById(modalFormId)?.dispatchEvent(new Event('submit')); // Trigger form submission
+                closeModal();
+              }}
               fill
             >
               Cancel
@@ -143,7 +141,13 @@ const EditModalFormStation = ({ stationData, onClose }) => {
                 width: "100px",
               }}
               type="button"
-              onClick={handleSubmit}
+              onClick={() => {
+                const formElement = document.getElementById(modalFormId);
+                if (formElement) {
+                  formElement.dispatchEvent(new Event('submit'));
+                }
+                handleSubmit();
+              }}
               fill
             >
               Save
@@ -152,23 +156,34 @@ const EditModalFormStation = ({ stationData, onClose }) => {
         </EuiModal>
       )}
 
+      <EuiButtonIcon
+        iconType="trash"
+        aria-label="Delete"
+        color="danger"
+        onClick={() => alert('Delete button clicked')}
+        title="Delete"
+      />
+     
+
       {modalType && (
         <EuiOverlayMask>
           <EuiModal onClose={closeModal}>
             <EuiModalHeader>
-              <EuiModalHeaderTitle>{modalType === 'Success!' ? 'Success' : 'Error'}</EuiModalHeaderTitle>
+              <EuiModalHeaderTitle>{modalType === 'Success' ? 'Success' : 'Error'}</EuiModalHeaderTitle>
             </EuiModalHeader>
             <EuiModalBody>
               <p>{modalMessage}</p>
             </EuiModalBody>
             <EuiModalFooter>
-              <EuiButton 
+              <EuiButton
                 style={{
                   background: "#73A33F",
                   color: "white",
                   width: "100px",
                 }}
-                onClick={closeModal} fill>
+                onClick={closeModal}
+                fill
+              >
                 Close
               </EuiButton>
             </EuiModalFooter>
@@ -179,4 +194,4 @@ const EditModalFormStation = ({ stationData, onClose }) => {
   );
 };
 
-export default EditModalFormStation;
+export default ModalFormStationEdit;

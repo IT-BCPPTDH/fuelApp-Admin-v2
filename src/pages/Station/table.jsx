@@ -10,6 +10,9 @@ import { Data } from './data'; // Ensure this path is correct
 import { useNavigate } from 'react-router-dom'; 
 import ModalFormStation from '../../components/ModalForm/ModalAddStation';
 import stationService from '../../services/stationDashboard';
+import ActionButtons from '../../components/Action';
+import EditModalFormStation from '../../components/ModalForm/EditFormStation';
+import ModalFormStationEdit from '../../components/ModalForm/EditFormStation';
 
 const TableData = () => {
   const navigate = useNavigate(); 
@@ -18,7 +21,8 @@ const TableData = () => {
   const [pageSize, setPageSize] = useState(10);
   const [showPerPageOptions, setShowPerPageOptions] = useState(true);
   const [tables, setTables] = useState([])
-
+  const [selectedItem, setSelectedItem] = useState(null);
+  const [isEditModalVisible, setIsEditModalVisible] = useState(false);
   const columns = [
     {
       field: 'id',
@@ -46,49 +50,21 @@ const TableData = () => {
       truncateText: true,
     },
     {
-      field: 'action',
       name: 'Action',
       render: (item) => (
-        <div className='action-buttons'>
-          <EuiButtonIcon
-            iconType="pencil"
-            aria-label="Edit"
-            color="success"
-            onClick={(e) => {
-              e.stopPropagation(); 
-              handleEdit(item);
-            }}
-          />
-          <EuiButtonIcon
-            iconType="trash"
-            aria-label="Delete"
-            color="danger"
-            onClick={(e) => {
-              e.stopPropagation();
-              handleDelete(item, e);
-            }}
-          />
-        </div>
+       <>
+       <ModalFormStationEdit></ModalFormStationEdit>
+       </>
       ),
       truncateText: true,
     },
   ];
 
-  const handleRowClick = (item) => {
-    navigate(`/details/${item.id}`); 
-  };
+ 
 
-  const getRowProps = (item) => ({
-    'data-test-subj': `row-${item.id}`,
-    className: 'customRowClass',
-    onClick: () => handleRowClick(item),
-  });
+ 
 
-  const getCellProps = (item, column) => ({
-    className: 'customCellClass',
-    'data-test-subj': `cell-${item.id}-${String(column.field)}`,
-    textOnly: true,
-  });
+ ;
 
   const handleSearchChange = (value) => {
     setSearchValue(value);
@@ -128,21 +104,6 @@ const TableData = () => {
       </>
     );
 
-  const handleEdit = (item) => {
-    // Implement your edit logic here
-    console.log('Edit:', item);
-    // Example: navigate to an edit page or show a modal
-    navigate(`/edit/${item.station}`);
-  };
-
-  const handleDelete = (item, e) => {
-    // Implement your delete logic here
-    console.log('Delete:', e.target.value, item);
-    // Example: show a confirmation dialog and make an API call
-    if (window.confirm(`Are you sure you want to delete ${item.id}?`)) {
-      // Call API to delete item and refresh table
-    }
-  };
 
   useEffect(() => {
     const fetchStation = async () => {
@@ -191,8 +152,6 @@ const TableData = () => {
         tableCaption="Demo of EuiBasicTable"
         items={pageOfItems}
         columns={columns}
-        rowProps={getRowProps}
-        cellProps={getCellProps}
         pagination={pagination}
         onChange={({ page }) => {
           if (page) {
@@ -201,6 +160,12 @@ const TableData = () => {
           }
         }}
       />
+      {isEditModalVisible && selectedItem && (
+        <EditModalFormStation
+          stationData={selectedItem}
+          onClose={closeEditModal}
+        />
+      )}
     </>
   );
 };
