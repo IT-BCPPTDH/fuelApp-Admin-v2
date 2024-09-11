@@ -122,7 +122,7 @@ const DetailsPageTransaction = () => {
       <div className="padding-content">
         <div style={{ marginTop: "20px" }}>
           <EuiText>
-            <div className="summary">Dashboard Form Number : {lkfId}</div>
+            <div className="summary">Form Number : {lkfId}</div>
             <div className="date">{date}</div>
           </EuiText>
         </div>

@@ -19,19 +19,19 @@ const DetailPage = () => {
 
   const cardsDataAll = [
     {
-      title: "4,368 Ltrs",
+      title: summaryAll.totalPrevSonding,
       description1: "Previous Close Sonding",
       description2: "Total close sonding",
       icon: Icon1,
     },
     {
-      title: "119,271 Ltrs",
+      title: summaryAll.totalOpenSonding,
       description1: "Open Stock (Sonding)",
       description2: "Summary Open Sonding",
       icon: Icon1,
     },
     {
-      title: "119,271 Ltrs",
+      title: summaryAll.totalReciptKpc,
       description1: "Receipt KPC",
       description2: "Summary Receipt KPC",
       icon: Icon1,
@@ -39,19 +39,19 @@ const DetailPage = () => {
   ];
   const cardsDataShiftDay = [
     {
-      title: "119,271 Ltrs",
+      title: summaryAll.prevSondingDay,
       description1: "Previous Close Sonding",
       description2: "Total close sonding",
       icon: Icon2,
     },
     {
-      title: "119,271 Ltrs",
+      title: summaryAll.openSondingDay,
       description1: "Open Stock (Sonding)",
       description2: "Summary Open Sonding",
       icon: Icon2,
     },
     {
-      title: "119,271 Ltrs",
+      title: summaryAll.receiptKpcDay,
       description1: "Receipt KPC",
       description2: "Summary Receipt KPC",
       icon: Icon2,
@@ -60,19 +60,19 @@ const DetailPage = () => {
 
   const cardsDataShiftNigth = [
     {
-      title: "119,271 Ltrs",
+      title: summaryAll.prevSondingNight,
       description1: "Previous Close Sonding",
       description2: "Total close sonding",
       icon: Icon3,
     },
     {
-      title: "119,271 Ltrs",
+      title: summaryAll.openSondingNight,
       description1: "Open Stock (Sonding)",
       description2: "Summary Open Sonding",
       icon: Icon3,
     },
     {
-      title: "119,271 Ltrs",
+      title: summaryAll.receiptKPCNight,
       description1: "Receipt KPC",
       description2: "Summary Receipt KPC",
       icon: Icon3,
@@ -86,7 +86,6 @@ const DetailPage = () => {
         if (res.status != 200) {
           throw new Error('Network response was not ok');
         }
-        // console.log(res)
         setSummaryAll(res.data);
       } catch (error) {
         console.log(error)
@@ -102,7 +101,7 @@ const DetailPage = () => {
       <div className="padding-content">
         <div style={{ marginTop: "20px" }}>
           <EuiText>
-            <div className="summary">Dashboard T112</div>
+            <div className="summary">Station T112</div>
             <div className="date">{dates}</div>
           </EuiText>
         </div>

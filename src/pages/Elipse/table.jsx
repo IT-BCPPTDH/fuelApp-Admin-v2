@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   EuiBasicTable,
   EuiButton,
@@ -12,6 +12,7 @@ import { useNavigate } from 'react-router-dom';
 import ModalForm from '../../components/ModalForm';
 import ModalFormStation from '../../components/ModalForm/ModalAddStation';
 import ModalFormStock from '../../components/ModalForm/ModalStockSystem';
+import masterElipseService from '../../services/masterElipse';
 
 const TableData = () => {
   const navigate = useNavigate(); 
@@ -19,46 +20,67 @@ const TableData = () => {
   const [pageIndex, setPageIndex] = useState(0);
   const [pageSize, setPageSize] = useState(10);
   const [showPerPageOptions, setShowPerPageOptions] = useState(true);
+  const [elipses, setElipses] = useState([])
 
   const columns = [
     {
-      field: 'no',
+      field: 'id',
       name: 'No',
       truncateText: true,
     },
     {
-      field: 'unit_no',
+      field: 'equip_no_unit',
       name: 'No Unit',
       truncateText: true,
     },
     {
-      field: 'item',
-      name: 'Item Name',
+      field: 'equip_no_show',
+      name: 'No show',
       truncateText: true,
     },
     {
-      field: 'owner',
-      name: 'Owner',
+      field: 'equip_model_egi',
+      name: 'Model',
       truncateText: true,
     },
     {
-      field: 'capacity',
-      name: 'Tank Capacity (L)',
+      field: 'equip_description',
+      name: 'Deskirpsi',
       truncateText: true,
     },
     {
-      field: 'eq_type',
-      name: 'Eq Type',
+      field: 'equip_category',
+      name: 'Kategori',
       truncateText: true,
     },
     {
-      field: 'eq_groupId',
-      name: 'Eq Group Id',
+      field: 'equip_cap_tank',
+      name: 'Kapasitas Tank',
       truncateText: true,
     },
     {
-      field: 'district_code',
-      name: 'District Code',
+      field: 'equip_fbr',
+      name: 'FBR',
+      truncateText: true,
+    },
+    {
+      field: 'equip_position',
+      name: 'Posisi',
+      truncateText: true,
+    },
+    {
+      field: 'equip_owner_protes',
+      name: 'Protes',
+      truncateText: true,
+    },
+    {
+      field: 'equip_owner_elipse',
+      name: 'Elipse',
+      truncateText: true,
+    },
+    {
+      field: 'keterangan',
+      name: 'Keterangan',
       truncateText: true,
     },
     {
@@ -90,8 +112,6 @@ const TableData = () => {
     },
   ];
 
- 
-
   const handleRowClick = (item) => {
  
     navigate(`/details/${item.station}`); 
@@ -114,8 +134,8 @@ const TableData = () => {
     setSearchValue(value);
   };
 
-  const filteredItems = Data.filter(item =>
-    item.station.toLowerCase().includes(searchValue.toLowerCase())
+  const filteredItems = elipses.filter(item =>
+    item.equip_no_unit.toLowerCase().includes(searchValue.toLowerCase())
   );
 
   const findPageItems = (items, pageIndex, pageSize) => {
@@ -148,6 +168,25 @@ const TableData = () => {
       </>
     );
 
+    useEffect(() => {
+      const fetchElipse = async () => {
+        try {
+          const res = await masterElipseService.getElipses()
+          if (res.status != 200) {
+            throw new Error('Network response was not ok');
+          }else if(res.status == 404){
+            setElipses([]);
+          }else{
+            setElipses(res.data);
+          }
+        } catch (error) {
+          console.log(error)
+          // setError(error);
+        } 
+      };
+      fetchElipse()
+    }, []);
+    
   return (
     <>
       <div style={{ marginBottom: '10px', display: "flex", justifyContent: "flex-end",gap:"15px",alignItems: "center" }}>

@@ -49,6 +49,15 @@ export const URL_MASTER_DATA = {
     getDetailBanlaws: `${linkMasterData}/master/unit-banlaws/detail/`,
     insertBanlaws:`${linkMasterData}/master/unit-banlaws/insert`,
     updateBanlaws:`${linkMasterData}/master/unit-banlaws/edit`,
+    delBanlaws:`${linkMasterData}/master/unit-banlaws/delete/`,
+    getMDSonding:`${linkMasterData}/master/sonding-master`,
+    delMDSonding: `${linkMasterData}/sonding-master/delete/`,
+    insertMDSonding:`${linkMasterData}/master/sonding-master/insert`,
+    updateMDSonding:`${linkMasterData}/master/sonding-master/edit`,
+    getMDElipse:`${linkMasterData}/master/master-elipses`,
+    delMDElipse: `${linkMasterData}/master/master-elipses/delete/`,
+    insertMDElipse:`${linkMasterData}/master/master-elipses/insert`,
+    updateMDElipse:`${linkMasterData}/master/master-elipses/edit`,
 };
 
 // HTTP Status Codes

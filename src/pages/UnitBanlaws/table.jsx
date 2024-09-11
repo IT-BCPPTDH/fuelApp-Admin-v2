@@ -7,12 +7,11 @@ import {
   EuiLink,
   EuiButtonIcon,
 } from '@elastic/eui';
-import { Data } from './data'; // Ensure this path is correct
 import { useNavigate } from 'react-router-dom'; 
 import ModalForm from '../../components/ModalForm';
 import ModalFormStation from '../../components/ModalForm/ModalAddStation';
 import ModalFormStock from '../../components/ModalForm/ModalStockSystem';
-import sondingService from '../../services/masterSonding';
+import UnitBanlawsService from '../../services/unitBanlaws';
 
 const TableData = () => {
   const navigate = useNavigate(); 
@@ -20,7 +19,7 @@ const TableData = () => {
   const [pageIndex, setPageIndex] = useState(0);
   const [pageSize, setPageSize] = useState(10);
   const [showPerPageOptions, setShowPerPageOptions] = useState(true);
-  const [sonding, setSonding] = useState([])
+  const [banlaws, setBanlaws] = useState([])
 
   const columns = [
     {
@@ -29,26 +28,30 @@ const TableData = () => {
       truncateText: true,
     },
     {
-      field: 'station',
-      name: 'Station',
+      field: 'unit_input',
+      name: 'Unit Input',
       truncateText: true,
     },
     {
-      field: 'cm',
-      name: 'CM',
+      field: 'unit_elipse',
+      name: 'Unit Elipse',
       truncateText: true,
     },
     {
-      field: 'liters',
-      name: 'Liters',
+      field: 'owner',
+      name: 'Owner',
       truncateText: true,
     },
     {
-      field: 'site',
-      name: 'Site',
+      field: 'pin_banlaw',
+      name: 'Pin Banlaws',
       truncateText: true,
     },
- 
+    {
+      field: 'unit_banlaw',
+      name: 'Unit Banlaws',
+      truncateText: true,
+    },
     {
       field: 'action',
       name: 'Action',
@@ -100,8 +103,8 @@ const TableData = () => {
     setSearchValue(value);
   };
 
-  const filteredItems = sonding.filter(item =>
-    item.station.toLowerCase().includes(searchValue.toLowerCase())
+  const filteredItems = banlaws.filter(item =>
+    item.unit_elipse.toLowerCase().includes(searchValue.toLowerCase())
   );
 
   const findPageItems = (items, pageIndex, pageSize) => {
@@ -135,23 +138,25 @@ const TableData = () => {
     );
 
     useEffect(() => {
-      const fetchSonding = async () => {
+      const fetchBanlaws = async () => {
         try {
-          const res = await sondingService.getSonding()
+          const res = await UnitBanlawsService.getUnitBanlaws()
+          console.log(res)
           if (res.status != 200) {
             throw new Error('Network response was not ok');
           }else if(res.status == 404){
-            setSonding([]);
+            setBanlaws([]);
           }else{
-            setSonding(res.data);
+            setBanlaws(res.data);
           }
         } catch (error) {
           console.log(error)
           // setError(error);
         } 
       };
-      fetchSonding()
+      fetchBanlaws()
     }, []);
+
 
   return (
     <>
