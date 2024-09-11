@@ -1,7 +1,7 @@
 // Configuration file
 
 // URLs from environment variables
-const link = import.meta.env.BACKEND; // Use correct env variable
+const link = import.meta.env.VITE_BACKEND; // Use correct env variable
 const userLink = import.meta.env.VITE_BE_USER;
 const linkSocket = import.meta.env.VITE_SOCKET_USER;
 const linkBe = import.meta.env.VITE_API_BASE_URL; 
