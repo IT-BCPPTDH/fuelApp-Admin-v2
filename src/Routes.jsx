@@ -16,6 +16,7 @@ const StockSystem = lazy(()=>import('./pages/StockSystem'));
 
 const DetailsPageTransaction = lazy(()=>import('./pages/DetailTrasactionDashboard/detailTransaction'));
 const ElipsePage = lazy(()=>import('./pages/Elipse'));
+const BanlawsPage = lazy(()=>import('./pages/UnitBanlaws'));
 
 const RouteApp = () => {
   const {isLogged}=useAuth()
@@ -111,6 +112,17 @@ const RouteApp = () => {
         </Layout>
       ),
       path: '/master-elipse',
+      errorElement: <FallbackUI />,
+    },
+    {
+      element: (
+        <Layout>
+          <Suspense fallback={<div>Loading Unit Banlaws...</div>}>
+            <BanlawsPage/>
+          </Suspense>
+        </Layout>
+      ),
+      path: '/unit-banlaws',
       errorElement: <FallbackUI />,
     },
   ]:[

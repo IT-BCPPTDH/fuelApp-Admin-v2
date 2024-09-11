@@ -38,7 +38,7 @@ const NavTop = () => {
     navigate('/master-station');
     navigate('/master-stock-system');
     navigate('/master-elipse');
-
+    navigate('/unit-banlaws');
   };
 
   const handlebackHome = () => {
@@ -63,8 +63,9 @@ const NavTop = () => {
   const menuItemstMaster = [
     { label: 'Station', action: () => navigate('/master-station') },
     { label: 'Equipment', action: () => navigate('/another-item') },
-    { label: 'Stock System', action: () => navigate('/master-stock-system') },
+    { label: 'Sonding Master', action: () => navigate('/master-stock-system') },
     { label: 'Master Data Elipse', action: () => navigate('/master-elipse') },
+    { label: 'Unit Banlaws', action: () => navigate('/unit-banlaws') },
     { label: 'User', action: () => navigate('/another-item') },
   ];
 
@@ -146,6 +147,13 @@ const HeaderUserMenu = () => {
     setIsOpen(false);
   };
 
+  const handlelLogout = () => {
+    localStorage.removeItem('user_data'); 
+    Cookies.remove('token')
+    Cookies.remove('user')
+    window.location.reload('/')
+  }
+
   return (
     <EuiPopover
       id="headerUserPopover"
@@ -182,11 +190,7 @@ const HeaderUserMenu = () => {
           <p>Position: {userData.position}</p>
         </EuiText>
         <EuiText>
-          <EuiLink onClick={() => {
-          
-            localStorage.removeItem('user_data'); 
-           
-          }}>Log out</EuiLink>
+          <EuiLink onClick={handlelLogout}>Log out</EuiLink>
         </EuiText>
       </div>
     </EuiPopover>
