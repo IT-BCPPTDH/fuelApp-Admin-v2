@@ -8,9 +8,7 @@ import {
   EuiButtonIcon,
 } from '@elastic/eui';
 import { useNavigate } from 'react-router-dom'; 
-import ModalForm from '../../components/ModalForm';
-import ModalFormStation from '../../components/ModalForm/ModalAddStation';
-import ModalFormStock from '../../components/ModalForm/ModalStockSystem';
+import ModalFormUnit from '../../components/ModalForm/ModalUnitBanlaws';
 import UnitBanlawsService from '../../services/unitBanlaws';
 
 const TableData = () => {
@@ -141,7 +139,6 @@ const TableData = () => {
       const fetchBanlaws = async () => {
         try {
           const res = await UnitBanlawsService.getUnitBanlaws()
-          console.log(res)
           if (res.status != 200) {
             throw new Error('Network response was not ok');
           }else if(res.status == 404){
@@ -162,7 +159,7 @@ const TableData = () => {
     <>
       <div style={{ marginBottom: '10px', display: "flex", justifyContent: "flex-end",gap:"15px",alignItems: "center" }}>
     
-        <ModalFormStock/>
+        <ModalFormUnit/>
         <EuiFieldSearch
           placeholder="Search data" 
           value={searchValue}

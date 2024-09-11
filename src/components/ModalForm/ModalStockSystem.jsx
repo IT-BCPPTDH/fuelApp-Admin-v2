@@ -37,7 +37,7 @@ const ModalFormStock = () => {
 
   return (
     <>
-      <EuiButton style={{background:"#1B46D9", color:"white"}}  onClick={showModal}>New Stock System</EuiButton>
+      <EuiButton style={{background:"#1B46D9", color:"white"}}  onClick={showModal}>Tambah Data</EuiButton>
       {isModalVisible && (
         <EuiModal
           aria-labelledby={modalTitleId}
@@ -46,7 +46,7 @@ const ModalFormStock = () => {
           style={{ width: "880px" }}
         >
           <EuiModalHeader>
-            <EuiModalHeaderTitle id={modalTitleId}> Add New Stock System</EuiModalHeaderTitle>
+            <EuiModalHeaderTitle id={modalTitleId}>Tambah Data Unit</EuiModalHeaderTitle>
           </EuiModalHeader>
           <EuiModalBody>
           <EuiForm id={modalFormId} component="form">
