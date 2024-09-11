@@ -60,12 +60,6 @@ const TableData = () => {
     },
   ];
 
- 
-
- 
-
- ;
-
   const handleSearchChange = (value) => {
     setSearchValue(value);
   };

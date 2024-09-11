@@ -47,13 +47,14 @@ const updateUnitBanlaws = async (requestBody) => {
     }
 };
 
-const delUnitBanlaws = async (requestBody) => {
+const delUnitBanlaws = async (id) => {
     try {
-        const response = await api.patch(URL_MASTER_DATA.delBanlaws, requestBody, {
+        const response = await api.patch(URL_MASTER_DATA.delBanlaws+id, {
             headers: {
                 'Content-Type': 'application/json',
             },
         });
+        console.log(1, response)
         return response.data;
     } catch (error) {
         console.error('Error fetching data:', error.message);
