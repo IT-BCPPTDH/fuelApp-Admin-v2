@@ -13,8 +13,8 @@ const BanlawsPage = () => {
   const breadcrumbs = [
     {
       text: 'Dashboard',
-      href: '#',
-      onClick: (e) => e.preventDefault(),
+      href: '/',
+      // onClick: (e) => e.preventDefault(),
     },
     {
       text: 'Unit Banlaws',
@@ -27,7 +27,7 @@ const BanlawsPage = () => {
     <>
       <div className="padding-content">
         <DynamicPageHeader
-          pageTitle="Stock System"
+          pageTitle="Unit Banlaws"
           breadcrumbs={breadcrumbs}
           pageTitleStyle={{ color: '#6a6a6a', fontSize: '24px' }}
         />

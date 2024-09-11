@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import {
   EuiButton,
+  EuiDatePicker,
   EuiFieldText,
   EuiFlexGrid,
+  EuiFlexItem,
   EuiForm,
   EuiFormRow,
   EuiModal,
@@ -10,26 +12,26 @@ import {
   EuiModalFooter,
   EuiModalHeader,
   EuiModalHeaderTitle,
+  EuiSelect,
+  EuiTextArea,
   useGeneratedHtmlId,
-  EuiOverlayMask
 } from '@elastic/eui';
-import moment from 'moment';
-import stationService from '../../services/stationDashboard';
+import UnitBanlawsService from '../../services/unitBanlaws';
 
-const ModalFormStation = () => {
+
+const ModalFormUnit = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
-  // const closeModal = () => setIsModalVisible(false);
   const showModal = () => setIsModalVisible(true);
   const modalFormId = useGeneratedHtmlId({ prefix: 'modalForm' });
   const modalTitleId = useGeneratedHtmlId();
-  const [stationName, setStationName] = useState("")
-  const [stationType, setStationType] = useState("")
-  const [capacity, setCapacity] = useState(0)
-  const [nozel, setNozel] = useState(0)
+  const [unitInput, setUnitInput] = useState("")
+  const [unitElipse, setUnitElipse] = useState("")
+  const [owner, setOwner] = useState("")
+  const [pin, setPin] = useState("")
+  const [unitBanlaws, setUnitBanlaws] = useState("")
+  const user = JSON.parse(localStorage.getItem('user_data'))
   const [modalType, setModalType] = useState('');
   const [modalMessage, setModalMessage] = useState('');
-  
-  const user = JSON.parse(localStorage.getItem('user_data'))
 
   const closeModal = () => {
     setIsModalVisible(false);
@@ -39,39 +41,35 @@ const ModalFormStation = () => {
 
   const handleSubmit = async() => {
     const data = {
-      fuel_station_name: stationName,
-      fuel_station_type: stationType,
-      fuel_capacity: capacity,
-      fuel_nozel: nozel,
-      site: 'BCP',
-      creation_by: user.JDE
+        unit_input: unitInput,
+        unit_elipse: unitElipse,
+        owner: owner,
+        pin_banlaw: pin,
+        unit_banlaw: unitBanlaws,
+        creation_by: user.JDE
     };
     try {
-      if (data.fuel_station_name && data.fuel_station_type) {
-        await stationService.insertStation(data).then((res) =>{
-          if(res.status == 200){
-            setModalType('Success!');
-            setModalMessage('Data successfully saved!');
-            closeModal();
-          }else
-            setModalType('Failed');
-            setModalMessage('Data not saved!');
-            closeModal();
+        await UnitBanlawsService.insertUnitBanlaws(data).then((res) =>{
+            if(res.status == 200){
+              setModalType('Success!');
+              setModalMessage('Data successfully saved!');
+              closeModal();
+            }else
+              setModalType('Failed');
+              setModalMessage('Data not saved!');
+              closeModal();
         })
-      } else {
-        throw new Error('Failed to save data. Missing required fields.');
-      }
     } catch (error) {
       setModalType('error');
       setModalMessage(error.message);
+    
     }
-
     setIsModalVisible(true); 
   };
 
   return (
     <>
-      <EuiButton style={{background:"#1B46D9", color:"white"}}  onClick={showModal}>New Fuel Station</EuiButton>
+      <EuiButton style={{background:"#1B46D9", color:"white"}}  onClick={showModal}>Tambah Data</EuiButton>
       {isModalVisible && (
         <EuiModal
           aria-labelledby={modalTitleId}
@@ -80,38 +78,45 @@ const ModalFormStation = () => {
           style={{ width: "880px" }}
         >
           <EuiModalHeader>
-            <EuiModalHeaderTitle id={modalTitleId}> Add New Station</EuiModalHeaderTitle>
+            <EuiModalHeaderTitle id={modalTitleId}>Tambah Data Unit</EuiModalHeaderTitle>
           </EuiModalHeader>
           <EuiModalBody>
           <EuiForm id={modalFormId} component="form">
               <EuiFlexGrid columns={2}>
-                <EuiFormRow label="Fuel Station Name">
-                  <EuiFieldText 
-                  name='station'
-                  placeholder='Input'
-                  onChange={(e) => setStationName(e.target.value)}
-               />
+                <EuiFormRow label="Unit Input">
+                    <EuiFieldText 
+                      name='input'
+                      placeholder='Unit Input'
+                      onChange={(e) => setUnitInput(e.target.value)}
+                     />
                 </EuiFormRow>
-                <EuiFormRow  style={{marginTop:"0px"}} label="Capacity/L">
-                  <EuiFieldText 
-                  name='capacity'
-                  placeholder='Input'
-                  onChange={(e) => setCapacity(e.target.value)}
-                  />
+                <EuiFormRow  style={{marginTop:"0px"}}label="Unit Elipse">
+                    <EuiFieldText 
+                     name='elipse'
+                     placeholder='Unit Elipse'
+                     onChange={(e) => setUnitElipse(e.target.value)}
+                    />
                 </EuiFormRow>
-                <EuiFormRow label="Type">
-                  <EuiFieldText 
-                  name='type'
-                  placeholder='Input'
-                  onChange={(e) => setStationType(e.target.value)}
-                  />
+                <EuiFormRow  style={{marginTop:"0px"}}label="Owner">
+                    <EuiFieldText 
+                     name='owner'
+                     placeholder='Owner'
+                     onChange={(e) => setOwner(e.target.value)}
+                    />
                 </EuiFormRow>
-                <EuiFormRow label="Nozal Qty">
-                  <EuiFieldText 
-                  name='qty'
-                  placeholder='Input'
-                  onChange={(e) => setNozel(e.target.value)}
-                  />
+                <EuiFormRow  style={{marginTop:"0px"}}label="Pin Banlaws">
+                    <EuiFieldText 
+                     name='pin'
+                     placeholder='Pin Banlaws'
+                     onChange={(e) => setPin(e.target.value)}
+                    />
+                </EuiFormRow>
+                <EuiFormRow  style={{marginTop:"0px"}}label="Unit Banlaws">
+                    <EuiFieldText 
+                     name='unit'
+                     placeholder='Unit Banlaws'
+                     onChange={(e) => setUnitBanlaws(e.target.value)}
+                    />
                 </EuiFormRow>
               </EuiFlexGrid>
             </EuiForm>
@@ -140,12 +145,9 @@ const ModalFormStation = () => {
             }}
               type="button" 
               onClick={() => {
-                const formElement = document.getElementById(modalFormId);
-                if (formElement) {
-                  formElement.dispatchEvent(new Event('submit')); 
-                }
-                closeModal();  
-                handleSubmit(); 
+                document.getElementById(modalFormId)?.dispatchEvent(new Event('submit')); // Trigger form submission
+                closeModal(); 
+                handleSubmit()
               }}
               fill
             >
@@ -182,4 +184,4 @@ const ModalFormStation = () => {
   );
 };
 
-export default ModalFormStation;
+export default ModalFormUnit;
