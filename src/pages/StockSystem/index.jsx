@@ -17,7 +17,7 @@ const StockSystemPage = () => {
       onClick: (e) => e.preventDefault(),
     },
     {
-      text: 'Stock System',
+      text: 'Sonding Master ',
       href: '#',
       onClick: (e) => e.preventDefault(),
     },
@@ -27,7 +27,7 @@ const StockSystemPage = () => {
     <>
       <div className="padding-content">
         <DynamicPageHeader
-          pageTitle="Stock System"
+          pageTitle="Sonding Master"
           breadcrumbs={breadcrumbs}
           pageTitleStyle={{ color: '#6a6a6a', fontSize: '24px' }}
         />

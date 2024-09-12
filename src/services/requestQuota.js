@@ -5,9 +5,9 @@ const api = axios.create({
   maxBodyLength: Infinity
 });
 
-const getRequest = async () => {
+const getRequest = async (requestBody) => {
     try {
-        const response = await api.get(URL_API.tableReq,  {
+        const response = await api.post(URL_API.tableReq, requestBody, {
             headers: {
                 'Content-Type': 'application/json',
             },
@@ -35,7 +35,7 @@ const insertRequest = async (requestBody) => {
 
 const summaryRequest = async (requestBody) => {
     try {
-        const response = await api.patch(URL_API.summaryReq, requestBody, {
+        const response = await api.get(URL_API.summaryReq+requestBody, {
             headers: {
                 'Content-Type': 'application/json',
             },
@@ -48,10 +48,10 @@ const summaryRequest = async (requestBody) => {
 };
 
 
-const sondingService = {
+const requestService = {
     getRequest,
     insertRequest,
     summaryRequest
 };
 
-export default sondingService;
+export default requestService;

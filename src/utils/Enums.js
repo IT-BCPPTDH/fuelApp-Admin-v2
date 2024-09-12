@@ -1,7 +1,7 @@
 // Configuration file
 
 // URLs from environment variables
-const link = import.meta.env.VITE_BACKEND; // Use correct env variable
+const link = import.meta.env.VITE_BACKEND; 
 const userLink = import.meta.env.VITE_BE_USER;
 const linkSocket = import.meta.env.VITE_SOCKET_USER;
 const linkBe = import.meta.env.VITE_API_BASE_URL; 
@@ -34,7 +34,7 @@ export const URL_API = {
     stationTable:`${linkBe}/api/admin/get-dashboard-table-station`,
     formDashboard: `${linkBe}/api/admin/get-dashboard-data/`,
     formTable:`${linkBe}/api/admin/get-dashboard-table-data/`,
-    summaryReq: `${linkBe}/api/admin/get-request-summary`,
+    summaryReq: `${linkBe}/api/admin/get-request-summary/`,
     tableReq:`${linkBe}/api/admin/get-request-table`,
     addData:`${linkBe}/api/admin/add-quota`,
 };
@@ -51,13 +51,21 @@ export const URL_MASTER_DATA = {
     updateBanlaws:`${linkMasterData}/master/unit-banlaws/edit`,
     delBanlaws:`${linkMasterData}/master/unit-banlaws/delete/`,
     getMDSonding:`${linkMasterData}/master/sonding-master`,
-    delMDSonding: `${linkMasterData}/sonding-master/delete/`,
+    delMDSonding: `${linkMasterData}/master/sonding-master/delete/`,
     insertMDSonding:`${linkMasterData}/master/sonding-master/insert`,
     updateMDSonding:`${linkMasterData}/master/sonding-master/edit`,
     getMDElipse:`${linkMasterData}/master/master-elipses`,
     delMDElipse: `${linkMasterData}/master/master-elipses/delete/`,
     insertMDElipse:`${linkMasterData}/master/master-elipses/insert`,
     updateMDElipse:`${linkMasterData}/master/master-elipses/edit`,
+    getMDEquip:`${linkMasterData}/master/master-elipses`,
+    delMDEquip: `${linkMasterData}/master/master-elipses/delete/`,
+    insertEquip:`${linkMasterData}/master/master-elipses/insert`,
+    updateEquip:`${linkMasterData}/master/master-elipses/edit`,
+    getMDUser:`${linkMasterData}/master/master-elipses`,
+    delMDUser: `${linkMasterData}/master/master-elipses/delete/`,
+    insertMDUser:`${linkMasterData}/master/master-elipses/insert`,
+    updateMDUser:`${linkMasterData}/master/master-elipses/edit`,
 };
 
 // HTTP Status Codes

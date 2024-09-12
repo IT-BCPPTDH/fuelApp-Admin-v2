@@ -50,10 +50,10 @@ const NavTop = () => {
 
   };
 
-  
- 
+  const handleChanges = () => {
+    navigate('/change-password');
 
-  
+  };
 
   const menuItems = [
     { label: 'Report Lkf', action: () => navigate('/report-lkf') },
@@ -87,7 +87,7 @@ const NavTop = () => {
         buttonLabel="Master"
         onItemClick={handleClickMaster}
       />
-      <EuiButton color="light">Change Password</EuiButton>
+      <EuiButton color="light" onClick={handleChanges}>Change Password</EuiButton>
       
 
       </div>

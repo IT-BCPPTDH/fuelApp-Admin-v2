@@ -17,6 +17,7 @@ const StockSystem = lazy(()=>import('./pages/StockSystem'));
 const DetailsPageTransaction = lazy(()=>import('./pages/DetailTrasactionDashboard/detailTransaction'));
 const ElipsePage = lazy(()=>import('./pages/Elipse'));
 const BanlawsPage = lazy(()=>import('./pages/UnitBanlaws'));
+const ChangePswdPage = lazy(()=>import('./pages/ChangePassword'));
 
 const RouteApp = () => {
   const {isLogged}=useAuth()
@@ -123,6 +124,17 @@ const RouteApp = () => {
         </Layout>
       ),
       path: '/unit-banlaws',
+      errorElement: <FallbackUI />,
+    },
+    {
+      element: (
+        <Layout>
+          <Suspense fallback={<div>Loading Change Passord...</div>}>
+            <ChangePswdPage/>
+          </Suspense>
+        </Layout>
+      ),
+      path: '/change-password',
       errorElement: <FallbackUI />,
     },
   ]:[

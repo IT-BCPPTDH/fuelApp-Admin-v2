@@ -56,26 +56,26 @@ const TableData = () => {
       field: 'action',
       name: 'Action',
       render: (item, row) => (
-        // <ModalFormBanlawsEdit/>
-        <div className='action-buttons'>
-          <EuiButtonIcon
-            iconType="pencil"
-            aria-label="Edit"
-            color="success"
-            onClick={(e) => {
-              handleEditClick
-            }}
-          />
-          <EuiButtonIcon
-            iconType="trash"
-            aria-label="Delete"
-            color="danger"
-            onClick={(e) => {
-              e.stopPropagation(); // Prevent row click
-              handleDelete(row.id);
-            }}
-          />
-        </div>
+        <ModalFormBanlawsEdit row={row}/>
+        // <div className='action-buttons'>
+        //   <EuiButtonIcon
+        //     iconType="pencil"
+        //     aria-label="Edit"
+        //     color="success"
+        //     onClick={(e) => {
+        //       handleEditClick
+        //     }}
+        //   />
+        //   <EuiButtonIcon
+        //     iconType="trash"
+        //     aria-label="Delete"
+        //     color="danger"
+        //     onClick={(e) => {
+        //       e.stopPropagation(); // Prevent row click
+        //       handleDelete(row.id);
+        //     }}
+        //   />
+        // </div>
       ),
       truncateText: true,
     },
@@ -158,7 +158,6 @@ const TableData = () => {
 
 
   const handleDelete = async(id) => {
-    console.log(id)
     try{
       await UnitBanlawsService.delUnitBanlaws(id).then((res)=>{
         if(res.status == 200){

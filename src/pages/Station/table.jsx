@@ -51,10 +51,29 @@ const TableData = () => {
     },
     {
       name: 'Action',
-      render: (item) => (
+      render: (row) => (
        <>
-       <ModalFormStationEdit></ModalFormStationEdit>
+          <ModalFormStationEdit row={row}></ModalFormStationEdit>
        </>
+      //  <div className='action-buttons'>
+      //     <EuiButtonIcon
+      //       iconType="pencil"
+      //       aria-label="Edit"
+      //       color="success"
+      //       onClick={(e) => {
+      //         handleEditClick
+      //       }}
+      //     />
+      //     <EuiButtonIcon
+      //       iconType="trash"
+      //       aria-label="Delete"
+      //       color="danger"
+      //       onClick={(e) => {
+      //         e.stopPropagation(); // Prevent row click
+      //         handleDelete(row.id);
+      //       }}
+      //     />
+      //  </div>
       ),
       truncateText: true,
     },
@@ -65,7 +84,11 @@ const TableData = () => {
   };
 
   const filteredItems = tables.filter(item =>
-    item.fuel_station_name.toLowerCase().includes(searchValue.toLowerCase())
+    item.fuel_station_name.toLowerCase().includes(searchValue.toLowerCase()) ||
+    item.fuel_station_type.toLowerCase().includes(searchValue.toLowerCase()) ||
+    String(item.fuel_capacity).includes(searchValue) ||
+    String(item.id).includes(searchValue.toLowerCase()) ||
+    String(item.fuel_nozel).includes(searchValue.toLowerCase()) 
   );
 
   const findPageItems = (items, pageIndex, pageSize) => {
@@ -118,6 +141,21 @@ const TableData = () => {
     fetchStation()
   }, []);
  
+  const handleDelete = async(id) => {
+    try{
+      await stationService.delStation(id).then((res)=>{
+        if(res.status == 200){
+          console.log('Berhasil Hapus')
+        }else{
+          console.log("first")
+        }
+      }).catch((error)=>{
+        console.log(error)
+      })
+    }catch(error){
+      console.log(error)
+    }
+  }
 
   return (
     <>
@@ -154,12 +192,12 @@ const TableData = () => {
           }
         }}
       />
-      {isEditModalVisible && selectedItem && (
+      {/* {isEditModalVisible && selectedItem && (
         <EditModalFormStation
           stationData={selectedItem}
           onClose={closeEditModal}
         />
-      )}
+      )} */}
     </>
   );
 };

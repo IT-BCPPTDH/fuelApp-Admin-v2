@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import {
   EuiBasicTable,
   EuiButton,
@@ -9,6 +9,8 @@ import {
 import { Data } from './data'; // Ensure this path is correct
 import { useNavigate } from 'react-router-dom'; 
 import ModalForm from '../../components/ModalForm';
+import requestService from '../../services/requestQuota';
+
 
 const TableData = () => {
   const navigate = useNavigate(); 
@@ -16,77 +18,68 @@ const TableData = () => {
   const [pageIndex, setPageIndex] = useState(0);
   const [pageSize, setPageSize] = useState(10);
   const [showPerPageOptions, setShowPerPageOptions] = useState(true);
+  const [tables, setTables] = useState([])
+  const date = JSON.parse(localStorage.getItem('formattedDatesReq'));
 
   const columns = [
+    // {
+    //   field: index+1,
+    //   name: 'No',
+    // },
+    {
+      field: 'date',
+      name: 'Tanggal',
+    },
+    {
+      field: 'unit_no',
+      name: 'No Unit',
+      truncateText: true,
+    },
     {
       field: 'station',
       name: 'Station',
-      'data-test-subj': 'stationCell',
-      mobileOptions: {
-        render: (item) => (
-          <EuiLink
-            href={`#${item.station}`}
-            onClick={(e) => {
-              e.preventDefault();
-              handleRowClick(item); // Handle row click action
-            }}
-          >
-            {item.station}
-          </EuiLink>
-        ),
-        header: false,
-        truncateText: false,
-        enlarge: true,
-        width: '100%',
-      },
-    },
-    {
-      field: 'open_stock',
-      name: 'Open Stock',
       truncateText: true,
     },
     {
-      field: 'receipt_kpc',
-      name: 'Receipt Kpc',
+      field: 'time',
+      name: 'Waktu',
       truncateText: true,
     },
     {
-      field: 'issued',
-      name: 'Issued',
+      field: 'request_name',
+      name: 'Nama',
       truncateText: true,
     },
     {
-      field: 'transfer',
-      name: 'Transfer',
+      field: 'request_by',
+      name: 'Id Karyawan',
       truncateText: true,
     },
     {
-      field: 'close_sonding',
-      name: 'Close Sonding',
+      field: 'quota_request',
+      name: 'Permintaan Kuota',
       truncateText: true,
     },
     {
-      field: 'close_data',
-      name: 'Close Data',
+      field: 'document',
+      name: 'Form Permintaan',
       truncateText: true,
     },
     {
-      field: 'variant',
-      name: 'Variant',
+      field: 'reason',
+      name: 'Alasan',
       truncateText: true,
     },
   ];
 
+  // const handleRowClick = (item) => {
  
-
-  const handleRowClick = (item) => {
- 
-    navigate(`/details/${item.station}`); 
+  //   navigate(`/details/${item.station}`); 
     
-  };
+  // };
 
   const getRowProps = (item) => ({
-    'data-test-subj': `row-${item.station}`,
+    'data-test-subj': `row-${item.unit_no}`,
     className: 'customRowClass',
     onClick: () => handleRowClick(item), 
   });
@@ -101,19 +94,28 @@ const TableData = () => {
     setSearchValue(value);
   };
 
-  const filteredItems = Data.filter(item =>
-    item.station.toLowerCase().includes(searchValue.toLowerCase())
+  const filteredItems = tables.filter(item =>
+    item.unit_no.includes(searchValue.toLowerCase()) ||
+    item.request_name.toLowerCase().includes(searchValue.toLowerCase()) ||
+    item.request_by.toLowerCase().includes(searchValue.toLowerCase())
   );
 
-  const findPageItems = (items, pageIndex, pageSize) => {
+  const findPageItems = useCallback((items, pageIndex, pageSize) => {
     const startIndex = pageIndex * pageSize;
     return {
       pageOfItems: items.slice(startIndex, startIndex + pageSize),
       totalItemCount: items.length,
     };
-  };
+  }, []);
 
   const { pageOfItems, totalItemCount } = findPageItems(filteredItems, pageIndex, pageSize);
+
+  const handleTableChange = useCallback(({ page }) => {
+    if (page) {
+      setPageIndex(page.index);
+      setPageSize(page.size);
+    }
+  }, []);
 
   const pagination = {
     pageIndex,
@@ -134,6 +136,28 @@ const TableData = () => {
         of {totalItemCount}
       </>
     );
+
+    useEffect(() => {
+      const fetchTable = async (date) => {
+        try {
+          const res = await requestService.getRequest({tanggal: `${date}`})
+          console.log(res)
+          if (res.status != 200) {
+            throw new Error('Network response was not ok');
+          }else if(res.status == 404){
+            setTables([]);
+          }else{
+            setTables(res.data);
+          }
+        } catch (error) {
+          console.log(error)
+          // setError(error);
+        } 
+      };
+      if (date) {  
+        fetchTable(date);
+      }
+    }, [date]);
 
   return (
     <>
@@ -167,12 +191,7 @@ const TableData = () => {
         rowProps={getRowProps}
         cellProps={getCellProps}
         pagination={pagination}
-        onChange={({ page }) => {
-          if (page) {
-            setPageIndex(page.index);
-            setPageSize(page.size);
-          }
-        }}
+        onChange={handleTableChange}
       />
     </>
   );
