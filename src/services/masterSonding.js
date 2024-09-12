@@ -26,6 +26,7 @@ const insertSonding = async (requestBody) => {
                 'Content-Type': 'application/json',
             },
         });
+        console.log(response)
         return response.data;
     } catch (error) {
         console.error('Error fetching data:', error.message);
@@ -47,9 +48,9 @@ const updateSonding = async (requestBody) => {
     }
 };
 
-const delSonding = async (requestBody) => {
+const delSonding = async (id) => {
     try {
-        const response = await api.patch(URL_MASTER_DATA.delMDSonding, requestBody, {
+        const response = await api.patch(URL_MASTER_DATA.delMDSonding+id, {
             headers: {
                 'Content-Type': 'application/json',
             },

@@ -1,10 +1,8 @@
 import React, { useState } from 'react';
 import {
   EuiButton,
-  EuiDatePicker,
   EuiFieldText,
   EuiFlexGrid,
-  EuiFlexItem,
   EuiForm,
   EuiFormRow,
   EuiModal,
@@ -12,41 +10,43 @@ import {
   EuiModalFooter,
   EuiModalHeader,
   EuiModalHeaderTitle,
-  EuiSelect,
-  EuiTextArea,
   useGeneratedHtmlId,
+  EuiOverlayMask,
+  EuiButtonIcon
 } from '@elastic/eui';
 import sondingService from '../../services/masterSonding';
 
-const ModalFormStock = () => {
+const ModalSondingnEdit = ({row}) => {
+  console.log(row)
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const showModal = () => setIsModalVisible(true);
-  const modalFormId = useGeneratedHtmlId({ prefix: 'modalForm' });
-  const modalTitleId = useGeneratedHtmlId();
-  const [station, setStation] = useState("")
-  const [takaranCM, setTakaranCM] = useState(0)
-  const [takaranLiter, setTakaranLiter] = useState(0)
-  const [site, setSite] = useState("")
-  const user = JSON.parse(localStorage.getItem('user_data'))
+  const [stations, setStations] = useState(row.station || "")
+  const [takaranCM, setTakaranCM] = useState(row.cm || "")
+  const [takaranLiter, setTakaranLiter] = useState(row.liters || "")
+  const [site, setSite] = useState(row.site || "")
   const [modalType, setModalType] = useState('');
   const [modalMessage, setModalMessage] = useState('');
+  const user = JSON.parse(localStorage.getItem('user_data'));
+
+  const modalFormId = useGeneratedHtmlId({ prefix: 'modalForm' });
+  const modalTitleId = useGeneratedHtmlId();
 
   const closeModal = () => {
     setIsModalVisible(false);
-    setModalType('');      
-    setModalMessage('');   
+    setModalType(''); 
+    setModalMessage(''); 
   };
 
   const handleSubmit = async() => {
     const data = {
-      station: station,
+      id:row.id,
+      station: stations,
       cm: takaranCM,
       liters: takaranLiter,
       site: site,
-      creation_by: user.JDE
+      updated_by: user.JDE
     };
     try {
-        await sondingService.insertSonding(data).then((res) =>{
+        await sondingService.updateSonding(data).then((res) =>{
           console.log(res)
             if(res.status == 200){
               setIsModalVisible(true); 
@@ -68,10 +68,10 @@ const ModalFormStock = () => {
     }
     
   };
-  
+
   return (
     <>
-      <EuiButton style={{background:"#1B46D9", color:"white"}}  onClick={showModal}>Tambah Data</EuiButton>
+     <EuiButtonIcon iconType="pencil"  onClick={() => setIsModalVisible(true)}>Edit</EuiButtonIcon>
       {isModalVisible && (
         <EuiModal
           aria-labelledby={modalTitleId}
@@ -80,29 +80,32 @@ const ModalFormStock = () => {
           style={{ width: "880px" }}
         >
           <EuiModalHeader>
-            <EuiModalHeaderTitle id={modalTitleId}>Tambah Data Sonding</EuiModalHeaderTitle>
+            <EuiModalHeaderTitle id={modalTitleId}> Edit Station</EuiModalHeaderTitle>
           </EuiModalHeader>
           <EuiModalBody>
-          <EuiForm id={modalFormId} component="form">
-              <EuiFlexGrid columns={2}>
+            <EuiForm id={modalFormId} component="form">
+            <EuiFlexGrid columns={2}>
                 <EuiFormRow label="Station">
                     <EuiFieldText 
                       name='Station'
                       placeholder='Input Station'
-                      onChange={(e) => setStation(e.target.value)}
+                      value={stations}
+                      onChange={(e) => setStations(e.target.value)}
                      />
                 </EuiFormRow>
                 <EuiFormRow  style={{marginTop:"0px"}}label="Jumlah (Dalam CM)">
                     <EuiFieldText 
                      name='jmlCm'
                      placeholder='Jumlah(CM)'
+                     value={takaranCM}
                      onChange={(e) => setTakaranCM(e.target.value)}
                     />
                 </EuiFormRow>
                 <EuiFormRow  style={{marginTop:"0px"}}label="Jumlah (Dalam Liters)">
                     <EuiFieldText 
                      name='jmlLiter'
-                     placeholder='Jumlah(CM)'
+                     placeholder='Jumlah(liter)'
+                     value={takaranLiter}
                      onChange={(e) => setTakaranLiter(e.target.value)}
                     />
                 </EuiFormRow>
@@ -110,6 +113,7 @@ const ModalFormStock = () => {
                     <EuiFieldText 
                      name='site'
                      placeholder='Site'
+                     value={site}
                      onChange={(e) => setSite(e.target.value)}
                     />
                 </EuiFormRow>
@@ -118,7 +122,7 @@ const ModalFormStock = () => {
           </EuiModalBody>
           <EuiModalFooter>
             <EuiButton
-              type="button" 
+              type="button"
               style={{
                 background: "White",
                 color: "#73A33F",
@@ -126,23 +130,25 @@ const ModalFormStock = () => {
               }}
               onClick={() => {
                 document.getElementById(modalFormId)?.dispatchEvent(new Event('submit')); // Trigger form submission
-                closeModal(); 
+                closeModal();
               }}
               fill
             >
               Cancel
             </EuiButton>
             <EuiButton
-             style={{
-              background: "#73A33F",
-              color: "white",
-              width: "100px",
-            }}
-              type="button" 
+              style={{
+                background: "#73A33F",
+                color: "white",
+                width: "100px",
+              }}
+              type="button"
               onClick={() => {
-                document.getElementById(modalFormId)?.dispatchEvent(new Event('submit')); // Trigger form submission
-                closeModal(); 
-                handleSubmit()
+                const formElement = document.getElementById(modalFormId);
+                if (formElement) {
+                  formElement.dispatchEvent(new Event('submit'));
+                }
+                handleSubmit();
               }}
               fill
             >
@@ -152,23 +158,34 @@ const ModalFormStock = () => {
         </EuiModal>
       )}
 
+      <EuiButtonIcon
+        iconType="trash"
+        aria-label="Delete"
+        color="danger"
+        onClick={() => alert('Delete button clicked')}
+        title="Delete"
+      />
+     
+
       {modalType && (
         <EuiOverlayMask>
           <EuiModal onClose={closeModal}>
             <EuiModalHeader>
-              <EuiModalHeaderTitle>{modalType === 'success' ? 'Success' : 'Error'}</EuiModalHeaderTitle>
+              <EuiModalHeaderTitle>{modalType === 'Success' ? 'Success' : 'Error'}</EuiModalHeaderTitle>
             </EuiModalHeader>
             <EuiModalBody>
               <p>{modalMessage}</p>
             </EuiModalBody>
             <EuiModalFooter>
-              <EuiButton 
-              style={{
-                background: "#73A33F",
-                color: "white",
-                width: "100px",
-              }}
-              onClick={closeModal} fill>
+              <EuiButton
+                style={{
+                  background: "#73A33F",
+                  color: "white",
+                  width: "100px",
+                }}
+                onClick={closeModal}
+                fill
+              >
                 Close
               </EuiButton>
             </EuiModalFooter>
@@ -179,4 +196,4 @@ const ModalFormStock = () => {
   );
 };
 
-export default ModalFormStock;
+export default ModalSondingnEdit;

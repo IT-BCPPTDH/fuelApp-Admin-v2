@@ -63,7 +63,7 @@ const insertStation = async (requestBody) => {
 
 const updateStation = async (requestBody) => {
     try {
-        const response = await api.patch(URL_MASTER_DATA.stationTable, requestBody, {
+        const response = await api.patch(URL_MASTER_DATA.updateStation, requestBody, {
             headers: {
                 'Content-Type': 'application/json',
             },
@@ -75,9 +75,9 @@ const updateStation = async (requestBody) => {
     }
 };
 
-const delStation = async (requestBody) => {
+const delStation = async (id) => {
     try {
-        const response = await api.patch(URL_MASTER_DATA.stationTable, requestBody, {
+        const response = await api.patch(URL_MASTER_DATA.delStation+id, {
             headers: {
                 'Content-Type': 'application/json',
             },

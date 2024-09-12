@@ -71,7 +71,7 @@ const ModalFormStation = () => {
 
   return (
     <>
-      <EuiButton style={{background:"#1B46D9", color:"white"}}  onClick={showModal}>New Fuel Station</EuiButton>
+      <EuiButton style={{background:"#1B46D9", color:"white"}}  onClick={showModal}>Tambah Station</EuiButton>
       {isModalVisible && (
         <EuiModal
           aria-labelledby={modalTitleId}
@@ -114,7 +114,7 @@ const ModalFormStation = () => {
                   />
                 </EuiFormRow>
               </EuiFlexGrid>
-            </EuiForm>
+          </EuiForm>
           </EuiModalBody>
           <EuiModalFooter>
             <EuiButton

@@ -54,7 +54,6 @@ const delUnitBanlaws = async (id) => {
                 'Content-Type': 'application/json',
             },
         });
-        console.log(1, response)
         return response.data;
     } catch (error) {
         console.error('Error fetching data:', error.message);

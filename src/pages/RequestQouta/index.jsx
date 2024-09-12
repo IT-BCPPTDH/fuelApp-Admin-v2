@@ -17,10 +17,24 @@ const RequestPage = () => {
   const [startDate, setStartDate] = useState(moment());
   const [endDate, setEndDate] = useState(moment());
   const [dueDate, setDueDate] = useState(moment());
+  const [selectDate, setSelectDate] = useState(moment());
+
+  const breadcrumbs = [
+    {
+      text: 'Dashboard',
+      href: '#',
+      onClick: (e) => e.preventDefault(),
+    },
+    {
+      text: 'Unit Request',
+      href: '#',
+      onClick: (e) => e.preventDefault(),
+    },
+  ];
 
   // Handle date range changes
   const handleStartDateChange = (date) => {
-    setStartDate(date);
+    setSelectDate(date);
   };
 
   const handleEndDateChange = (date) => {
@@ -37,6 +51,12 @@ const RequestPage = () => {
     return startDate.isBefore(endDate) && endDate.isBefore(dueDate);
   };
 
+  const formattedDateReq = moment(selectDate).format('dddd, DD-MM-YYYY');
+  const formattedDatesReq = moment(selectDate).format('YYYY-MM-DD');
+  localStorage.setItem("tanggalReq", JSON.stringify(formattedDateReq))
+  localStorage.setItem("formattedDatesReq", JSON.stringify(formattedDatesReq))
+
+
   return (
     <>
       <div className="content-padding">
@@ -44,7 +64,7 @@ const RequestPage = () => {
           <EuiFlexItem>
             <EuiText paddingSize="l">
               <div className="summary">Dashboard Unit Request</div>
-              <div className="date">Tuesday, 26-April-2024</div>
+              <div style={{marginTop:"10px"}} className="date">{formattedDateReq}</div>
             </EuiText>
           </EuiFlexItem>
           <EuiFlexItem>
@@ -58,14 +78,17 @@ const RequestPage = () => {
               <EuiFlexItem>
                 <EuiDatePicker
                   className="date-picker"
-                  selected={startDate}
+                  selected={selectDate}
                   onChange={handleStartDateChange}
+                  dateFormat="DD/MM/YYYY"  
+                  locale="en-gb" 
                 />
               </EuiFlexItem>
               <EuiFlexItem>
                 <EuiButton
                   size="s"
                   style={{
+                    marginTop:"3px",
                     background: "#73A33F",
                     color: "white",
                     width: "100px",
@@ -91,19 +114,6 @@ const RequestPage = () => {
         </div>
         <div className="mt20">
           <EuiFlexGrid columns={2}>
-            <EuiFlexItem>
-              <EuiText paddingSize="l">
-                <div className="summary">Fuel Station Summary</div>
-              </EuiText>
-              <EuiText>
-                <div className="note-summary">Notes for validation:</div>
-                <div className="note-summary">
-                  <div>Close Data = Open Stock + Receipt KPC + Receipt - Issued - Transfer</div>
-                  <div>* Variant = Close Sonding - Close Data</div>
-                  <div>* Intershift O/C Variance = Opening Stock Current Shift - Closing Stock Previous Shift</div>
-                </div>
-              </EuiText>
-            </EuiFlexItem>
           </EuiFlexGrid>
         </div>
         <div className="mt20">

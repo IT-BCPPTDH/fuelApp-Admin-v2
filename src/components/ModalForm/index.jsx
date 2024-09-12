@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   EuiButton,
   EuiDatePicker,
@@ -28,15 +28,73 @@ const ModalForm = () => {
   const [selectedTime, setSelectedTime] = useState(moment());
   const [selectedFile, setSelectedFile] = useState(null);
 
+  const [tanggal, setTanggal] = useState("")
+  const [Waktu, setWaktu] = useState("")
+  const [nomorUnit, setNomorUnit] = useState("")
+  const [station, setStation] = useState("")
+  const [shift, setShift] = useState("")
+  const [model, setModel] = useState("")
+  const [hmkm, setHmkm] = useState(0)
+  const [qty, setQty] = useState(0)
+  const [reason, setReason] = useState("")
+  const [picture, setPicture] = useState("")
+
   // Handle file selection
   const onFileChange = (event) => {
     const file = event.target.files[0];
     setSelectedFile(file);
   };
 
+  const handleSubmit = async() => {
+    const data = {
+      fuel_station_name: stationName,
+      fuel_station_type: stationType,
+      fuel_capacity: capacity,
+      fuel_nozel: nozel,
+      site: 'BCP',
+      creation_by: user.JDE
+    };
+    console.log(data)
+    // try {
+    //   if (data.fuel_station_name && data.fuel_station_type) {
+    //     await stationService.insertStation(data).then((res) =>{
+    //       if(res.status == 200){
+    //         setModalType('Success!');
+    //         setModalMessage('Data successfully saved!');
+    //         closeModal();
+    //       }else
+    //         setModalType('Failed');
+    //         setModalMessage('Data not saved!');
+    //         closeModal();
+    //     })
+    //   } else {
+    //     throw new Error('Failed to save data. Missing required fields.');
+    //   }
+    // } catch (error) {
+    //   setModalType('error');
+    //   setModalMessage(error.message);
+    // }
+
+    // setIsModalVisible(true); 
+  };
+
+  // const fetchUnits = async () => {
+  //   try {
+  //     const response = await axios.get('/api/units'); 
+  //     setUnits(response.data); 
+  //   } catch (error) {
+  //     console.error('Error fetching units:', error);
+  //   }
+  // };
+
+  // // Memanggil API ketika komponen di-mount
+  // useEffect(() => {
+  //   fetchUnits();
+  // }, []);
+
   return (
     <>
-      <EuiButton style={{background:"#1B46D9", color:"white"}}  onClick={showModal}>Add Kouta</EuiButton>
+      <EuiButton style={{background:"#1B46D9", color:"white"}}  onClick={showModal}>Tambah Kouta</EuiButton>
       {isModalVisible && (
         <EuiModal
           aria-labelledby={modalTitleId}
@@ -45,7 +103,7 @@ const ModalForm = () => {
           style={{ width: "880px" }}
         >
           <EuiModalHeader>
-            <EuiModalHeaderTitle id={modalTitleId}> Add Kouta</EuiModalHeaderTitle>
+            <EuiModalHeaderTitle id={modalTitleId}> Tambah Kouta</EuiModalHeaderTitle>
           </EuiModalHeader>
           <EuiModalBody>
             <EuiForm id={modalFormId} component="form">
@@ -76,10 +134,44 @@ const ModalForm = () => {
                     {/* Add options here */}
                   </EuiSelect>
                 </EuiFormRow>
+                <EuiFormRow style={{marginTop:"0px"}}label="Station">
+                  <EuiFieldText 
+                  name='station'
+                  placeholder='Station'
+                  />
+                </EuiFormRow>
                 <EuiFormRow style={{marginTop:"0px"}}label="Model Unit">
                   <EuiFieldText 
                   name='model_unit'
                   placeholder='Model Unit'
+                  disabled />
+                </EuiFormRow>
+                <EuiFormRow style={{marginTop:"0px"}}label="Shift">
+                  <EuiFieldText 
+                  name='shift'
+                  placeholder='Shift'
+                  />
+                </EuiFormRow>
+                <EuiFormRow label="Id Request">
+                  <EuiSelect>
+                    {/* Add options here */}
+                  </EuiSelect>
+                </EuiFormRow>
+                <EuiFormRow label="Name Request">
+                  <EuiFieldText 
+                  name='station'
+                  placeholder='Station'
+                  disabled />
+                </EuiFormRow>
+                <EuiFormRow label="Id Apporoval">
+                  <EuiSelect>
+                    {/* Add options here */}
+                  </EuiSelect>
+                </EuiFormRow>
+                <EuiFormRow label="Name Appove">
+                  <EuiFieldText 
+                  name='station'
+                  placeholder='Station'
                   disabled />
                 </EuiFormRow>
                 <EuiFormRow label="HmKm">
@@ -133,6 +225,7 @@ const ModalForm = () => {
               onClick={() => {
                 document.getElementById(modalFormId)?.dispatchEvent(new Event('submit')); // Trigger form submission
                 closeModal(); 
+                handleSubmit()
               }}
               fill
             >

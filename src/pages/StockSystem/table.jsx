@@ -9,9 +9,8 @@ import {
 } from '@elastic/eui';
 import { Data } from './data'; // Ensure this path is correct
 import { useNavigate } from 'react-router-dom'; 
-import ModalForm from '../../components/ModalForm';
-import ModalFormStation from '../../components/ModalForm/ModalAddStation';
 import ModalFormStock from '../../components/ModalForm/ModalStockSystem';
+import ModalSondingnEdit from '../../components/ModalForm/EditFormSonding';
 import sondingService from '../../services/masterSonding';
 
 const TableData = () => {
@@ -48,11 +47,14 @@ const TableData = () => {
       name: 'Site',
       truncateText: true,
     },
- 
+
     {
       field: 'action',
       name: 'Action',
-      render: (item) => (
+      render: (e,row) => (
+        // <>
+        // <ModalSondingnEdit row={row}/>
+        // </>
         <div className='action-buttons'>
           <EuiButtonIcon
             iconType="pencil"
@@ -60,7 +62,7 @@ const TableData = () => {
             color="success"
             onClick={(e) => {
               e.stopPropagation(); // Prevent row click
-              handleEdit(item);
+              handleEdit(row);
             }}
           />
           <EuiButtonIcon
@@ -69,7 +71,7 @@ const TableData = () => {
             color="danger"
             onClick={(e) => {
               e.stopPropagation(); // Prevent row click
-              handleDelete(item);
+              handleDelete(row.id);
             }}
           />
         </div>
@@ -78,11 +80,11 @@ const TableData = () => {
     },
   ];
 
-  const handleRowClick = (item) => {
+  // const handleRowClick = (item) => {
  
-    navigate(`/details/${item.station}`); 
+  //   navigate(`/details/${item.station}`); 
     
-  };
+  // };
 
   const getRowProps = (item) => ({
     'data-test-subj': `row-${item.station}`,
@@ -101,7 +103,11 @@ const TableData = () => {
   };
 
   const filteredItems = sonding.filter(item =>
-    item.station.toLowerCase().includes(searchValue.toLowerCase())
+    item.station.toLowerCase().includes(searchValue.toLowerCase()) ||
+    String(item.id).toLowerCase().includes(searchValue.toLowerCase()) ||
+    String(item.cm).toLowerCase().includes(searchValue.toLowerCase()) ||
+    String(item.liters).toLowerCase().includes(searchValue.toLowerCase()) ||
+    item.site.toLowerCase().includes(searchValue.toLowerCase())
   );
 
   const findPageItems = (items, pageIndex, pageSize) => {
@@ -152,6 +158,22 @@ const TableData = () => {
       };
       fetchSonding()
     }, []);
+
+    const handleDelete = async(id) => {
+      try{
+        await sondingService.delSonding(id).then((res)=>{
+          if(res.status == 200){
+            console.log('Berhasil Hapus')
+          }else{
+            console.log("first")
+          }
+        }).catch((error)=>{
+          console.log(error)
+        })
+      }catch(error){
+        console.log(error)
+      }
+    } 
 
   return (
     <>

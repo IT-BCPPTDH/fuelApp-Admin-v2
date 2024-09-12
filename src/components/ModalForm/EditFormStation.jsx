@@ -18,20 +18,18 @@ import moment from 'moment';
 import stationService from '../../services/stationDashboard';
 import ActionButtons from '../Action';
 
-const ModalFormStationEdit = () => {
+const ModalFormStationEdit = ({row}) => {
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [stationName, setStationName] = useState("");
-  const [stationType, setStationType] = useState("");
-  const [capacity, setCapacity] = useState(0);
-  const [nozel, setNozel] = useState(0);
+  const [stationName, setStationName] = useState(row.fuel_station_name || "");
+  const [stationType, setStationType] = useState(row.fuel_station_type || "");
+  const [capacity, setCapacity] = useState(row.fuel_capacity || 0);
+  const [nozel, setNozel] = useState(row.fuel_nozel || 0);
   const [modalType, setModalType] = useState('');
   const [modalMessage, setModalMessage] = useState('');
   const user = JSON.parse(localStorage.getItem('user_data'));
 
   const modalFormId = useGeneratedHtmlId({ prefix: 'modalForm' });
   const modalTitleId = useGeneratedHtmlId();
-
-
 
   const closeModal = () => {
     setIsModalVisible(false);
@@ -40,18 +38,20 @@ const ModalFormStationEdit = () => {
   };
 
   const handleSubmit = async () => {
+    console.log(row.id)
     const data = {
+      id: row.id,
       fuel_station_name: stationName,
       fuel_station_type: stationType,
       fuel_capacity: capacity,
       fuel_nozel: nozel,
       site: 'BCP',
-      creation_by: user.JDE
+      updated_by: user.JDE
     };
 
     try {
       if (data.fuel_station_name && data.fuel_station_type) {
-        await stationService.insertStation(data).then((res) => {
+        await stationService.updateStation(data).then((res) => {
           if (res.status === 200) {
             setModalType('Success!');
             setModalMessage('Data successfully saved!');
@@ -91,6 +91,7 @@ const ModalFormStationEdit = () => {
                   <EuiFieldText
                     name='station'
                     placeholder='Input'
+                    value={stationName}
                     onChange={(e) => setStationName(e.target.value)}
                   />
                 </EuiFormRow>
@@ -98,6 +99,7 @@ const ModalFormStationEdit = () => {
                   <EuiFieldText
                     name='capacity'
                     placeholder='Input'
+                    value={capacity}
                     onChange={(e) => setCapacity(e.target.value)}
                   />
                 </EuiFormRow>
@@ -105,6 +107,7 @@ const ModalFormStationEdit = () => {
                   <EuiFieldText
                     name='type'
                     placeholder='Input'
+                    value={stationType}
                     onChange={(e) => setStationType(e.target.value)}
                   />
                 </EuiFormRow>
@@ -112,6 +115,7 @@ const ModalFormStationEdit = () => {
                   <EuiFieldText
                     name='qty'
                     placeholder='Input'
+                    value={nozel}
                     onChange={(e) => setNozel(e.target.value)}
                   />
                 </EuiFormRow>
