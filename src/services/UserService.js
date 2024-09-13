@@ -41,8 +41,6 @@ const authLogin = async (requestBody) => {
 };
 
 
-
-
 const logout = async (requestBody) => {
     try {
         const response = await fetch(URL_USER_API.Logout, {
@@ -105,13 +103,27 @@ const getAllRoles = async (requestBody) => {
     }
 }
 
+const updatedPassword = async (requestBody) => {
+    try {
+        const response = await api.post(URL_USER_API.resetPswd, requestBody, {
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        });
+        return response.data;
+    } catch (error) {
+        console.error('Error fetching data:', error.message);
+        throw error;
+    }
+};
 
 const UserService = {
     authLogin,
     logout,
     getAllUser,
     updateMasterDataUser,
-    getAllRoles
+    getAllRoles,
+    updatedPassword
 };
 
 export default UserService;  

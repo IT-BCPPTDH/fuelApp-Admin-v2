@@ -37,6 +37,7 @@ export const URL_API = {
     summaryReq: `${linkBe}/api/admin/get-request-summary/`,
     tableReq:`${linkBe}/api/admin/get-request-table`,
     addData:`${linkBe}/api/admin/add-quota`,
+    addTransaction:`${linkBe}/api/operator/post-data`
 };
 
 export const URL_MASTER_DATA = {
@@ -58,7 +59,7 @@ export const URL_MASTER_DATA = {
     delMDElipse: `${linkMasterData}/master/master-elipses/delete/`,
     insertMDElipse:`${linkMasterData}/master/master-elipses/insert`,
     updateMDElipse:`${linkMasterData}/master/master-elipses/edit`,
-    getMDEquip:`${linkMasterData}/master/master-elipses`,
+    getMDEquip:`${linkMasterData}/master/unit`,
     delMDEquip: `${linkMasterData}/master/master-elipses/delete/`,
     insertEquip:`${linkMasterData}/master/master-elipses/insert`,
     updateEquip:`${linkMasterData}/master/master-elipses/edit`,

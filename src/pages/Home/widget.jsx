@@ -39,7 +39,7 @@ const CardContent = () => {
       fetchSummary(date);
     }
     
-  },[date, summary]);
+  },[date]);
   
   return (
     <EuiFlexGroup gutterSize="l" wrap responsive={true}>

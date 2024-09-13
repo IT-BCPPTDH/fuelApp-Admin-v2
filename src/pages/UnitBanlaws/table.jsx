@@ -57,40 +57,14 @@ const TableData = () => {
       name: 'Action',
       render: (item, row) => (
         <ModalFormBanlawsEdit row={row}/>
-        // <div className='action-buttons'>
-        //   <EuiButtonIcon
-        //     iconType="pencil"
-        //     aria-label="Edit"
-        //     color="success"
-        //     onClick={(e) => {
-        //       handleEditClick
-        //     }}
-        //   />
-        //   <EuiButtonIcon
-        //     iconType="trash"
-        //     aria-label="Delete"
-        //     color="danger"
-        //     onClick={(e) => {
-        //       e.stopPropagation(); // Prevent row click
-        //       handleDelete(row.id);
-        //     }}
-        //   />
-        // </div>
       ),
       truncateText: true,
     },
   ];
 
-  const handleRowClick = (item) => {
- 
-    navigate(`/details/${item.station}`); 
-    
-  };
-
   const getRowProps = (item) => ({
     'data-test-subj': `row-${item.station}`,
     className: 'customRowClass',
-    // onClick: () => handleRowClick(item), 
   });
 
   const getCellProps = (item, column) => ({
@@ -157,41 +131,10 @@ const TableData = () => {
     }, []);
 
 
-  const handleDelete = async(id) => {
-    try{
-      await UnitBanlawsService.delUnitBanlaws(id).then((res)=>{
-        if(res.status == 200){
-          console.log('Berhasil Hapus')
-        }else{
-          console.log("first")
-        }
-      }).catch((error)=>{
-        console.log(error)
-      })
-    }catch(error){
-      console.log(error)
-    }
-  } 
-
-  const handleEditClick = (e) => {
-    e.stopPropagation(); // mencegah event click pada row
-    setIsEditModalVisible(true); // tampilkan modal
-  };
-
-  const closeEditModal = () => {
-    setIsEditModalVisible(false); // sembunyikan modal saat ditutup
-  };
-
-
   return (
     <>
       <div style={{ marginBottom: '10px', display: "flex", justifyContent: "flex-end",gap:"15px",alignItems: "center" }}>
         <ModalFormUnit/>
-        {isEditModalVisible && (
-        <ModalFormBanlawsEdit 
-          onClose={closeEditModal} // pass fungsi untuk menutup modal
-        />
-        )}
         <EuiFieldSearch
           placeholder="Search data" 
           value={searchValue}

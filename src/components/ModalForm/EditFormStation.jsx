@@ -12,11 +12,10 @@ import {
   EuiModalHeaderTitle,
   useGeneratedHtmlId,
   EuiOverlayMask,
-  EuiButtonIcon
+  EuiButtonIcon,
+  EuiText
 } from '@elastic/eui';
-import moment from 'moment';
 import stationService from '../../services/stationDashboard';
-import ActionButtons from '../Action';
 
 const ModalFormStationEdit = ({row}) => {
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -24,50 +23,75 @@ const ModalFormStationEdit = ({row}) => {
   const [stationType, setStationType] = useState(row.fuel_station_type || "");
   const [capacity, setCapacity] = useState(row.fuel_capacity || 0);
   const [nozel, setNozel] = useState(row.fuel_nozel || 0);
-  const [modalType, setModalType] = useState('');
-  const [modalMessage, setModalMessage] = useState('');
   const user = JSON.parse(localStorage.getItem('user_data'));
-
   const modalFormId = useGeneratedHtmlId({ prefix: 'modalForm' });
   const modalTitleId = useGeneratedHtmlId();
-
   const closeModal = () => {
     setIsModalVisible(false);
-    setModalType(''); // Reset modal type
-    setModalMessage(''); // Reset modal message
   };
 
-  const handleSubmit = async () => {
-    console.log(row.id)
-    const data = {
-      id: row.id,
-      fuel_station_name: stationName,
-      fuel_station_type: stationType,
-      fuel_capacity: capacity,
-      fuel_nozel: nozel,
-      site: 'BCP',
-      updated_by: user.JDE
-    };
+  const [isResultModalVisible, setIsResultModalVisible] = useState(false);
+  const [resultMessage, setResultMessage] = useState('');
+  const [resultStatus, setResultStatus] = useState(''); 
+  const showResultModal = () => setIsResultModalVisible(true);
+  const closeResultModal = () => {
+    setIsResultModalVisible(false)
+    window.location.reload();
+  }
 
+  const [isEditResult, setIsEditResult] = useState(false)
+  const [editMessage, setEditMessage] = useState('');
+  const [editStatus, setEditStatus] = useState(''); 
+  const showEditModal = () => setIsEditResult(true);
+  const closeEditModal = () => {
+    setIsEditResult(false)
+    window.location.reload();
+  }
+
+  const handleEditData = async () => {
+    closeModal()
     try {
-      if (data.fuel_station_name && data.fuel_station_type) {
-        await stationService.updateStation(data).then((res) => {
-          if (res.status === 200) {
-            setModalType('Success!');
-            setModalMessage('Data successfully saved!');
-            closeModal();
-          } else {
-            setModalType('Failed');
-            setModalMessage('Data not saved!');
-            closeModal();
-          }
-        });
+      const data = {
+        id: row.id,
+        fuel_station_name: stationName,
+        fuel_station_type: stationType,
+        fuel_capacity: capacity,
+        fuel_nozel: nozel,
+        site: 'BCP',
+        updated_by: user.JDE
+      };  
+      const res = await stationService.updateStation(data)
+      if (res.status === '200') {
+          setEditStatus('Success!');
+          setEditMessage('Data successfully saved!');
       } else {
-        throw new Error('Failed to save data. Missing required fields.');
+          setEditStatus('Failed');
+          setEditMessage('Data not saved!');
       }
     } catch (error) {
-      setModalType('Error');
-      setModalMessage(error.message);
+      console.log(first)
+      setEditStatus('Error');
+      setEditMessage('Terjadi kesalahan saat update data. Data tidak tersimpan!');
+    } finally {
+      showEditModal();
+    }
+  };
+
+  const handleDelete = async () => {
+    try {
+      const res = await stationService.delStation(row.id);
+      if (res.status === '200') {
+        setResultStatus('success');
+        setResultMessage('Data berhasil dihapus');
+      } else {
+        setResultStatus('failure');
+        setResultMessage('Data gagal dihapus');
+      }
+    } catch (error) {
+      setResultStatus('error');
+      setResultMessage('Terjadi kesalahan saat menghapus data');
+    } finally {
+      showResultModal();
     }
   };
 
@@ -150,7 +174,7 @@ const ModalFormStationEdit = ({row}) => {
                 if (formElement) {
                   formElement.dispatchEvent(new Event('submit'));
                 }
-                handleSubmit();
+                handleEditData();
               }}
               fill
             >
@@ -164,35 +188,65 @@ const ModalFormStationEdit = ({row}) => {
         iconType="trash"
         aria-label="Delete"
         color="danger"
-        onClick={() => alert('Delete button clicked')}
+        onClick={() => handleDelete()}
         title="Delete"
       />
-     
 
-      {modalType && (
-        <EuiOverlayMask>
-          <EuiModal onClose={closeModal}>
-            <EuiModalHeader>
-              <EuiModalHeaderTitle>{modalType === 'Success' ? 'Success' : 'Error'}</EuiModalHeaderTitle>
-            </EuiModalHeader>
-            <EuiModalBody>
-              <p>{modalMessage}</p>
-            </EuiModalBody>
-            <EuiModalFooter>
-              <EuiButton
-                style={{
-                  background: "#73A33F",
-                  color: "white",
-                  width: "100px",
-                }}
-                onClick={closeModal}
-                fill
-              >
-                Close
-              </EuiButton>
-            </EuiModalFooter>
-          </EuiModal>
-        </EuiOverlayMask>
+      {isEditResult && (
+        <EuiModal>
+          <EuiModalBody>
+            <EuiText style={{
+                fontSize: '22px',
+                height: '25%',
+                marginTop: '25px',
+                color: editStatus === 'success' ? '#D52424' : '#73A33F',
+                fontWeight: '600',
+              }}>
+              {editMessage}
+            </EuiText>
+            <EuiText style={{
+                fontSize: '15px',
+                height: '25%',
+                marginTop: '35px'
+              }}>
+                {editStatus === 'success' ? 'Data berhasil terupdate. Silahkan kembali untuk menambah data atau ke halaman utama.'
+                : 'Data belum terupdate. Silahkan kembali untuk update data atau ke halaman utama.'}
+            </EuiText>
+          </EuiModalBody>
+          <EuiModalFooter>
+            <EuiButton onClick={closeEditModal} style={{ background: "#73A33F", color: "white" }}>
+              Tutup
+            </EuiButton>
+          </EuiModalFooter>
+        </EuiModal>
+      )}
+
+      {isResultModalVisible && (
+        <EuiModal>
+          <EuiModalBody>
+            <EuiText style={{
+                fontSize: '22px',
+                height: '25%',
+                marginTop: '25px',
+                color: resultStatus === 'success' ? '#73A33F' : '#D52424',
+                fontWeight: '600',
+              }}>
+              {resultMessage}
+            </EuiText>
+            <EuiText style={{
+                fontSize: '15px',
+                height: '25%',
+                marginTop: '35px'
+              }}>
+                Data telah dihapus.
+            </EuiText>
+          </EuiModalBody>
+          <EuiModalFooter>
+            <EuiButton onClick={closeResultModal} style={{ background: "#73A33F", color: "white" }}>
+              Tutup
+            </EuiButton>
+          </EuiModalFooter>
+        </EuiModal>
       )}
     </>
   );

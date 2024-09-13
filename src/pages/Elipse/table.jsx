@@ -10,8 +10,8 @@ import {
 import { Data } from './data'; // Ensure this path is correct
 import { useNavigate } from 'react-router-dom'; 
 import ModalForm from '../../components/ModalForm';
-import ModalFormStation from '../../components/ModalForm/ModalAddStation';
-import ModalFormStock from '../../components/ModalForm/ModalStockSystem';
+import ModalFormElipse from '../../components/ModalForm/ModalAddElipse';
+import ModalFormEditElipse from '../../components/ModalForm/EditFormElipse';
 import masterElipseService from '../../services/masterElipse';
 
 const TableData = () => {
@@ -86,37 +86,18 @@ const TableData = () => {
     {
       field: 'action',
       name: 'Action',
-      render: (item) => (
-        <div className='action-buttons'>
-          <EuiButtonIcon
-            iconType="pencil"
-            aria-label="Edit"
-            color="success"
-            onClick={(e) => {
-              e.stopPropagation(); // Prevent row click
-              handleEdit(item);
-            }}
-          />
-          <EuiButtonIcon
-            iconType="trash"
-            aria-label="Delete"
-            color="danger"
-            onClick={(e) => {
-              e.stopPropagation(); // Prevent row click
-              handleDelete(item);
-            }}
-          />
-        </div>
+      render: (e,row) => (
+        <><ModalFormEditElipse row={row}/></>
       ),
       truncateText: true,
     },
   ];
 
-  const handleRowClick = (item) => {
+  // const handleRowClick = (item) => {
  
-    navigate(`/details/${item.station}`); 
+  //   navigate(`/details/${item.station}`); 
     
-  };
+  // };
 
   const getRowProps = (item) => ({
     'data-test-subj': `row-${item.station}`,
@@ -191,35 +172,22 @@ const TableData = () => {
     <>
       <div style={{ marginBottom: '10px', display: "flex", justifyContent: "flex-end",gap:"15px",alignItems: "center" }}>
     
-        {/* <ModalFormStock/> */}
+        
         <EuiButton
-          style={{ background: "#1B46D9", color: "white" }}
+          style={{ background: "#73A33F", color: "white" }}
           color="primary"
           onClick={() => alert('Export button clicked')}
         >
-          Import Equpiment
+          Import Master Elipse
         </EuiButton>
         <EuiButton
           style={{ background: "#FEC514", color: "white" }}
           color="primary"
           onClick={() => alert('Export button clicked')}
         >
-          Import Maste Elipse
+          Export Master Elipse
         </EuiButton>
-        <EuiButton
-          style={{ background: "#E16104", color: "white" }}
-          color="primary"
-          onClick={() => alert('Export button clicked')}
-        >
-          Import Unit Banlaw
-        </EuiButton>
-        <EuiButton
-          style={{ background: "#73A33F", color: "white" }}
-          color="primary"
-          onClick={() => alert('Export button clicked')}
-        >
-          Export
-        </EuiButton>
+        <ModalFormElipse/>
       
         <EuiFieldSearch
           placeholder="Search data" 

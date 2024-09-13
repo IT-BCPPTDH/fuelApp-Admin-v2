@@ -12,19 +12,25 @@ import {
   EuiModalHeaderTitle,
   useGeneratedHtmlId,
   EuiOverlayMask,
-  EuiButtonIcon
+  EuiButtonIcon,
+  EuiText
 } from '@elastic/eui';
-import UnitBanlawsService from '../../services/unitBanlaws';
+import masterElipseService from '../../services/masterElipse';
 
-const ModalFormBanlawsEdit = ({row}) => {
+const ModalFormElipseEdit = ({row}) => {
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [unitInput, setUnitInput] = useState(row.unit_input || "")
-  const [unitElipse, setUnitElipse] = useState(row.unit_elipse || "")
-  const [owner, setOwner] = useState(row.owner || "")
-  const [pin, setPin] = useState(row.pin_banlaw || "")
-  const [unitBanlaws, setUnitBanlaws] = useState(row.unit_banlaw || "")
+  const [unitNo, setUnitNo] = useState(row.equip_no_unit||"")
+  const [showNo, setShowNo] = useState(row.equip_no_show||"")
+  const [model, setModel] = useState(row.equip_model_egi||"")
+  const [desc, setDesc] = useState(row.equip_description||"")
+  const [cat, setCat] = useState(row.equip_category|| "")
+  const [cap, setCap] = useState(row.equip_cap_tank|| "")
+  const [fbr, setFbr] = useState(row.equip_fbr||"")
+  const [position, setPosition] = useState(row.equip_position||"")
+  const [protes, setProtes] = useState(row.equip_owner_protes||"")
+  const [elipse, setElipse] = useState(row.equip_owner_elipse||"")
+  const [ket, setKet] = useState(row.keterangan||"")
   const user = JSON.parse(localStorage.getItem('user_data'));
-
   const modalFormId = useGeneratedHtmlId({ prefix: 'modalForm' });
   const modalTitleId = useGeneratedHtmlId();
   const closeModal = () => {
@@ -52,16 +58,22 @@ const ModalFormBanlawsEdit = ({row}) => {
   const handleEditData = async () => {
     closeModal()
     try {
-      const data = {
-        id: row.id,
-        unit_input: unitInput,
-        unit_elipse: unitElipse,
-        owner: owner,
-        pin_banlaw: pin,
-        unit_banlaw: unitBanlaws,
-        updated_by: user.JDE
-      };
-      const res = UnitBanlawsService.updateUnitBanlaws(data)
+        const data = {
+            id: row.id,
+            equip_no_unit : unitNo,
+            equip_no_show: showNo,
+            equip_model_egi: model,
+            equip_description: desc,
+            equip_category: cat,
+            equip_cap_tank: cap,
+            equip_fbr: fbr,
+            equip_position: position,
+            equip_owner_protes: protes,
+            equip_owner_elipse: elipse,
+            keterangan: ket,
+            creation_by: user.JDE
+        };
+      const res = await masterElipseService.updateElipses(data)
       if (res.status === '200') {
           setEditStatus('Success!');
           setEditMessage('Data successfully saved!');
@@ -80,7 +92,7 @@ const ModalFormBanlawsEdit = ({row}) => {
 
   const handleDelete = async () => {
     try {
-      const res = await UnitBanlawsService.delUnitBanlaws(row.id);
+      const res = await masterElipseService.delElipses(row.id);
       if (res.status === '200') {
         setResultStatus('success');
         setResultMessage('Data berhasil dihapus');
@@ -107,50 +119,98 @@ const ModalFormBanlawsEdit = ({row}) => {
           style={{ width: "880px" }}
         >
           <EuiModalHeader>
-            <EuiModalHeaderTitle id={modalTitleId}> Edit Unit Banlaws</EuiModalHeaderTitle>
+            <EuiModalHeaderTitle id={modalTitleId}> Edit Station</EuiModalHeaderTitle>
           </EuiModalHeader>
           <EuiModalBody>
             <EuiForm id={modalFormId} component="form">
             <EuiFlexGrid columns={2}>
-                <EuiFormRow label="Unit Input">
-                    <EuiFieldText 
-                      name='input'
-                      placeholder='Unit Input'
-                      value={unitInput}
-                      onChange={(e) => setUnitInput(e.target.value)}
-                     />
+                <EuiFormRow label="Nomor Unit">
+                  <EuiFieldText 
+                  name='unit_no'
+                  placeholder='Input'
+                  value={unitNo}
+                  onChange={(e) => setUnitNo(e.target.value)}
+               />
                 </EuiFormRow>
-                <EuiFormRow  style={{marginTop:"0px"}}label="Unit Elipse">
-                    <EuiFieldText 
-                     name='elipse'
-                     placeholder='Unit Elipse'
-                     value={unitElipse}
-                     onChange={(e) => setUnitElipse(e.target.value)}
-                    />
+                <EuiFormRow  style={{marginTop:"0px"}} label="Show No">
+                  <EuiFieldText 
+                  name='show_no'
+                  placeholder='Input'
+                  value={showNo}
+                  onChange={(e) => setShowNo(e.target.value)}
+                  />
                 </EuiFormRow>
-                <EuiFormRow  style={{marginTop:"0px"}}label="Owner">
-                    <EuiFieldText 
-                     name='owner'
-                     placeholder='Owner'
-                     value={owner}
-                     onChange={(e) => setOwner(e.target.value)}
-                    />
+                <EuiFormRow label="Model">
+                  <EuiFieldText 
+                  name='model'
+                  placeholder='Input'
+                  value={model}
+                  onChange={(e) => setModel(e.target.value)}
+                  />
                 </EuiFormRow>
-                <EuiFormRow  style={{marginTop:"0px"}}label="Pin Banlaws">
-                    <EuiFieldText 
-                     name='pin'
-                     value={pin}
-                     placeholder='Pin Banlaws'
-                     onChange={(e) => setPin(e.target.value)}
-                    />
+                <EuiFormRow label="Deskripsi">
+                  <EuiFieldText 
+                  name='desc'
+                  placeholder='Input'
+                  value={desc}
+                  onChange={(e) => setDesc(e.target.value)}
+                  />
                 </EuiFormRow>
-                <EuiFormRow  style={{marginTop:"0px"}}label="Unit Banlaws">
-                    <EuiFieldText 
-                     name='unit'
-                     value={unitBanlaws}
-                     placeholder='Unit Banlaws'
-                     onChange={(e) => setUnitBanlaws(e.target.value)}
-                    />
+                <EuiFormRow label="Kategori">
+                  <EuiFieldText 
+                  name='category'
+                  placeholder='Input'
+                  value={cat}
+                  onChange={(e) => setCat(e.target.value)}
+               />
+                </EuiFormRow>
+                <EuiFormRow  label="Capacity/L">
+                  <EuiFieldText 
+                  name='capacity'
+                  placeholder='Input'
+                  value={cap}
+                  onChange={(e) => setCap(e.target.value)}
+                  />
+                </EuiFormRow>
+                <EuiFormRow label="FBR">
+                  <EuiFieldText 
+                  name='fbr'
+                  placeholder='Input'
+                  value={fbr}
+                  onChange={(e) => setFbr(e.target.value)}
+                  />
+                </EuiFormRow>
+                <EuiFormRow label="Posisi">
+                  <EuiFieldText 
+                  name='position'
+                  placeholder='Input'
+                  value={position}
+                  onChange={(e) => setPosition(e.target.value)}
+                  />
+                </EuiFormRow>
+                <EuiFormRow label="Owner Protes">
+                  <EuiFieldText 
+                  name='prostes'
+                  placeholder='Input'
+                  value={protes}
+                  onChange={(e) => setProtes(e.target.value)}
+               />
+                </EuiFormRow>
+                <EuiFormRow label="Owner Elipse">
+                  <EuiFieldText 
+                  name='elipse'
+                  placeholder='Input'
+                  value={elipse}
+                  onChange={(e) => setElipse(e.target.value)}
+                  />
+                </EuiFormRow>
+                <EuiFormRow label="Keteragan">
+                  <EuiFieldText 
+                  name='keterangan'
+                  placeholder='Input'
+                  value={ket}
+                  onChange={(e) => setKet(e.target.value)}
+                  />
                 </EuiFormRow>
               </EuiFlexGrid>
             </EuiForm>
@@ -200,7 +260,6 @@ const ModalFormBanlawsEdit = ({row}) => {
         onClick={() => handleDelete()}
         title="Delete"
       />
-     
 
       {isEditResult && (
         <EuiModal>
@@ -262,4 +321,4 @@ const ModalFormBanlawsEdit = ({row}) => {
   );
 };
 
-export default ModalFormBanlawsEdit;
+export default ModalFormElipseEdit;
