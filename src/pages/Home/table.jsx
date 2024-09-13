@@ -165,7 +165,7 @@ const TableData = () => {
     if (date) {  
       fetchTable(date);
     }
-  }, [date, tables]);
+  }, [date]);
   
   return (
     <>

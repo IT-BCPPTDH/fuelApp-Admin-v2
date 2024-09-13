@@ -10,8 +10,6 @@ import { Data } from './data'; // Ensure this path is correct
 import { useNavigate } from 'react-router-dom'; 
 import ModalFormStation from '../../components/ModalForm/ModalAddStation';
 import stationService from '../../services/stationDashboard';
-import ActionButtons from '../../components/Action';
-import EditModalFormStation from '../../components/ModalForm/EditFormStation';
 import ModalFormStationEdit from '../../components/ModalForm/EditFormStation';
 
 const TableData = () => {
@@ -21,8 +19,7 @@ const TableData = () => {
   const [pageSize, setPageSize] = useState(10);
   const [showPerPageOptions, setShowPerPageOptions] = useState(true);
   const [tables, setTables] = useState([])
-  const [selectedItem, setSelectedItem] = useState(null);
-  const [isEditModalVisible, setIsEditModalVisible] = useState(false);
+  
   const columns = [
     {
       field: 'id',
@@ -52,28 +49,20 @@ const TableData = () => {
     {
       name: 'Action',
       render: (row) => (
-       <>
+       <div className='action-buttons'>
+        <div>
           <ModalFormStationEdit row={row}></ModalFormStationEdit>
-       </>
-      //  <div className='action-buttons'>
-      //     <EuiButtonIcon
-      //       iconType="pencil"
-      //       aria-label="Edit"
-      //       color="success"
-      //       onClick={(e) => {
-      //         handleEditClick
-      //       }}
-      //     />
-      //     <EuiButtonIcon
-      //       iconType="trash"
-      //       aria-label="Delete"
-      //       color="danger"
-      //       onClick={(e) => {
-      //         e.stopPropagation(); // Prevent row click
-      //         handleDelete(row.id);
-      //       }}
-      //     />
-      //  </div>
+        </div>
+          <EuiButtonIcon
+            // iconType="trash"
+            aria-label="Delete"
+            color="danger"
+            onClick={(e) => {
+              e.stopPropagation();
+              handleDelete(row.id);
+            }}
+          />
+       </div>
       ),
       truncateText: true,
     },
@@ -141,21 +130,6 @@ const TableData = () => {
     fetchStation()
   }, []);
  
-  const handleDelete = async(id) => {
-    try{
-      await stationService.delStation(id).then((res)=>{
-        if(res.status == 200){
-          console.log('Berhasil Hapus')
-        }else{
-          console.log("first")
-        }
-      }).catch((error)=>{
-        console.log(error)
-      })
-    }catch(error){
-      console.log(error)
-    }
-  }
 
   return (
     <>
@@ -192,12 +166,6 @@ const TableData = () => {
           }
         }}
       />
-      {/* {isEditModalVisible && selectedItem && (
-        <EditModalFormStation
-          stationData={selectedItem}
-          onClose={closeEditModal}
-        />
-      )} */}
     </>
   );
 };

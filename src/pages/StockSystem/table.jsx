@@ -52,39 +52,13 @@ const TableData = () => {
       field: 'action',
       name: 'Action',
       render: (e,row) => (
-        // <>
-        // <ModalSondingnEdit row={row}/>
-        // </>
-        <div className='action-buttons'>
-          <EuiButtonIcon
-            iconType="pencil"
-            aria-label="Edit"
-            color="success"
-            onClick={(e) => {
-              e.stopPropagation(); // Prevent row click
-              handleEdit(row);
-            }}
-          />
-          <EuiButtonIcon
-            iconType="trash"
-            aria-label="Delete"
-            color="danger"
-            onClick={(e) => {
-              e.stopPropagation(); // Prevent row click
-              handleDelete(row.id);
-            }}
-          />
-        </div>
+        <>
+        <ModalSondingnEdit row={row}/>
+        </>
       ),
       truncateText: true,
     },
   ];
-
-  // const handleRowClick = (item) => {
- 
-  //   navigate(`/details/${item.station}`); 
-    
-  // };
 
   const getRowProps = (item) => ({
     'data-test-subj': `row-${item.station}`,
@@ -159,21 +133,6 @@ const TableData = () => {
       fetchSonding()
     }, []);
 
-    const handleDelete = async(id) => {
-      try{
-        await sondingService.delSonding(id).then((res)=>{
-          if(res.status == 200){
-            console.log('Berhasil Hapus')
-          }else{
-            console.log("first")
-          }
-        }).catch((error)=>{
-          console.log(error)
-        })
-      }catch(error){
-        console.log(error)
-      }
-    } 
 
   return (
     <>

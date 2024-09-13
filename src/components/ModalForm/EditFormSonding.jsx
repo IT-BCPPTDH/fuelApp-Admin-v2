@@ -12,7 +12,8 @@ import {
   EuiModalHeaderTitle,
   useGeneratedHtmlId,
   EuiOverlayMask,
-  EuiButtonIcon
+  EuiButtonIcon,
+  EuiText
 } from '@elastic/eui';
 import sondingService from '../../services/masterSonding';
 
@@ -23,50 +24,75 @@ const ModalSondingnEdit = ({row}) => {
   const [takaranCM, setTakaranCM] = useState(row.cm || "")
   const [takaranLiter, setTakaranLiter] = useState(row.liters || "")
   const [site, setSite] = useState(row.site || "")
-  const [modalType, setModalType] = useState('');
-  const [modalMessage, setModalMessage] = useState('');
   const user = JSON.parse(localStorage.getItem('user_data'));
-
   const modalFormId = useGeneratedHtmlId({ prefix: 'modalForm' });
   const modalTitleId = useGeneratedHtmlId();
-
   const closeModal = () => {
     setIsModalVisible(false);
-    setModalType(''); 
-    setModalMessage(''); 
   };
 
-  const handleSubmit = async() => {
-    const data = {
-      id:row.id,
-      station: stations,
-      cm: takaranCM,
-      liters: takaranLiter,
-      site: site,
-      updated_by: user.JDE
-    };
+  const [isResultModalVisible, setIsResultModalVisible] = useState(false);
+  const [resultMessage, setResultMessage] = useState('');
+  const [resultStatus, setResultStatus] = useState(''); 
+  const showResultModal = () => setIsResultModalVisible(true);
+  const closeResultModal = () => {
+    setIsResultModalVisible(false)
+    window.location.reload();
+  }
+
+  const [isEditResult, setIsEditResult] = useState(false)
+  const [editMessage, setEditMessage] = useState('');
+  const [editStatus, setEditStatus] = useState(''); 
+  const showEditModal = () => setIsEditResult(true);
+  const closeEditModal = () => {
+    setIsEditResult(false)
+    window.location.reload();
+  }
+
+  const handleEditData = async () => {
+    closeModal()
     try {
-        await sondingService.updateSonding(data).then((res) =>{
-          console.log(res)
-            if(res.status == 200){
-              setIsModalVisible(true); 
-              setModalType('Success!');
-              setModalMessage('Data successfully saved!');
-              closeModal();
-            }else{
-              setIsModalVisible(true); 
-              console.log("gagal")
-              setModalType('Failed');
-              setModalMessage('Data not saved!');
-              closeModal();
-            }
-        })
+      const data = {
+        id:row.id,
+        station: stations,
+        cm: takaranCM,
+        liters: takaranLiter,
+        site: site,
+        updated_by: user.JDE
+      };
+      const res = await sondingService.updateSonding(data)
+      if (res.status === '200') {
+          setEditStatus('Success!');
+          setEditMessage('Data successfully saved!');
+      } else {
+          setEditStatus('Failed');
+          setEditMessage('Data not saved!');
+      }
     } catch (error) {
-      setIsModalVisible(true); 
-      setModalType('error');
-      setModalMessage(error.message);
+      console.log(first)
+      setEditStatus('Error');
+      setEditMessage('Terjadi kesalahan saat update data. Data tidak tersimpan!');
+    } finally {
+      showEditModal();
     }
-    
+  };
+
+  const handleDelete = async () => {
+    try {
+      const res = await sondingService.delSonding(row.id);
+      if (res.status === '200') {
+        setResultStatus('success');
+        setResultMessage('Data berhasil dihapus');
+      } else {
+        setResultStatus('failure');
+        setResultMessage('Data gagal dihapus');
+      }
+    } catch (error) {
+      setResultStatus('error');
+      setResultMessage('Terjadi kesalahan saat menghapus data');
+    } finally {
+      showResultModal();
+    }
   };
 
   return (
@@ -80,7 +106,7 @@ const ModalSondingnEdit = ({row}) => {
           style={{ width: "880px" }}
         >
           <EuiModalHeader>
-            <EuiModalHeaderTitle id={modalTitleId}> Edit Station</EuiModalHeaderTitle>
+            <EuiModalHeaderTitle id={modalTitleId}> Edit Sonding Master</EuiModalHeaderTitle>
           </EuiModalHeader>
           <EuiModalBody>
             <EuiForm id={modalFormId} component="form">
@@ -148,7 +174,7 @@ const ModalSondingnEdit = ({row}) => {
                 if (formElement) {
                   formElement.dispatchEvent(new Event('submit'));
                 }
-                handleSubmit();
+                handleEditData()
               }}
               fill
             >
@@ -162,35 +188,65 @@ const ModalSondingnEdit = ({row}) => {
         iconType="trash"
         aria-label="Delete"
         color="danger"
-        onClick={() => alert('Delete button clicked')}
+        onClick={() => handleDelete()}
         title="Delete"
       />
      
+     {isEditResult && (
+        <EuiModal>
+          <EuiModalBody>
+            <EuiText style={{
+                fontSize: '22px',
+                height: '25%',
+                marginTop: '25px',
+                color: editStatus === 'success' ? '#D52424' : '#73A33F',
+                fontWeight: '600',
+              }}>
+              {editMessage}
+            </EuiText>
+            <EuiText style={{
+                fontSize: '15px',
+                height: '25%',
+                marginTop: '35px'
+              }}>
+                {editStatus === 'success' ? 'Data berhasil terupdate. Silahkan kembali untuk menambah data atau ke halaman utama.'
+                : 'Data belum terupdate. Silahkan kembali untuk update data atau ke halaman utama.'}
+            </EuiText>
+          </EuiModalBody>
+          <EuiModalFooter>
+            <EuiButton onClick={closeEditModal} style={{ background: "#73A33F", color: "white" }}>
+              Tutup
+            </EuiButton>
+          </EuiModalFooter>
+        </EuiModal>
+      )}
 
-      {modalType && (
-        <EuiOverlayMask>
-          <EuiModal onClose={closeModal}>
-            <EuiModalHeader>
-              <EuiModalHeaderTitle>{modalType === 'Success' ? 'Success' : 'Error'}</EuiModalHeaderTitle>
-            </EuiModalHeader>
-            <EuiModalBody>
-              <p>{modalMessage}</p>
-            </EuiModalBody>
-            <EuiModalFooter>
-              <EuiButton
-                style={{
-                  background: "#73A33F",
-                  color: "white",
-                  width: "100px",
-                }}
-                onClick={closeModal}
-                fill
-              >
-                Close
-              </EuiButton>
-            </EuiModalFooter>
-          </EuiModal>
-        </EuiOverlayMask>
+      {isResultModalVisible && (
+        <EuiModal>
+          <EuiModalBody>
+            <EuiText style={{
+                fontSize: '22px',
+                height: '25%',
+                marginTop: '25px',
+                color: resultStatus === 'success' ? '#73A33F' : '#D52424',
+                fontWeight: '600',
+              }}>
+              {resultMessage}
+            </EuiText>
+            <EuiText style={{
+                fontSize: '15px',
+                height: '25%',
+                marginTop: '35px'
+              }}>
+                Data telah dihapus dari peradaban - By Admin Cantik;p
+            </EuiText>
+          </EuiModalBody>
+          <EuiModalFooter>
+            <EuiButton onClick={closeResultModal} style={{ background: "#73A33F", color: "white" }}>
+              Tutup
+            </EuiButton>
+          </EuiModalFooter>
+        </EuiModal>
       )}
     </>
   );

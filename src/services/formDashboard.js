@@ -33,9 +33,25 @@ const tableForm = async (requestBody) => {
     }
 };
 
+
+const insertData = async (requestBody) => {
+    try {
+        const response = await api.post(URL_API.addData, requestBody, {
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        });
+        return response.data;
+    } catch (error) {
+        console.error('Error fetching data:', error.message);
+        throw error;
+    }
+};
+
 const formService = {
     summaryForm,
-    tableForm
+    tableForm,
+    insertData
 };
 
 export default formService;

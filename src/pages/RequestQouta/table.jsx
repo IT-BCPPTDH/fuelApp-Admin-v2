@@ -141,7 +141,6 @@ const TableData = () => {
       const fetchTable = async (date) => {
         try {
           const res = await requestService.getRequest({tanggal: `${date}`})
-          console.log(res)
           if (res.status != 200) {
             throw new Error('Network response was not ok');
           }else if(res.status == 404){

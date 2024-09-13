@@ -47,9 +47,9 @@ const updateElipses = async (requestBody) => {
     }
 };
 
-const delElipses = async (requestBody) => {
+const delElipses = async (id) => {
     try {
-        const response = await api.patch(URL_MASTER_DATA.delMDElipse, requestBody, {
+        const response = await api.patch(URL_MASTER_DATA.delMDElipse+id, {
             headers: {
                 'Content-Type': 'application/json',
             },
