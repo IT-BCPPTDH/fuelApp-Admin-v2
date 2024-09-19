@@ -19,6 +19,9 @@ const ElipsePage = lazy(()=>import('./pages/Elipse'));
 const BanlawsPage = lazy(()=>import('./pages/UnitBanlaws'));
 const ChangePswdPage = lazy(()=>import('./pages/ChangePassword'));
 
+const UserPage = lazy(()=>import('./pages/User'));
+const EquipPage = lazy(()=>import('./pages/Equipment'));
+
 const RouteApp = () => {
   const {isLogged}=useAuth()
 
@@ -124,6 +127,28 @@ const RouteApp = () => {
         </Layout>
       ),
       path: '/unit-banlaws',
+      errorElement: <FallbackUI />,
+    },
+    {
+      element: (
+        <Layout>
+          <Suspense fallback={<div>Loading Change Passord...</div>}>
+            <EquipPage/>
+          </Suspense>
+        </Layout>
+      ),
+      path: '/equipment',
+      errorElement: <FallbackUI />,
+    },
+    {
+      element: (
+        <Layout>
+          <Suspense fallback={<div>Loading Change Passord...</div>}>
+            <UserPage/>
+          </Suspense>
+        </Layout>
+      ),
+      path: '/User',
       errorElement: <FallbackUI />,
     },
     {

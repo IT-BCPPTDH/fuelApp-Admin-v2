@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import {
   EuiButton,
@@ -17,21 +18,16 @@ import {
   EuiTextArea,
   useGeneratedHtmlId,
   EuiText,
-  EuiFilePicker
+  EuiFilePicker,
+  EuiButtonIcon
 } from '@elastic/eui';
 import moment from 'moment';
 import UserService from '../../services/UserService';
 import EquipService from '../../services/EquiptmentService';
-import formService from '../../services/formDashboard';
 import { useParams } from 'react-router-dom';
 
-const ModalFormAddIssued = () => {
-  const id = useParams()
+const ModalFormDataEdit = ({row}) => {
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const closeModal = () => setIsModalVisible(false);
-  const showModal = () => setIsModalVisible(true);
-  const modalFormId = useGeneratedHtmlId({ prefix: 'modalForm' });
-  const modalTitleId = useGeneratedHtmlId();
   const [selectedTime, setSelectedTime] = useState(moment());
   const [selectedTimeEnd, setSelectedTimeEnd] = useState(moment());
 
@@ -47,7 +43,6 @@ const ModalFormAddIssued = () => {
   const [hmStart, setHmStart] = useState("")
   const [hmLast, setHmLast] = useState("")
   const [qty, setQty] = useState(0)
-  const [qtyLast, setQtyLast] = useState(0)
   const [flowStart, setFlowStart] = useState(0)
   const [flowEnd, setflowEnd] = useState(0)
   const [empId, setEmpId] = useState("")
@@ -60,16 +55,30 @@ const ModalFormAddIssued = () => {
   const [picture, setPicture] = useState("")
   const [sign, setSign] = useState("")
 
-  const [isSubmitResult, setIsSubmitResult] = useState(false)
-  const [submitMessage, setSubmitMessage] = useState('');
-  const [submiStatus, setSubmitStatus] = useState(''); 
-  const showSubmitModal = () => setIsSubmitResult(true);
-  const closeSubmitModal = () => {
-    setIsSubmitResult(false)
+  const modalFormId = useGeneratedHtmlId({ prefix: 'modalForm' });
+  const modalTitleId = useGeneratedHtmlId();
+  const closeModal = () => {
+    setIsModalVisible(false);
+  };
+
+  const [isResultModalVisible, setIsResultModalVisible] = useState(false);
+  const [resultMessage, setResultMessage] = useState('');
+  const [resultStatus, setResultStatus] = useState(''); 
+  const showResultModal = () => setIsResultModalVisible(true);
+  const closeResultModal = () => {
+    setIsResultModalVisible(false)
     window.location.reload();
   }
 
-  // Handle file selection
+  const [isEditResult, setIsEditResult] = useState(false)
+  const [editMessage, setEditMessage] = useState('');
+  const [editStatus, setEditStatus] = useState(''); 
+  const showEditModal = () => setIsEditResult(true);
+  const closeEditModal = () => {
+    setIsEditResult(false)
+    window.location.reload();
+  }
+
   const onFileChange = (event) => {
     const file = event.target.files[0];
     setPicture(file);
@@ -80,49 +89,55 @@ const ModalFormAddIssued = () => {
     setSign(file);
   };
 
-  const handleSubmitData = async () => {
-    try {
-      // console.log(dataId, unitNo, model, owner, dates, )
-      const data = {
-        from_data_id : dataId,
-        no_unit: unitNo,
-        model_unit: model,
-        owner: owner,
-        date_trx: dates,
-        hm_last: hmStart,
-        hm_km: hmLast,
-        qty_last: qtyLast,
-        qty:qty,
-        flow_start: flowStart,
-        flow_end: flowEnd,
-        jde_operator: empId,
-        name_operator: nameEmp,
-        start: timeStart,
-        end: timeEnd,
-        fbr: fbr,
-        lkf_id: lkfId,
-        signature: sign,
-        type: trxType,
-        photo: picture,
-        created_by: user.JDE
-      };
-      const res = await formService.insertData(data)
-      console.log(res)
-      if (res.status === '201') {
-        setSubmitStatus('Success!');
-        setSubmitMessage('Data successfully saved!');
-      } else {
-        setSubmitStatus('Failed');
-        setSubmitMessage('Data not saved!');
-      }
-    } catch (error) {
-      setSubmitStatus('Error');
-      setSubmitMessage('Terjadi kesalahan saat update data. Data tidak tersimpan!');
-    } 
-    finally {
-      showSubmitModal();
-    }
-  };
+//   const handleSubmitData = async () => {
+//     try {
+//       const datas = {
+//         from_data_id : dataId,
+//         no_unit: unitNo,
+//         model_unit: model,
+//         owner: owner,
+//         date_trx: dates,
+//         hm_last: hmStart,
+//         hm_km: hmLast,
+//         qty_last: qty_last,
+//         qty:qty,
+//         flow_start: flowStart,
+//         flow_end: flowEnd,
+//         dip_start,
+//         dip_end,
+//         sonding_start,
+//         sonding_end,
+//         jde_operator: empId,
+//         name_operator: nameEmp,
+//         start: timeStart,
+//         end: timeEnd,
+//         fbr,
+//         lkf_id: lkfId,
+//         signature,
+//         type: trxType,
+//         reference,
+//         photo,
+//         fuelman_id: user.JDE,
+//         created_by: user.JDE
+//       };
+//       console.log(1, datas)
+//       console.log("first")
+//       // const res = await requestService.insertRequest(data)
+//       if (res.status === '201') {
+//         setSubmitStatus('Success!');
+//         setSubmitMessage('Data successfully saved!');
+//       } else {
+//         setSubmitStatus('Failed');
+//         setSubmitMessage('Data not saved!');
+//       }
+//     } catch (error) {
+//       setSubmitStatus('Error');
+//       setSubmitMessage('Terjadi kesalahan saat update data. Data tidak tersimpan!');
+//     } 
+//     finally {
+//       showSubmitModal();
+//     }
+//   };
 
 
   const handleChageStart = (time) => {
@@ -140,7 +155,7 @@ const ModalFormAddIssued = () => {
   useEffect(() => {
     let dt = Math.floor(Date.now() / 1000);
     setDataId(dt)
-    setlkfId(id.lkfId)
+    setlkfId(row.id)
     const fetchUnit = async () => {
       try {
         const res = await EquipService.getEquip()
@@ -199,25 +214,41 @@ const ModalFormAddIssued = () => {
     setTrxType(value);
   };
 
+  const handleDelete = async () => {
+    try {
+      const res = await UnitBanlawsService.delUnitBanlaws(row.id);
+      if (res.status === '200') {
+        setResultStatus('success');
+        setResultMessage('Data berhasil dihapus');
+      } else {
+        setResultStatus('failure');
+        setResultMessage('Data gagal dihapus');
+      }
+    } catch (error) {
+      setResultStatus('error');
+      setResultMessage('Terjadi kesalahan saat menghapus data');
+    } finally {
+      showResultModal();
+    }
+  };
 
   return (
     <>
-      <EuiButton style={{background:"#00BFB3", color:"white"}}  onClick={showModal}>Add Data</EuiButton>
+     <EuiButtonIcon iconType="pencil"  onClick={() => setIsModalVisible(true)}>Edit</EuiButtonIcon>
       {isModalVisible && (
-        <EuiModal 
+        <EuiModal
           aria-labelledby={modalTitleId}
           onClose={closeModal}
           initialFocus="[name=popswitch]"
-        
+          style={{ width: "880px" }}
         >
           <EuiModalHeader>
-            <EuiModalHeaderTitle id={modalTitleId}> Add Data</EuiModalHeaderTitle>
-            <hr/>
+            <EuiModalHeaderTitle id={modalTitleId}> Edit Unit Banlaws</EuiModalHeaderTitle>
           </EuiModalHeader>
-          <EuiModalBody>
-          <EuiForm id={modalFormId} component="form">
-              <EuiFlexGrid columns={2}>
-                <EuiFormRow label="No Unit">
+            <EuiModalBody>
+                <EuiForm id={modalFormId} component="form">
+                 <EuiFlexGrid columns={2}>
+                    <EuiFormRow label="No Unit">
                     <EuiSelect
                     options={equipData.map(items => ({
                       value: items.unit_no,  
@@ -249,31 +280,31 @@ const ModalFormAddIssued = () => {
                 <div style={{display:"flex", gap:"15px", marginTop:"40px"}}>
                    <EuiRadio 
                     label="Issued"
-                    id="Issued"
-                    value="Issued"
-                    checked={trxType === 'Issued'}
-                    onChange={(e) => handleOptionChange('Issued')}
+                    id="issued"
+                    value="issued"
+                    checked={trxType === 'issued'}
+                    onChange={(e) => handleOptionChange('issued')}
                     />
                      <EuiRadio 
                     id="receive"
                     label="Receive"
-                    value="Receive"
-                    checked={trxType === 'Receive'}
-                    onChange={(e) => handleOptionChange('Receive')}
+                    value="receive"
+                    checked={trxType === 'receive'}
+                    onChange={(e) => handleOptionChange('receive')}
                     />
                      <EuiRadio 
                     id="transfer"
                     label="Transfer"
-                    value="Transfer"
-                    checked={trxType === 'Transfer'}
-                    onChange={(e) => handleOptionChange('Transfer')}
+                    value="transfer"
+                    checked={trxType === 'transfer'}
+                    onChange={(e) => handleOptionChange('transfer')}
                     />
                      <EuiRadio 
                     label="Receive KPC"
-                    id="Receive kpc"
-                    value="Receive KPC"
-                    checked={trxType === 'Receive KPC'}
-                    onChange={(e) => handleOptionChange('Receive KPC')}
+                    id="receive_kpc"
+                    value="receive_kpc"
+                    checked={trxType === 'receive_kpc'}
+                    onChange={(e) => handleOptionChange('receive_kpc')}
                     />
                 </div>
                   
@@ -323,7 +354,7 @@ const ModalFormAddIssued = () => {
                     name='hmkm_last'
                     value={flowEnd}
                     onChange={(e)=> setflowEnd(e.target.value)}
-                    // disabled
+                    disabled
                   />
                 </EuiFormRow>
 
@@ -387,7 +418,7 @@ const ModalFormAddIssued = () => {
           </EuiModalBody>
           <EuiModalFooter>
             <EuiButton
-              type="button" 
+              type="button"
               style={{
                 background: "White",
                 color: "#73A33F",
@@ -395,23 +426,25 @@ const ModalFormAddIssued = () => {
               }}
               onClick={() => {
                 document.getElementById(modalFormId)?.dispatchEvent(new Event('submit')); // Trigger form submission
-                closeModal(); 
+                closeModal();
               }}
               fill
             >
               Cancel
             </EuiButton>
             <EuiButton
-             style={{
-              background: "#73A33F",
-              color: "white",
-              width: "100px",
-            }}
-              type="button" 
+              style={{
+                background: "#73A33F",
+                color: "white",
+                width: "100px",
+              }}
+              type="button"
               onClick={() => {
-                document.getElementById(modalFormId)?.dispatchEvent(new Event('submit')); // Trigger form submission
-                closeModal(); 
-                handleSubmitData()
+                const formElement = document.getElementById(modalFormId);
+                if (formElement) {
+                  formElement.dispatchEvent(new Event('submit'));
+                }
+                handleEditData();
               }}
               fill
             >
@@ -421,36 +454,73 @@ const ModalFormAddIssued = () => {
         </EuiModal>
       )}
 
-      {isSubmitResult && (
-          <EuiModal>
-            <EuiModalBody>
-              <EuiText style={{
-                  fontSize: '22px',
-                  height: '25%',
-                  marginTop: '25px',
-                  color: submiStatus === 'success' ? '#D52424' : '#73A33F',
-                  fontWeight: '600',
-                }}>
-                {submitMessage}
-              </EuiText>
-              <EuiText style={{
-                  fontSize: '15px',
-                  height: '25%',
-                  marginTop: '35px'
-                }}>
-                  {submiStatus === 'success' ? 'Data berhasil terupdate. Silahkan kembali untuk menambah data atau ke halaman utama.'
-                  : 'Data belum terupdate. Silahkan kembali untuk update data atau ke halaman utama.'}
-              </EuiText>
-            </EuiModalBody>
-            <EuiModalFooter>
-              <EuiButton onClick={closeSubmitModal} style={{ background: "#73A33F", color: "white" }}>
-                Tutup
-              </EuiButton>
-            </EuiModalFooter>
-          </EuiModal>
+      <EuiButtonIcon
+        iconType="trash"
+        aria-label="Delete"
+        color="danger"
+        onClick={() => handleDelete()}
+        title="Delete"
+      />
+     
+
+      {isEditResult && (
+        <EuiModal>
+          <EuiModalBody>
+            <EuiText style={{
+                fontSize: '22px',
+                height: '25%',
+                marginTop: '25px',
+                color: editStatus === 'success' ? '#D52424' : '#73A33F',
+                fontWeight: '600',
+              }}>
+              {editMessage}
+            </EuiText>
+            <EuiText style={{
+                fontSize: '15px',
+                height: '25%',
+                marginTop: '35px'
+              }}>
+                {editStatus === 'success' ? 'Data berhasil terupdate. Silahkan kembali untuk menambah data atau ke halaman utama.'
+                : 'Data belum terupdate. Silahkan kembali untuk update data atau ke halaman utama.'}
+            </EuiText>
+          </EuiModalBody>
+          <EuiModalFooter>
+            <EuiButton onClick={closeEditModal} style={{ background: "#73A33F", color: "white" }}>
+              Tutup
+            </EuiButton>
+          </EuiModalFooter>
+        </EuiModal>
+      )}
+
+      {isResultModalVisible && (
+        <EuiModal>
+          <EuiModalBody>
+            <EuiText style={{
+                fontSize: '22px',
+                height: '25%',
+                marginTop: '25px',
+                color: resultStatus === 'success' ? '#73A33F' : '#D52424',
+                fontWeight: '600',
+              }}>
+              {resultMessage}
+            </EuiText>
+            <EuiText style={{
+                fontSize: '15px',
+                height: '25%',
+                marginTop: '35px'
+              }}>
+                Data telah dihapus.
+            </EuiText>
+          </EuiModalBody>
+          <EuiModalFooter>
+            <EuiButton onClick={closeResultModal} style={{ background: "#73A33F", color: "white" }}>
+              Tutup
+            </EuiButton>
+          </EuiModalFooter>
+        </EuiModal>
       )}
     </>
   );
 };
 
-export default ModalFormAddIssued;
+export default ModalFormDataEdit;

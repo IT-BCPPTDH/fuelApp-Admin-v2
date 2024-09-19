@@ -224,7 +224,7 @@ const ModalForm = () => {
                     text: items.unit_no  
                   }))}
                   value={nomorUnit}  
-                  onChange={handleApprovalChange}  // fungsi yang memproses perubahan
+                  onChange={handleApprovalChange}  
                   hasNoInitialSelection
                   >
                   </EuiSelect>

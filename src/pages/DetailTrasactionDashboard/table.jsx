@@ -120,6 +120,7 @@ const TableData = () => {
     const fetchTable = async () => {
       try {
         const res = await stationService.tableStation({tanggal: `${date}`, station:station})
+        console.log(res)
         if (res.status != 200) {
           throw new Error('Network response was not ok');
         }

@@ -19,61 +19,61 @@ const DetailsPageTransaction = () => {
 
   const cardsDataAll = [
     {
-      title: formTotal.openStock ? formTotal.openStock : 0,
+      title: formTotal.openStock ? formTotal.openStock + ' Ltrs'  : 0 + ' Ltrs' ,
       description1: "Opening Stock",
       description2: "(Opening Dip)",
       icon: Icon1,
     },
     {
-      title: formTotal.receipt ? formTotal.receipt : 0,
+      title: formTotal.receipt ? formTotal.receipt + ' Ltrs'  : 0 + ' Ltrs' ,
       description1: "Receipt",
       description2: "(From Other FS or FT)",
       icon: Icon1,
     },
     {
-      title: formTotal.stock ? formTotal.stock : 0,
+      title: formTotal.stock ? formTotal.stock + ' Ltrs'  : 0 + ' Ltrs' ,
       description1: "Stock",
       description2: "( onHand )",
       icon: Icon1,
     },
     {
-        title: formTotal.issued ? formTotal.issued : 0,
+        title: formTotal.issued ? formTotal.issued + ' Ltrs' : 0 + ' Ltrs' ,
         description1: "Issued",
         description2: "( Issued + Transfer )",
         icon: Icon2,
       },
       {
-        title: formTotal.totalBalance ? formTotal.totalBalance : 0,
+        title: formTotal.totalBalance ? formTotal.totalBalance + ' Ltrs'  : 0 + ' Ltrs' ,
         description1: "Total Balance",
         description2: "( Stock - Issued )",
         icon: Icon2,
       },
       {
-        title: formTotal.closingStock ? formTotal.closingStock : 0,
+        title: formTotal.closingStock ? formTotal.closingStock + ' Ltrs'  : 0 + ' Ltrs' ,
         description1: "Closing Stock",
         description2: "( Closing Dip)",
         icon: Icon2,
       },
       {
-        title: formTotal.dailyVarience ? formTotal.dailyVarience : 0,
+        title: formTotal.dailyVarience ? formTotal.dailyVarience + ' Ltrs'  : 0 + ' Ltrs' ,
         description1: "Daily Variance",
         description2: "( Closing Dip - Balance)",
         icon: Icon3,
       },
       {
-        title: formTotal.startMeter ? formTotal.startMeter : 0,
+        title: formTotal.startMeter ? formTotal.startMeter + ' Ltrs'  : 0 + ' Ltrs' ,
         description1: "Start Meter",
         description2: "( Flow Meter Start",
         icon: Icon3,
       },
       {
-        title: formTotal.closeMeter ? formTotal.closeMeter : 0,
+        title: formTotal.closeMeter ? formTotal.closeMeter + ' Ltrs'  : 0 + ' Ltrs' ,
         description1: "Close Meter",
         description2: "( Flow Meter End",
         icon: Icon3,
       },
       {
-        title:formTotal.totalMeter ? formTotal.totalMeter : 0,
+        title:formTotal.totalMeter ? formTotal.totalMeter + ' Ltrs'  : 0 + ' Ltrs' ,
         description1: "Total Meter",
         description2: "( Close Meter - Start Meter",
         icon: Icon1,
@@ -133,7 +133,6 @@ const DetailsPageTransaction = () => {
         <div style={{ marginTop: "20px" }}>
           <CardContentData cardsData={cardsDataAll} />
         </div>
-       
        
     
         <div className="mt20">

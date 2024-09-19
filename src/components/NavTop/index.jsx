@@ -62,11 +62,11 @@ const NavTop = () => {
 
   const menuItemstMaster = [
     { label: 'Station', action: () => navigate('/master-station') },
-    { label: 'Equipment', action: () => navigate('/another-item') },
+    { label: 'Equipment', action: () => navigate('/equipment') },
     { label: 'Sonding Master', action: () => navigate('/master-stock-system') },
     { label: 'Master Data Elipse', action: () => navigate('/master-elipse') },
     { label: 'Unit Banlaws', action: () => navigate('/unit-banlaws') },
-    { label: 'User', action: () => navigate('/another-item') },
+    { label: 'User', action: () => navigate('/user') },
   ];
 
 

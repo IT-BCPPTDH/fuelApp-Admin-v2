@@ -17,67 +17,239 @@ const DetailPage = () => {
   const date = JSON.parse(localStorage.getItem('tanggal'));
   const dates= JSON.parse(localStorage.getItem('formattedDate'));
 
-  const cardsDataAll = [
-    {
-      title: summaryAll.totalPrevSonding,
-      description1: "Previous Close Sonding",
-      description2: "Total close sonding",
-      icon: Icon1,
-    },
-    {
-      title: summaryAll.totalOpenSonding,
-      description1: "Open Stock (Sonding)",
-      description2: "Summary Open Sonding",
-      icon: Icon1,
-    },
-    {
-      title: summaryAll.totalReciptKpc,
-      description1: "Receipt KPC",
-      description2: "Summary Receipt KPC",
-      icon: Icon1,
-    },
-  ];
-  const cardsDataShiftDay = [
-    {
-      title: summaryAll.prevSondingDay,
-      description1: "Previous Close Sonding",
-      description2: "Total close sonding",
-      icon: Icon2,
-    },
-    {
-      title: summaryAll.openSondingDay,
-      description1: "Open Stock (Sonding)",
-      description2: "Summary Open Sonding",
-      icon: Icon2,
-    },
-    {
-      title: summaryAll.receiptKpcDay,
-      description1: "Receipt KPC",
-      description2: "Summary Receipt KPC",
-      icon: Icon2,
-    },
-  ];
+  let cardsDataAll, cardsDataShiftDay, cardsDataShiftNigth
+  if(station == 'T112'){
+    cardsDataAll = [
+      {
+        title: summaryAll.totalAllOpening ? summaryAll.totalAllOpening + ' Ltrs'  : 0 + ' Ltrs',
+        description1: "Opening Stock",
+        description2: "Total sonding days",
+        icon: Icon1,
+      },
+      {
+        title: summaryAll.totalAllIssued ? summaryAll.totalAllIssued  + ' Ltrs' : 0 + ' Ltrs',
+        description1: "Issued",
+        description2: "Summary Issued",
+        icon: Icon1,
+      },
+      {
+        title: summaryAll.totalAllKpc ? summaryAll.totalAllKpc + ' Ltrs' : 0 + ' Ltrs',
+        description1: "Receipt",
+        description2: "Summary Receipt",
+        icon: Icon1,
+      },
+      {
+        title: summaryAll.totalAllClosing ? summaryAll.totalAllClosing + ' Ltrs' : 0 + ' Ltrs',
+        description1: "Closing Stock",
+        description2: "Total Closing Stock",
+        icon: Icon3,
+      },
+      {
+        title: summaryAll.totalAllVariance ? summaryAll.totalAllVariance + ' Ltrs' : 0 + ' Ltrs',
+        description1: "Variace",
+        description2: "Total Variance",
+        icon: Icon3,
+      },
+      {
+        title: summaryAll.totalAllCloseData ? summaryAll.totalAllCloseData + ' Ltrs' : 0 + ' Ltrs',
+        description1: "Close Data",
+        description2: "Total Close Data",
+        icon: Icon2,
+      }
+    ];
+    cardsDataShiftDay = [
+      {
+        title: summaryAll.totalAllOpeningDay ? summaryAll.totalAllOpeningDay + ' Ltrs' : 0 + ' Ltrs',
+        description1: "Opening Stock",
+        description2: "Total opening sonding",
+        icon: Icon1,
+      },
+      {
+        title: summaryAll.totalAllIssuedDay ? summaryAll.totalAllIssuedDay + ' Ltrs' : 0 + ' Ltrs',
+        description1: "Issued",
+        description2: "Issued Transaction",
+        icon: Icon1,
+      },
+      {
+        title: summaryAll.totalAllKpcDay ? summaryAll.totalAllKpcDay + ' Ltrs' : 0 + ' Ltrs',
+        description1: "Receipt KPC",
+        description2: "Summary Receipt KPC",
+        icon: Icon1,
+      },{
+        title: summaryAll.totalAllClosingDay ? summaryAll.totalAllClosingDay + ' Ltrs' : 0 + ' Ltrs',
+        description1: "Close Sonding",
+        description2: "Total Close Sonding",
+        icon: Icon3,
+      },
+      {
+        title: summaryAll.totalAllVarianceDay ? summaryAll.totalAllVarianceDay + ' Ltrs' : 0 + ' Ltrs',
+        description1: "Variance",
+        description2: "Variance",
+        icon: Icon3,
+      },
+      {
+        title: summaryAll.totalAllCloseDataDay ? summaryAll.totalAllCloseDataDay + ' Ltrs' : 0 + ' Ltrs',
+        description1: "Close Data",
+        description2: "Close Data",
+        icon: Icon2,
+      },
+    ];
+  
+    cardsDataShiftNigth = [
+      {
+        title: summaryAll.totalAllOpeningNigth ? summaryAll.totalAllOpeningNigth + ' Ltrs' : 0 + ' Ltrs',
+        description1: "Opening Stock",
+        description2: "Total opening sonding",
+        icon: Icon1,
+      },
+      {
+        title: summaryAll.totalAllIssuedNigth ? summaryAll.totalAllIssuedNigth + ' Ltrs' : 0 + ' Ltrs',
+        description1: "Issued",
+        description2: "Issued Transaction",
+        icon: Icon1,
+      },
+      {
+        title: summaryAll.totalAllKpcNigth ? summaryAll.totalAllKpcNigth + ' Ltrs' : 0 + ' Ltrs',
+        description1: "Receipt KPC",
+        description2: "Summary Receipt KPC",
+        icon: Icon1,
+      },
+      {
+        title: summaryAll.totalAllClosingNigth ? summaryAll.totalAllClosingNigth + ' Ltrs' : 0 + ' Ltrs',
+        description1: "Close Sonding",
+        description2: "Total Close Sonding",
+        icon: Icon3,
+      },
+      {
+        title: summaryAll.totalAllVarianceNigth ? summaryAll.totalAllVarianceNigth + ' Ltrs' : 0 + ' Ltrs',
+        description1: "Variance",
+        description2: "Variance",
+        icon: Icon3,
+      },
+      {
+        title: summaryAll.totalAllCloseDataNigth ? summaryAll.totalAllCloseDataNigth + ' Ltrs' : 0 + ' Ltrs',
+        description1: "Close Data",
+        description2: "Close Data",
+        icon: Icon2,
+      },
+    ];
+  }else{
+    cardsDataAll = [
+      {
+        title: summaryAll.totalAllOpening ? summaryAll.totalAllOpening + ' Ltrs'  : 0 + ' Ltrs',
+        description1: "Opening Stock",
+        description2: "Total sonding days",
+        icon: Icon1,
+      },
+      {
+        title: summaryAll.totalAllIssued ? summaryAll.totalAllIssued  + ' Ltrs' : 0 + ' Ltrs',
+        description1: "Issued",
+        description2: "Summary Issued",
+        icon: Icon1,
+      },
+      {
+        title: summaryAll.totalAllReceipt ? summaryAll.totalAllReceipt + ' Ltrs' : 0 + ' Ltrs',
+        description1: "Receipt",
+        description2: "Summary Receipt",
+        icon: Icon1,
+      },
+      {
+        title: summaryAll.totalAllClosing ? summaryAll.totalAllClosing + ' Ltrs' : 0 + ' Ltrs',
+        description1: "Closing Stock",
+        description2: "Total Closing Stock",
+        icon: Icon3,
+      },
+      {
+        title: summaryAll.totalAllVariance ? summaryAll.totalAllVariance + ' Ltrs' : 0 + ' Ltrs',
+        description1: "Variace",
+        description2: "Total Variance",
+        icon: Icon3,
+      },
+      {
+        title: summaryAll.totalAllCloseData ? summaryAll.totalAllCloseData + ' Ltrs' : 0 + ' Ltrs',
+        description1: "Close Data",
+        description2: "Total Close Data",
+        icon: Icon2,
+      }
+    ];
+    cardsDataShiftDay = [
+      {
+        title: summaryAll.totalAllOpeningDay ? summaryAll.totalAllOpeningDay + ' Ltrs' : 0 + ' Ltrs',
+        description1: "Opening Stock",
+        description2: "Total opening sonding",
+        icon: Icon1,
+      },
+      {
+        title: summaryAll.totalAllIssuedDay ? summaryAll.totalAllIssuedDay + ' Ltrs' : 0 + ' Ltrs',
+        description1: "Issued",
+        description2: "Issued Transaction",
+        icon: Icon1,
+      },
+      {
+        title: summaryAll.totalAllReceiptDay ? summaryAll.totalAllReceiptDay + ' Ltrs' : 0 + ' Ltrs',
+        description1: "Receipt",
+        description2: "Receipt Transaction",
+        icon: Icon1,
+      },{
+        title: summaryAll.totalAllClosingDay ? summaryAll.totalAllClosingDay + ' Ltrs' : 0 + ' Ltrs',
+        description1: "Close Sonding",
+        description2: "Total Close Sonding",
+        icon: Icon3,
+      },
+      {
+        title: summaryAll.totalAllVarianceDay ? summaryAll.totalAllVarianceDay + ' Ltrs' : 0 + ' Ltrs',
+        description1: "Variance",
+        description2: "Variance",
+        icon: Icon3,
+      },
+      {
+        title: summaryAll.totalAllCloseDataDay ? summaryAll.totalAllCloseDataDay + ' Ltrs' : 0 + ' Ltrs',
+        description1: "Close Data",
+        description2: "Close Data",
+        icon: Icon2,
+      },
+    ];
+  
+    cardsDataShiftNigth = [
+      {
+        title: summaryAll.totalAllOpeningNigth ? summaryAll.totalAllOpeningNigth + ' Ltrs' : 0 + ' Ltrs',
+        description1: "Opening Stock",
+        description2: "Total opening sonding",
+        icon: Icon1,
+      },
+      {
+        title: summaryAll.totalAllIssuedNigth ? summaryAll.totalAllIssuedNigth + ' Ltrs' : 0 + ' Ltrs',
+        description1: "Issued",
+        description2: "Issued Transaction",
+        icon: Icon1,
+      },
+      {
+        title: summaryAll.totalAllReceiptNigth ? totalAllReceiptNigth.totalAllKpcNigth + ' Ltrs' : 0 + ' Ltrs',
+        description1: "Receipt",
+        description2: "Receipt Transaction",
+        icon: Icon1,
+      },
+      {
+        title: summaryAll.totalAllClosingNigth ? summaryAll.totalAllClosingNigth + ' Ltrs' : 0 + ' Ltrs',
+        description1: "Close Sonding",
+        description2: "Total Close Sonding",
+        icon: Icon3,
+      },
+      {
+        title: summaryAll.totalAllVarianceNigth ? summaryAll.totalAllVarianceNigth + ' Ltrs' : 0 + ' Ltrs',
+        description1: "Variance",
+        description2: "Variance",
+        icon: Icon3,
+      },
+      {
+        title: summaryAll.totalAllCloseDataNigth ? summaryAll.totalAllCloseDataNigth + ' Ltrs' : 0 + ' Ltrs',
+        description1: "Close Data",
+        description2: "Close Data",
+        icon: Icon2,
+      },
+    ];
+  }
 
-  const cardsDataShiftNigth = [
-    {
-      title: summaryAll.prevSondingNight,
-      description1: "Previous Close Sonding",
-      description2: "Total close sonding",
-      icon: Icon3,
-    },
-    {
-      title: summaryAll.openSondingNight,
-      description1: "Open Stock (Sonding)",
-      description2: "Summary Open Sonding",
-      icon: Icon3,
-    },
-    {
-      title: summaryAll.receiptKPCNight,
-      description1: "Receipt KPC",
-      description2: "Summary Receipt KPC",
-      icon: Icon3,
-    },
-  ];
 
   useEffect(() => {
     const fetchTable = async () => {
@@ -101,7 +273,7 @@ const DetailPage = () => {
       <div className="padding-content">
         <div style={{ marginTop: "20px" }}>
           <EuiText>
-            <div className="summary">Station T112</div>
+            <div className="summary">Station {station}</div>
             <div className="date">{dates}</div>
           </EuiText>
         </div>
@@ -121,7 +293,7 @@ const DetailPage = () => {
         </div>
         <EuiText style={{ marginTop: "20px" }}>
           {" "}
-          <h2>Summary Day Nigth</h2>
+          <h2>Summary Nigth Shift</h2>
         </EuiText>
         <div style={{ marginTop: "20px" }}>
           <CardContentData cardsData={cardsDataShiftNigth} />

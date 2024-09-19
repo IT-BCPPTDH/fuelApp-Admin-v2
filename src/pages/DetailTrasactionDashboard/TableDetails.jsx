@@ -10,6 +10,7 @@ import {
 import { useNavigate } from 'react-router-dom'; 
 import { DataTrxDetails } from './datadetails';
 import ModalFormAddIssued from '../../components/ModalForm/ModalAddTransaction';
+import ModalFormDataEdit from '../../components/ModalForm/EditFormData';
 import formService from '../../services/formDashboard';
 
 const TableDataDetails = ({lkfId}) => {
@@ -100,23 +101,9 @@ const TableDataDetails = ({lkfId}) => {
     {
       field: 'action',
       name: 'Action',
-      render: (item) => (
+      render: (e, row) => (
         <>
-       
-          <EuiButton
-            size='s'
-            style={{ background: "#0077CC", color: "white" }}
-            color="primary"
-            onClick={() => alert('Edit button clicked')}
-          >
-            Edit
-          </EuiButton>
-          <EuiButton  
-            style={{ background: "#00BFB3", color: "white" }}
-            onClick={() => alert('Delete button clicked')}
-          >
-            Delete
-          </EuiButton>
+        <ModalFormDataEdit row = {row}/>
         </>
       ),
       truncateText: true,

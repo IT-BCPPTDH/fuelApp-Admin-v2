@@ -70,7 +70,6 @@ const ModalAddElipse = () => {
         setSubmitMessage('Data not saved!');
       }
     } catch (error) {
-      console.log(first)
       setSubmitStatus('Error');
       setSubmitMessage('Terjadi kesalahan saat update data. Data tidak tersimpan!');
     } finally {
