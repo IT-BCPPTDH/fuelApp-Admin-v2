@@ -19,53 +19,53 @@ const getEquip = async () => {
     }
 };
 
-// const insertEquip = async (requestBody) => {
-//     try {
-//         const response = await api.post(URL_MASTER_DATA.insertMDElipse, requestBody, {
-//             headers: {
-//                 'Content-Type': 'application/json',
-//             },
-//         });
-//         return response.data;
-//     } catch (error) {
-//         console.error('Error fetching data:', error.message);
-//         throw error;
-//     }
-// };
+const insertEquip = async (requestBody) => {
+    try {
+        const response = await api.post(URL_MASTER_DATA.insertEquip, requestBody, {
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        });
+        return response.data;
+    } catch (error) {
+        console.error('Error fetching data:', error.message);
+        throw error;
+    }
+};
 
-// const updateEquip = async (requestBody) => {
-//     try {
-//         const response = await api.patch(URL_MASTER_DATA.updateMDElipse, requestBody, {
-//             headers: {
-//                 'Content-Type': 'application/json',
-//             },
-//         });
-//         return response.data;
-//     } catch (error) {
-//         console.error('Error fetching data:', error.message);
-//         throw error;
-//     }
-// };
+const updateEquip = async (requestBody) => {
+    try {
+        const response = await api.patch(URL_MASTER_DATA.updateEquip, requestBody, {
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        });
+        return response.data;
+    } catch (error) {
+        console.error('Error fetching data:', error.message);
+        throw error;
+    }
+};
 
-// const delEquip = async (id) => {
-//     try {
-//         const response = await api.patch(URL_MASTER_DATA.delMDElipse+id, {
-//             headers: {
-//                 'Content-Type': 'application/json',
-//             },
-//         });
-//         return response.data;
-//     } catch (error) {
-//         console.error('Error fetching data:', error.message);
-//         throw error;
-//     }
-// };
+const delEquip = async (id) => {
+    try {
+        const response = await api.patch(URL_MASTER_DATA.delMDEquip+id, {
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        });
+        return response.data;
+    } catch (error) {
+        console.error('Error fetching data:', error.message);
+        throw error;
+    }
+};
 
 const EquipService = {
-    getEquip
-    // insertEquip,
-    // updateEquip,
-    // delEquip
+    getEquip,
+    insertEquip,
+    updateEquip,
+    delEquip
 };
 
 export default EquipService;

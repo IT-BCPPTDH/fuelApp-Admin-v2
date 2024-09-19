@@ -20,7 +20,6 @@ import UnitBanlawsService from '../../services/unitBanlaws';
 
 
 const ModalFormUnit = ({item}) => {
-    console.log(item)
   const [isModalVisible, setIsModalVisible] = useState(false);
   const showModal = () => setIsModalVisible(true);
   const modalFormId = useGeneratedHtmlId({ prefix: 'modalForm' });

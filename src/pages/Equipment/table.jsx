@@ -5,10 +5,12 @@ import {
   EuiFieldSearch,
   EuiText,
   EuiLink,
+  EuiButtonIcon,
 } from '@elastic/eui';
-import { Data } from './data'; 
-import MainService from '../../services/HomeData';
 import { useNavigate } from 'react-router-dom'; 
+import ModalAddEquip from '../../components/ModalForm/ModalAddEquip';
+import ModalEditEquipment from '../../components/ModalForm/EditEquipment';
+import EquipService from '../../services/EquiptmentService';
 
 const TableData = () => {
   const navigate = useNavigate(); 
@@ -16,88 +18,58 @@ const TableData = () => {
   const [pageIndex, setPageIndex] = useState(0);
   const [pageSize, setPageSize] = useState(10);
   const [showPerPageOptions, setShowPerPageOptions] = useState(true);
-  const [tables, setTables] = useState([])
+  const [banlaws, setBanlaws] = useState([])
+  const [isEditModalVisible, setIsEditModalVisible] = useState(false);
 
   const columns = [
     {
-      field: 'station',
-      name: 'Station',
-      'data-test-subj': 'stationCell',
-      mobileOptions: {
-        render: (item) => (
-          <EuiLink
-            href={`#${item.station}`}
-            onClick={(e) => {
-              e.preventDefault();
-              handleRowClick(item); // Handle row click action
-            }}
-          >
-            {item.station}
-          </EuiLink>
-        ),
-        header: false,
-        truncateText: false,
-        enlarge: true,
-        width: '100%',
-      },
-    },
-    {
-      field: 'total_opening',
-      name: 'Open Stock',
+      field: 'id',
+      name: 'No',
       truncateText: true,
     },
     {
-      field: 'total_receive_kpc',
-      name: 'Receipt Kpc',
+      field: 'unit_no',
+      name: 'No Unit',
       truncateText: true,
     },
     {
-      field: 'total_receive',
-      name: 'Receipt',
+      field: 'type',
+      name: 'Unit Type',
       truncateText: true,
     },
     {
-      field: 'total_issued',
-      name: 'Issued',
+      field: 'tank_cap',
+      name: 'Tank Capacity/L',
       truncateText: true,
     },
     {
-      field: 'total_transfer',
-      name: 'Transfer',
+      field: 'category',
+      name: 'Unit Group Id',
       truncateText: true,
     },
     {
-      field: 'total_closing',
-      name: 'Close Sonding',
+      field: 'site',
+      name: 'Site',
       truncateText: true,
     },
     {
-      field: 'closeDataPrev',
-      name: 'Close Data',
+      field: 'owner',
+      name: 'Owner',
       truncateText: true,
     },
     {
-      field: 'variants',
-      name: 'Variant',
-      truncateText: true,
-    },
-    {
-      field: 'interShift',
-      name: 'Intershift',
+      field: 'action',
+      name: 'Action',
+      render: (item, row) => (
+        <ModalEditEquipment row={row}/>
+      ),
       truncateText: true,
     },
   ];
 
-  const handleRowClick = (item) => {
- 
-    navigate(`/details/${item.station}`); 
-    
-  };
-
   const getRowProps = (item) => ({
     'data-test-subj': `row-${item.station}`,
     className: 'customRowClass',
-    onClick: () => handleRowClick(item), 
   });
 
   const getCellProps = (item, column) => ({
@@ -110,8 +82,12 @@ const TableData = () => {
     setSearchValue(value);
   };
 
-  const filteredItems = tables.filter(item =>
-    item.station.toLowerCase().includes(searchValue.toLowerCase())
+  const filteredItems = banlaws.filter(item =>
+    String(item.unit_no).toLowerCase().includes(searchValue.toLowerCase()) ||
+    String(item.type).toLowerCase().includes(searchValue.toLowerCase()) ||
+    item.category.toLowerCase().includes(searchValue.toLowerCase()) ||
+    item.site.toLowerCase().includes(searchValue.toLowerCase()) ||
+    item.owner.toLowerCase().includes(searchValue.toLowerCase())
   );
 
   const findPageItems = (items, pageIndex, pageSize) => {
@@ -144,32 +120,31 @@ const TableData = () => {
       </>
     );
 
-  const date = JSON.parse(localStorage.getItem('tanggal'));
+    useEffect(() => {
+      const fetchBanlaws = async () => {
+        try {
+          const res = await EquipService.getEquip()
+          console.log(res)
+          if (res.status != 200) {
+            throw new Error('Network response was not ok');
+          }else if(res.status == 404){
+            setBanlaws([]);
+          }else{
+            setBanlaws(res.data);
+          }
+        } catch (error) {
+          console.log(error)
+          // setError(error);
+        } 
+      };
+      fetchBanlaws()
+    }, []);
 
-  useEffect(() => {
-    const fetchTable = async (date) => {
-      try {
-        const res = await MainService.tableDashboard({tanggal: `${date}`})
-        if (res.status != 200) {
-          throw new Error('Network response was not ok');
-        }else if(res.status == 404){
-          setTables([]);
-        }else{
-          setTables(res.data);
-        }
-      } catch (error) {
-        console.log(error)
-        // setError(error);
-      } 
-    };
-    if (date) {  
-      fetchTable(date);
-    }
-  }, [date]);
-  
+
   return (
     <>
       <div style={{ marginBottom: '10px', display: "flex", justifyContent: "flex-end",gap:"15px",alignItems: "center" }}>
+        <ModalAddEquip/>
         <EuiFieldSearch
           placeholder="Search data" 
           value={searchValue}
@@ -177,13 +152,7 @@ const TableData = () => {
           aria-label="Search data"
           style={{ marginRight: '10px' }}
         />
-        <EuiButton
-          style={{ background: "#73A33F", color: "white" }}
-          color="primary"
-          onClick={() => alert('Export button clicked')}
-        >
-          Export
-        </EuiButton>
+        
       </div>
       <EuiText size="xs">
         Showing {resultsCount} <strong>Data</strong>

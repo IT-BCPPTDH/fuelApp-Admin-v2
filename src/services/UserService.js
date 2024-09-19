@@ -77,10 +77,12 @@ const getAllUser = async (requestBody) => {
 
 const updateMasterDataUser = async (data) =>{
     try {
-        const response = await api.patch(URL_USER_API.updateUser,data)
-        console.log("data response", response.data);
+        const response = await api.put(URL_USER_API.updateUser, data, {
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        });
         return response.data;
-
     } catch (error) {
         console.error("Error updating", error);
         throw error;
@@ -117,13 +119,61 @@ const updatedPassword = async (requestBody) => {
     }
 };
 
+const getAllEmployee = async (requestBody) => {
+    try {
+        const response = await fetch(URL_USER_API.getUserFuels, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(requestBody)
+        })
+        return await response.json();
+
+    } catch (error) {
+        console.log(error)
+    }
+}
+
+const insertUser = async (requestBody) => {
+    try {
+        const response = await api.post(URL_USER_API.createUser, requestBody, {
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        });
+        return response.data;
+    } catch (error) {
+        console.error('Error fetching data:', error.message);
+        throw error;
+    }
+};
+
+const deleteUser = async (id) => {
+    try {
+        const response = await api.delete(URL_USER_API.delUser+id, {
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        });
+        console.log(2,response.data)
+        return response.data;
+    } catch (error) {
+        console.error('Error fetching data:', error.message);
+        throw error;
+    }
+};
+
 const UserService = {
     authLogin,
     logout,
     getAllUser,
     updateMasterDataUser,
     getAllRoles,
-    updatedPassword
+    updatedPassword,
+    getAllEmployee,
+    insertUser,
+    deleteUser
 };
 
 export default UserService;  

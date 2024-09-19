@@ -36,7 +36,7 @@ const tableForm = async (requestBody) => {
 
 const insertData = async (requestBody) => {
     try {
-        const response = await api.post(URL_API.addData, requestBody, {
+        const response = await api.post(URL_API.addTransaction, requestBody, {
             headers: {
                 'Content-Type': 'application/json',
             },

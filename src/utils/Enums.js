@@ -21,9 +21,12 @@ export const URL_USER_API = {
     Auth: `${userLink}/api-user/auth`,
     Logout: `${userLink}/api-user/logout`,
     getallUser: `${userLink}/api-user/get-all`,
-    updateUser: `${userLink}/api-user/update-data`,
+    updateUser: `${userLink}/api-user/update-fuel-employee`,
     resetPswd: `${userLink}/api-user/reset-password`,
     getAllRoles: `${userLink}/api-user/get-all-roles`,
+    getUserFuels: `${userLink}/api-user/get-user-fuel`,
+    createUser: `${userLink}/api-user/add-user-role`,
+    delUser :`${userLink}/api-user/delete/`
 };
 
 // Export Admin API URLs
@@ -59,14 +62,10 @@ export const URL_MASTER_DATA = {
     delMDElipse: `${linkMasterData}/master/master-elipses/delete/`,
     insertMDElipse:`${linkMasterData}/master/master-elipses/insert`,
     updateMDElipse:`${linkMasterData}/master/master-elipses/edit`,
-    getMDEquip:`${linkMasterData}/master/unit`,
-    delMDEquip: `${linkMasterData}/master/master-elipses/delete/`,
-    insertEquip:`${linkMasterData}/master/master-elipses/insert`,
-    updateEquip:`${linkMasterData}/master/master-elipses/edit`,
-    getMDUser:`${linkMasterData}/master/master-elipses`,
-    delMDUser: `${linkMasterData}/master/master-elipses/delete/`,
-    insertMDUser:`${linkMasterData}/master/master-elipses/insert`,
-    updateMDUser:`${linkMasterData}/master/master-elipses/edit`,
+    getMDEquip:`${linkMasterData}/master/unit/get-equip`,
+    delMDEquip: `${linkMasterData}/master/unit/delete/`,
+    insertEquip:`${linkMasterData}/master/unit/insert`,
+    updateEquip:`${linkMasterData}/master/unit/edit`
 };
 
 // HTTP Status Codes
