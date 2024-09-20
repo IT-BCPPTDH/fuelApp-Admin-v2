@@ -3,7 +3,7 @@ import Icon1 from "../../images/icon1.png";
 import Icon2 from "../../images/chart.png";
 import Icon3 from "../../images/circle.png";
 import Icon4 from "../../images/icon4.png";
-import CardContentData from "../../components/Card";
+import CardStasion from "../../components/CardStasion/cardStation";
 import { EuiText } from "@elastic/eui";
 import NavTop from "../../components/NavTop";
 import TableData from "./table";
@@ -23,7 +23,7 @@ const DetailPage = () => {
       {
         title: summaryAll.totalAllOpening ? summaryAll.totalAllOpening + ' Ltrs'  : 0 + ' Ltrs',
         description1: "Opening Stock",
-        description2: "Total sonding days",
+        description2: "Total sonding",
         icon: Icon1,
       },
       {
@@ -41,7 +41,7 @@ const DetailPage = () => {
       {
         title: summaryAll.totalAllClosing ? summaryAll.totalAllClosing + ' Ltrs' : 0 + ' Ltrs',
         description1: "Closing Stock",
-        description2: "Total Closing Stock",
+        description2: "Closing Stock",
         icon: Icon3,
       },
       {
@@ -50,18 +50,18 @@ const DetailPage = () => {
         description2: "Total Variance",
         icon: Icon3,
       },
-      {
-        title: summaryAll.totalAllCloseData ? summaryAll.totalAllCloseData + ' Ltrs' : 0 + ' Ltrs',
-        description1: "Close Data",
-        description2: "Total Close Data",
-        icon: Icon2,
-      }
+      // {
+      //   title: summaryAll.totalAllCloseData ? summaryAll.totalAllCloseData + ' Ltrs' : 0 + ' Ltrs',
+      //   description1: "Close Data",
+      //   description2: "Total Close Data",
+      //   icon: Icon2,
+      // }
     ];
     cardsDataShiftDay = [
       {
         title: summaryAll.totalAllOpeningDay ? summaryAll.totalAllOpeningDay + ' Ltrs' : 0 + ' Ltrs',
         description1: "Opening Stock",
-        description2: "Total opening sonding",
+        description2: "opening sonding",
         icon: Icon1,
       },
       {
@@ -77,8 +77,8 @@ const DetailPage = () => {
         icon: Icon1,
       },{
         title: summaryAll.totalAllClosingDay ? summaryAll.totalAllClosingDay + ' Ltrs' : 0 + ' Ltrs',
-        description1: "Close Sonding",
-        description2: "Total Close Sonding",
+        description1: "Closing Stock",
+        description2: "Close Sonding",
         icon: Icon3,
       },
       {
@@ -87,19 +87,19 @@ const DetailPage = () => {
         description2: "Variance",
         icon: Icon3,
       },
-      {
-        title: summaryAll.totalAllCloseDataDay ? summaryAll.totalAllCloseDataDay + ' Ltrs' : 0 + ' Ltrs',
-        description1: "Close Data",
-        description2: "Close Data",
-        icon: Icon2,
-      },
+      // {
+      //   title: summaryAll.totalAllCloseDataDay ? summaryAll.totalAllCloseDataDay + ' Ltrs' : 0 + ' Ltrs',
+      //   description1: "Close Data",
+      //   description2: "Close Data",
+      //   icon: Icon2,
+      // },
     ];
   
     cardsDataShiftNigth = [
       {
         title: summaryAll.totalAllOpeningNigth ? summaryAll.totalAllOpeningNigth + ' Ltrs' : 0 + ' Ltrs',
         description1: "Opening Stock",
-        description2: "Total opening sonding",
+        description2: "opening sonding",
         icon: Icon1,
       },
       {
@@ -116,8 +116,8 @@ const DetailPage = () => {
       },
       {
         title: summaryAll.totalAllClosingNigth ? summaryAll.totalAllClosingNigth + ' Ltrs' : 0 + ' Ltrs',
-        description1: "Close Sonding",
-        description2: "Total Close Sonding",
+        description1: "Closing Stock",
+        description2: "Close Sonding",
         icon: Icon3,
       },
       {
@@ -126,19 +126,19 @@ const DetailPage = () => {
         description2: "Variance",
         icon: Icon3,
       },
-      {
-        title: summaryAll.totalAllCloseDataNigth ? summaryAll.totalAllCloseDataNigth + ' Ltrs' : 0 + ' Ltrs',
-        description1: "Close Data",
-        description2: "Close Data",
-        icon: Icon2,
-      },
+      // {
+      //   title: summaryAll.totalAllCloseDataNigth ? summaryAll.totalAllCloseDataNigth + ' Ltrs' : 0 + ' Ltrs',
+      //   description1: "Close Data",
+      //   description2: "Close Data",
+      //   icon: Icon2,
+      // },
     ];
   }else{
     cardsDataAll = [
       {
         title: summaryAll.totalAllOpening ? summaryAll.totalAllOpening + ' Ltrs'  : 0 + ' Ltrs',
         description1: "Opening Stock",
-        description2: "Total sonding days",
+        description2: "Opening Sonding",
         icon: Icon1,
       },
       {
@@ -156,7 +156,7 @@ const DetailPage = () => {
       {
         title: summaryAll.totalAllClosing ? summaryAll.totalAllClosing + ' Ltrs' : 0 + ' Ltrs',
         description1: "Closing Stock",
-        description2: "Total Closing Stock",
+        description2: "Closing Stock",
         icon: Icon3,
       },
       {
@@ -165,18 +165,18 @@ const DetailPage = () => {
         description2: "Total Variance",
         icon: Icon3,
       },
-      {
-        title: summaryAll.totalAllCloseData ? summaryAll.totalAllCloseData + ' Ltrs' : 0 + ' Ltrs',
-        description1: "Close Data",
-        description2: "Total Close Data",
-        icon: Icon2,
-      }
+      // {
+      //   title: summaryAll.totalAllCloseData ? summaryAll.totalAllCloseData + ' Ltrs' : 0 + ' Ltrs',
+      //   description1: "Close Data",
+      //   description2: "Total Close Data",
+      //   icon: Icon2,
+      // }
     ];
     cardsDataShiftDay = [
       {
         title: summaryAll.totalAllOpeningDay ? summaryAll.totalAllOpeningDay + ' Ltrs' : 0 + ' Ltrs',
         description1: "Opening Stock",
-        description2: "Total opening sonding",
+        description2: "opening sonding",
         icon: Icon1,
       },
       {
@@ -193,7 +193,7 @@ const DetailPage = () => {
       },{
         title: summaryAll.totalAllClosingDay ? summaryAll.totalAllClosingDay + ' Ltrs' : 0 + ' Ltrs',
         description1: "Close Sonding",
-        description2: "Total Close Sonding",
+        description2: "Close Sonding",
         icon: Icon3,
       },
       {
@@ -202,19 +202,19 @@ const DetailPage = () => {
         description2: "Variance",
         icon: Icon3,
       },
-      {
-        title: summaryAll.totalAllCloseDataDay ? summaryAll.totalAllCloseDataDay + ' Ltrs' : 0 + ' Ltrs',
-        description1: "Close Data",
-        description2: "Close Data",
-        icon: Icon2,
-      },
+      // {
+      //   title: summaryAll.totalAllCloseDataDay ? summaryAll.totalAllCloseDataDay + ' Ltrs' : 0 + ' Ltrs',
+      //   description1: "Close Data",
+      //   description2: "Close Data",
+      //   icon: Icon2,
+      // },
     ];
   
     cardsDataShiftNigth = [
       {
         title: summaryAll.totalAllOpeningNigth ? summaryAll.totalAllOpeningNigth + ' Ltrs' : 0 + ' Ltrs',
         description1: "Opening Stock",
-        description2: "Total opening sonding",
+        description2: "Opening sonding",
         icon: Icon1,
       },
       {
@@ -232,7 +232,7 @@ const DetailPage = () => {
       {
         title: summaryAll.totalAllClosingNigth ? summaryAll.totalAllClosingNigth + ' Ltrs' : 0 + ' Ltrs',
         description1: "Close Sonding",
-        description2: "Total Close Sonding",
+        description2: "Close Sonding",
         icon: Icon3,
       },
       {
@@ -241,12 +241,12 @@ const DetailPage = () => {
         description2: "Variance",
         icon: Icon3,
       },
-      {
-        title: summaryAll.totalAllCloseDataNigth ? summaryAll.totalAllCloseDataNigth + ' Ltrs' : 0 + ' Ltrs',
-        description1: "Close Data",
-        description2: "Close Data",
-        icon: Icon2,
-      },
+      // {
+      //   title: summaryAll.totalAllCloseDataNigth ? summaryAll.totalAllCloseDataNigth + ' Ltrs' : 0 + ' Ltrs',
+      //   description1: "Close Data",
+      //   description2: "Close Data",
+      //   icon: Icon2,
+      // },
     ];
   }
 
@@ -282,21 +282,21 @@ const DetailPage = () => {
           <h2>Summary All</h2>
         </EuiText>
         <div style={{ marginTop: "20px" }}>
-          <CardContentData cardsData={cardsDataAll} />
+          <CardStasion cardsData={cardsDataAll} />
         </div>
         <EuiText style={{ marginTop: "20px" }}>
           {" "}
           <h2>Summary Day Shift</h2>
         </EuiText>
         <div style={{ marginTop: "20px" }}>
-          <CardContentData cardsData={cardsDataShiftDay} />
+          <CardStasion cardsData={cardsDataShiftDay} />
         </div>
         <EuiText style={{ marginTop: "20px" }}>
           {" "}
           <h2>Summary Nigth Shift</h2>
         </EuiText>
         <div style={{ marginTop: "20px" }}>
-          <CardContentData cardsData={cardsDataShiftNigth} />
+          <CardStasion cardsData={cardsDataShiftNigth} />
         </div>
         <div className="mt20">
           <TableData />
