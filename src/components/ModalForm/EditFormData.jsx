@@ -24,9 +24,11 @@ import {
 import moment from 'moment';
 import UserService from '../../services/UserService';
 import EquipService from '../../services/EquiptmentService';
+import FormData from '../../services/formDashboard';
 import { useParams } from 'react-router-dom';
 
 const ModalFormDataEdit = ({row}) => {
+  console.log(row)
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [selectedTime, setSelectedTime] = useState(moment());
   const [selectedTimeEnd, setSelectedTimeEnd] = useState(moment());
@@ -37,21 +39,21 @@ const ModalFormDataEdit = ({row}) => {
   const [equipData, setEquipData] = useState([])
 
   const [dataId, setDataId] = useState("")
-  const [unitNo, setUnitNo] = useState("")
-  const [model, setModel] = useState("")
-  const [owner, setOwner] = useState("")
-  const [hmStart, setHmStart] = useState("")
-  const [hmLast, setHmLast] = useState("")
-  const [qty, setQty] = useState(0)
-  const [flowStart, setFlowStart] = useState(0)
-  const [flowEnd, setflowEnd] = useState(0)
-  const [empId, setEmpId] = useState("")
-  const [nameEmp, setNameEmp] = useState("")
+  const [unitNo, setUnitNo] = useState(row.no_unit || "")
+  const [model, setModel] = useState(row.model_unit || "")
+  const [owner, setOwner] = useState(row.owner || "")
+  const [hmStart, setHmStart] = useState(row.hm_last || "")
+  const [hmLast, setHmLast] = useState(row.hm_km || "")
+  const [qty, setQty] = useState(row.qty || 0)
+  const [flowStart, setFlowStart] = useState(row.flow_start || 0)
+  const [flowEnd, setflowEnd] = useState(row.flow_end || 0)
+  const [empId, setEmpId] = useState(row.jde_operator || "")
+  const [nameEmp, setNameEmp] = useState(row.name_operator || "")
   const [timeStart, setTimeStart] = useState(moment())
   const [timeEnd, setTimeEnd] = useState(moment())
-  const [lkfId, setlkfId] = useState("")
-  const [trxType, setTrxType] = useState("")
-  const [fbr, setFbr] = useState(0)
+  const [lkfId, setlkfId] = useState(row.lkf_id || "")
+  const [trxType, setTrxType] = useState(row.type || "")
+  const [fbr, setFbr] = useState(row.fbr || 0)
   const [picture, setPicture] = useState("")
   const [sign, setSign] = useState("")
 
@@ -79,65 +81,63 @@ const ModalFormDataEdit = ({row}) => {
     window.location.reload();
   }
 
-  const onFileChange = (event) => {
+  const onFileChange = async(event) => {
     const file = event.target.files[0];
-    setPicture(file);
+    try {
+      const base64 = await convertToBase64(file);
+      setPicture(base64);
+    } catch (error) {
+      console.error("Error converting file to base64:", error);
+    }
   };
 
-  const onSignChange = (event) => {
+  const onSignChange = async (event) => {
     const file = event.target.files[0];
-    setSign(file);
+    const base64 = await convertToBase64(file);
+    setSign(base64);
   };
 
-//   const handleSubmitData = async () => {
-//     try {
-//       const datas = {
-//         from_data_id : dataId,
-//         no_unit: unitNo,
-//         model_unit: model,
-//         owner: owner,
-//         date_trx: dates,
-//         hm_last: hmStart,
-//         hm_km: hmLast,
-//         qty_last: qty_last,
-//         qty:qty,
-//         flow_start: flowStart,
-//         flow_end: flowEnd,
-//         dip_start,
-//         dip_end,
-//         sonding_start,
-//         sonding_end,
-//         jde_operator: empId,
-//         name_operator: nameEmp,
-//         start: timeStart,
-//         end: timeEnd,
-//         fbr,
-//         lkf_id: lkfId,
-//         signature,
-//         type: trxType,
-//         reference,
-//         photo,
-//         fuelman_id: user.JDE,
-//         created_by: user.JDE
-//       };
-//       console.log(1, datas)
-//       console.log("first")
-//       // const res = await requestService.insertRequest(data)
-//       if (res.status === '201') {
-//         setSubmitStatus('Success!');
-//         setSubmitMessage('Data successfully saved!');
-//       } else {
-//         setSubmitStatus('Failed');
-//         setSubmitMessage('Data not saved!');
-//       }
-//     } catch (error) {
-//       setSubmitStatus('Error');
-//       setSubmitMessage('Terjadi kesalahan saat update data. Data tidak tersimpan!');
-//     } 
-//     finally {
-//       showSubmitModal();
-//     }
-//   };
+  const handleSubmitData = async () => {
+    try {
+      const data = {
+        from_data_id : dataId,
+        no_unit: unitNo,
+        model_unit: model,
+        owner: owner,
+        date_trx: dates,
+        hm_last: hmStart,
+        hm_km: hmLast,
+        qty_last: qtyLast,
+        qty:qty,
+        flow_start: flowStart,
+        flow_end: flowEnd,
+        jde_operator: empId,
+        name_operator: nameEmp,
+        start: timeStart,
+        end: timeEnd,
+        fbr: fbr,
+        lkf_id: lkfId,
+        signature: sign,
+        type: trxType,
+        photo: picture,
+        created_by: user.JDE
+      }
+      const res = await FormData.updateData(data)
+      if (res.status === '201') {
+        setSubmitStatus('Success!');
+        setSubmitMessage('Data successfully saved!');
+      } else {
+        setEditStatus('Failed');
+        setEditMessage('Data not saved!');
+      }
+    } catch (error) {
+      setEditStatus('Error');
+      setEditMessage('Terjadi kesalahan saat update data. Data tidak tersimpan!');
+    } 
+    finally {
+      showEditModal();
+    }
+  };
 
 
   const handleChageStart = (time) => {
@@ -216,7 +216,7 @@ const ModalFormDataEdit = ({row}) => {
 
   const handleDelete = async () => {
     try {
-      const res = await UnitBanlawsService.delUnitBanlaws(row.id);
+      const res = await FormData.delData(row.from_data_id);
       if (res.status === '200') {
         setResultStatus('success');
         setResultMessage('Data berhasil dihapus');
@@ -444,7 +444,7 @@ const ModalFormDataEdit = ({row}) => {
                 if (formElement) {
                   formElement.dispatchEvent(new Event('submit'));
                 }
-                handleEditData();
+                handleSubmitData();
               }}
               fill
             >

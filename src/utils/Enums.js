@@ -40,7 +40,9 @@ export const URL_API = {
     summaryReq: `${linkBe}/api/admin/get-request-summary/`,
     tableReq:`${linkBe}/api/admin/get-request-table`,
     addData:`${linkBe}/api/admin/add-quota`,
-    addTransaction:`${linkBe}/api/operator/post-data`
+    addTransaction:`${linkBe}/api/operator/post-data`,
+    updateTransaction: `${linkBe}/api/operator/post-data`,
+    delTransaction:`${linkBe}/api/admin/delete-data/`,
 };
 
 export const URL_MASTER_DATA = {
