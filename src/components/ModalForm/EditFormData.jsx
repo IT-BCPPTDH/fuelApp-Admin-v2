@@ -292,7 +292,7 @@ const ModalFormDataEdit = ({row}) => {
                     checked={trxType === 'receive'}
                     onChange={(e) => handleOptionChange('receive')}
                     />
-                     <EuiRadio 
+                    <EuiRadio 
                     id="transfer"
                     label="Transfer"
                     value="transfer"
@@ -321,7 +321,7 @@ const ModalFormDataEdit = ({row}) => {
                   <EuiFieldText 
                   name='issued'
                   placeholder='Input'
-                  // value={qty}
+                  value={qty}
                   onChange={(e)=> setFbr(e.target.value)}
                 />
                 </EuiFormRow>
@@ -330,6 +330,7 @@ const ModalFormDataEdit = ({row}) => {
                    <EuiFieldText 
                     name='hmkm'
                     placeholder='Input'
+                    value={hmStart}
                     onChange={(e)=> setHmStart(e.target.value)}
                   />
                 </EuiFormRow>
@@ -337,13 +338,15 @@ const ModalFormDataEdit = ({row}) => {
                 <EuiFormRow label="HM/KM Unit" style={{marginTop:"0px"}}>
                    <EuiFieldText 
                     name='hmkm_last'
+                    value={hmLast}
                     onChange={(e)=> setHmLast(e.target.value)}
                   />
                 </EuiFormRow>
 
                 <EuiFormRow label="Flow Meter Awal" style={{marginTop:"0px"}}>
                    <EuiFieldText 
-                    name='hmkm'
+                    name='flowStart'
+                    value={flowStart}
                     placeholder='Input'
                     onChange={(e)=> setFlowStart(e.target.value)}
                   />
@@ -351,7 +354,7 @@ const ModalFormDataEdit = ({row}) => {
 
                 <EuiFormRow label="Flow Meter Akhir" style={{marginTop:"0px"}}>
                    <EuiFieldText 
-                    name='hmkm_last'
+                    name='flowEnd'
                     value={flowEnd}
                     onChange={(e)=> setflowEnd(e.target.value)}
                     disabled
