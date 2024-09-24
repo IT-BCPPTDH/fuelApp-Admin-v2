@@ -70,19 +70,24 @@ const ModalFormAddIssued = () => {
   }
 
   // Handle file selection
-  const onFileChange = (event) => {
+  const onFileChange = async(event) => {
     const file = event.target.files[0];
-    setPicture(file);
+    try {
+      const base64 = await convertToBase64(file);
+      setPicture(base64);
+    } catch (error) {
+      console.error("Error converting file to base64:", error);
+    }
   };
 
-  const onSignChange = (event) => {
+  const onSignChange = async (event) => {
     const file = event.target.files[0];
-    setSign(file);
+    const base64 = await convertToBase64(file);
+    setSign(base64);
   };
 
   const handleSubmitData = async () => {
     try {
-      // console.log(dataId, unitNo, model, owner, dates, )
       const data = {
         from_data_id : dataId,
         no_unit: unitNo,
@@ -107,7 +112,6 @@ const ModalFormAddIssued = () => {
         created_by: user.JDE
       };
       const res = await formService.insertData(data)
-      console.log(res)
       if (res.status === '201') {
         setSubmitStatus('Success!');
         setSubmitMessage('Data successfully saved!');

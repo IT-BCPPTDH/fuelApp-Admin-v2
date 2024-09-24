@@ -48,10 +48,40 @@ const insertData = async (requestBody) => {
     }
 };
 
+const updateData = async (requestBody) => {
+    try {
+        const response = await api.put(URL_API.addTransaction, requestBody, {
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        });
+        return response.data;
+    } catch (error) {
+        console.error('Error fetching data:', error.message);
+        throw error;
+    }
+};
+
+const delData = async (id) => {
+    try {
+        const response = await api.put(URL_API.delTransaction+id, {
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        });
+        return response.data;
+    } catch (error) {
+        console.error('Error fetching data:', error.message);
+        throw error;
+    }
+};
+
 const formService = {
     summaryForm,
     tableForm,
-    insertData
+    insertData,
+    delData,
+    updateData
 };
 
 export default formService;
