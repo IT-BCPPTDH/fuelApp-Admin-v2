@@ -72,12 +72,12 @@ const TableData = () => {
       truncateText: true,
     },
     {
-      field: 'closeDataPrev',
+      field: 'total_close_data',
       name: 'Close Data',
       truncateText: true,
     },
     {
-      field: 'variants',
+      field: 'total_variant',
       name: 'Variant',
       truncateText: true,
     },

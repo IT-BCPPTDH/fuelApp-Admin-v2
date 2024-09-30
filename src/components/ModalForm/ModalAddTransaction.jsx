@@ -178,7 +178,7 @@ const ModalFormAddIssued = () => {
       };
       fetchUnit()
       fetchUser()
-    }, []);
+  }, []);
 
   const handleUnitChange = (e) => {
     const val = String(e.target.value)
@@ -202,6 +202,26 @@ const ModalFormAddIssued = () => {
   const handleOptionChange = (value) => {
     setTrxType(value);
   };
+
+  useEffect(() => {
+    const fetchUnitPrev = async () => {
+      try {
+        const res = await formService.unitData(unitNo)
+        if (res.status != 200) {
+          throw new Error('Network response was not ok');
+        }else if(res.status == 404){
+          setEquipData([]);
+        }else{
+          setEquipData(res.data);
+        }
+      } catch (error) {
+        console.log(error)
+        // setError(error);
+      } 
+    };
+
+    fetchUnitPrev()
+    }, []);
 
 
   return (

@@ -22,6 +22,7 @@ const CardStasionData = ({ cardsData }) => {
                     fontWeight: card.titleFontWeight || 'bold',
                     fontSize: card.titleFontSize || '25px',
                     textAlign: card.textAlign || 'left',
+                    lineHeight: card.lineHeight || '1'
                   }}
                 >
                   {card.title}
