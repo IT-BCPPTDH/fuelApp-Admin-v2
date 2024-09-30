@@ -76,12 +76,27 @@ const delData = async (id) => {
     }
 };
 
+const unitData = async(unitNo) => {
+    try {
+        const response = await api.put(URL_API.delTransaction+unitNo, {
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        });
+        return response.data;
+    } catch (error) {
+        console.error('Error fetching data:', error.message);
+        throw error;
+    }
+}
+
 const formService = {
     summaryForm,
     tableForm,
     insertData,
     delData,
-    updateData
+    updateData,
+    unitData
 };
 
 export default formService;

@@ -23,9 +23,6 @@ const HomePage = () => {
     setSelectDate(date);
   };
 
-  // Function to check if the date range is valid
- 
-
   // Options for the select dropdown
   const options = [
     { value: 'daily', text: 'Daily' },

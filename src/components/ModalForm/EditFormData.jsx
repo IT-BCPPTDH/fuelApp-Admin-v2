@@ -28,7 +28,6 @@ import FormData from '../../services/formDashboard';
 import { useParams } from 'react-router-dom';
 
 const ModalFormDataEdit = ({row}) => {
-  console.log(row)
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [selectedTime, setSelectedTime] = useState(moment());
   const [selectedTimeEnd, setSelectedTimeEnd] = useState(moment());

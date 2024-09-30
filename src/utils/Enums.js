@@ -43,6 +43,7 @@ export const URL_API = {
     addTransaction:`${linkBe}/api/operator/post-data`,
     updateTransaction: `${linkBe}/api/operator/post-data`,
     delTransaction:`${linkBe}/api/admin/delete-data/`,
+    unitDatas : `${linkBe}/api/operator/get-data/`
 };
 
 export const URL_MASTER_DATA = {
