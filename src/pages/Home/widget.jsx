@@ -10,8 +10,8 @@ const CardContent = () => {
   const [summary, setSummary] = useState(0)
   const date = JSON.parse(localStorage.getItem('tanggal'));
   const cardsData = [
-    { title: summary.prevSonding ? summary.prevSonding + ' Ltrs' : 0 + ' Ltrs', description1: 'Previous Close Sonding', description2: 'Total close sonding', icon: Icon1 },
-    { title: summary.openSonding ? summary.openSonding + ' Ltrs' : 0 + ' Ltrs', description1: 'Open Stock (Sonding)', description2: 'Summary Open Sonding', icon: Icon1 },
+    { title: summary.prevSonding ? summary.prevSonding + ' Ltrs' : 0 + ' Ltrs', description1: 'Previous Close Sonding', description2: 'Total close sonding (h-1)', icon: Icon1 },
+    { title: summary.openSonding ? summary.openSonding + ' Ltrs' : 0 + ' Ltrs', description1: 'Open Stock (Sonding)', description2: 'Summary Open Sonding (h)', icon: Icon1 },
     { title: summary.reciptKpc ? summary.reciptKpc + ' Ltrs' : 0 + ' Ltrs', description1: 'Receipt KPC', description2: 'Summary Receipt KPC', icon: Icon1 },
     { title: summary.issuedTrx ? summary.issuedTrx + ' Ltrs' : 0 + ' Ltrs', description1: 'Issued Transaction', description2: 'Summary Issued', icon: Icon2 },
     { title: summary.tfTrx ? summary.tfTrx + ' Ltrs' : 0 + ' Ltrs', description1 : 'Transfer Transaction', description2: 'Summary Transaction', icon: Icon2 },
