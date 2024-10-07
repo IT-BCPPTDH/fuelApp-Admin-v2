@@ -18,7 +18,6 @@ const HomePage = () => {
   const [selectedOption, setSelectedOption] = useState('');
 
 
-  // Handle due date change
   const handleChageDate = (date) => {
     setSelectDate(date);
   };
@@ -31,8 +30,6 @@ const HomePage = () => {
     { value: 'YTD', text: 'YTD' },
   ];
   
-
-  // Handle selection change
   const handleChange = (event) => {
     setSelectedOption(event.target.value);
   };

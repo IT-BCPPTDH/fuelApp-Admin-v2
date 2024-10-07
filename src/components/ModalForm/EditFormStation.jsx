@@ -48,6 +48,19 @@ const ModalFormStationEdit = ({row}) => {
     window.location.reload();
   }
 
+  const [isConfirmStatus, setIsConfirmStatus] = useState(false)
+  const showConfirmModal = () => setIsConfirmStatus(true);
+  const closeConfirmModal = () => {
+    setIsConfirmStatus(false)
+  }
+
+  const [isConfirmEditStatus, setIsConfirmEditStatus] = useState(false)
+  const showConfirmEditModal = () => setIsConfirmEditStatus(true);
+  const closeConfirmEditModal = () => {
+    setIsConfirmEditStatus(false)
+    setIsModalVisible(false)
+  }
+
   const handleEditData = async () => {
     closeModal()
     try {
@@ -83,9 +96,11 @@ const ModalFormStationEdit = ({row}) => {
       if (res.status === '200') {
         setResultStatus('success');
         setResultMessage('Data berhasil dihapus');
+        closeResultModal()
       } else {
         setResultStatus('failure');
         setResultMessage('Data gagal dihapus');
+        closeResultModal()
       }
     } catch (error) {
       setResultStatus('error');
@@ -174,7 +189,7 @@ const ModalFormStationEdit = ({row}) => {
                 if (formElement) {
                   formElement.dispatchEvent(new Event('submit'));
                 }
-                handleEditData();
+                showConfirmEditModal()
               }}
               fill
             >
@@ -188,7 +203,7 @@ const ModalFormStationEdit = ({row}) => {
         iconType="trash"
         aria-label="Delete"
         color="danger"
-        onClick={() => handleDelete()}
+        onClick={() => showConfirmModal()}
         title="Delete"
       />
 
@@ -199,7 +214,7 @@ const ModalFormStationEdit = ({row}) => {
                 fontSize: '22px',
                 height: '25%',
                 marginTop: '25px',
-                color: editStatus === 'success' ? '#D52424' : '#73A33F',
+                color: editStatus === 'Success!' ? '#D52424' : '#73A33F',
                 fontWeight: '600',
               }}>
               {editMessage}
@@ -209,7 +224,7 @@ const ModalFormStationEdit = ({row}) => {
                 height: '25%',
                 marginTop: '35px'
               }}>
-                {editStatus === 'success' ? 'Data berhasil terupdate. Silahkan kembali untuk menambah data atau ke halaman utama.'
+                {editStatus === 'Success!' ? 'Data berhasil terupdate. Silahkan kembali untuk menambah data atau ke halaman utama.'
                 : 'Data belum terupdate. Silahkan kembali untuk update data atau ke halaman utama.'}
             </EuiText>
           </EuiModalBody>
@@ -247,6 +262,70 @@ const ModalFormStationEdit = ({row}) => {
             </EuiButton>
           </EuiModalFooter>
         </EuiModal>
+      )}
+
+      {isConfirmStatus && (
+        <EuiModal onClose={closeConfirmModal}>
+        <EuiModalBody>
+          <EuiText style={{
+              fontSize: '22px',
+              height: '25%',
+              marginTop: '25px',
+              color: resultStatus === 'success' ? '#73A33F' : '#D52424',
+              fontWeight: '600',
+            }}>
+            {resultMessage}
+          </EuiText>
+          <EuiText style={{
+              fontSize: '15px',
+              height: '25%',
+              marginTop: '35px'
+            }}>
+              Apakah anda yakin ingin menghapus data ?
+          </EuiText>
+        </EuiModalBody>
+
+        <EuiModalFooter>
+          <EuiButton onClick={handleDelete} style={{ background: "#73A33F", color: "white" }}>
+            Ya
+          </EuiButton>
+          <EuiButton onClick={closeConfirmModal} style={{ background: "crimson", color: "white" }}>
+            Tutup
+          </EuiButton>
+        </EuiModalFooter>
+      </EuiModal>
+      )}
+
+      {isConfirmEditStatus && (
+        <EuiModal onClose={closeConfirmEditModal}>
+        <EuiModalBody>
+          <EuiText style={{
+              fontSize: '22px',
+              height: '25%',
+              marginTop: '25px',
+              color: resultStatus === 'success' ? '#73A33F' : '#D52424',
+              fontWeight: '600',
+            }}>
+            {resultMessage}
+          </EuiText>
+          <EuiText style={{
+              fontSize: '15px',
+              height: '25%',
+              marginTop: '35px'
+            }}>
+              Apakah anda ingin menyimpan perubahan ?
+          </EuiText>
+        </EuiModalBody>
+
+        <EuiModalFooter>
+          <EuiButton onClick={handleEditData} style={{ background: "#73A33F", color: "white" }}>
+            Ya
+          </EuiButton>
+          <EuiButton onClick={closeConfirmEditModal} style={{ background: "crimson", color: "white" }}>
+            Tutup
+          </EuiButton>
+        </EuiModalFooter>
+      </EuiModal>
       )}
     </>
   );

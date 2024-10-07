@@ -11,7 +11,8 @@ import {
   EuiModalHeader,
   EuiModalHeaderTitle,
   useGeneratedHtmlId,
-  EuiOverlayMask
+  EuiOverlayMask,
+  EuiText
 } from '@elastic/eui';
 import moment from 'moment';
 import stationService from '../../services/stationDashboard';
@@ -37,6 +38,22 @@ const ModalFormStation = () => {
     setModalMessage('');   
   };
 
+  const [isSubmitResult, setIsSubmitResult] = useState(false)
+  const [submitMessage, setSubmitMessage] = useState('');
+  const [submiStatus, setSubmitStatus] = useState(''); 
+  const showSubmitModal = () => setIsSubmitResult(true);
+  const closeSubmitModal = () => {
+    setIsSubmitResult(false)
+    window.location.reload();
+  }
+
+  const [isConfirmAddStatus, setIsConfirmAddStatus] = useState(false)
+  const showConfirmAddModal = () => setIsConfirmAddStatus(true);
+  const closeConfirmAddModal = () => {
+    setIsConfirmAddStatus(false)
+    // setIsModalVisible(false)
+  }
+
   const handleSubmit = async() => {
     const data = {
       fuel_station_name: stationName,
@@ -50,23 +67,23 @@ const ModalFormStation = () => {
       if (data.fuel_station_name && data.fuel_station_type) {
         await stationService.insertStation(data).then((res) =>{
           if(res.status == 200){
-            setModalType('Success!');
-            setModalMessage('Data successfully saved!');
-            closeModal();
+            setSubmitStatus('Success!');
+            setSubmitMessage('Data successfully saved!');
+            closeSubmitModal();
           }else
-            setModalType('Failed');
-            setModalMessage('Data not saved!');
-            closeModal();
+          setSubmitStatus('Failed');
+          setSubmitMessage('Data not saved!');
+          closeSubmitModal();
         })
       } else {
         throw new Error('Failed to save data. Missing required fields.');
       }
     } catch (error) {
-      setModalType('error');
-      setModalMessage(error.message);
+      setSubmitStatus('error');
+      setSubmitMessage(error.message);
+    } finally{
+      showSubmitModal(); 
     }
-
-    setIsModalVisible(true); 
   };
 
   return (
@@ -144,8 +161,7 @@ const ModalFormStation = () => {
                 if (formElement) {
                   formElement.dispatchEvent(new Event('submit')); 
                 }
-                closeModal();  
-                handleSubmit(); 
+                showConfirmAddModal()
               }}
               fill
             >
@@ -155,28 +171,65 @@ const ModalFormStation = () => {
         </EuiModal>
       )}
 
-      {modalType && (
-        <EuiOverlayMask>
-          <EuiModal onClose={closeModal}>
-            <EuiModalHeader>
-              <EuiModalHeaderTitle>{modalType === 'success' ? 'Success' : 'Error'}</EuiModalHeaderTitle>
-            </EuiModalHeader>
-            <EuiModalBody>
-              <p>{modalMessage}</p>
-            </EuiModalBody>
-            <EuiModalFooter>
-              <EuiButton 
-              style={{
-                background: "#73A33F",
-                color: "white",
-                width: "100px",
-              }}
-              onClick={closeModal} fill>
-                Close
-              </EuiButton>
-            </EuiModalFooter>
-          </EuiModal>
-        </EuiOverlayMask>
+    {isSubmitResult && (
+        <EuiModal>
+          <EuiModalBody>
+            <EuiText style={{
+                fontSize: '22px',
+                height: '25%',
+                marginTop: '25px',
+                color: submiStatus === 'Success!' ? '#D52424' : '#73A33F',
+                fontWeight: '600',
+              }}>
+              {submitMessage}
+            </EuiText>
+            <EuiText style={{
+                fontSize: '15px',
+                height: '25%',
+                marginTop: '35px'
+              }}>
+                {submiStatus === 'Success!' ? 'Data berhasil terupdate. Silahkan kembali untuk menambah data atau ke halaman utama.'
+                : 'Data belum terupdate. Silahkan kembali untuk update data atau ke halaman utama.'}
+            </EuiText>
+          </EuiModalBody>
+          <EuiModalFooter>
+            <EuiButton onClick={closeSubmitModal} style={{ background: "#73A33F", color: "white" }}>
+              Tutup
+            </EuiButton>
+          </EuiModalFooter>
+        </EuiModal>
+    )}
+
+      {isConfirmAddStatus && (
+        <EuiModal onClose={closeConfirmAddModal}>
+        <EuiModalBody>
+          <EuiText style={{
+              fontSize: '22px',
+              height: '25%',
+              marginTop: '25px',
+              color: modalType === 'success' ? '#73A33F' : '#D52424',
+              fontWeight: '600',
+            }}>
+            {modalMessage}
+          </EuiText>
+          <EuiText style={{
+              fontSize: '15px',
+              height: '25%',
+              marginTop: '35px'
+            }}>
+              Apakah data yang diisi sudah benar ?
+          </EuiText>
+        </EuiModalBody>
+
+        <EuiModalFooter>
+          <EuiButton onClick={handleSubmit} style={{ background: "#73A33F", color: "white" }}>
+            Ya
+          </EuiButton>
+          <EuiButton onClick={closeConfirmAddModal} style={{ background: "crimson", color: "white" }}>
+            Batal
+          </EuiButton>
+        </EuiModalFooter>
+      </EuiModal>
       )}
     </>
   );
