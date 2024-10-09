@@ -39,6 +39,21 @@ const ModalFormUnit = ({item}) => {
     setModalMessage('');   
   };
 
+  const [isSubmitResult, setIsSubmitResult] = useState(false)
+  const [submitMessage, setSubmitMessage] = useState('');
+  const [submiStatus, setSubmitStatus] = useState(''); 
+  const showSubmitModal = () => setIsSubmitResult(true);
+  const closeSubmitModal = () => {
+    setIsSubmitResult(false)
+    window.location.reload();
+  }
+
+  const [isConfirmAddStatus, setIsConfirmAddStatus] = useState(false)
+  const showConfirmAddModal = () => setIsConfirmAddStatus(true);
+  const closeConfirmAddModal = () => {
+    setIsConfirmAddStatus(false)
+  }
+
   const handleSubmit = async() => {
     const data = {
         unit_input: unitInput,
@@ -51,19 +66,20 @@ const ModalFormUnit = ({item}) => {
     try {
         await UnitBanlawsService.insertUnitBanlaws(data).then((res) =>{
             if(res.status == 200){
-              setModalType('Success!');
-              setModalMessage('Data successfully saved!');
+              setSubmitMessage('Success!');
+              setSubmitStatus('Data successfully saved!');
               closeModal();
             }else
-              setModalType('Failed');
-              setModalMessage('Data not saved!');
+            setSubmitMessage('Failed');
+            setSubmitStatus('Data not saved!');
               closeModal();
         })
     } catch (error) {
-      setModalType('error');
-      setModalMessage(error.message);
+      setSubmitMessage('error');
+      setSubmitStatus(error.message);
+    } finally{
+      showSubmitModal()
     }
-    setIsModalVisible(true); 
   };
 
   return (
@@ -146,7 +162,7 @@ const ModalFormUnit = ({item}) => {
               onClick={() => {
                 document.getElementById(modalFormId)?.dispatchEvent(new Event('submit')); // Trigger form submission
                 closeModal(); 
-                handleSubmit()
+                showConfirmAddModal()
               }}
               fill
             >
@@ -179,6 +195,67 @@ const ModalFormUnit = ({item}) => {
           </EuiModal>
         </EuiOverlayMask>
       )}
+
+      {isSubmitResult && (
+        <EuiModal>
+          <EuiModalBody>
+            <EuiText style={{
+                fontSize: '22px',
+                height: '25%',
+                marginTop: '25px',
+                color: submiStatus === 'Success!' ? '#D52424' : '#73A33F',
+                fontWeight: '600',
+              }}>
+              {submitMessage}
+            </EuiText>
+            <EuiText style={{
+                fontSize: '15px',
+                height: '25%',
+                marginTop: '35px'
+              }}>
+                {submiStatus === 'Success!' ? 'Data berhasil terupdate. Silahkan kembali untuk menambah data atau ke halaman utama.'
+                : 'Data belum terupdate. Silahkan kembali untuk update data atau ke halaman utama.'}
+            </EuiText>
+          </EuiModalBody>
+          <EuiModalFooter>
+            <EuiButton onClick={closeSubmitModal} style={{ background: "#73A33F", color: "white" }}>
+              Tutup
+            </EuiButton>
+          </EuiModalFooter>
+        </EuiModal>
+    )}
+
+    {isConfirmAddStatus && (
+        <EuiModal onClose={closeConfirmAddModal}>
+        <EuiModalBody>
+          <EuiText style={{
+              fontSize: '22px',
+              height: '25%',
+              marginTop: '25px',
+              color: modalType === 'success' ? '#73A33F' : '#D52424',
+              fontWeight: '600',
+            }}>
+            {modalMessage}
+          </EuiText>
+          <EuiText style={{
+              fontSize: '15px',
+              height: '25%',
+              marginTop: '35px'
+            }}>
+              Apakah data yang diisi sudah benar ?
+          </EuiText>
+        </EuiModalBody>
+
+        <EuiModalFooter>
+          <EuiButton onClick={handleSubmit} style={{ background: "#73A33F", color: "white" }}>
+            Ya
+          </EuiButton>
+          <EuiButton onClick={closeConfirmAddModal} style={{ background: "crimson", color: "white" }}>
+            Batal
+          </EuiButton>
+        </EuiModalFooter>
+      </EuiModal>
+    )}
     </>
   );
 };

@@ -11,11 +11,29 @@ import FormModal from "../../components/ModalForm";
 import TableDataDetails from "./TableDetails";
 import { useParams } from "react-router-dom";
 import formService from '../../services/formDashboard';
+import DynamicPageHeader from "../../components/Breadcrumbs";
 
 const DetailsPageTransaction = () => {
   const {lkfId} = useParams()
   const [formTotal, setFormTotal] = useState(0)
   const date = JSON.parse(localStorage.getItem('formattedDate'));
+  const station = JSON.parse(localStorage.getItem('storedStation'));
+
+  const breadcrumbs = [
+    {
+      text: 'Dashboard',
+      href: '/',
+    },
+    {
+      text: `${station}`,
+      href: `/details/${station}`,
+    },
+    {
+      text: lkfId,
+      href: '#',
+      onClick: (e) => e.preventDefault(),
+    },
+  ];
 
   const cardsDataAll = [
     {
@@ -121,8 +139,12 @@ const DetailsPageTransaction = () => {
      
       <div className="padding-content">
         <div style={{ marginTop: "20px" }}>
+          <DynamicPageHeader
+            pageTitle={`No lkf ${lkfId}`}
+            breadcrumbs={breadcrumbs}
+            pageTitleStyle={{  fontSize: '24px',  }}
+          />
           <EuiText>
-            <div className="summary">Form Number : {lkfId}</div>
             <div className="date">{date}</div>
           </EuiText>
         </div>

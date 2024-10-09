@@ -69,6 +69,12 @@ const ModalFormAddIssued = () => {
     window.location.reload();
   }
 
+  const [isConfirmAddStatus, setIsConfirmAddStatus] = useState(false)
+  const showConfirmAddModal = () => setIsConfirmAddStatus(true);
+  const closeConfirmAddModal = () => {
+    setIsConfirmAddStatus(false)
+  }
+
   // Handle file selection
   const onFileChange = async(event) => {
     const file = event.target.files[0];
@@ -435,7 +441,7 @@ const ModalFormAddIssued = () => {
               onClick={() => {
                 document.getElementById(modalFormId)?.dispatchEvent(new Event('submit')); // Trigger form submission
                 closeModal(); 
-                handleSubmitData()
+                showConfirmAddModal()
               }}
               fill
             >
@@ -452,7 +458,7 @@ const ModalFormAddIssued = () => {
                   fontSize: '22px',
                   height: '25%',
                   marginTop: '25px',
-                  color: submiStatus === 'success' ? '#D52424' : '#73A33F',
+                  color: submiStatus === 'Success!' ? '#D52424' : '#73A33F',
                   fontWeight: '600',
                 }}>
                 {submitMessage}
@@ -462,7 +468,7 @@ const ModalFormAddIssued = () => {
                   height: '25%',
                   marginTop: '35px'
                 }}>
-                  {submiStatus === 'success' ? 'Data berhasil terupdate. Silahkan kembali untuk menambah data atau ke halaman utama.'
+                  {submiStatus === 'Success!' ? 'Data berhasil terupdate. Silahkan kembali untuk menambah data atau ke halaman utama.'
                   : 'Data belum terupdate. Silahkan kembali untuk update data atau ke halaman utama.'}
               </EuiText>
             </EuiModalBody>
@@ -473,6 +479,38 @@ const ModalFormAddIssued = () => {
             </EuiModalFooter>
           </EuiModal>
       )}
+
+    {isConfirmAddStatus && (
+        <EuiModal onClose={closeConfirmAddModal}>
+        <EuiModalBody>
+          <EuiText style={{
+              fontSize: '22px',
+              height: '25%',
+              marginTop: '25px',
+              color: modalType === 'success' ? '#73A33F' : '#D52424',
+              fontWeight: '600',
+            }}>
+            {modalMessage}
+          </EuiText>
+          <EuiText style={{
+              fontSize: '15px',
+              height: '25%',
+              marginTop: '35px'
+            }}>
+              Apakah data yang diisi sudah benar ?
+          </EuiText>
+        </EuiModalBody>
+
+        <EuiModalFooter>
+          <EuiButton onClick={handleSubmitData} style={{ background: "#73A33F", color: "white" }}>
+            Ya
+          </EuiButton>
+          <EuiButton onClick={closeConfirmAddModal} style={{ background: "crimson", color: "white" }}>
+            Batal
+          </EuiButton>
+        </EuiModalFooter>
+      </EuiModal>
+    )}
     </>
   );
 };

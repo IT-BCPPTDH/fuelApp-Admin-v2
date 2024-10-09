@@ -50,6 +50,12 @@ const ModalAddEquip = () => {
     setModalMessage('');   
   };
 
+  const [isConfirmAddStatus, setIsConfirmAddStatus] = useState(false)
+  const showConfirmAddModal = () => setIsConfirmAddStatus(true);
+  const closeConfirmAddModal = () => {
+    setIsConfirmAddStatus(false)
+  }
+
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -179,7 +185,7 @@ const ModalAddEquip = () => {
               onClick={() => {
                 document.getElementById(modalFormId)?.dispatchEvent(new Event('submit')); // Trigger form submission
                 closeModal(); 
-                handleSubmit()
+                showConfirmAddModal()
               }}
               fill
             >
@@ -220,7 +226,7 @@ const ModalAddEquip = () => {
                 fontSize: '22px',
                 height: '25%',
                 marginTop: '25px',
-                color: submiStatus === 'success' ? '#D52424' : '#73A33F',
+                color: submiStatus === 'Success!' ? '#D52424' : '#73A33F',
                 fontWeight: '600',
               }}>
               {submitMessage}
@@ -240,6 +246,38 @@ const ModalAddEquip = () => {
             </EuiButton>
           </EuiModalFooter>
         </EuiModal>
+    )}
+
+    {isConfirmAddStatus && (
+        <EuiModal onClose={closeConfirmAddModal}>
+        <EuiModalBody>
+          <EuiText style={{
+              fontSize: '22px',
+              height: '25%',
+              marginTop: '25px',
+              color: modalType === 'success' ? '#73A33F' : '#D52424',
+              fontWeight: '600',
+            }}>
+            {modalMessage}
+          </EuiText>
+          <EuiText style={{
+              fontSize: '15px',
+              height: '25%',
+              marginTop: '35px'
+            }}>
+              Apakah data yang diisi sudah benar ?
+          </EuiText>
+        </EuiModalBody>
+
+        <EuiModalFooter>
+          <EuiButton onClick={handleSubmit} style={{ background: "#73A33F", color: "white" }}>
+            Ya
+          </EuiButton>
+          <EuiButton onClick={closeConfirmAddModal} style={{ background: "crimson", color: "white" }}>
+            Batal
+          </EuiButton>
+        </EuiModalFooter>
+      </EuiModal>
     )}
     </>
   );

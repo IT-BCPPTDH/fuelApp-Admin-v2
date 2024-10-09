@@ -18,16 +18,18 @@ const TableDataDetails = ({lkfId}) => {
   const [searchValue, setSearchValue] = useState('');
   const [formData, setformData] = useState([])
   const date = JSON.parse(localStorage.getItem('tanggal'));
+  const [pageIndex, setPageIndex] = useState(0);
+  const [pageSize, setPageSize] = useState(10);
+  const [showPerPageOptions, setShowPerPageOptions] = useState(true);
 
   const data = DataTrxDetails || [];
 
   const columns = [
-
     {
         field: 'no_unit',
         name: 'Unit No',
         truncateText: true,
-      },
+    },
     {
       field: 'model_unit',
       name: 'Model Unit',
@@ -124,6 +126,36 @@ const TableDataDetails = ({lkfId}) => {
     item.no_unit.toLowerCase().includes(searchValue.toLowerCase())
   );
 
+  const findPageItems = (items, pageIndex, pageSize) => {
+    const startIndex = pageIndex * pageSize;
+    return {
+      pageOfItems: items.slice(startIndex, startIndex + pageSize),
+      totalItemCount: items.length,
+    };
+  };
+
+  const { pageOfItems, totalItemCount } = findPageItems(filteredItems, pageIndex, pageSize);
+
+  const pagination = {
+    pageIndex,
+    pageSize,
+    totalItemCount,
+    pageSizeOptions: [10, 20, 50, 100],
+    showPerPageOptions,
+  };
+
+  const resultsCount =
+    pageSize === 0 ? (
+      <strong>All</strong>
+    ) : (
+      <>
+        <strong>
+          {pageSize * pageIndex + 1}-{Math.min(pageSize * (pageIndex + 1), totalItemCount)}
+        </strong>{' '}
+        of {totalItemCount}
+      </>
+    );
+
   const renderHeader = () => (
     <>
     
@@ -193,10 +225,16 @@ const TableDataDetails = ({lkfId}) => {
         <div style={{ marginBottom: '10px', maxHeight: '600px', overflow: 'auto' }}>
         <EuiBasicTable
           tableCaption="Demo of EuiBasicTable"
-          items={filteredItems}
+          items={pageOfItems}
+          pagination={pagination}
           columns={columns}
-        
           cellProps={getCellProps}
+          onChange={({ page }) => {
+            if (page) {
+              setPageIndex(page.index);
+              setPageSize(page.size);
+            }
+          }}
         />
       </div>
         </EuiFlexGrid>

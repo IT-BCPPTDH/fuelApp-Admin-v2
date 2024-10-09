@@ -10,12 +10,14 @@ import TableData from "./table";
 import FormModal from "../../components/ModalForm";
 import { useParams } from "react-router-dom";
 import stationService from '../../services/stationDashboard';
+import DynamicPageHeader from "../../components/Breadcrumbs";
 
 const DetailPage = () => {
   const {station} = useParams()
   const [summaryAll, setSummaryAll] = useState(0)
   const date = JSON.parse(localStorage.getItem('tanggal'));
   const dates= JSON.parse(localStorage.getItem('formattedDate'));
+  localStorage.setItem("storedStation", JSON.stringify(station))
 
   let cardsDataAll, cardsDataShiftDay, cardsDataShiftNigth
   if(station == 'T112'){
@@ -224,7 +226,7 @@ const DetailPage = () => {
         icon: Icon1,
       },
       {
-        title: summaryAll.totalAllReceiptNigth ? totalAllReceiptNigth.totalAllKpcNigth + ' Ltrs' : 0 + ' Ltrs',
+        title: summaryAll.totalAllReceiptNigth ? summaryAll.totalAllKpcNigth + ' Ltrs' : 0 + ' Ltrs',
         description1: "Receipt",
         description2: "Receipt Transaction",
         icon: Icon1,
@@ -250,11 +252,24 @@ const DetailPage = () => {
     ];
   }
 
+  const breadcrumbs = [
+    {
+      text: 'Dashboard',
+      href: '/',
+    },
+    {
+      text: station,
+      href: '#',
+      onClick: (e) => e.preventDefault(),
+    },
+  ];
+
 
   useEffect(() => {
     const fetchTable = async () => {
       try {
         const res = await stationService.summaryStation({tanggal:`${date}`, station:station})
+        console.log(res)
         if (res.status != 200) {
           throw new Error('Network response was not ok');
         }
@@ -272,11 +287,15 @@ const DetailPage = () => {
      
       <div className="padding-content">
         <div style={{ marginTop: "20px" }}>
-          <EuiText>
-            <div className="summary">Station {station}</div>
-            <div className="date">{dates}</div>
-          </EuiText>
+        <DynamicPageHeader
+          pageTitle={`Dashboard Station ${station}`}
+          breadcrumbs={breadcrumbs}
+          pageTitleStyle={{  fontSize: '24px',  }}
+        />
         </div>
+        <EuiText>
+          <div className="date">{dates}</div>
+        </EuiText>
         <EuiText style={{ marginTop: "20px" }}>
           {" "}
           <h2>Summary All</h2>

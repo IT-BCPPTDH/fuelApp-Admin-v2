@@ -21,6 +21,7 @@ const ChangePswdPage = lazy(()=>import('./pages/ChangePassword'));
 
 const UserPage = lazy(()=>import('./pages/User'));
 const EquipPage = lazy(()=>import('./pages/Equipment'));
+const QuotaDailyPage = lazy(()=>import('./pages/QuotaDaily'));
 
 const RouteApp = () => {
   const {isLogged}=useAuth()
@@ -160,6 +161,17 @@ const RouteApp = () => {
         </Layout>
       ),
       path: '/change-password',
+      errorElement: <FallbackUI />,
+    },
+    {
+      element: (
+        <Layout>
+          <Suspense fallback={<div>Loading Limited Quota...</div>}>
+            <QuotaDailyPage/>
+          </Suspense>
+        </Layout>
+      ),
+      path: '/limited-quota-daily',
       errorElement: <FallbackUI />,
     },
   ]:[

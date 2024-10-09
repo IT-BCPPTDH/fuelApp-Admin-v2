@@ -4,12 +4,13 @@ import {
   EuiButton,
   EuiFieldSearch,
   EuiText,
-  EuiLink,
+  EuiLink
 } from '@elastic/eui';
-import { Data } from './data'; // Ensure this path is correct
+// import { Data } from './data'; // Ensure this path is correct
 import { useNavigate } from 'react-router-dom'; 
 import ModalForm from '../../components/ModalForm';
-import requestService from '../../services/requestQuota';
+import ToogleActive from './toggleActive';
+import dailyService from '../../services/dailyQuotaService';
 
 
 const TableData = () => {
@@ -22,56 +23,37 @@ const TableData = () => {
   const date = JSON.parse(localStorage.getItem('formattedDatesReq'));
 
   const columns = [
-    // {
-    //   field: index+1,
-    //   name: 'No',
-    // },
+    {
+      field: 'number',
+      name: 'Nomor',
+    },
     {
       field: 'date',
       name: 'Tanggal',
     },
     {
-      field: 'shift',
-      name: 'Shift',
-    },
-    {
-      field: 'unit_no',
+      field: 'unitNo',
       name: 'No Unit',
       truncateText: true,
     },
     {
-      field: 'station',
-      name: 'Station',
+      field: 'quota',
+      name: 'Limited Quota',
       truncateText: true,
     },
     {
-      field: 'time',
-      name: 'Waktu',
+      field: 'additional',
+      name: 'Tambahan',
       truncateText: true,
     },
     {
-      field: 'request_name',
-      name: 'Nama',
-      truncateText: true,
-    },
-    {
-      field: 'request_by',
-      name: 'Id Karyawan',
-      truncateText: true,
-    },
-    {
-      field: 'quota_request',
-      name: 'Permintaan Kuota',
-      truncateText: true,
-    },
-    {
-      field: 'document',
-      name: 'Form Permintaan',
-      truncateText: true,
-    },
-    {
-      field: 'reason',
-      name: 'Alasan',
+      field: 'isActive',
+      name: 'Active',
+      render: (e, row) => (
+        <>
+        <ToogleActive row={row}/>
+        </>
+      ),
       truncateText: true,
     },
   ];
@@ -85,7 +67,7 @@ const TableData = () => {
   const getRowProps = (item) => ({
     'data-test-subj': `row-${item.unit_no}`,
     className: 'customRowClass',
-    onClick: () => handleRowClick(item), 
+    // onClick: () => handleRowClick(item), 
   });
 
   const getCellProps = (item, column) => ({
@@ -99,9 +81,10 @@ const TableData = () => {
   };
 
   const filteredItems = tables.filter(item =>
-    item.unit_no.includes(searchValue.toLowerCase()) ||
-    item.request_name.toLowerCase().includes(searchValue.toLowerCase()) ||
-    item.request_by.toLowerCase().includes(searchValue.toLowerCase())
+    item.unitNo.includes(searchValue.toLowerCase()) 
+    // ||
+    // item.request_name.toLowerCase().includes(searchValue.toLowerCase()) ||
+    // item.request_by.toLowerCase().includes(searchValue.toLowerCase())
   );
 
   const findPageItems = useCallback((items, pageIndex, pageSize) => {
@@ -144,7 +127,7 @@ const TableData = () => {
     useEffect(() => {
       const fetchTable = async (date) => {
         try {
-          const res = await requestService.getRequest({tanggal: `${date}`})
+          const res = await dailyService.getData(date)
           if (res.status != 200) {
             throw new Error('Network response was not ok');
           }else if(res.status == 404){
@@ -166,14 +149,14 @@ const TableData = () => {
     <>
       <div style={{ marginBottom: '10px', display: "flex", justifyContent: "flex-end",gap:"15px",alignItems: "center" }}>
     
-        <ModalForm/>
+        {/* <ModalForm/> */}
         
       <EuiButton
           style={{ background: "#73A33F", color: "white" }}
           color="primary"
           onClick={() => alert('Export button clicked')}
         >
-          Export
+          Generate data
         </EuiButton>
         <EuiFieldSearch
           placeholder="Search data" 

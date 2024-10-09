@@ -21,22 +21,26 @@ import moment from 'moment';
 import requestService from '../../services/requestQuota';
 import UserService from '../../services/UserService';
 import EquipService from '../../services/EquiptmentService';
+import dailyQuotaService from '../../services/dailyQuotaService';
+import stationService from '../../services/stationDashboard';
 
 const ModalForm = () => {
+  const daily = [{id:1, shift: 'Day'}, {id:2, shift: 'Night'}]
   const [isModalVisible, setIsModalVisible] = useState(false);
   const closeModal = () => setIsModalVisible(false);
   const showModal = () => setIsModalVisible(true);
   const modalFormId = useGeneratedHtmlId({ prefix: 'modalForm' });
   const modalTitleId = useGeneratedHtmlId();
+  const initialDate = moment().format('YYYY-MM-DD');
+  const formattedTime = moment().format('HH:mm:ss');
   const [selectedDate, setSelectedDate] = useState(moment());
   const [selectedTime, setSelectedTime] = useState(moment());
-  const [selectedFile, setSelectedFile] = useState(null);
 
-  const [tanggal, setTanggal] = useState(moment())
-  const [Waktu, setWaktu] = useState("")
+  const [tanggal, setTanggal] = useState(moment().format('YYYY-MM-DD'))
+  const [Waktu, setWaktu] = useState(formattedTime || selectedTime)
   const [nomorUnit, setNomorUnit] = useState("")
   const [station, setStation] = useState("")
-  const [shift, setShift] = useState("")
+  const [shift, setShift] = useState('Day')
   const [model, setModel] = useState("")
   const [hmkm, setHmkm] = useState(0)
   const [qty, setQty] = useState(0)
@@ -50,6 +54,8 @@ const ModalForm = () => {
 
   const [userData, setUserData] = useState([])
   const [equipData, setEquipData] = useState([])
+  const [stationData, setStationData] = useState([])
+  const [errorMessage, setErrorMessage] = useState(false)
 
   const [isSubmitResult, setIsSubmitResult] = useState(false)
   const [submitMessage, setSubmitMessage] = useState('');
@@ -58,6 +64,12 @@ const ModalForm = () => {
   const closeSubmitModal = () => {
     setIsSubmitResult(false)
     window.location.reload();
+  }
+
+  const [isConfirmAddStatus, setIsConfirmAddStatus] = useState(false)
+  const showConfirmAddModal = () => setIsConfirmAddStatus(true);
+  const closeConfirmAddModal = () => {
+    setIsConfirmAddStatus(false)
   }
 
   // Handle file selection
@@ -85,6 +97,9 @@ const ModalForm = () => {
         approve_name: nameApprv,
         created_by: user.JDE
       };
+      if(!nomorUnit){
+        setErrorMessage(true)
+      }
       const res = await requestService.insertRequest(data)
       if (res.status === '201') {
         setSubmitStatus('Success!');
@@ -94,24 +109,44 @@ const ModalForm = () => {
         setSubmitMessage('Data not saved!');
       }
     } catch (error) {
-      console.log(first)
       setSubmitStatus('Error');
       setSubmitMessage('Terjadi kesalahan saat update data. Data tidak tersimpan!');
     } finally {
-        showSubmitModal();
+      showSubmitModal();
     }
   };
+
+  const validateData = () => {
+    try {
+      if(nomorUnit == "" || qty == ""){
+        setErrorMessage(true)
+      }else{
+        showConfirmAddModal()
+      }
+    }catch(error){
+      console.log(error)
+    }
+  }
 
   useEffect(() => {
     const fetchUnit = async () => {
       try {
         const res = await EquipService.getEquip()
+        const rest = await dailyQuotaService.getActiveData(tanggal)
+        const newUnit = rest.data
+          .filter(b => b.isActive) // hanya mengambil yang aktif
+          .map(b => {
+            const unitA = res.data.find(a => a.unit_no === b.unitNo); 
+            return unitA ? { ...b, modelUnit: unitA.type} : null; 
+          })
+          .filter(c => c !== null); 
+
         if (res.status != 200) {
           throw new Error('Network response was not ok');
-        }else if(res.status == 404){
+        }else if(newUnit.length == 0){
           setEquipData([]);
         }else{
-          setEquipData(res.data);
+          setEquipData(newUnit);
         }
       } catch (error) {
         console.log(error)
@@ -134,18 +169,39 @@ const ModalForm = () => {
         // setError(error);
       } 
     };
+
+    const fetchStation = async () => {
+      try {
+        const res = await stationService.getStation()
+        if (res.status != 200) {
+          throw new Error('Network response was not ok');
+        }else if(res.status == 404){
+          setStationData([]);
+        }else{
+          setStationData(res.data);
+        }
+      } catch (error) {
+        console.log(error)
+      } 
+    };
     fetchUnit()
     fetchUser()
-  }, []);
+    fetchStation()
+  }, [tanggal]);
 
 
   const handleApprovalChange = (e) => {
     const val = String(e.target.value)
-    const itemSelected = equipData.find((units)=> units.unit_no === val)
+    const itemSelected = equipData.find((units)=> units.unitNo === val)
     if(itemSelected){
       setNomorUnit(val)
-      setModel(itemSelected.type)
+      setModel(itemSelected.modelUnit)
     }
+  }
+
+  const handleStationChange = (e) => {
+    const val = String(e.target.value)
+    setStation(val)
   }
 
   const handleUserChange = (e) => {
@@ -164,6 +220,7 @@ const ModalForm = () => {
       setidAprv(val)
       setnameApprv(itemSelected.fullname)
     }
+    setErrorMessage(false)
   }
 
   const handleChageDate = (date) => {
@@ -175,7 +232,6 @@ const ModalForm = () => {
   const handleChageTime = (time) => {
     setSelectedTime(time);
     const formattedDates = moment(time).format('hh:mm:ss');
-    console.log(formattedDates)
     setWaktu(formattedDates)
   };
 
@@ -217,11 +273,14 @@ const ModalForm = () => {
                     />
                   </EuiFormRow>
                 </EuiFlexItem>
-                <EuiFormRow label="Unit No">
+                <EuiFormRow label="Unit No"
+                isInvalid={errorMessage}
+                error={errorMessage ? 'Silahkan pilih unit lebih dahulu' : undefined}
+                >
                   <EuiSelect
                    options={equipData.map(items => ({
-                    value: items.unit_no,  
-                    text: items.unit_no  
+                    value: items.unitNo,  
+                    text: items.unitNo  
                   }))}
                   value={nomorUnit}  
                   onChange={handleApprovalChange}  
@@ -230,11 +289,16 @@ const ModalForm = () => {
                   </EuiSelect>
                 </EuiFormRow>
                 <EuiFormRow style={{marginTop:"0px"}}label="Station">
-                  <EuiFieldText 
-                  name='station'
-                  placeholder='Station'
-                  onChange={(e) => setStation(e.target.value)}
-                  />
+                <EuiSelect
+                   options={stationData.map(items => ({
+                    value: items.fuel_station_name,  
+                    text: items.fuel_station_name  
+                  }))}
+                  value={station}  
+                  onChange={handleStationChange}  
+                  hasNoInitialSelection
+                  >
+                  </EuiSelect>
                 </EuiFormRow>
                 <EuiFormRow style={{marginTop:"0px"}}label="Model Unit">
                   <EuiFieldText 
@@ -244,11 +308,16 @@ const ModalForm = () => {
                   disabled />
                 </EuiFormRow>
                 <EuiFormRow style={{marginTop:"0px"}}label="Shift">
-                  <EuiFieldText 
-                  name='shift'
-                  placeholder='Shift'
-                  onChange={(e) => setShift(e.target.value)}
-                  />
+                <EuiSelect
+                   options={daily.map(items => ({
+                    value: items.shift,  
+                    text: items.shift  
+                  }))}
+                  value={shift}  
+                  onChange={(e)=>setShift(e.target.value)}  
+                  hasNoInitialSelection
+                  >
+                  </EuiSelect>
                 </EuiFormRow>
                 <EuiFormRow label="Id Request">
                   <EuiSelect
@@ -297,7 +366,10 @@ const ModalForm = () => {
                   onChange={(e)=> setHmkm(e.target.value)}
                   />
                 </EuiFormRow>
-                <EuiFormRow label="Quantity Qouta">
+                <EuiFormRow label="Quantity Qouta"
+                isInvalid={errorMessage}
+                error={errorMessage ? 'Silahkan isi jumlah quota lebih dahulu' : undefined}
+                >
                   <EuiFieldText 
                     name='qty'
                     placeholder='Input Quantity'
@@ -343,9 +415,8 @@ const ModalForm = () => {
             }}
               type="button" 
               onClick={() => {
-                document.getElementById(modalFormId)?.dispatchEvent(new Event('submit')); // Trigger form submission
-                closeModal(); 
-                handleSubmitData()
+                document.getElementById(modalFormId)?.dispatchEvent(new Event('submit')); 
+                validateData()
               }}
               fill
             >
@@ -362,7 +433,7 @@ const ModalForm = () => {
                   fontSize: '22px',
                   height: '25%',
                   marginTop: '25px',
-                  color: submiStatus === 'success' ? '#D52424' : '#73A33F',
+                  color: submiStatus === 'Success!' ? '#D52424' : '#73A33F',
                   fontWeight: '600',
                 }}>
                 {submitMessage}
@@ -372,7 +443,7 @@ const ModalForm = () => {
                   height: '25%',
                   marginTop: '35px'
                 }}>
-                  {submiStatus === 'success' ? 'Data berhasil terupdate. Silahkan kembali untuk menambah data atau ke halaman utama.'
+                  {submiStatus === 'Success!' ? 'Data berhasil terupdate. Silahkan kembali untuk menambah data atau ke halaman utama.'
                   : 'Data belum terupdate. Silahkan kembali untuk update data atau ke halaman utama.'}
               </EuiText>
             </EuiModalBody>
@@ -383,6 +454,37 @@ const ModalForm = () => {
             </EuiModalFooter>
           </EuiModal>
       )}
+
+    {isConfirmAddStatus && (
+        <EuiModal onClose={closeConfirmAddModal}>
+        <EuiModalBody>
+          <EuiText style={{
+              fontSize: '22px',
+              height: '25%',
+              marginTop: '25px',
+              color: submiStatus === 'Success!' ? '#73A33F' : '#D52424',
+              fontWeight: '600',
+            }}>
+          </EuiText>
+          <EuiText style={{
+              fontSize: '15px',
+              height: '25%',
+              marginTop: '35px'
+            }}>
+              Apakah data yang diisi sudah benar ?
+          </EuiText>
+        </EuiModalBody>
+
+        <EuiModalFooter>
+          <EuiButton onClick={handleSubmitData} style={{ background: "#73A33F", color: "white" }}>
+            Ya
+          </EuiButton>
+          <EuiButton onClick={closeConfirmAddModal} style={{ background: "crimson", color: "white" }}>
+            Batal
+          </EuiButton>
+        </EuiModalFooter>
+      </EuiModal>
+    )}
     </>
   );
 };
