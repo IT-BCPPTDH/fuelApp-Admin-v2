@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
 import Navtop from "../../components/NavTop";
 import CardContent from "./widget";
 import {
@@ -14,7 +14,9 @@ import moment from "moment";
 import TableData from "./table";
 
 const HomePage = () => {
-  const [selectDate, setSelectDate] = useState(moment());
+  const storedDate = JSON.parse(localStorage.getItem('tanggal'));
+  const initialDate = moment(storedDate) || moment()
+  const [selectDate, setSelectDate] = useState(initialDate);
   const [selectedOption, setSelectedOption] = useState('');
 
 
