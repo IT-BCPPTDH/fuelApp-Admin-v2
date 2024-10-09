@@ -39,6 +39,7 @@ const NavTop = () => {
     navigate('/master-stock-system');
     navigate('/master-elipse');
     navigate('/unit-banlaws');
+    navigate('/limited-quota-daily');
   };
 
   const handlebackHome = () => {
@@ -61,10 +62,11 @@ const NavTop = () => {
   ];
 
   const menuItemstMaster = [
-    { label: 'Station', action: () => navigate('/master-station') },
     { label: 'Equipment', action: () => navigate('/equipment') },
-    { label: 'Sonding Master', action: () => navigate('/master-stock-system') },
+    { label: 'Limited Quota', action: () => navigate('/limited-quota-daily') },
     { label: 'Master Data Elipse', action: () => navigate('/master-elipse') },
+    { label: 'Sonding Master', action: () => navigate('/master-stock-system') },
+    { label: 'Station', action: () => navigate('/master-station') },
     { label: 'Unit Banlaws', action: () => navigate('/unit-banlaws') },
     { label: 'User', action: () => navigate('/user') },
   ];

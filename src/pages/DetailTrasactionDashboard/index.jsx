@@ -224,7 +224,7 @@ const DetailPage = () => {
         icon: Icon1,
       },
       {
-        title: summaryAll.totalAllReceiptNigth ? totalAllReceiptNigth.totalAllKpcNigth + ' Ltrs' : 0 + ' Ltrs',
+        title: summaryAll.totalAllReceiptNigth ? summaryAll.totalAllKpcNigth + ' Ltrs' : 0 + ' Ltrs',
         description1: "Receipt",
         description2: "Receipt Transaction",
         icon: Icon1,
@@ -255,6 +255,7 @@ const DetailPage = () => {
     const fetchTable = async () => {
       try {
         const res = await stationService.summaryStation({tanggal:`${date}`, station:station})
+        console.log(res)
         if (res.status != 200) {
           throw new Error('Network response was not ok');
         }

@@ -43,7 +43,11 @@ export const URL_API = {
     addTransaction:`${linkBe}/api/operator/post-data`,
     updateTransaction: `${linkBe}/api/operator/post-data`,
     delTransaction:`${linkBe}/api/admin/delete-data/`,
-    unitDatas : `${linkBe}/api/operator/get-data/`
+    unitDatas : `${linkBe}/api/operator/get-data/`,
+    insetQuota:`${linkBe}/api/quota-usage/bulk-insert`,
+    getQuota : `${linkBe}/api/quota-usage/get-data/`,
+    updateQuota : `${linkBe}/api/quota-usage/update-data`,
+    getActiveQuota : `${linkBe}/api/quota-usage/get-active/`,
 };
 
 export const URL_MASTER_DATA = {

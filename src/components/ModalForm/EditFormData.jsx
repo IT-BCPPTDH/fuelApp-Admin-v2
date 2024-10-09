@@ -17,7 +17,6 @@ import {
   EuiSelect,
   EuiTextArea,
   useGeneratedHtmlId,
-  EuiText,
   EuiFilePicker,
   EuiButtonIcon,
   EuiText
