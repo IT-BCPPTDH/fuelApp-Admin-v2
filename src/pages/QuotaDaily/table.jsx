@@ -4,7 +4,9 @@ import {
   EuiButton,
   EuiFieldSearch,
   EuiText,
-  EuiLink
+  EuiModal,
+  EuiModalBody,
+  EuiModalFooter,
 } from '@elastic/eui';
 // import { Data } from './data'; // Ensure this path is correct
 import { useNavigate } from 'react-router-dom'; 
@@ -13,14 +15,23 @@ import ToogleActive from './toggleActive';
 import dailyService from '../../services/dailyQuotaService';
 
 
-const TableData = () => {
+const TableData = ({opt}) => {
   const navigate = useNavigate(); 
   const [searchValue, setSearchValue] = useState('');
   const [pageIndex, setPageIndex] = useState(0);
   const [pageSize, setPageSize] = useState(10);
   const [showPerPageOptions, setShowPerPageOptions] = useState(true);
   const [tables, setTables] = useState([])
-  const date = JSON.parse(localStorage.getItem('formattedDatesReq'));
+
+  const [confirmMessage, setConfirmMessage] = useState('');
+  const [confirmStatus, setConfirmStatus] = useState(''); 
+  const [isConfirmStatus, setIsConfirmStatus] = useState(false)
+  const showConfirmModal = () => setIsConfirmStatus(true);
+  const closeConfirmModal = () => {
+    setIsConfirmStatus(false)
+    window.location.reload()
+  }
+
 
   const columns = [
     {
@@ -37,8 +48,18 @@ const TableData = () => {
       truncateText: true,
     },
     {
+      field: 'modelUnit',
+      name: 'Model',
+      truncateText: true,
+    },
+    {
       field: 'quota',
       name: 'Limited Quota',
+      truncateText: true,
+    },
+    {
+      field: 'used',
+      name: 'Quota Terpakai',
       truncateText: true,
     },
     {
@@ -58,12 +79,6 @@ const TableData = () => {
     },
   ];
 
-  // const handleRowClick = (item) => {
- 
-  //   navigate(`/details/${item.station}`); 
-    
-  // };
-
   const getRowProps = (item) => ({
     'data-test-subj': `row-${item.unit_no}`,
     className: 'customRowClass',
@@ -81,9 +96,9 @@ const TableData = () => {
   };
 
   const filteredItems = tables.filter(item =>
-    item.unitNo.includes(searchValue.toLowerCase()) 
+    item.unitNo.toLowerCase().includes(searchValue.toLowerCase()) 
+    || item.modelUnit.toLowerCase().includes(searchValue.toLowerCase()) 
     // ||
-    // item.request_name.toLowerCase().includes(searchValue.toLowerCase()) ||
     // item.request_by.toLowerCase().includes(searchValue.toLowerCase())
   );
 
@@ -125,9 +140,9 @@ const TableData = () => {
     );
 
     useEffect(() => {
-      const fetchTable = async (date) => {
+      const fetchTable = async (opt) => {
         try {
-          const res = await dailyService.getData(date)
+          const res = await dailyService.getData(opt)
           if (res.status != 200) {
             throw new Error('Network response was not ok');
           }else if(res.status == 404){
@@ -140,24 +155,121 @@ const TableData = () => {
           // setError(error);
         } 
       };
-      if (date) {  
-        fetchTable(date);
+      if (opt) {  
+        fetchTable(opt);
       }
-    }, [date]);
+    }, [opt]);
+
+    const handleDisableBus = async() => {
+      try {
+        const res = await dailyService.disableBusQuo(opt.tanggal)
+        if (res.status != 200) {
+          setConfirmStatus('Error')
+          setConfirmMessage('Oops..sepertinya ada kesalahan!')
+        }else{
+          setConfirmStatus('Success!')
+          setConfirmMessage('Model unit bus berhasil disable!')
+        }
+      } catch (error) {
+        setConfirmStatus('Error')
+        setConfirmMessage('Yah, sepertinya ada yang error! ', error)
+      } finally{
+        showConfirmModal()
+      }
+    }
+
+    const handleDisableLV = async() => {
+      try {
+        const res = await dailyService.disableLvQuo(opt.tanggal)
+        if (res.status != 200) {
+          setConfirmStatus('Error')
+          setConfirmMessage('Oops..sepertinya ada kesalahan!')
+        }else{
+          setConfirmStatus('Success!')
+          setConfirmMessage('Model unit Lv berhasil disable.')
+        }
+      } catch (error) {
+        setConfirmStatus('Error')
+        setConfirmMessage('Yah, sepertinya ada yang error! ', error)
+      } finally{
+        showConfirmModal()
+      }
+    }
+
+    const handleDisableHLV = async() => {
+      try {
+        const res = await dailyService.disableHlvQuo(opt.tanggal)
+        if (res.status != 200) {
+          setConfirmStatus('Error')
+          setConfirmMessage('Oops..sepertinya ada kesalahan!')
+        }else{
+          setConfirmStatus('Success!')
+          setConfirmMessage('Model unit Hlv berhasil disable.')
+        }
+      } catch (error) {
+        setConfirmStatus('Error')
+        setConfirmMessage('Yah, sepertinya ada yang error! ', error)
+      } finally{
+        showConfirmModal()
+      }
+    }
+
+    const generateData = async() => {
+      try {
+        const res = await dailyService.insertData()
+        if (res.status != 200) {
+          setConfirmStatus('Error')
+          setConfirmMessage('Network response was not ok')
+        }else{
+          setConfirmStatus('Success!')
+          setConfirmMessage('Data berhasil di generate.')
+        }
+      } catch (error) {
+        setConfirmStatus('Error')
+        setConfirmMessage('Data berhasil di generate.')
+      } finally{
+        showConfirmModal()
+      }
+    }
+
+    const renderHeader = () => (
+      <>
+        <EuiButton
+          style={{ background: "#0077CC", color: "white" }}
+          color="primary"
+          onClick={generateData}
+        >
+          Generate data
+        </EuiButton>
+        <EuiButton
+          style={{ background: "#F04E98", color: "white" }}
+          color="primary"
+          onClick={handleDisableBus}
+        >
+          Disable Bus
+        </EuiButton>
+        <EuiButton
+          style={{ background: "#FBBA6D", color: "white" }}
+          color="primary"
+          onClick={handleDisableLV}
+        >
+          Disable HLV
+        </EuiButton>
+        <EuiButton
+          style={{ background: "#73A33F", color: "white" }}
+          color="primary"
+          onClick={handleDisableHLV}
+        >
+          Disable LV
+        </EuiButton>
+      </>
+    );
 
   return (
     <>
       <div style={{ marginBottom: '10px', display: "flex", justifyContent: "flex-end",gap:"15px",alignItems: "center" }}>
-    
-        {/* <ModalForm/> */}
         
-      <EuiButton
-          style={{ background: "#73A33F", color: "white" }}
-          color="primary"
-          onClick={() => alert('Export button clicked')}
-        >
-          Generate data
-        </EuiButton>
+        {renderHeader()}
         <EuiFieldSearch
           placeholder="Search data" 
           value={searchValue}
@@ -179,6 +291,35 @@ const TableData = () => {
         pagination={pagination}
         onChange={handleTableChange}
       />
+
+      {isConfirmStatus && (
+        <EuiModal onClose={closeConfirmModal}>
+        <EuiModalBody>
+          <EuiText style={{
+              fontSize: '22px',
+              height: '25%',
+              marginTop: '25px',
+              color: confirmStatus === 'Success!' ? '#73A33F' : '#D52424',
+              fontWeight: '600',
+            }}>
+            {confirmStatus}
+          </EuiText>
+          <EuiText style={{
+              fontSize: '15px',
+              height: '25%',
+              marginTop: '35px'
+            }}>
+            {confirmMessage}
+          </EuiText>
+        </EuiModalBody>
+
+        <EuiModalFooter>
+          <EuiButton onClick={closeConfirmModal} style={{ background: "crimson", color: "white" }}>
+            Tutup
+          </EuiButton>
+        </EuiModalFooter>
+      </EuiModal>
+    )}
     </>
   );
 };
