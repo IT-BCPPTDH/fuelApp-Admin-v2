@@ -14,6 +14,7 @@ import {
   EuiText,
   EuiLink,
   EuiAvatar,
+  EuiIcon,
 } from '@elastic/eui';
 import Logo from "../../images/logo_darma_henwa.png";
 import HeaderMasterDataMenu from './dropdown';
@@ -77,7 +78,10 @@ const NavTop = () => {
       <div className='logo'>
         <EuiImage src={Logo} alt='' style={{width:"120",height:"50px",padding:"10px"}} />
       </div >
-      <div className='nav-lf'><EuiButton color="light" onClick={handlebackHome}>Fuel History</EuiButton>
+      <div className='nav-lf'><EuiButton color="light" onClick={handlebackHome} >
+      <EuiIcon type="home"/>
+        Home
+      </EuiButton>
       <MenuDropdown
         items={menuItems}
         buttonLabel="LKF"

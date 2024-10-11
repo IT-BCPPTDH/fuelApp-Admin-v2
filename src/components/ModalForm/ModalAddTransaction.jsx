@@ -14,10 +14,8 @@ import {
   EuiModalHeaderTitle,
   EuiRadio,
   EuiSelect,
-  EuiTextArea,
   useGeneratedHtmlId,
   EuiText,
-  EuiFilePicker
 } from '@elastic/eui';
 import moment from 'moment';
 import UserService from '../../services/UserService';

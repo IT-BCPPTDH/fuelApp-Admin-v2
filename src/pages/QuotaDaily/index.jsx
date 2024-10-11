@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Navtop from "../../components/NavTop";
 // import CardContent from "./widget";
 import {
@@ -8,16 +8,15 @@ import {
   EuiText,
   EuiButton,
   EuiDatePicker,
+  EuiSelect
 } from "@elastic/eui";
 import moment from "moment";
 import TableData from "./table";
-// import CardContentQouta from "./widget";
 
 const QuotaDailyPage = () => {
-  const [startDate, setStartDate] = useState(moment());
-  const [endDate, setEndDate] = useState(moment());
-  const [dueDate, setDueDate] = useState(moment());
   const [selectDate, setSelectDate] = useState(moment());
+  const [selectedOption, setSelectedOption] = useState('Daily');
+  const [opt, setOpt] = useState({tanggal: moment().format('YYYY-MM-DD'), option: selectedOption})
 
   const breadcrumbs = [
     {
@@ -32,30 +31,27 @@ const QuotaDailyPage = () => {
     },
   ];
 
-  // Handle date range changes
+  const options = [
+    { value: 'Daily', text: 'Daily' },
+    { value: 'Weekly', text: 'Weekly' },
+    { value: 'Montly', text: 'Montly' },
+    { value: 'YTD', text: 'YTD' },
+  ];
+  
+  const handleChange = (event) => {
+    setSelectedOption(event.target.value);
+  };
+
   const handleStartDateChange = (date) => {
     setSelectDate(date);
   };
 
-  const handleEndDateChange = (date) => {
-    setEndDate(date);
-  };
-
-  // Handle due date change
-  const handleDueDateChange = (date) => {
-    setDueDate(date);
-  };
-
-  // Function to check if the date range is valid
-  const isDateRangeValid = () => {
-    return startDate.isBefore(endDate) && endDate.isBefore(dueDate);
-  };
-
   const formattedDateReq = moment(selectDate).format('dddd, DD-MM-YYYY');
   const formattedDatesReq = moment(selectDate).format('YYYY-MM-DD');
-  localStorage.setItem("tanggalReq", JSON.stringify(formattedDateReq))
-  localStorage.setItem("formattedDatesReq", JSON.stringify(formattedDatesReq))
 
+  const handleSaveData = () => {
+    setOpt({tanggal: formattedDatesReq, option: selectedOption})
+  }
 
   return (
     <>
@@ -63,7 +59,7 @@ const QuotaDailyPage = () => {
         <EuiFlexGrid columns={4}>
           <EuiFlexItem>
             <EuiText paddingSize="l">
-              <div className="summary">Dashboard Limited Quota Daily</div>
+              <div className="summary">Limited Quota</div>
               <div style={{marginTop:"10px"}} className="date">{formattedDateReq}</div>
             </EuiText>
           </EuiFlexItem>
@@ -74,7 +70,7 @@ const QuotaDailyPage = () => {
             <EuiText paddingSize="l"></EuiText>
           </EuiFlexItem>
           <EuiFlexItem>
-            <EuiFlexGrid columns={2}>
+            <EuiFlexGrid columns={4}>
               <EuiFlexItem>
                 <EuiDatePicker
                   className="date-picker"
@@ -85,6 +81,16 @@ const QuotaDailyPage = () => {
                 />
               </EuiFlexItem>
               <EuiFlexItem>
+                <div>
+                  <EuiSelect style={{width:"200px"}}
+                    options={options}
+                    value={selectedOption}
+                    onChange={handleChange}
+                    aria-label="Select "
+                  />
+                </div>
+              </EuiFlexItem>
+              <EuiFlexItem>
                 <EuiButton
                   size="s"
                   style={{
@@ -93,15 +99,7 @@ const QuotaDailyPage = () => {
                     color: "white",
                     width: "100px",
                   }}
-                  onClick={() => {
-                    if (isDateRangeValid()) {
-                      // Implement what should happen when the date range is valid
-                      console.log("Date Range is valid.");
-                    } else {
-                      // Handle invalid date range
-                      console.log("Invalid Date Range.");
-                    }
-                  }}
+                  onClick={handleSaveData}
                 >
                   <div>Select</div>
                 </EuiButton>
@@ -117,7 +115,7 @@ const QuotaDailyPage = () => {
           </EuiFlexGrid>
         </div>
         <div className="mt20">
-          <TableData />
+          <TableData opt={opt}/>
         </div>
       </div>
     </>

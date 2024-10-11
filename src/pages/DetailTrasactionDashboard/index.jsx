@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import Icon1 from "../../images/icon1.png";
 import Icon2 from "../../images/chart.png";
 import Icon3 from "../../images/circle.png";
@@ -20,7 +20,7 @@ const DetailPage = () => {
   localStorage.setItem("storedStation", JSON.stringify(station))
 
   let cardsDataAll, cardsDataShiftDay, cardsDataShiftNigth
-  if(station == 'T112'){
+  if(station == 'FT1116'){
     cardsDataAll = [
       {
         title: summaryAll.totalAllOpening ? summaryAll.totalAllOpening + ' Ltrs'  : 0 + ' Ltrs',
@@ -204,14 +204,7 @@ const DetailPage = () => {
         description2: "Variance",
         icon: Icon3,
       },
-      // {
-      //   title: summaryAll.totalAllCloseDataDay ? summaryAll.totalAllCloseDataDay + ' Ltrs' : 0 + ' Ltrs',
-      //   description1: "Close Data",
-      //   description2: "Close Data",
-      //   icon: Icon2,
-      // },
     ];
-  
     cardsDataShiftNigth = [
       {
         title: summaryAll.totalAllOpeningNigth ? summaryAll.totalAllOpeningNigth + ' Ltrs' : 0 + ' Ltrs',
@@ -226,7 +219,7 @@ const DetailPage = () => {
         icon: Icon1,
       },
       {
-        title: summaryAll.totalAllReceiptNigth ? summaryAll.totalAllKpcNigth + ' Ltrs' : 0 + ' Ltrs',
+        title: summaryAll.totalAllReceiptNigth  + ' Ltrs',
         description1: "Receipt",
         description2: "Receipt Transaction",
         icon: Icon1,
@@ -243,12 +236,6 @@ const DetailPage = () => {
         description2: "Variance",
         icon: Icon3,
       },
-      // {
-      //   title: summaryAll.totalAllCloseDataNigth ? summaryAll.totalAllCloseDataNigth + ' Ltrs' : 0 + ' Ltrs',
-      //   description1: "Close Data",
-      //   description2: "Close Data",
-      //   icon: Icon2,
-      // },
     ];
   }
 

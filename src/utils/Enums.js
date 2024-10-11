@@ -45,9 +45,12 @@ export const URL_API = {
     delTransaction:`${linkBe}/api/admin/delete-data/`,
     unitDatas : `${linkBe}/api/operator/get-data/`,
     insetQuota:`${linkBe}/api/quota-usage/bulk-insert`,
-    getQuota : `${linkBe}/api/quota-usage/get-data/`,
+    getQuota : `${linkBe}/api/quota-usage/get-data`,
     updateQuota : `${linkBe}/api/quota-usage/update-data`,
     getActiveQuota : `${linkBe}/api/quota-usage/get-active/`,
+    disableBus : `${linkBe}/api/quota-usage/disable-bus/`,
+    disableLv : `${linkBe}/api/quota-usage/disable-lv/`,
+    disableHlv : `${linkBe}/api/quota-usage/disable-hlv/`,
 };
 
 export const URL_MASTER_DATA = {

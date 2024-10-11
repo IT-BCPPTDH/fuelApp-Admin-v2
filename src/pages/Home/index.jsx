@@ -12,16 +12,19 @@ import {
 } from "@elastic/eui";
 import moment from "moment";
 import TableData from "./table";
+import { useAtom } from "jotai";
+import { days } from "../../helpers/generalState"
 
 const HomePage = () => {
   const storedDate = JSON.parse(localStorage.getItem('tanggal'));
-  const initialDate = moment(storedDate) || moment()
+  const initialDate = storedDate ? moment(storedDate) : moment()
   const [selectDate, setSelectDate] = useState(initialDate);
   const [selectedOption, setSelectedOption] = useState('');
-
+  const [tanggalAtom, setTanggalAtom] = useAtom(days)
 
   const handleChageDate = (date) => {
     setSelectDate(date);
+    setTanggalAtom(date)
   };
 
   // Options for the select dropdown
