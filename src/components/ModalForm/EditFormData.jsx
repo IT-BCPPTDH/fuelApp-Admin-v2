@@ -255,7 +255,7 @@ const ModalFormDataEdit = ({row}) => {
           style={{ width: "880px" }}
         >
           <EuiModalHeader>
-            <EuiModalHeaderTitle id={modalTitleId}> Edit Unit Banlaws</EuiModalHeaderTitle>
+            <EuiModalHeaderTitle id={modalTitleId}> Edit Transaksi</EuiModalHeaderTitle>
           </EuiModalHeader>
             <EuiModalBody>
                 <EuiForm id={modalFormId} component="form">
@@ -324,16 +324,16 @@ const ModalFormDataEdit = ({row}) => {
                   <EuiFieldText 
                   name='issued'
                   placeholder='Input'
-                  // value={qty}
+                  value={qty}
                   onChange={(e)=> setQty(e.target.value)}
                />
                 </EuiFormRow>
 
                 <EuiFormRow label="Fuel Burn Rate(FBR)" style={{marginTop:"0px"}}>
                   <EuiFieldText 
-                  name='issued'
+                  name='fbr'
                   placeholder='Input'
-                  value={qty}
+                  value={fbr}
                   onChange={(e)=> setFbr(e.target.value)}
                 />
                 </EuiFormRow>

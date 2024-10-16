@@ -1,11 +1,18 @@
 // Configuration file
 
+// VITE_BACKEND_URL=http://10.27.240.110:9053
+// VITE_LINK_BACKEND_WS=http://10.27.240.110/websocket
+// VITE_LINK_BE_USER=http://10.27.240.110:9050
+// VITE_BELINK_MASTER_URL=http://10.27.240.110:9051
+
+
+
 // URLs from environment variables
 const link = import.meta.env.VITE_BACKEND; 
-const userLink = import.meta.env.VITE_BE_USER;
+const userLink = import.meta.env.VITE_LINK_BE_USER;
 const linkSocket = import.meta.env.VITE_SOCKET_USER;
-const linkBe = import.meta.env.VITE_API_BASE_URL; 
-const linkMasterData = import.meta.env.VITE_MASTER_DATA; 
+const linkBe = import.meta.env.VITE_BACKEND_URL; 
+const linkMasterData = import.meta.env.VITE_BELINK_MASTER_URL; 
 // Export URL Enums
 export const URL_ENUMS = {
     linkWebSocket: linkSocket,
