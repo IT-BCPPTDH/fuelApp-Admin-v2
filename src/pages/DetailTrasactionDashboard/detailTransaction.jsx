@@ -13,14 +13,13 @@ import { useParams } from "react-router-dom";
 import formService from '../../services/formDashboard';
 import DynamicPageHeader from "../../components/Breadcrumbs";
 import { useAtom } from 'jotai';
-import { days } from '../../helpers/generalState';
+// import { days } from '../../helpers/generalState';
 
 const DetailsPageTransaction = () => {
   const {lkfId} = useParams()
   const [formTotal, setFormTotal] = useState(0)
   const date = JSON.parse(localStorage.getItem('formattedDate'));
-  const station = JSON.parse(localStorage.getItem('storedStation'));
-  const [salam, setSalam] = useAtom(days)
+  const station = JSON.parse(localStorage.getItem('storedStation'))
 
   const breadcrumbs = [
     {
@@ -187,7 +186,6 @@ const DetailsPageTransaction = () => {
   ];
 
   useEffect(() => {
-    console.log(salam)
     const fetchTable = async () => {
       try {
         const res = await formService.summaryForm(lkfId)

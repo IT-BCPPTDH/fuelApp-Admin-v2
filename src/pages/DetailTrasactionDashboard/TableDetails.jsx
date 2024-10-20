@@ -12,12 +12,14 @@ import { DataTrxDetails } from './datadetails';
 import ModalFormAddIssued from '../../components/ModalForm/ModalAddTransaction';
 import ModalFormDataEdit from '../../components/ModalForm/EditFormData';
 import formService from '../../services/formDashboard';
+import reportService from '../../services/reportService';
+import { URL_API } from '../../utils/Enums';
 
 const TableDataDetails = ({lkfId}) => {
   const navigate = useNavigate(); 
   const [searchValue, setSearchValue] = useState('');
   const [formData, setformData] = useState([])
-  const date = JSON.parse(localStorage.getItem('tanggal'));
+  const date = JSON.parse(localStorage.getItem('formattedOption'));
   const [pageIndex, setPageIndex] = useState(0);
   const [pageSize, setPageSize] = useState(10);
   const [showPerPageOptions, setShowPerPageOptions] = useState(true);
@@ -156,6 +158,45 @@ const TableDataDetails = ({lkfId}) => {
       </>
     );
 
+
+  const handleExport = async () => {
+    try {
+      const data = {
+        tanggal : date.tanggal,
+        lkfId: lkfId
+      }
+      const response = await reportService.reportLkf(data);
+      console.log(response)
+      if (response.status === "200") { 
+        const reportLink = response.link;
+        window.location.href = URL_API.generateReport + reportLink
+      } else {
+        console.log(`Gagal mendapatkan laporan: ${response.status}`);
+      }
+    } catch (error) {
+      console.error("Terjadi kesalahan saat melakukan ekspor:", error);
+    }
+  }
+
+  const handleExportElipse = async() => {
+    try {
+      const data = {
+        tanggal: date.tanggal,
+        lkfId: lkfId
+      }
+      const response = await reportService.reportLkfElipse(data);
+      console.log(response)
+      if (response.status === "200") { 
+        const reportLink = response.link;
+        window.location.href = URL_API.generateReport + reportLink
+      } else {
+        console.log(`Gagal mendapatkan laporan: ${response.status}`);
+      }
+    } catch (error) {
+      console.error("Terjadi kesalahan saat melakukan ekspor:", error);
+    }
+  }
+
   const renderHeader = () => (
     <>
     
@@ -175,13 +216,13 @@ const TableDataDetails = ({lkfId}) => {
       </EuiButton>
       <EuiButton
         style={{ background: "#FBBA6D", color: "white", width: "350px" }}
-        onClick={() => alert('Export to Ellipse button clicked')}
+        onClick={handleExportElipse}
       >
         Export to Ellipse
       </EuiButton>
       <EuiButton
         style={{ background: "#73A33F", color: "white" }}
-        onClick={() => alert('Export button clicked')}
+        onClick={handleExport}
       >
         Export
       </EuiButton>

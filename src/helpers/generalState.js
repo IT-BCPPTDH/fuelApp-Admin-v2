@@ -1,7 +1,5 @@
 import { atom } from "jotai";
+import moment from "moment";
 
-
-export const hello = atom('Hello My world')
-
-export const days = atom('')
+export const option = atom({})
 

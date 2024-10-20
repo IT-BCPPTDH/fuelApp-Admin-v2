@@ -13,24 +13,24 @@ import {
 import moment from "moment";
 import TableData from "./table";
 import { useAtom } from "jotai";
-import { days } from "../../helpers/generalState"
+import { option } from "../../helpers/generalState"
 
 const HomePage = () => {
-  const storedDate = JSON.parse(localStorage.getItem('tanggal'));
-  const initialDate = storedDate ? moment(storedDate) : moment()
+  const storedDate = JSON.parse(localStorage.getItem('formattedOption'));
+  const initialDate = storedDate.tanggal ? moment(storedDate.tanggal) : moment()
+  const initialOpt = storedDate.option ? storedDate.option : 'Daily'
   const [selectDate, setSelectDate] = useState(initialDate);
-  const [selectedOption, setSelectedOption] = useState('');
-  const [tanggalAtom, setTanggalAtom] = useAtom(days)
+  const [selectedOption, setSelectedOption] = useState(initialOpt);
+  // const [opt, setOpt] = useAtom(option)
+  const [opt, setOpt] = useState({tanggal: selectDate, option: selectedOption})
 
   const handleChageDate = (date) => {
     setSelectDate(date);
-    setTanggalAtom(date)
   };
 
-  // Options for the select dropdown
   const options = [
-    { value: 'daily', text: 'Daily' },
-    { value: 'weekly', text: 'Weekly' },
+    { value: 'Daily', text: 'Daily' },
+    { value: 'Weekly', text: 'Weekly' },
     { value: 'Montly', text: 'Montly' },
     { value: 'YTD', text: 'YTD' },
   ];
@@ -41,8 +41,12 @@ const HomePage = () => {
 
   const formattedDate = moment(selectDate).format('dddd, DD-MM-YYYY');
   const formattedDates = moment(selectDate).format('YYYY-MM-DD');
-  localStorage.setItem("tanggal", JSON.stringify(formattedDates))
-  localStorage.setItem("formattedDate", JSON.stringify(formattedDate))
+  // localStorage.setItem("tanggal", JSON.stringify(formattedDates))
+  localStorage.setItem("formattedOption", JSON.stringify(opt))
+
+  const handleOption = () => {
+    setOpt({tanggal: formattedDates, option: selectedOption})
+  }
 
   return (
     <>
@@ -89,9 +93,7 @@ const HomePage = () => {
                     color: "white",
                     width: "100px",
                   }}
-                  onClick={() => {
-                  
-                  }}
+                  onClick={handleOption}
                 >
                   <div>Select</div>
                 </EuiButton>
