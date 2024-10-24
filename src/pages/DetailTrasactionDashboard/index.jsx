@@ -15,7 +15,7 @@ import DynamicPageHeader from "../../components/Breadcrumbs";
 const DetailPage = () => {
   const {station} = useParams()
   const [summaryAll, setSummaryAll] = useState(0)
-  const date = JSON.parse(localStorage.getItem('tanggal'));
+  const date = JSON.parse(localStorage.getItem('formattedOption'));
   const dates= JSON.parse(localStorage.getItem('formattedDate'));
   localStorage.setItem("storedStation", JSON.stringify(station))
 
@@ -255,8 +255,8 @@ const DetailPage = () => {
   useEffect(() => {
     const fetchTable = async () => {
       try {
-        const res = await stationService.summaryStation({tanggal:`${date}`, station:station})
-        console.log(res)
+        const opt = {...date, station:station}
+        const res = await stationService.summaryStation(opt)
         if (res.status != 200) {
           throw new Error('Network response was not ok');
         }

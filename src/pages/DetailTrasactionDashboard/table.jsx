@@ -18,7 +18,7 @@ const TableData = () => {
   const [searchValue, setSearchValue] = useState('');
   const [formLkf, setFormLkf] = useState([]);
   const {station} = useParams()
-  const date = JSON.parse(localStorage.getItem('tanggal'));
+  const date = JSON.parse(localStorage.getItem('formattedOption'));
 
   const columns = [
     {
@@ -119,7 +119,8 @@ const TableData = () => {
   useEffect(() => {
     const fetchTable = async () => {
       try {
-        const res = await stationService.tableStation({tanggal: `${date}`, station:station})
+        const opt = {...date, station:station}
+        const res = await stationService.tableStation(opt)
         if (res.status != 200) {
           throw new Error('Network response was not ok');
         }

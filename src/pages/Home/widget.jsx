@@ -8,7 +8,7 @@ import MainService from '../../services/HomeData';
 
 const CardContent = () => {
   const [summary, setSummary] = useState(0)
-  const date = JSON.parse(localStorage.getItem('tanggal'));
+  const date = JSON.parse(localStorage.getItem('formattedOption'));
   const cardsData = [
     { title: summary.prevSonding ? summary.prevSonding + ' Ltrs' : 0 + ' Ltrs', description1: 'Previous Close Sonding', description2: 'Total close sonding (h-1)', icon: Icon1 },
     { title: summary.openSonding ? summary.openSonding + ' Ltrs' : 0 + ' Ltrs', description1: 'Open Stock (Sonding)', description2: 'Summary Open Sonding (h)', icon: Icon1 },
@@ -25,11 +25,16 @@ const CardContent = () => {
   useEffect(() => {
     const fetchSummary = async (date) => {
       try {
-        const response = await MainService.summaryDashboard({tanggal:`${date}`})
+        const response = await MainService.summaryDashboard(date)
         if (response.status != 200) {
           throw new Error('Network response was not ok');
         }
-        setSummary(response.data);
+        setSummary(prevSummary => {
+          if (JSON.stringify(prevSummary) !== JSON.stringify(response.data)) {
+            return response.data;
+          }
+          return prevSummary;
+        });
       } catch (error) {
         console.log(2,error)
         // setError(error);
