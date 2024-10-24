@@ -26,6 +26,7 @@ import UserService from '../../services/UserService';
 import EquipService from '../../services/EquiptmentService';
 import FormData from '../../services/formDashboard';
 import { useParams } from 'react-router-dom';
+import formService from '../../services/formDashboard';
 
 const ModalFormDataEdit = ({row}) => {
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -44,6 +45,7 @@ const ModalFormDataEdit = ({row}) => {
   const [hmStart, setHmStart] = useState(row.hm_last || "")
   const [hmLast, setHmLast] = useState(row.hm_km || "")
   const [qty, setQty] = useState(row.qty || 0)
+  const [qtyLast, setQtyLast] = useState(row.qtyLast || 0)
   const [flowStart, setFlowStart] = useState(row.flow_start || 0)
   const [flowEnd, setflowEnd] = useState(row.flow_end || 0)
   const [empId, setEmpId] = useState(row.jde_operator || "")
@@ -109,47 +111,11 @@ const ModalFormDataEdit = ({row}) => {
     setSign(base64);
   };
 
-  const handleSubmitData = async () => {
-    try {
-      const data = {
-        from_data_id : dataId,
-        no_unit: unitNo,
-        model_unit: model,
-        owner: owner,
-        date_trx: dates,
-        hm_last: hmStart,
-        hm_km: hmLast,
-        qty_last: qtyLast,
-        qty:qty,
-        flow_start: flowStart,
-        flow_end: flowEnd,
-        jde_operator: empId,
-        name_operator: nameEmp,
-        start: timeStart,
-        end: timeEnd,
-        fbr: fbr,
-        lkf_id: lkfId,
-        signature: sign,
-        type: trxType,
-        photo: picture,
-        created_by: user.JDE
-      }
-      const res = await FormData.updateData(data)
-      if (res.status === '201') {
-        setEditStatus('Success!');
-        setEditMessage('Data successfully saved!');
-      } else {
-        setEditStatus('Failed');
-        setEditMessage('Data not saved!');
-      }
-    } catch (error) {
-      setEditStatus('Error');
-      setEditMessage('Terjadi kesalahan saat update data. Data tidak tersimpan!');
-    } 
-    finally {
-      showEditModal();
-    }
-  };
+
+
+
+  
+  
 
 
   const handleChageStart = (time) => {
@@ -244,6 +210,97 @@ const ModalFormDataEdit = ({row}) => {
     }
   };
 
+  const calculationFbr = async () => {
+    try {
+      const hmkmTransaction = parseFloat(hmStart); 
+      const hmkmUnit = parseFloat(hmLast); 
+      const issuedQty = parseFloat(qty); 
+  
+    
+      if (issuedQty === 0) {
+        throw new Error("Issued quantity cannot be zero.");
+      }
+  
+      
+      const fbrValue = ( hmkmUnit - hmkmTransaction) / issuedQty;
+      console.log("data",fbrValue)
+  
+      
+      setFbr(fbrValue.toFixed(2)); 
+  
+    } catch (error) {
+      console.error("Error calculating FBR:", error);
+     
+    }
+  };
+  
+
+
+  const handleQtyChange = (e) => {
+    setQty(e.target.value);
+   
+    calculationFbr(); // Optionally recalculate FBR
+  };
+  
+  const handleHmStartChange = (e) => {
+    setHmStart(e.target.value);
+
+    calculationFbr(); // Optionally recalculate FBR
+  };
+  
+  const handleHmLastChange = (e) => {
+    setHmLast(e.target.value);
+
+    calculationFbr(); // Optionally recalculate FBR
+  };
+
+
+  const handleSubmitData = async () => {
+    try {
+      const data = {
+        from_data_id: dataId,  // Make sure this is correct and consistent
+        no_unit: unitNo,
+        model_unit: model,
+        owner: owner,
+        date_trx: dates ? dates : new Date().toISOString(),
+        hm_last: hmStart,
+        hm_km: hmLast,
+        qty_last: qtyLast,
+        qty: qty,
+        flow_start: flowStart,
+        flow_end: flowEnd,
+        jde_operator: empId,
+        name_operator: nameEmp,
+        start: timeStart,
+        end: timeEnd,
+        fbr: fbr,
+        lkf_id: lkfId,
+        signature: sign,
+        type: trxType,
+        photo: picture,
+        updated_at: user.JDE
+      };
+  
+      console.log("Sending data to server:", data);  
+  
+      const res = await FormData.updateData(data);
+  
+      if (res.status === 201 || res.status === '201') {
+        setEditStatus('Success');
+        setEditMessage('Data successfully saved!');
+      } else {
+        setEditStatus('Failed');
+        setEditMessage('Data not saved! Please try again.');
+      }
+    } catch (error) {
+      console.error('Error updating data:', error);
+      setEditStatus('Error');
+      setEditMessage('Terjadi kesalahan saat update data. Data tidak tersimpan!');
+    } finally {
+      showEditModal();
+    }
+  };
+  
   return (
     <>
      <EuiButtonIcon iconType="pencil"  onClick={() => setIsModalVisible(true)}>Edit</EuiButtonIcon>
@@ -320,13 +377,15 @@ const ModalFormDataEdit = ({row}) => {
                     />
                 </div>
                   
-                <EuiFormRow label="Qty" >
+               
+                <EuiFormRow label="Qty">
                   <EuiFieldText 
-                  name='issued'
-                  placeholder='Input'
-                  value={qty}
-                  onChange={(e)=> setQty(e.target.value)}
-               />
+                    name='issued'
+                    placeholder='Input'
+                    value={qty}
+                    onChange={handleQtyChange} // Attach handler here
+                  />
+             
                 </EuiFormRow>
 
                 <EuiFormRow label="Fuel Burn Rate(FBR)" style={{marginTop:"0px"}}>
@@ -339,19 +398,21 @@ const ModalFormDataEdit = ({row}) => {
                 </EuiFormRow>
 
                 <EuiFormRow label="HM/KM Terakhir Transaksi" style={{marginTop:"0px"}}>
-                   <EuiFieldText 
+                <EuiFieldText 
                     name='hmkm'
                     placeholder='Input'
-                    value={hmStart}
-                    onChange={(e)=> setHmStart(e.target.value)}
+                    value={hmLast}
+                
+                    onChange={(e)=> setHmLast(e.target.value)}
                   />
                 </EuiFormRow>
 
                 <EuiFormRow label="HM/KM Unit" style={{marginTop:"0px"}}>
                    <EuiFieldText 
                     name='hmkm_last'
-                    value={hmLast}
-                    onChange={(e)=> setHmLast(e.target.value)}
+                    value={hmStart}
+                    onChange={handleHmStartChange} // Attach handler here
+                   
                   />
                 </EuiFormRow>
 

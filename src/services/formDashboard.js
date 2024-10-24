@@ -50,21 +50,33 @@ const insertData = async (requestBody) => {
 
 const updateData = async (requestBody) => {
     try {
-        const response = await api.put(URL_API.addTransaction, requestBody, {
-            headers: {
-                'Content-Type': 'application/json',
-            },
-        });
-        return response.data;
+      const response = await api.put(URL_API.updateTransaction, requestBody, {
+        
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+  
+      // Check if the response status indicates success (200 or 201)
+      if (response.status === 200 || response.status === 201) {
+        return response.data; 
+        
+      } else {
+        // Handle other response statuses (e.g., 400, 500)
+        console.error('Error: Unexpected response status', response.status);
+        throw new Error(`Failed to update. Status code: ${response.status}`);
+      }
     } catch (error) {
-        console.error('Error fetching data:', error.message);
-        throw error;
+      // Improved error logging
+      console.error('Error updating data:', error.message || error);
+      throw error; // Rethrow the error to propagate it up
     }
-};
+  };
+  
 
 const delData = async (id) => {
     try {
-        const response = await api.put(URL_API.delTransaction+id, {
+        const response = await api.delete(URL_API.delTransaction+id, {
             headers: {
                 'Content-Type': 'application/json',
             },
@@ -78,7 +90,7 @@ const delData = async (id) => {
 
 const unitData = async(unitNo) => {
     try {
-        const response = await api.put(URL_API.delTransaction+unitNo, {
+        const response = await api.delete(URL_API.delTransaction+unitNo, {
             headers: {
                 'Content-Type': 'application/json',
             },

@@ -207,25 +207,25 @@ const ModalFormAddIssued = () => {
     setTrxType(value);
   };
 
-  useEffect(() => {
-    const fetchUnitPrev = async () => {
-      try {
-        const res = await formService.unitData(unitNo)
-        if (res.status != 200) {
-          throw new Error('Network response was not ok');
-        }else if(res.status == 404){
-          setEquipData([]);
-        }else{
-          setEquipData(res.data);
-        }
-      } catch (error) {
-        console.log(error)
-        // setError(error);
-      } 
-    };
+  // useEffect(() => {
+  //   const fetchUnitPrev = async () => {
+  //     try {
+  //       const res = await formService.unitData(unitNo)
+  //       if (res.status != 200) {
+  //         throw new Error('Network response was not ok');
+  //       }else if(res.status == 404){
+  //         setEquipData([]);
+  //       }else{
+  //         setEquipData(res.data);
+  //       }
+  //     } catch (error) {
+  //       console.log(error)
+  //       // setError(error);
+  //     } 
+  //   };
 
-    fetchUnitPrev()
-    }, []);
+  //   fetchUnitPrev()
+  //   }, []);
 
 
   return (

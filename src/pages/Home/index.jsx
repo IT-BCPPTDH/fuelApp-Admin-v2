@@ -16,14 +16,19 @@ import { useAtom } from "jotai";
 import { option } from "../../helpers/generalState"
 
 const HomePage = () => {
-  const storedDate = JSON.parse(localStorage.getItem('formattedOption'));
-  const initialDate = storedDate.tanggal ? moment(storedDate.tanggal) : moment()
-  const initialOpt = storedDate.option ? storedDate.option : 'Daily'
+  // const storedDate = JSON.parse(localStorage.getItem('formattedOption'));
+  // const initialDate = storedDate.tanggal ? moment(storedDate.tanggal) : moment()
+  // const initialOpt = storedDate.option ? storedDate.option : 'Daily'
+  // const [selectDate, setSelectDate] = useState(initialDate);
+  // const [selectedOption, setSelectedOption] = useState(initialOpt);
+  // const [opt, setOpt] = useAtom(option)
+  // const [opt, setOpt] = useState({tanggal: selectDate, option: selectedOption})
+  const storedDate = JSON.parse(localStorage.getItem('formattedOption')) || {};
+  const initialDate = storedDate.tanggal ? moment(storedDate.tanggal) : moment();
+  const initialOpt = storedDate.option || 'Daily';
   const [selectDate, setSelectDate] = useState(initialDate);
   const [selectedOption, setSelectedOption] = useState(initialOpt);
-  // const [opt, setOpt] = useAtom(option)
-  const [opt, setOpt] = useState({tanggal: selectDate, option: selectedOption})
-
+  const [opt, setOpt] = useState({ tanggal: initialDate, option: initialOpt });
   const handleChageDate = (date) => {
     setSelectDate(date);
   };

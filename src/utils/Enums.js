@@ -48,7 +48,7 @@ export const URL_API = {
     tableReq:`${linkBe}/api/admin/get-request-table`,
     addData:`${linkBe}/api/admin/add-quota`,
     addTransaction:`${linkBe}/api/operator/post-data`,
-    updateTransaction: `${linkBe}/api/operator/post-data`,
+    updateTransaction: `${linkBe}/api/admin/update-data`,
     delTransaction:`${linkBe}/api/admin/delete-data/`,
     unitDatas : `${linkBe}/api/operator/get-data/`,
     insetQuota:`${linkBe}/api/quota-usage/bulk-insert`,
