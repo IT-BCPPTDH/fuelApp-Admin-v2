@@ -9,6 +9,8 @@ import {
 import { Data } from './data'; 
 import MainService from '../../services/HomeData';
 import { useNavigate } from 'react-router-dom'; 
+import reportService from '../../services/reportService';
+import { URL_API } from '../../utils/Enums';
 
 const TableData = () => {
   const navigate = useNavigate(); 
@@ -144,28 +146,49 @@ const TableData = () => {
       </>
     );
 
-  const date = JSON.parse(localStorage.getItem('tanggal'));
+  const date = JSON.parse(localStorage.getItem('formattedOption'));
+
+  const handleExport = async () => {
+    try {
+      const response = await reportService.reportHome(date);
+      if (response.status === "200") { 
+        const reportLink = response.link;
+        window.location.href = URL_API.generateReport + reportLink
+      } else {
+        console.log(`Gagal mendapatkan laporan: ${response.status}`);
+      }
+    } catch (error) {
+      console.error("Terjadi kesalahan saat melakukan ekspor:", error);
+    }
+  };
+  
 
   useEffect(() => {
     const fetchTable = async (date) => {
       try {
-        const res = await MainService.tableDashboard({tanggal: `${date}`})
-        if (res.status != 200) {
+        const res = await MainService.tableDashboard(date);
+        if (res.status !== "200") {
           throw new Error('Network response was not ok');
-        }else if(res.status == 404){
+        } else if (res.status === 404) {
           setTables([]);
-        }else{
-          setTables(res.data);
+        } else {
+          setTables(prevTables => {
+            if (JSON.stringify(prevTables) !== JSON.stringify(res.data)) {
+              return res.data;
+            }
+            return prevTables;
+          });
         }
       } catch (error) {
-        console.log(error)
-        // setError(error);
-      } 
+        console.log("Error:", error);
+      }
     };
-    if (date) {  
+  
+    if (date) {
       fetchTable(date);
     }
   }, [date]);
+  
   
   return (
     <>
@@ -180,7 +203,7 @@ const TableData = () => {
         <EuiButton
           style={{ background: "#73A33F", color: "white" }}
           color="primary"
-          onClick={() => alert('Export button clicked')}
+          onClick={handleExport}
         >
           Export
         </EuiButton>

@@ -6,74 +6,30 @@ import DynamicTabs from "../../components/Tablist";
 import './style.css';
 import DynamicRadioGroup from '../../components/Radio';
 import moment from "moment";
+import stationsServices from "../../services/stationDashboard"
+import reportService from '../../services/reportService';
+import { URL_API } from '../../utils/Enums';
 
 const ReportFuel = () => {
   const [checkedItems, setCheckedItems] = useState({});
   const [isAllChecked, setIsAllChecked] = useState(false);
   const [startDate, setStartDate] = useState(moment());
   const [endDate, setEndDate] = useState(moment());
+  const [station, setStation] = useState([])
+  const [selectedStations, setSelectedStations] = useState([]);
+  const [selectedRadio, setSelectedRadio] = useState("")
+  const [selectedId, setSelectedId] = useState(""); 
+  const [selectedOption, setSelectedOption] = useState('Excel');
+  const initialDate = moment().format('YYYY-MM-DD')
+  const [firstDate, setFirstDate] = useState(initialDate)
+  const [lastDate, setLastDate] = useState(initialDate)
 
-  const dummyData = [
-    { id: 'checkboxId__1', label: 'TK1037-1' },
-    { id: 'checkboxId__2', label: 'TK1047' },
-    { id: 'checkboxId__3', label: 'FT1101' },
-    { id: 'checkboxId__4', label: 'FT1146' },
-    { id: 'checkboxId__5', label: 'FT1114' },
-    { id: 'checkboxId__6', label: 'TK1036-2' },
-    { id: 'checkboxId__7', label: 'BEJM369' },
-    { id: 'checkboxId__8', label: 'PT. DIRE' },
-    { id: 'checkboxId__9', label: 'TK1037 ' },
-    { id: 'checkboxId__10', label: 'HFT1164' },
-    { id: 'checkboxId__11', label: 'TK1037-2' },
-    { id: 'checkboxId__12', label: 'T112' },
-    { id: 'checkboxId__13', label: 'TK1036-1' },
-    { id: 'checkboxId__14', label: 'FT1116' },
-    { id: 'checkboxId__15', label: 'FT1102' },
-    { id: 'checkboxId__16', label: 'FT1108' },
-    { id: 'checkboxId__17', label: 'FT1151' },
-    { id: 'checkboxId__18', label: 'TK1033' },
-    { id: 'checkboxId__19', label: 'T112-2' },
-    { id: 'checkboxId__20', label: 'TK1035' },
-    { id: 'checkboxId__21', label: 'PT. MTN' },
-    { id: 'checkboxId__22', label: 'FT1154' },
-    { id: 'checkboxId__23', label: 'HFT1120' },
- 
-   
-   
-  ];
 
-  useEffect(() => {
- 
-    const allChecked = dummyData.every(item => checkedItems[item.id]);
-    setIsAllChecked(allChecked);
-  }, [checkedItems]);
-
-  const onChange = (event) => {
-    const { id, checked } = event.target;
-    setCheckedItems(prevState => ({
-      ...prevState,
-      [id]: checked
-    }));
-    console.log(checked)
-  };
-
-  const onSelectAllChange = (event) => {
-    const { checked } = event.target;
-    setIsAllChecked(checked);
-    const updatedCheckedItems = dummyData.reduce((acc, item) => {
-      acc[item.id] = checked;
-      return acc;
-    }, {});
-    setCheckedItems(updatedCheckedItems);
-  };
-  const handleStartDateChange = (date) => {
-    setStartDate(date);
-  };
-
-  const handleEndDateChange = (date) => {
-    setEndDate(date);
-  };
-
+  const initialDaily = moment().format('YYYY-MM-DD')
+  const [dailyDate, setDailyDate] = useState(initialDaily)
+  const [endDaily, setendDaily] = useState(moment())
+  const [selectedIdDaily, setSelectedIdDaily] = useState("")
+  const [selectedOptDaily, setselectedOptDaily] = useState("Consumtion")
 
   const breadcrumbs = [
     {
@@ -89,14 +45,166 @@ const ReportFuel = () => {
   ];
 
   const radioOptions = [
-    { label: 'All' },
-    { label: 'Issued And Transfer' },
-    { label: 'Receipt Only' },
-    { label: 'Issued Only' },
-    { label: 'Receipt KPC Only' },
+    { id: 1, label: 'All'},
+    { id: 2,label: 'Issued And Transfer' },
+    { id: 3,label: 'Receipt Only' },
+    { id: 4,label: 'Issued Only' },
+    { id: 5,label: 'Receipt KPC Only' },
   ];
 
-  // Define the default selected option ID
+  const radioOptionsDaily = [
+    { id: 1, label: 'Fuel Consumption', values: 'Consumtion'},
+    { id: 2,label: 'Fuel Consumption (with shift)', values: 'Shift' },
+    { id: 3,label: 'Summary Receipt KPC', values: 'KPC' },
+    { id: 4,label: 'Fuel Consumption (with HM KM)', values: 'HMKM' },
+    { id: 5,label: 'Fuel Consumption (By Owner)', values: 'Owner' },
+  ];
+
+  const reports = [
+    { id: 1, label: 'Export to Excel', value: 'Excel'},
+    { id: 2,label: 'Export to Elipse', value: 'Elipse' },
+    { id: 3,label: 'Export Raw', value:'Raw' },
+  ];
+
+  const stationData =  station.map((item, index) => ({
+    id: index + 1,
+    label: item 
+  }));
+
+  useEffect(() => {
+    const fetchTable = async () => {
+      try {
+        const res = await stationsServices.getStation();
+        if (res.status !== "200") {
+          throw new Error('Network response was not ok');
+        } else if (res.status === 404) {
+          setStation([]);
+        } else {
+          setStation(prevStation => {
+            if (JSON.stringify(prevStation) !== JSON.stringify(res.data)) {
+              const fuelStationNames = res.data.map(item => item.fuel_station_name);
+              return fuelStationNames;
+            }
+            return prevStation;
+          });
+        }
+      } catch (error) {
+        console.log("Error:", error);
+      }
+    };
+  
+    fetchTable();
+  }, []);
+
+  const onChange = (event) => {
+    const { value, checked } = event.target;
+    console.log(value)
+    setCheckedItems(prevState => ({
+      ...prevState,
+      [value]: checked
+    }));
+    if (checked) {
+      const items = stationData.find(item => item.id === parseInt(value));
+      if (items) {
+        setSelectedStations(prevSelected => [...prevSelected, items.label]);
+      }
+    } else {
+      setSelectedStations(prevSelected => prevSelected.filter(station => station !== stationData.find(item => item.id ===  parseInt(value))?.label));
+    }
+  };
+
+  const onSelectAllChange = (event) => {
+    const { checked } = event.target;
+    setIsAllChecked(checked);
+    const updatedCheckedItems = stationData.reduce((acc, item) => {
+      acc[item.id] = checked;
+      return acc;
+    }, {});
+    setCheckedItems(updatedCheckedItems);
+    setSelectedStations([])
+  };
+
+  const handleStartDateChange = (date) => {
+    setStartDate(date);
+    setFirstDate(moment(startDate).format('YYYY-MM-DD'))
+  };
+
+  const handleEndDateChange = (date) => {
+    setEndDate(date);
+    setLastDate(moment(endDate).format('YYYY-MM-DD'))
+  };
+
+  const handleRadioChange = (event) => {
+    const selectedId = Number(event.target.value);
+    setSelectedId(selectedId); 
+    const selectedOption = radioOptions.find(option => option.id === selectedId);
+    if (selectedOption) {
+      setSelectedRadio(selectedOption.label);
+    }
+  };
+
+const handleRadioDaily = (event) => {
+  const optDaily = Number(event.target.value);
+  setSelectedIdDaily(optDaily);
+
+  
+  const selectedOptions = radioOptionsDaily.find(option => option.id === optDaily)
+
+  if (selectedOptions) {
+    setselectedOptDaily(selectedOptions.values);
+  }
+};
+
+
+  const handleOptionReport = (event) =>{
+    setSelectedOption(event.target.value)
+  }
+
+  const handleExport = async () => {
+    try {
+      const data = {
+        tanggalFrom: firstDate,
+        tanggalTo: lastDate,
+        station: selectedStations,
+        type: selectedRadio,
+        option: selectedOption
+    }
+      const response = await reportService.getReportLkfs(data);
+      if (response.status === "200") { 
+        const reportLink = response.link;
+        window.location.href = URL_API.generateReport + reportLink
+      } else {
+        console.log(`Gagal mendapatkan laporan: ${response.status}`);
+      }
+    } catch (error) {
+      console.error("Terjadi kesalahan saat melakukan ekspor:", error);
+    }
+  }
+
+  const handleDailyChange = (date) => {
+    setendDaily(date);
+    setDailyDate(moment(endDaily).format('YYYY-MM-DD'))
+  };
+
+  const handleExportDaily = async () => {
+    try {
+      const data = {
+        untilDate: dailyDate,
+        option: selectedOptDaily
+      }
+      const response = await reportService.generateReportDaily(data);
+      if (response.status === "200") { 
+        const reportLink = response.link;
+        window.location.href = URL_API.generateReport + reportLink
+      } else {
+        console.log(`Gagal mendapatkan laporan: ${response.status}`);
+      }
+    } catch (error) {
+      console.error("Terjadi kesalahan saat melakukan ekspor:", error);
+    }
+  }
+
+
   const defaultSelectedId = 'radioGroupItem_1';
 
   const tabs = [
@@ -108,15 +216,26 @@ const ReportFuel = () => {
         <div className='mt20'>
         <EuiCard className="cardContainer">
             <div className="formRowContainer">
-                <EuiDatePicker   fullWidth 
-                  selected={startDate}
-                  onChange={handleStartDateChange}
-                />
-                <EuiDatePicker  fullWidth
-              selected={endDate}
-                  onChange={handleEndDateChange}
-                />
+              <EuiFlexGrid>
+                <EuiFormRow  style={{marginTop:"0px"}} label="Mulai pada tanggal">
+                    <EuiDatePicker fullWidth 
+                      selected={startDate}
+                      onChange={handleStartDateChange}
+                      dateFormat="DD/MM/YYYY"
+                      locale="en-gb"
+                    />
+                </EuiFormRow>
+              </EuiFlexGrid>
+              <EuiFormRow  style={{marginTop:"0px"}} label="Sampai pada tanggal">
+                  <EuiDatePicker  fullWidth
+                    selected={endDate}
+                    onChange={handleEndDateChange}
+                    dateFormat="DD/MM/YYYY"
+                    locale="en-gb"
+                  />
+              </EuiFormRow>
             </div>
+
             <EuiFlexGrid className='mt20'>
               <EuiFormRow>
                 <EuiCheckbox
@@ -128,10 +247,10 @@ const ReportFuel = () => {
               </EuiFormRow>
             </EuiFlexGrid>
             <div className="checkbox-content">
-              {dummyData.map(item => (
+              {stationData.map(item => (
                 <EuiFormRow key={item.id} className="euiFormRow">
                   <EuiCheckbox
-                    id={item.id}
+                    value={item.id}
                     label={<span className="checkboxLabel">{item.label}</span>}
                     checked={!!checkedItems[item.id]}
                     onChange={onChange}
@@ -140,18 +259,33 @@ const ReportFuel = () => {
               ))}
              
             </div>
+
             <div className="checkbox-content">
-            <EuiFlexGrid>
-                <DynamicRadioGroup 
-                 options={radioOptions}
-                 defaultSelectedId={defaultSelectedId}
-               
-                />
+              <EuiFlexGrid  columns={3} gutterSize="xs">
+                {radioOptions.map(option => (
+                  <div key={option.id} style={{ textAlign: 'left', margin:'10px', display: 'flex' }}>
+                    <input
+                      type="radio"
+                      id={`radio-${option.id}`} 
+                      name="dynamicRadioGroup" 
+                      value={option.id} 
+                      checked={selectedId === option.id}
+                      onChange={handleRadioChange} 
+                    />
+                    <label htmlFor={`radio-${option.id}`} style={{ marginLeft: '5px' }}>{option.label}</label>
+                  </div>
+                ))}
               </EuiFlexGrid>
             </div>
+
             <div className='checkbox-content'>
-              <EuiSelect fullWidth></EuiSelect>
+              <EuiSelect fullWidth
+              options={reports}
+              onChange={handleOptionReport}
+              ></EuiSelect>
             </div>
+            
+
             <EuiButton
                   size="s"
                   style={{
@@ -162,10 +296,10 @@ const ReportFuel = () => {
                     float:"inline-end",
                     marginTop:"40px"
                   }}
-                 
+                 onClick={handleExport}
                 >
                   <div>Create Report</div>
-                </EuiButton>
+            </EuiButton>
           </EuiCard>
           
         </div>
@@ -178,14 +312,56 @@ const ReportFuel = () => {
       name: 'Daily Report',
       content: (
         <>
-          <EuiSpacer />
-          <EuiText>
-            <p>
-              Intravenous sugar solution, also known as dextrose solution, is a 
-              mixture of dextrose (glucose) and water. It is used to treat low 
-              blood sugar or water loss without electrolyte loss.
-            </p>
-          </EuiText>
+        <div className='mt20'>
+        <EuiCard className="cardContainer">
+            <div className="formRowContainer">
+              <EuiFlexGrid>
+                <EuiFormRow  style={{marginTop:"0px"}} label="Sampai tanggal">
+                    <EuiDatePicker fullWidth 
+                      selected={endDaily}
+                      onChange={handleDailyChange}
+                      dateFormat="DD/MM/YYYY"
+                      locale="en-gb"
+                    />
+                </EuiFormRow>
+              </EuiFlexGrid>
+            </div>
+
+            <div className="checkbox-content">
+              <EuiFlexGrid  columns={1} gutterSize="xs"> Pili jenis report yang diinginkan :
+                {radioOptionsDaily.map(option => (
+                  <div key={option.id} style={{ textAlign: 'left', margin:'10px', display: 'flex' }}>
+                    <input
+                      type="radio"
+                      id={`radio-${option.id}`} 
+                      name="dynamicRadioGroup" 
+                      value={option.id} 
+                      checked={selectedIdDaily === option.id}
+                      onChange={handleRadioDaily} 
+                    />
+                    <label htmlFor={`radio-${option.id}`} style={{ marginLeft: '5px' }}>{option.label}</label>
+                  </div>
+                ))}
+              </EuiFlexGrid>
+            </div>
+
+            <EuiButton
+                  size="s"
+                  style={{
+                    background: "#73A33F",
+                    color: "white",
+                    width: "100px",
+                    textAlign:"center",
+                    float:"inline-end",
+                    marginTop:"40px"
+                  }}
+                 onClick={handleExportDaily}
+                >
+                  <div>Create Report</div>
+            </EuiButton>
+          </EuiCard>
+          
+        </div>
         </>
       ),
     },

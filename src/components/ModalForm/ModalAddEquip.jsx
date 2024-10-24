@@ -13,6 +13,7 @@ import {
   useGeneratedHtmlId,
   EuiText,
   EuiSelect,
+  EuiOverlayMask
 } from '@elastic/eui';
 import EquipService from '../../services/EquiptmentService';
 

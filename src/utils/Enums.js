@@ -51,6 +51,12 @@ export const URL_API = {
     disableBus : `${linkBe}/api/quota-usage/disable-bus/`,
     disableLv : `${linkBe}/api/quota-usage/disable-lv/`,
     disableHlv : `${linkBe}/api/quota-usage/disable-hlv/`,
+    reportsLkf: `${linkBe}/api/admin/download-lkf`,
+    reportsDaily: `${linkBe}/api/admin/daily-consumtion`,
+    exportHome: `${linkBe}/api/admin/download-station`,
+    exportLkf: `${linkBe}/api/admin/download-lkf-excel`,
+    exportLkfElipse: `${linkBe}/api/admin/download-lkf-elipse`,
+    generateReport: linkBe + "/api/downloads/"
 };
 
 export const URL_MASTER_DATA = {
