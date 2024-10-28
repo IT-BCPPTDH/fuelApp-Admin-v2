@@ -7,17 +7,17 @@ import dailyQuotaService from '../../services/dailyQuotaService';
 
 
 const ToogleActive = ({row}) => {
-    const [isChecked, setIsChecked] = useState(row.isActive);
-
+    const [isChecked, setIsChecked] = useState(row.isActive || false);
     const handleToggle = async() => {
         try{
             const newChecked = !isChecked; 
+            console.log(newChecked)
             setIsChecked(newChecked); 
             const update = await dailyQuotaService.updateData({ active: newChecked, unitNo: row.unitNo });
             if(update.status == 200){
-                console.log("berhasil")
+              // window.location.reload()
             }else{
-                console.log("coba lagi")
+              // window.location.reload()
             }
         }catch(error){
             console.log(error)

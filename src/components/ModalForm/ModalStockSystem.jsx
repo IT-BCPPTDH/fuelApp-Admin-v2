@@ -13,6 +13,7 @@ import {
   EuiModalHeader,
   EuiModalHeaderTitle,
   useGeneratedHtmlId,
+  EuiText
 } from '@elastic/eui';
 import sondingService from '../../services/masterSonding';
 

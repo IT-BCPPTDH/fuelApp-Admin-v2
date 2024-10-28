@@ -14,9 +14,12 @@ import moment from "moment";
 import TableData from "./table";
 
 const QuotaDailyPage = () => {
-  const [selectDate, setSelectDate] = useState(moment());
+  const storedDate = JSON.parse(localStorage.getItem('optionLimited')) || {};
+  // const initialDate = storedDate.tanggal ? moment(storedDate.tanggal) : moment().format('YYYY-MM-DD')
+  const initialDate = moment(storedDate.tanggal)
+  const [selectDate, setSelectDate] = useState(initialDate);
   const [selectedOption, setSelectedOption] = useState('Daily');
-  const [opt, setOpt] = useState({tanggal: moment().format('YYYY-MM-DD'), option: selectedOption})
+  const [opt, setOpt] = useState({tanggal: moment(initialDate).format('YYYY-MM-DD'), option: selectedOption})
 
   const breadcrumbs = [
     {
@@ -48,6 +51,8 @@ const QuotaDailyPage = () => {
 
   const formattedDateReq = moment(selectDate).format('dddd, DD-MM-YYYY');
   const formattedDatesReq = moment(selectDate).format('YYYY-MM-DD');
+  
+  localStorage.setItem("optionLimited", JSON.stringify(opt))
 
   const handleSaveData = () => {
     setOpt({tanggal: formattedDatesReq, option: selectedOption})

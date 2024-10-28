@@ -48,15 +48,18 @@ export const URL_API = {
     getQuota : `${linkBe}/api/quota-usage/get-data`,
     updateQuota : `${linkBe}/api/quota-usage/update-data`,
     getActiveQuota : `${linkBe}/api/quota-usage/get-active/`,
-    disableBus : `${linkBe}/api/quota-usage/disable-bus/`,
-    disableLv : `${linkBe}/api/quota-usage/disable-lv/`,
-    disableHlv : `${linkBe}/api/quota-usage/disable-hlv/`,
+    disableBus : `${linkBe}/api/quota-usage/disable-bus`,
+    disableLv : `${linkBe}/api/quota-usage/disable-lv`,
+    disableHlv : `${linkBe}/api/quota-usage/disable-hlv`,
     reportsLkf: `${linkBe}/api/admin/download-lkf`,
     reportsDaily: `${linkBe}/api/admin/daily-consumtion`,
     exportHome: `${linkBe}/api/admin/download-station`,
     exportLkf: `${linkBe}/api/admin/download-lkf-excel`,
     exportLkfElipse: `${linkBe}/api/admin/download-lkf-elipse`,
-    generateReport: linkBe + "/api/downloads/"
+    generateReport: linkBe + "/api/downloads/",
+    generateTemplate: linkBe + "/api/upload/template/",
+    getDataPrint :`${linkBe}/api/admin/get-print-lkf/`,
+    uploadData :`${linkBe}/api/upload`
 };
 
 export const URL_MASTER_DATA = {

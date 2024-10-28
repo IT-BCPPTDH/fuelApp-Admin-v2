@@ -22,12 +22,14 @@ const ModalEditEquipment = ({row}) => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [editingId, setEditingId] = useState(row.id);
   const [formData, setFormData] = useState({
-    jde: row.JDE || "",
-    fullname: row.fullname || "",
-    position: row.position || "",
-    division: row.division || "",
-    fuelman: row.fuelman || false,
-    admin_fuel: row.admin_fuel || false
+    unit_no: row.unit_no || "",
+    brand: row.brand || "",
+    type: row.type || "",
+    tank_cap: row.tank_cap || "",
+    category: row.category || "",
+    usage: row.usage || "",
+    site: row.site || "",
+    owner: row.owner || "",
   });
   const user = JSON.parse(localStorage.getItem('user_data'));
   const modalFormId = useGeneratedHtmlId({ prefix: 'modalForm' });
@@ -68,14 +70,14 @@ const ModalEditEquipment = ({row}) => {
 
   useEffect(() => {
     setFormData({
-      jde: row.JDE || "",
-      fullname: row.fullname || "",
-      position: row.position || "",
-      division: row.division || "",
-      fuelman: row.fuelman || "",
-      admin_fuel: row.admin_fuel || "",
-      fuelman: row.fuelman || false,
-      admin_fuel: row.admin_fuel || false
+      unit_no: row.unit_no || "",
+      brand: row.brand || "",
+      type: row.type || "",
+      tank_cap: row.tank_cap || "",
+      category: row.category || "",
+      usage: row.usage || "",
+      site: row.site || "",
+      owner: row.owner || "",
     });
     setEditingId(row.id);
   }, [row]);
@@ -99,8 +101,8 @@ const ModalEditEquipment = ({row}) => {
   const handleEditData = async () => {
     closeModal()
     try {
-      const updateList = {id: row.id, ...formData}
-      const res = await UserService.updateMasterDataUser(updateList)
+      const updateList = {id: row.id, ...formData, updated_by: user.JDE}
+      const res = await EquipService.updateMasterDataUser(updateList)
       if (res.status === '200') {
           setEditStatus('Success!');
           setEditMessage('Data successfully saved!');
@@ -109,7 +111,6 @@ const ModalEditEquipment = ({row}) => {
           setEditMessage('Data not saved!');
       }
     } catch (error) {
-      console.log("first", error)
       setEditStatus('Error');
       setEditMessage('Terjadi kesalahan saat update data. Data tidak tersimpan!');
     } finally {
@@ -137,7 +138,7 @@ const ModalEditEquipment = ({row}) => {
 
   return (
     <>
-     <EuiButtonIcon iconType="pencil"  onClick={() => setIsModalVisible(true)}>Edit</EuiButtonIcon>
+     <EuiButtonIcon iconType="pencil" aria-label="Edit" onClick={() => setIsModalVisible(true)}>Edit</EuiButtonIcon>
       {isModalVisible && (
         <EuiModal
           aria-labelledby={modalTitleId}
@@ -155,51 +156,83 @@ const ModalEditEquipment = ({row}) => {
                     <EuiFieldText 
                       name='unit_no'
                       placeholder='Unit No'
+                      value={formData.unit_no || ""}
                       onChange={handleChange}
                      />
                 </EuiFormRow>
+                <EuiFormRow  style={{marginTop:"0px"}}label="Description">
+                    <EuiFieldText 
+                     name='brand'
+                     placeholder='Description'
+                     value={formData.brand || ""}
+                     onChange={handleChange}
+                    />
+                </EuiFormRow>
                 <EuiFormRow label="Tipe Unit" style={{marginTop:"0px"}}>
-                  <EuiSelect 
-                //    options={equipData.map(items => ({
-                //     value: items.unit_no,  
-                //     text: items.unit_no  
-                //   }))}
-                //   value={nomorUnit}  
-                //   onChange={handleApprovalChange}  
-                //   hasNoInitialSelection
+                  <EuiFieldText 
+                      name='type'
+                      placeholder='Tipe Unit'
+                      value={formData.type || ""}
+                      onChange={handleChange}
+                  />
+                  {/* <EuiSelect 
+                   options={equipData.map(items => ({
+                    value: items.unit_no,  
+                    text: items.unit_no  
+                  }))}
+                  value={nomorUnit}  
+                  onChange={handleApprovalChange}  
+                  hasNoInitialSelection
                   >
-                  </EuiSelect>
+                  </EuiSelect> */}
                 </EuiFormRow>
                 <EuiFormRow  style={{marginTop:"0px"}}label="Tank Capacity/L">
                     <EuiFieldText 
                      name='tank_capacity'
                      placeholder='Tank Capacity/L'
+                     value={formData.tank_cap || ""}
                      onChange={handleChange}
                     />
                 </EuiFormRow>
-                <EuiFormRow label="Group Id" style={{marginTop:"0px"}}>
-                  <EuiSelect 
-                //    options={equipData.map(items => ({
-                //     value: items.unit_no,  
-                //     text: items.unit_no  
-                //   }))}
-                //   value={nomorUnit}  
-                //   onChange={handleApprovalChange}  
-                //   hasNoInitialSelection
+                <EuiFormRow label="Category" style={{marginTop:"0px"}}>
+                <EuiFieldText 
+                      name='category'
+                      placeholder='Category'
+                      value={formData.category || ""}
+                      onChange={handleChange}
+                  />
+                  {/* <EuiSelect 
+                   options={equipData.map(items => ({
+                    value: items.unit_no,  
+                    text: items.unit_no  
+                  }))}
+                  value={nomorUnit}  
+                  onChange={handleApprovalChange}  
+                  hasNoInitialSelection
                   >
-                  </EuiSelect>
+                  </EuiSelect> */}
+                </EuiFormRow>
+                <EuiFormRow  style={{marginTop:"0px"}}label="Usage">
+                    <EuiFieldText 
+                     name='usage'
+                     placeholder='Usage'
+                     value={formData.usage || ""}
+                     onChange={handleChange}
+                    />
                 </EuiFormRow>
                 <EuiFormRow  style={{marginTop:"0px"}}label="Site">
                     <EuiFieldText 
-                     name='division'
-                     placeholder='Division'
+                     name='site'
+                     placeholder='Site'
+                     value={formData.site || ""}
                      onChange={handleChange}
                     />
                 </EuiFormRow>
                 <EuiFormRow  style={{marginTop:"0px"}}label="Owner">
                     <EuiFieldText 
-                     name='division'
-                     placeholder='Division'
+                     name='owner'
+                     placeholder='Owner'
+                     value={formData.owner || ""}
                      onChange={handleChange}
                     />
                 </EuiFormRow>

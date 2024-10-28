@@ -16,7 +16,7 @@ import { useAtom } from "jotai";
 import { option } from "../../helpers/generalState"
 
 const HomePage = () => {
-  const storedDate = JSON.parse(localStorage.getItem('formattedOption'));
+  const storedDate = JSON.parse(localStorage.getItem('formattedOption')) || {};
   const initialDate = storedDate.tanggal ? moment(storedDate.tanggal) : moment()
   const initialOpt = storedDate.option ? storedDate.option : 'Daily'
   const [selectDate, setSelectDate] = useState(initialDate);
@@ -47,6 +47,12 @@ const HomePage = () => {
   const handleOption = () => {
     setOpt({tanggal: formattedDates, option: selectedOption})
   }
+
+  useEffect(() => {
+    if (!storedDate.tanggal) {
+      setSelectDate(moment());
+    }
+  }, []);
 
   return (
     <>
