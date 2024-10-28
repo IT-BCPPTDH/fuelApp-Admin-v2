@@ -61,9 +61,9 @@ const getActiveData = async (tanggal) => {
     }
 };
 
-const disableBusQuo = async (tanggal) => {
+const disableBusQuo = async (requestBody) => {
     try {
-        const response = await api.put(URL_API.disableBus+tanggal, {
+        const response = await api.put(URL_API.disableBus, requestBody, {
             headers: {
                 'Content-Type': 'application/json',
             },
@@ -75,9 +75,9 @@ const disableBusQuo = async (tanggal) => {
     }
 };
 
-const disableLvQuo = async (tanggal) => {
+const disableLvQuo = async (requestBody) => {
     try {
-        const response = await api.put(URL_API.disableLv+tanggal, {
+        const response = await api.put(URL_API.disableLv, requestBody, {
             headers: {
                 'Content-Type': 'application/json',
             },
@@ -89,9 +89,9 @@ const disableLvQuo = async (tanggal) => {
     }
 };
 
-const disableHlvQuo = async (tanggal) => {
+const disableHlvQuo = async (requestBody) => {
     try {
-        const response = await api.put(URL_API.disableHlv+tanggal, {
+        const response = await api.put(URL_API.disableHlv, requestBody, {
             headers: {
                 'Content-Type': 'application/json',
             },

@@ -1,11 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import {
   EuiBasicTable,
-  EuiButton,
   EuiFieldSearch,
   EuiText,
-  EuiLink,
-  EuiButtonIcon,
 } from '@elastic/eui';
 import { useNavigate } from 'react-router-dom'; 
 import ModalAddEquip from '../../components/ModalForm/ModalAddEquip';
@@ -33,6 +30,11 @@ const TableData = () => {
       truncateText: true,
     },
     {
+      field: 'brand',
+      name: 'Description',
+      truncateText: true,
+    },
+    {
       field: 'type',
       name: 'Unit Type',
       truncateText: true,
@@ -48,6 +50,11 @@ const TableData = () => {
       truncateText: true,
     },
     {
+      field: 'usage',
+      name: 'Usage',
+      truncateText: true,
+    },
+    {
       field: 'site',
       name: 'Site',
       truncateText: true,
@@ -60,7 +67,7 @@ const TableData = () => {
     {
       field: 'action',
       name: 'Action',
-      render: (item, row) => (
+      render: (e, row) => (
         <ModalEditEquipment row={row}/>
       ),
       truncateText: true,
@@ -124,7 +131,6 @@ const TableData = () => {
       const fetchBanlaws = async () => {
         try {
           const res = await EquipService.getEquip()
-          console.log(res)
           if (res.status != 200) {
             throw new Error('Network response was not ok');
           }else if(res.status == 404){

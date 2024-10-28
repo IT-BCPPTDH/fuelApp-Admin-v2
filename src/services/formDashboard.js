@@ -90,13 +90,28 @@ const unitData = async(unitNo) => {
     }
 }
 
+const getDataLKF = async (requestBody) => {
+    try {
+        const response = await api.get(URL_API.getDataPrint+requestBody, {
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        });
+        return response.data;
+    } catch (error) {
+        console.error('Error fetching data:', error.message);
+        throw error;
+    }
+};
+
 const formService = {
     summaryForm,
     tableForm,
     insertData,
     delData,
     updateData,
-    unitData
+    unitData,
+    getDataLKF
 };
 
 export default formService;

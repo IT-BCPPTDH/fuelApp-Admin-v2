@@ -1,0 +1,113 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #fff;
+}
+.container {
+    width: 80%;
+    margin: 20px auto;
+    border: 1px solid #ddd;
+    padding: 20px;
+}
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 10px;
+}
+.header img {
+    height: 50px;
+}
+.header .title {
+    text-align: center;
+    flex-grow: 1;
+}
+.header .title h1 {
+    margin: 0;
+    font-size: 24px;
+}
+.header .title h2 {
+    margin: 0;
+    font-size: 18px;
+    font-weight: normal;
+}
+.fuelman-info {
+    text-align: right;
+    border-bottom: 1px solid #ddd;
+}
+.info {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 10px;
+}
+.info div {
+    width: 30%;
+}
+.info div p {
+    margin: 5px 0;
+}
+.content {
+    margin-top: 20px;
+}
+.content .left, .content .right {
+    width: 48%;
+}
+.content .left {
+    float: left;
+}
+.content .right {
+    float: right;
+}
+.content p {
+    margin: 5px 0;
+}
+.content .left p, .content .right p {
+    display: flex;
+    justify-content: space-between;
+}
+.content .left p span, .content .right p span {
+    width: 50%;
+}
+.clearfix::after {
+    content: "";
+    clear: both;
+    display: table;
+}
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+}
+th, td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+}
+th {
+    background-color: #f2f2f2;
+    font-weight: bold;
+}
+tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+tr:hover {
+    background-color: #f1f1f1;
+}
+tfoot {
+    font-weight: bold;
+}
+tfoot .header {
+    text-align: right;
+}
+tfoot .value {
+    text-align: left;
+}
+.footer {
+    text-align: right;
+    margin: 20px;
+    font-size: 14px;
+}

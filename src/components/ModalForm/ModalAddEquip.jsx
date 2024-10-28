@@ -24,9 +24,11 @@ const ModalAddEquip = () => {
   const modalTitleId = useGeneratedHtmlId();
   const [data, setData] = useState({
     unit_no: "",
+    brand: "",
     type: "",
     tank_capacity: "",
     category: "",
+    usage: "",
     site: "",
     owner: ""
   });
@@ -70,10 +72,10 @@ const ModalAddEquip = () => {
     try {
       const updatedData = {
         ...data,
-        ...(isFuelman ? { fuelman: true } : {}), 
-        ...(isAdmin ? {admin_fuel:true} : {})
+        operator : user.JDE
       };
-      const res = await userServices.insertUser(updatedData)
+      console.log(updatedData)
+      const res = await EquipService.insertEquip(updatedData)
       if (res.status === '200') {
         setSubmitStatus('Success!');
         setSubmitMessage('Data successfully saved!');
@@ -112,17 +114,29 @@ const ModalAddEquip = () => {
                       onChange={handleChange}
                      />
                 </EuiFormRow>
+                <EuiFormRow  style={{marginTop:"0px"}}label="Description">
+                    <EuiFieldText 
+                     name='brand'
+                     placeholder='Description'
+                     onChange={handleChange}
+                    />
+                </EuiFormRow>
                 <EuiFormRow label="Tipe Unit" style={{marginTop:"0px"}}>
-                  <EuiSelect 
-                //    options={equipData.map(items => ({
-                //     value: items.unit_no,  
-                //     text: items.unit_no  
-                //   }))}
-                //   value={nomorUnit}  
-                //   onChange={handleApprovalChange}  
-                //   hasNoInitialSelection
+                  <EuiFieldText 
+                      name='type'
+                      placeholder='Tipe Unit'
+                      onChange={handleChange}
+                  />
+                {/* <EuiSelect 
+                   options={equipData.map(items => ({
+                    value: items.unit_no,  
+                    text: items.unit_no  
+                  }))}
+                  value={nomorUnit}  
+                  onChange={handleApprovalChange}  
+                  hasNoInitialSelection
                   >
-                  </EuiSelect>
+                  </EuiSelect> */}
                 </EuiFormRow>
                 <EuiFormRow  style={{marginTop:"0px"}}label="Tank Capacity/L">
                     <EuiFieldText 
@@ -131,29 +145,41 @@ const ModalAddEquip = () => {
                      onChange={handleChange}
                     />
                 </EuiFormRow>
-                <EuiFormRow label="Group Id" style={{marginTop:"0px"}}>
-                  <EuiSelect 
-                //    options={equipData.map(items => ({
-                //     value: items.unit_no,  
-                //     text: items.unit_no  
-                //   }))}
-                //   value={nomorUnit}  
-                //   onChange={handleApprovalChange}  
-                //   hasNoInitialSelection
+                <EuiFormRow label="Category" style={{marginTop:"0px"}}>
+                  <EuiFieldText 
+                      name='category'
+                      placeholder='Category'
+                      onChange={handleChange}
+                  />
+                  {/* <EuiSelect 
+                   options={equipData.map(items => ({
+                    value: items.unit_no,  
+                    text: items.unit_no  
+                  }))}
+                  value={nomorUnit}  
+                  onChange={handleApprovalChange}  
+                  hasNoInitialSelection
                   >
-                  </EuiSelect>
+                  </EuiSelect> */}
+                </EuiFormRow>
+                <EuiFormRow  style={{marginTop:"0px"}}label="Usage">
+                    <EuiFieldText 
+                     name='usage'
+                     placeholder='Usage'
+                     onChange={handleChange}
+                    />
                 </EuiFormRow>
                 <EuiFormRow  style={{marginTop:"0px"}}label="Site">
                     <EuiFieldText 
-                     name='division'
-                     placeholder='Division'
+                     name='site'
+                     placeholder='Site'
                      onChange={handleChange}
                     />
                 </EuiFormRow>
                 <EuiFormRow  style={{marginTop:"0px"}}label="Owner">
                     <EuiFieldText 
-                     name='division'
-                     placeholder='Division'
+                     name='owner'
+                     placeholder='Owner'
                      onChange={handleChange}
                     />
                 </EuiFormRow>

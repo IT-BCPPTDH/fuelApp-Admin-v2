@@ -11,6 +11,7 @@ import { useNavigate } from 'react-router-dom';
 import { DataTrxDetails } from './datadetails';
 import ModalFormAddIssued from '../../components/ModalForm/ModalAddTransaction';
 import ModalFormDataEdit from '../../components/ModalForm/EditFormData';
+import UploadButton from '../../components/ModalForm/ModalUpload';
 import formService from '../../services/formDashboard';
 import reportService from '../../services/reportService';
 import { URL_API } from '../../utils/Enums';
@@ -185,7 +186,6 @@ const TableDataDetails = ({lkfId}) => {
         lkfId: lkfId
       }
       const response = await reportService.reportLkfElipse(data);
-      console.log(response)
       if (response.status === "200") { 
         const reportLink = response.link;
         window.location.href = URL_API.generateReport + reportLink
@@ -197,20 +197,24 @@ const TableDataDetails = ({lkfId}) => {
     }
   }
 
+  const openNewTab = () => {
+    window.open(`/form_lkf/Lkf_print.html?id=${lkfId}`, '_blank', 'noopener,noreferrer');
+  }
+
   const renderHeader = () => (
     <>
-    
-      <EuiButton
+      {/* <EuiButton
         style={{ background: "#0077CC", color: "white" }}
         color="primary"
         onClick={() => alert('Upload Data button clicked')}
       >
         Upload Data
-      </EuiButton>
+      </EuiButton> */}
+      <UploadButton/>
       <ModalFormAddIssued/>
       <EuiButton
         style={{ background: "#F04E98", color: "white" }}
-        onClick={() => alert('Print LKF button clicked')}
+        onClick={openNewTab}
       >
         Print LKF
       </EuiButton>

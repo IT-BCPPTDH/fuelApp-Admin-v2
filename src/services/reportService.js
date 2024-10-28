@@ -75,13 +75,28 @@ const reportLkfElipse = async (paramsBody) => {
     }
 };
 
+const uploadDatas = async (paramsBody) => {
+    try {
+        const response = await api.post(URL_API.uploadData, paramsBody, {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+            },
+        });
+        return response.data;
+    } catch (error) {
+        console.error('Error fetching data:', error.message);
+        throw error;
+    }
+};
+
 
 const reportService = {
     getReportLkfs,
     generateReportDaily,
     reportHome,
     reportLkf,
-    reportLkfElipse
+    reportLkfElipse,
+    uploadDatas
 };
 
 export default reportService;
