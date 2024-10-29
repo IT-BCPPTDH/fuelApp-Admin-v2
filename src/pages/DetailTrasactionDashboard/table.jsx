@@ -121,6 +121,7 @@ const TableData = () => {
       try {
         const opt = {...date, station:station}
         const res = await stationService.tableStation(opt)
+        console.log(res.data)
         if (res.status != 200) {
           throw new Error('Network response was not ok');
         }
@@ -138,7 +139,7 @@ const TableData = () => {
     <>
       <div style={{ marginBottom: '10px', float: "inline-end", display: "flex", gap: "10px" }}>
       
-        {renderHeader()}
+        {/* {renderHeader()} */}
         <EuiFieldSearch
           placeholder="Search data"
           value={searchValue}
