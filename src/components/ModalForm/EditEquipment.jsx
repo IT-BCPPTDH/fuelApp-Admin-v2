@@ -11,9 +11,9 @@ import {
   EuiModalHeader,
   EuiModalHeaderTitle,
   useGeneratedHtmlId,
-  EuiOverlayMask,
+ 
   EuiButtonIcon,
-  EuiSelect,
+ 
   EuiText
 } from '@elastic/eui';
 import EquipService from '../../services/EquiptmentService';
