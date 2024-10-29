@@ -224,7 +224,7 @@ const ModalAddUser = () => {
                 fontSize: '22px',
                 height: '25%',
                 marginTop: '25px',
-                color: submiStatus === 'Success!' ? '#D52424' : '#73A33F',
+                color: submiStatus === 'Success!' ? '#73A33F' : '#D52424',
                 fontWeight: '600',
               }}>
               {submitMessage}

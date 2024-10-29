@@ -63,7 +63,7 @@ const TableData = () => {
   const getRowProps = (item) => ({
     'data-test-subj': `row-${item.station}`,
     className: 'customRowClass',
-    onClick: () => handleRowClick(item), 
+    // onClick: () => handleRowClick(item), 
   });
 
   const getCellProps = (item, column) => ({

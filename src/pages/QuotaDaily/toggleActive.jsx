@@ -2,26 +2,20 @@ import React, { useEffect, useState } from 'react';
 import { EuiSwitch } from '@elastic/eui';
 import dailyQuotaService from '../../services/dailyQuotaService';
 
-const ToggleActive = ({ row }) => {
-    const [isChecked, setIsChecked] = useState(row.isActive);
 
-    // Synchronize isChecked with row.isActive
-    useEffect(() => {
-        setIsChecked(row.isActive);
-    }, [row.isActive]);
-
-    const handleToggle = async () => {
-        const newChecked = !isChecked;
-        setIsChecked(newChecked);
-        
-        try {
+const ToogleActive = ({row}) => {
+    const [isChecked, setIsChecked] = useState(row.isActive || false);
+    const handleToggle = async() => {
+        try{
+            const newChecked = !isChecked; 
+            console.log(newChecked)
+            setIsChecked(newChecked); 
             const update = await dailyQuotaService.updateData({ active: newChecked, unitNo: row.unitNo });
-            if (update.status === 200) {
-                console.log("Update successful");
-            } else {
-                console.log("Try again");
-                // Optionally revert the toggle state if the update fails
-                setIsChecked(isChecked);
+            if(update.status == 200){
+              // window.location.reload()
+            }else{
+              // window.location.reload()
+
             }
         } catch (error) {
             console.log("Error:", error);

@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { EuiButton, EuiIcon } from '@elastic/eui';
 import './DropdownMenu.css';
 
-const MenuDropdown = ({ items, buttonLabel, onItemClick }) => {
+const MenuDropdown = ({ items, buttonLabel= 'Dropdown', onItemClick }) => {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef(null);
 
@@ -73,8 +73,8 @@ MenuDropdown.propTypes = {
   buttonLabel: PropTypes.string,
 };
 
-MenuDropdown.defaultProps = {
-  buttonLabel: 'Dropdown',
-};
+// MenuDropdown.defaultProps = {
+//   buttonLabel: 'Dropdown',
+// };
 
 export default MenuDropdown;

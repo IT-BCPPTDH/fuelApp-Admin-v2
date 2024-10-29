@@ -22,6 +22,7 @@ const ChangePswdPage = lazy(()=>import('./pages/ChangePassword'));
 const UserPage = lazy(()=>import('./pages/User'));
 const EquipPage = lazy(()=>import('./pages/Equipment'));
 const QuotaDailyPage = lazy(()=>import('./pages/QuotaDaily'));
+// const printLKfPage = lazy(()=>import('./pages/printLKF'));
 
 const RouteApp = () => {
   const {isLogged}=useAuth()

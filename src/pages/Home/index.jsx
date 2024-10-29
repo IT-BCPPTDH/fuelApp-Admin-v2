@@ -17,16 +17,11 @@ import { option } from "../../helpers/generalState"
 import MainService from "../../services/HomeData";
 
 const HomePage = () => {
-  // const storedDate = JSON.parse(localStorage.getItem('formattedOption'));
-  // const initialDate = storedDate.tanggal ? moment(storedDate.tanggal) : moment()
-  // const initialOpt = storedDate.option ? storedDate.option : 'Daily'
-  // const [selectDate, setSelectDate] = useState(initialDate);
-  // const [selectedOption, setSelectedOption] = useState(initialOpt);
-  // const [opt, setOpt] = useAtom(option)
-  // const [opt, setOpt] = useState({tanggal: selectDate, option: selectedOption})
+
   const storedDate = JSON.parse(localStorage.getItem('formattedOption')) || {};
-  const initialDate = storedDate.tanggal ? moment(storedDate.tanggal) : moment();
-  const initialOpt = storedDate.option || 'Daily';
+  const initialDate = storedDate.tanggal ? moment(storedDate.tanggal) : moment()
+  const initialOpt = storedDate.option ? storedDate.option : 'Daily'
+
   const [selectDate, setSelectDate] = useState(initialDate);
   const [selectedOption, setSelectedOption] = useState(initialOpt);
   const [opt, setOpt] = useState({ tanggal: initialDate, option: initialOpt });
@@ -36,9 +31,9 @@ const HomePage = () => {
 
   const options = [
     { value: 'Daily', text: 'Daily' },
-    { value: 'Weekly', text: 'Weekly' },
-    { value: 'Montly', text: 'Montly' },
-    { value: 'YTD', text: 'YTD' },
+    // { value: 'Weekly', text: 'Weekly' },
+    // { value: 'Montly', text: 'Montly' },
+    // { value: 'YTD', text: 'YTD' },
   ];
   
   const handleChange = (event) => {
@@ -53,10 +48,15 @@ const HomePage = () => {
   const handleOption = () => {
     setOpt({tanggal: formattedDates, option: selectedOption})
   }
-//  useEffect(async()=>{
-//   const res = await MainService.getDataPrevTR()
-//   console.log('data_prev', res)
-//  })
+
+
+  useEffect(() => {
+    if (!storedDate.tanggal) {
+      setSelectDate(moment());
+    }
+  }, []);
+
+
   return (
     <>
       <div className="content-padding">

@@ -173,7 +173,7 @@ const TableData = () => {
       <div style={{ marginBottom: '10px', display: "flex", justifyContent: "flex-end",gap:"15px",alignItems: "center" }}>
     
         
-        <EuiButton
+        {/* <EuiButton
           style={{ background: "#73A33F", color: "white" }}
           color="primary"
           onClick={() => alert('Export button clicked')}
@@ -186,7 +186,7 @@ const TableData = () => {
           onClick={() => alert('Export button clicked')}
         >
           Export Master Elipse
-        </EuiButton>
+        </EuiButton> */}
         <ModalFormElipse/>
       
         <EuiFieldSearch

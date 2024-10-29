@@ -6,13 +6,14 @@ import {
   EuiText,
   EuiModal,
   EuiModalBody,
-  EuiModalFooter,
+  EuiModalFooter
 } from '@elastic/eui';
 // import { Data } from './data'; // Ensure this path is correct
 import { useNavigate } from 'react-router-dom'; 
 import ModalForm from '../../components/ModalForm';
 import ToogleActive from './toggleActive';
 import dailyService from '../../services/dailyQuotaService';
+import moment from "moment";
 
 
 const TableData = ({opt}) => {
@@ -23,6 +24,13 @@ const TableData = ({opt}) => {
   const [showPerPageOptions, setShowPerPageOptions] = useState(true);
   const [tables, setTables] = useState([])
 
+  const [toggle0On, setToggle0On] = useState(false);
+  const [toggle1On, setToggle1On] = useState(true);
+
+  const [labelLv, setLabelLv] = useState(true)
+  const [labelHLV, setLabelHLV] = useState(true)
+  const [labelBus, setLabelBus] = useState(true)
+
   const [confirmMessage, setConfirmMessage] = useState('');
   const [confirmStatus, setConfirmStatus] = useState(''); 
   const [isConfirmStatus, setIsConfirmStatus] = useState(false)
@@ -31,7 +39,6 @@ const TableData = ({opt}) => {
     setIsConfirmStatus(false)
     window.location.reload()
   }
-
 
   const columns = [
     {
@@ -149,28 +156,34 @@ const TableData = ({opt}) => {
             setTables([]);
           }else{
             setTables(res.data);
+            const rest = res.data.some((item) => item.modelUnit == "BUS" && item.isActive == true) 
+            setLabelBus(rest)
           }
         } catch (error) {
           console.log(error)
-          // setError(error);
+          setError(error);
         } 
       };
       if (opt) {  
         fetchTable(opt);
       }
     }, [opt]);
+    // console.log(labelBus)
 
     const handleDisableBus = async() => {
       try {
-        const res = await dailyService.disableBusQuo(opt.tanggal)
+        
+        const res = await dailyService.disableBusQuo({tanggal : opt.tanggal, opt: true})
         if (res.status != 200) {
           setConfirmStatus('Error')
           setConfirmMessage('Oops..sepertinya ada kesalahan!')
         }else{
           setConfirmStatus('Success!')
           setConfirmMessage('Model unit bus berhasil disable!')
+          // setLabelBus(newStatus)
         }
       } catch (error) {
+        console.log(error)
         setConfirmStatus('Error')
         setConfirmMessage('Yah, sepertinya ada yang error! ', error)
       } finally{
@@ -184,6 +197,7 @@ const TableData = ({opt}) => {
         if (res.status != 200) {
           setConfirmStatus('Error')
           setConfirmMessage('Oops..sepertinya ada kesalahan!')
+          setLabelLv(true)
         }else{
           setConfirmStatus('Success!')
           setConfirmMessage('Model unit Lv berhasil disable.')
@@ -202,6 +216,7 @@ const TableData = ({opt}) => {
         if (res.status != 200) {
           setConfirmStatus('Error')
           setConfirmMessage('Oops..sepertinya ada kesalahan!')
+          setLabelHLV(true)
         }else{
           setConfirmStatus('Success!')
           setConfirmMessage('Model unit Hlv berhasil disable.')
@@ -246,22 +261,31 @@ const TableData = ({opt}) => {
           color="primary"
           onClick={handleDisableBus}
         >
-          Disable Bus
+          {labelBus  ?   'Disable Bus' : 'Enable Bus' } 
         </EuiButton>
         <EuiButton
           style={{ background: "#FBBA6D", color: "white" }}
           color="primary"
           onClick={handleDisableLV}
         >
-          Disable HLV
+          {labelHLV ? 'Disable Elf' : 'Enable Elf' }
         </EuiButton>
         <EuiButton
           style={{ background: "#73A33F", color: "white" }}
           color="primary"
           onClick={handleDisableHLV}
         >
-          Disable LV
+          {labelLv ? 'Disable LV' : 'Enable LV'}
         </EuiButton>
+
+        {/* <EuiButton
+        onClick={() => {
+          setToggle0On((isOn) => !isOn);
+        }}
+      >
+        {toggle0On ? 'Hey there good lookin' : 'Toggle me'}
+      </EuiButton> */}
+      
       </>
     );
 

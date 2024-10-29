@@ -1,0 +1,311 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+
+    <title>.</title>
+    <style>
+        @media screen {
+            footer {
+                display: none;
+            }
+        }
+
+        @media print {
+            footer {
+                position: absolute;
+                bottom: 0;
+                right: 0;
+                margin-right: 5px;
+                margin-bottom: 5px;
+                float: right;
+            }
+
+            @page {
+                size: auto;
+                margin: 0;
+            }
+
+            body {
+                padding-top: 5rem;
+                padding-bottom: 5rem;
+            }
+
+            a[href]:after {
+                content: none !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <script type="module">
+        import  formService  from '/src/services/formDashboard.js';
+        import  userService  from '/src/services/UserService.js';
+
+        function getQueryParam(param) {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get(param);
+        }
+        const formatDate = (dateString) => {
+            const options = { day: '2-digit', month: 'short', year: 'numeric' };
+            return new Date(dateString).toLocaleDateString('en-GB', options).replace(/ /g, '-');
+        };
+
+        async function fetchData() {
+            const id = getQueryParam('id');
+            if (id) {
+                try {
+                  const rest = await userService.getAllUser()
+                  const user =  rest.data
+                  
+                    const response = await formService.getDataLKF(id);
+                    const data =  response.data
+
+                    const findFuelname = user.find((people)=> people.JDE == data.header.fuelman_id)
+
+                    document.getElementById('fuelman').innerText = `Fuelman: ${findFuelname.fullname} (${data.header.fuelman_id})`;
+                    document.getElementById('unit_no').innerText = data.header.station;
+                    document.getElementById('date').innerText = new Date(data.header.date).toLocaleDateString('en-GB');
+                    document.getElementById('no_lkf').innerText = id;
+                    document.getElementById('shift').innerText = data.header.shift;
+                    document.getElementById('hm_awal').innerText = `${data.header.hm_start} Ltrs`;
+                    document.getElementById('hm_akhir').innerText = `${data.header.hm_end} Ltrs`;
+                    document.getElementById('issued').innerText = `${data.header.issued} Ltrs`;
+                    document.getElementById('receipt-body').innerText = `${data.header.receipt} Ltrs`;
+                    document.getElementById('opening').innerText = `${data.header.openStock} Ltrs (${data.header.openCm} CM) `;
+                    document.getElementById('stock').innerText = `${data.header.stock} Ltrs`;
+                    document.getElementById('balance').innerText = `${data.header.totalBalance} Ltrs`;
+                    document.getElementById('closing').innerText = `${data.header.closingStock} Ltrs (${data.header.closingCm} CM)`;
+                    document.getElementById('daily').innerText = `${data.header.total_receive} Ltrs`;
+                    document.getElementById('start_meter').innerText = `${data.header.startMeter} Ltrs`;
+                    document.getElementById('end_meter').innerText = `${data.header.closeMeter} Ltrs`;
+                    document.getElementById('total_meter').innerText = `${data.header.totalMeter} Ltrs`;
+
+                    document.getElementById('jml_issued').innerText = `${data.header.issued} Ltrs`;
+
+                    data.table.forEach((item, index) => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td>${index + 1}</td>
+                            <td>${item.no_unit}</td>
+                            <td>${item.model_unit}</td>
+                            <td>${item.hm_km}</td>
+                            <td>${item.owner}</td>
+                            <td>${item.flow_start}</td>
+                            <td>${item.flow_end}</td>
+                            <td>${item.qty}</td>
+                            <td>${item.name_operator}</td>
+                            <td>${item.jde_operator}</td>
+                            <td>${item.start}</td>
+                            <td>${item.end}</td>`;
+                        
+                        document.getElementById('data-body').appendChild(row);
+                        document.getElementById('lkf_footer').innerText = `No.LKF-${formatDate(data.header.date)} #${id}`;
+                    });
+
+                    window.print();
+                } catch (error) {
+                    console.error('Error fetching data:', error);
+                }
+            } else {
+                document.getElementById('data').innerText = 'No ID provided';
+            }
+        }
+        fetchData();
+    </script>
+
+    <div class="container-fluid mt-4">
+        <table class="table table-bordered" width="100%">
+            <tbody>
+                <tr>
+                    <td width="30%" style="border-right:none">
+                        <img src="/form_lkf/logo.png" class="mt-2" style="width:120px" alt="">
+                    </td>
+                    <td class="text-center" width="40%" style="border-left:none;border-right:none">Lembar Kerja Fuelman <br>(Daily Fuel Issued)</td>
+                    <td width="30%" style="border-left:none"></td>
+                </tr>
+                <tr style="text-align:right">
+                    <td colspan="3"><b style="font-size:12px" id="fuelman"></b></td>
+                </tr>
+                <tr>
+                    <td>
+                        <table class="table table-borderless" style="font-size:8px" width="100%">
+                            <tr>
+                                <td width="60%">No UNIT</td>
+                                <td width="10%" style="text-align:right">:</td>
+                                <td width="30%" style="text-align:right" id="unit_no"></td>
+                            </tr>
+                            <tr>
+                                <td>Date</td>
+                                <td style="text-align:right">:</td>
+                                <td style="text-align:right" id="date"></td>
+                            </tr>
+                        </table>
+                    </td>
+                    <td>
+                        <table class="table table-borderless container mt-4" style="font-size:8px;text-align:center" width="100%">
+                            <tr>
+                                <td>HM AWAL: <u id="hm_awal"></u> AKHIR: <u id="hm_akhir"></u></td>
+                            </tr>
+                        </table>
+                    </td>
+                    <td>
+                        <table class="table table-borderless" style="font-size:8px;text-align:left" width="100%">
+                            <tr>
+                                <td width="40%">NO LKF</td>
+                                <td width="30%" style="text-align:right">:</td>
+                                <td width="30%" style="text-align:right" id="no_lkf"></td>
+                            </tr>
+                            <tr>
+                                <td>SHIFT</td>
+                                <td style="text-align:right">:</td>
+                                <td style="text-align:right" id="shift"></td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="3">
+                        <div class="container-fluid">
+                            <div class="row">
+                                <div class="col-6">
+                                    <table class="table table-borderless" style="font-size:11px">
+                                        <tbody>
+                                            <tr>
+                                                <td><b>1. Opening Dip/ Sonding</b></td>
+                                                <td>:</td>
+                                                <td id="opening"></td> 
+                                            </tr>
+                                            <tr>
+                                                <td><b>2. Receipt</b></td>
+                                                <td>:</td>
+                                                <td id="receipt-body"></td> 
+                                            </tr>
+                                            <!-- <tbody id="receipt-body"></tbody> -->
+                                            <tr>
+                                                <td><b>3. Stock/Onhand</b></td>
+                                                <td>:</td>
+                                                <td id="stock"></td> 
+                                            </tr>
+                                            <tr>
+                                                <td><b>4. Issued</b></td>
+                                                <td>:</td>
+                                                <td id="issued"></td>
+                                            </tr>
+                                            <tr>
+                                                <td><b>5. Balance</b></td>
+                                                <td>:</td>
+                                                <td id="balance"></td>
+                                            </tr>
+                                            <tr>
+                                                <td><b>6. Closing Dip/ Sonding</b></td>
+                                                <td>:</td>
+                                                <td id="closing"></td> 
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div class="col-6">
+                                    <table class="table table-borderless" style="font-size:11px">
+                                        <tbody>
+                                            <tr>
+                                                <td><b>7. Start Meter (Totalisator)</b></td>
+                                                <td>:</td>
+                                                <td id="start_meter"></td> <!-- Update with actual value -->
+                                            </tr>
+                                            <tr>
+                                                <td><b>8. Close Meter (Totalisator)</b></td>
+                                                <td>:</td>
+                                                <td id="end_meter"></td> <!-- Update with actual value -->
+                                            </tr>
+                                            <tr>
+                                                <td><b>9. Total Meter (8-7)</b></td>
+                                                <td>:</td>
+                                                <td id="total_meter"></td> <!-- Update with actual value -->
+                                            </tr>
+                                            <tr>
+                                                <td><b>10. Daily Variant (6-5)</b></td>
+                                                <td>:</td>
+                                                <td id="daily"></td> <!-- Update with actual value -->
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="3">
+                        <table class="table table-bordered mb-0" style="font-size:8px">
+                            <thead style="text-align:center;vertical-align:middle">
+                                <tr>
+                                  <th rowspan="2">  No</th>
+                                  <th rowspan="2"> UNIT NO</th>
+                                  <th rowspan="2">  MODEL UNIT</th>
+                                  <th rowspan="2">  HM / KM</th>
+                                  <th rowspan="2">  Owner</th>
+                                  <th colspan="2"> Flow Meter</th>
+                                  <th rowspan="2"> QTY ISSUED</th>
+                                  <th colspan="2"> Operator</th>
+                                  <th colspan="2"> Jam Refueling</th>
+                                  <th rowspan="2">REMARKS <br> SIGN</th>
+                                </tr>
+                                <tr>
+                                  <th>Awal</th>
+                                  <th>Akhir</th>
+                                  <th>Nama</th>
+                                  <th>ID NO</th>
+                                  <th>START</th>
+                                  <th>STOP</th>
+                                </tr>
+                            </thead>
+                            <tbody id="data-body">
+                                <!-- Add more rows as needed -->
+                            </tbody>
+                        </table>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <table class="table table-bordered mt-0" style="font-size:8px" width="100%">
+          <tr >
+            <td colspan="6" style="border:none"></td>
+            <td style=" text-align:center">TOTAL FUEL <br> ISSUED </td>
+            <td id="jml_issued"></td>
+            <td colspan="5" style="border:none"></td>
+          </tr>
+          <tr style="border:none">
+            <td style="border:none"></td>
+            <td style="border:none"></td>
+            <td style="border:none"></td>
+            <td style="border:none"></td>
+            <td style="border:none"></td>
+            <td style="border:none"></td>
+            <td style="border:none"></td>
+            <td style="border:none"></td>
+            <td style="border:none"></td>
+            <td style="border:none"></td>
+            <td style="border:none"></td>
+            <td style="border:none"></td>
+            <td style="border:none"></td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </tbody>
+</table>
+    </div>
+
+    <footer id="lkf_footer">
+    </footer>
+
+</body>
+</html>
+
+

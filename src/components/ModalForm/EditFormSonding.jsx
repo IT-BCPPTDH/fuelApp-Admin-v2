@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   EuiButton,
   EuiFieldText,
@@ -18,13 +18,14 @@ import {
 import sondingService from '../../services/masterSonding';
 
 const ModalSondingnEdit = ({row}) => {
-  console.log(row)
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [stations, setStations] = useState(row.station || "")
-  const [takaranCM, setTakaranCM] = useState(row.cm || "")
-  const [takaranLiter, setTakaranLiter] = useState(row.liters || "")
-  const [site, setSite] = useState(row.site || "")
   const user = JSON.parse(localStorage.getItem('user_data'));
+  const [formData, setFormData] = useState({
+    station: row.station || "",
+    cm: row.cm || 0,
+    liters: row.liters || 0,
+    site: row.site || "",
+  });
   const modalFormId = useGeneratedHtmlId({ prefix: 'modalForm' });
   const modalTitleId = useGeneratedHtmlId();
   const closeModal = () => {
@@ -63,17 +64,9 @@ const ModalSondingnEdit = ({row}) => {
   }
 
   const handleEditData = async () => {
-    closeModal()
     try {
-      const data = {
-        id:row.id,
-        station: stations,
-        cm: takaranCM,
-        liters: takaranLiter,
-        site: site,
-        updated_by: user.JDE
-      };
-      const res = await sondingService.updateSonding(data)
+      const updateList = {id: row.id, ...formData, updated_by: user.JDE}
+      const res = await sondingService.updateSonding(updateList)
       if (res.status === '200') {
           setEditStatus('Success!');
           setEditMessage('Data successfully saved!');
@@ -82,7 +75,6 @@ const ModalSondingnEdit = ({row}) => {
           setEditMessage('Data not saved!');
       }
     } catch (error) {
-      console.log(first)
       setEditStatus('Error');
       setEditMessage('Terjadi kesalahan saat update data. Data tidak tersimpan!');
     } finally {
@@ -108,6 +100,24 @@ const ModalSondingnEdit = ({row}) => {
     }
   };
 
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    console.log(name, value)
+    setFormData(prevData => ({
+      ...prevData,
+      [name]: value
+    }));
+  };
+
+  useEffect(() => {
+    setFormData({
+      station: row.station || "",
+      cm: row.cm || "",
+      liters: row.liters || "",
+      site: row.site || ""
+    });
+  }, [row]);
+
   return (
     <>
      <EuiButtonIcon iconType="pencil"  onClick={() => setIsModalVisible(true)}>Edit</EuiButtonIcon>
@@ -126,34 +136,34 @@ const ModalSondingnEdit = ({row}) => {
             <EuiFlexGrid columns={2}>
                 <EuiFormRow label="Station">
                     <EuiFieldText 
-                      name='Station'
+                      name='station'
                       placeholder='Input Station'
-                      value={stations}
-                      onChange={(e) => setStations(e.target.value)}
+                      value={formData.station || ""}
+                      onChange={handleChange}
                      />
                 </EuiFormRow>
                 <EuiFormRow  style={{marginTop:"0px"}}label="Jumlah (Dalam CM)">
                     <EuiFieldText 
-                     name='jmlCm'
+                     name='cm'
                      placeholder='Jumlah(CM)'
-                     value={takaranCM}
-                     onChange={(e) => setTakaranCM(e.target.value)}
+                     value={formData.cm || ""}
+                     onChange={handleChange}
                     />
                 </EuiFormRow>
                 <EuiFormRow  style={{marginTop:"0px"}}label="Jumlah (Dalam Liters)">
                     <EuiFieldText 
-                     name='jmlLiter'
+                     name='liters'
                      placeholder='Jumlah(liter)'
-                     value={takaranLiter}
-                     onChange={(e) => setTakaranLiter(e.target.value)}
+                     value={formData.liters || ""}
+                     onChange={handleChange}
                     />
                 </EuiFormRow>
                 <EuiFormRow  style={{marginTop:"0px"}}label="Site">
                     <EuiFieldText 
                      name='site'
                      placeholder='Site'
-                     value={site}
-                     onChange={(e) => setSite(e.target.value)}
+                     value={formData.site || ""}
+                     onChange={handleChange}
                     />
                 </EuiFormRow>
               </EuiFlexGrid>
@@ -251,7 +261,7 @@ const ModalSondingnEdit = ({row}) => {
                 height: '25%',
                 marginTop: '35px'
               }}>
-                Data telah dihapus dari peradaban - By Admin Cantik;p
+                Data telah dihapus!
             </EuiText>
           </EuiModalBody>
           <EuiModalFooter>

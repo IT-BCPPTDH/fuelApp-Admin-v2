@@ -36,6 +36,7 @@ const insertSonding = async (requestBody) => {
 
 const updateSonding = async (requestBody) => {
     try {
+        console.log(requestBody)
         const response = await api.patch(URL_MASTER_DATA.updateMDSonding, requestBody, {
             headers: {
                 'Content-Type': 'application/json',
@@ -43,6 +44,7 @@ const updateSonding = async (requestBody) => {
         });
         return response.data;
     } catch (error) {
+        console.log(error)
         console.error('Error fetching data:', error.message);
         throw error;
     }

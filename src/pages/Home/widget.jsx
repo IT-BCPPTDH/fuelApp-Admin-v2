@@ -26,6 +26,7 @@ const CardContent = () => {
     const fetchSummary = async (date) => {
       try {
         const response = await MainService.summaryDashboard(date)
+        console.log(response.data)
         if (response.status != 200) {
           throw new Error('Network response was not ok');
         }
