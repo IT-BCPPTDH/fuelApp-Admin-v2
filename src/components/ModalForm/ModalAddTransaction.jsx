@@ -16,13 +16,14 @@ import {
   EuiSelect,
   useGeneratedHtmlId,
   EuiText,
+
 } from '@elastic/eui';
 import moment from 'moment';
 import UserService from '../../services/UserService';
 import EquipService from '../../services/EquiptmentService';
 import formService from '../../services/formDashboard';
 import { useParams } from 'react-router-dom';
-
+import MainService from '../../services/HomeData';
 const ModalFormAddIssued = () => {
   const id = useParams()
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -57,18 +58,37 @@ const ModalFormAddIssued = () => {
   const [fbr, setFbr] = useState(0)
   const [picture, setPicture] = useState("")
   const [sign, setSign] = useState("")
-
+  const [date, setDate] = useState("")
+  const [showError, setShowError] = useState(false);
   const [isSubmitResult, setIsSubmitResult] = useState(false)
   const [submitMessage, setSubmitMessage] = useState('');
   const [submiStatus, setSubmitStatus] = useState(''); 
-  const showSubmitModal = () => setIsSubmitResult(true);
-  const closeSubmitModal = () => {
-    setIsSubmitResult(false)
-    window.location.reload();
+ 
+  const closeEditModal = () => {
+    setIsEditResult(false)
+    setIsConfirmEditStatus(false)
+    Navigate("/form-data/:lkfId")
   }
-
+  const [koutaLimit, setKoutaLimit] = useState('');
+  const [isConfirmEditStatus, setIsConfirmEditStatus] = useState(false)
+  const showConfirmEditModal = () => setIsConfirmEditStatus(true);
+  const [resultStatus, setResultStatus] = useState(''); 
+  const [qtyValue, setQtyValue] = useState("")
+  const [editStatus, setEditStatus] = useState(''); 
+  const [editMessage, setEditMessage] = useState('');
+  const [isEditResult, setIsEditResult] = useState(false)
+  const [hmkmValue, setHmkmValue] = useState("");
+  const showEditModal = () => setIsEditResult(true);
+ 
+  const closeConfirmEditModal = () => {
+    setIsConfirmEditStatus(false)
+    setIsModalVisible(false)
+    
+  }
+  const [selectedUnit, setSelectedUnit] = useState("");
   const [isConfirmAddStatus, setIsConfirmAddStatus] = useState(false)
   const showConfirmAddModal = () => setIsConfirmAddStatus(true);
+
   const closeConfirmAddModal = () => {
     setIsConfirmAddStatus(false)
   }
@@ -93,15 +113,15 @@ const ModalFormAddIssued = () => {
   const handleSubmitData = async () => {
     try {
       const data = {
-        from_data_id : dataId,
+        from_data_id: dataId,
         no_unit: unitNo,
         model_unit: model,
         owner: owner,
-        date_trx: dates,
+        date_trx: new Date().toISOString(),
         hm_last: hmStart,
         hm_km: hmLast,
         qty_last: qtyLast,
-        qty:qty,
+        qty: qty,
         flow_start: flowStart,
         flow_end: flowEnd,
         jde_operator: empId,
@@ -113,25 +133,28 @@ const ModalFormAddIssued = () => {
         signature: sign,
         type: trxType,
         photo: picture,
-        created_by: user.JDE
+        created_by: user.JDE,
       };
-      const res = await formService.insertData(data)
-      if (res.status === '201') {
-        setSubmitStatus('Success!');
-        setSubmitMessage('Data successfully saved!');
+  
+      const res = await formService.insertData(data);
+      if (res.status === 200|| res.status === "201") {  
+        setEditStatus('Success');
+        setEditMessage('Data successfully saved!');
+        showEditModal(); 
       } else {
-        setSubmitStatus('Failed');
-        setSubmitMessage('Data not saved!');
+        throw new Error('Data not saved! Please try again.');
       }
     } catch (error) {
-      setSubmitStatus('Error');
-      setSubmitMessage('Terjadi kesalahan saat update data. Data tidak tersimpan!');
-    } 
-    finally {
-      showSubmitModal();
+      console.error('Error updating data:', error);
+      setEditStatus('Error');
+      setEditMessage('Terjadi kesalahan saat update data. Data tidak tersimpan!');
+      showEditModal(); 
+    } finally {
+      // closeModal(); 
+      closeModal(); 
     }
   };
-
+  
 
   const handleChageStart = (time) => {
     setSelectedTime(time);
@@ -184,15 +207,88 @@ const ModalFormAddIssued = () => {
       fetchUser()
   }, []);
 
-  const handleUnitChange = (e) => {
-    const val = String(e.target.value)
-    const itemSelected = equipData.find((units)=> units.unit_no === val)
-    if(itemSelected){
-      setUnitNo(e.target.value)
-      setModel(itemSelected.type)
-      setOwner(itemSelected.owner)
-    }
-  }
+
+
+
+  useEffect(() => {
+    const fetchUnitData = async () => {
+      if (!selectedUnit) return;
+
+      setLoading(true);
+      setError(null);
+      try {
+        const response = await MainService.getDataPrevTR(selectedUnit);
+
+        if (response.status === '200' && response.data.length > 0) {
+          const latestUnitData = response.data.sort(
+            (a, b) => new Date(b.date_trx) - new Date(a.date_trx)
+          )[0];
+
+          if (latestUnitData) {
+            const hmKmValue = Number(latestUnitData.hm_km) || 0; 
+            const hmKmLastValue = Number(latestUnitData.hm_last) || 0;
+            setHmkmValue(hmKmValue);
+            setHmLast(hmKmLastValue);
+            setModel(latestUnitData.model_unit);
+            setOwner(latestUnitData.owner);
+            setQty(lastUnitData.qty || 0); 
+            localStorage.setItem('latestUnitDataHMKM', JSON.stringify(latestUnitData));
+          } else {
+            setError('No data found');
+          }
+        } else {
+          setError('No data found');
+        }
+      } catch (err) {
+        setError('Failed to fetch unit data');
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchUnitData();
+  }, [selectedUnit]);
+  
+
+//   const handleUnitChange = async (e) => {
+//     const val = String(e.target.value);
+//     console.log('Selected unit number:', val);
+    
+//     try {
+//         const itemSelected = await MainService.getDataPrevTR(val);
+        
+//         if (itemSelected && Array.isArray(itemSelected.data) && itemSelected.data.length > 0) {
+//             const unitData = itemSelected.data[0]; // Access the first item if it exists
+//             setUnitNo(val);
+//             setModel(unitData.type);
+//             setOwner(unitData.owner);
+//             setHmkmValue(unitData.hm_km);
+//             setHmLast(unitData.hm_last);
+//             setQty(unitData.qty);
+//             console.log('Fetched unit data:', unitData);
+//         } else {
+//             console.warn(`No previous transactions found for unit: ${val}`);
+//             // Optionally show a message to the user
+//             alert(`No previous transactions found for unit: ${val}`);
+//             // Reset state when no data is found
+//             setUnitNo('');
+//             setModel('');
+//             setOwner('');
+//             setHmkmValue('');
+//             setHmLast('');
+//             setQty(0);
+//         }
+//     } catch (error) {
+//         console.error('Error fetching unit data:', error.message);
+//     }
+// };
+
+  
+const handleUnitChange = (e) => {
+  const val = String(e.target.value);
+  setSelectedUnit(val);  // Set the selected unit
+};
 
   const handleUserChange = (e) => {
     const val = String(e.target.value)
@@ -207,29 +303,34 @@ const ModalFormAddIssued = () => {
     setTrxType(value);
   };
 
-  useEffect(() => {
-    const fetchUnitPrev = async () => {
-      try {
-        const res = await formService.unitData(unitNo)
-        if (res.status != 200) {
-          throw new Error('Network response was not ok');
-        }else if(res.status == 404){
-          setEquipData([]);
-        }else{
-          setEquipData(res.data);
-        }
-      } catch (error) {
-        console.log(error)
-        // setError(error);
-      } 
-    };
+  // useEffect(() => {
+  //   const fetchUnitPrev = async () => {
+  //     try {
+  //       const res = await formService.unitData(unitNo)
+  //       if (res.status != 200) {
+  //         throw new Error('Network response was not ok');
+  //       }else if(res.status == 404){
+  //         setEquipData([]);
+  //       }else{
+  //         setEquipData(res.data);
+  //       }
+  //     } catch (error) {
+  //       console.log(error)
+  //       // setError(error);
+  //     } 
+  //   };
 
-    fetchUnitPrev()
-    }, []);
+  //   fetchUnitPrev()
+  //   }, []);
+
+
 
 
   return (
     <>
+
+
+    
       <EuiButton style={{background:"#00BFB3", color:"white"}}  onClick={showModal}>Add Data</EuiButton>
       {isModalVisible && (
         <EuiModal 
@@ -309,16 +410,16 @@ const ModalFormAddIssued = () => {
                   <EuiFieldText 
                   name='issued'
                   placeholder='Input'
-                  // value={qty}
+                  value={qty}
                   onChange={(e)=> setQty(e.target.value)}
                />
                 </EuiFormRow>
 
                 <EuiFormRow label="Fuel Burn Rate(FBR)" style={{marginTop:"0px"}}>
                   <EuiFieldText 
-                  name='issued'
+                  name='fbr'
                   placeholder='Input'
-                  // value={qty}
+                  value={fbr}
                   onChange={(e)=> setFbr(e.target.value)}
                 />
                 </EuiFormRow>
@@ -328,6 +429,7 @@ const ModalFormAddIssued = () => {
                     name='hmkm'
                     placeholder='Input'
                     onChange={(e)=> setHmStart(e.target.value)}
+                    value={hmkmValue || ""}
                   />
                 </EuiFormRow>
 
@@ -349,7 +451,7 @@ const ModalFormAddIssued = () => {
                 <EuiFormRow label="Flow Meter Akhir" style={{marginTop:"0px"}}>
                    <EuiFieldText 
                     name='hmkm_last'
-                    value={flowEnd}
+                    value={hmLast}
                     onChange={(e)=> setflowEnd(e.target.value)}
                     // disabled
                   />
@@ -438,8 +540,8 @@ const ModalFormAddIssued = () => {
               type="button" 
               onClick={() => {
                 document.getElementById(modalFormId)?.dispatchEvent(new Event('submit')); // Trigger form submission
-                closeModal(); 
-                showConfirmAddModal()
+           
+                showConfirmEditModal();
               }}
               fill
             >
@@ -449,53 +551,53 @@ const ModalFormAddIssued = () => {
         </EuiModal>
       )}
 
-      {isSubmitResult && (
-          <EuiModal>
-            <EuiModalBody>
-              <EuiText style={{
-                  fontSize: '22px',
-                  height: '25%',
-                  marginTop: '25px',
-                  color: submiStatus === 'Success!' ? '#D52424' : '#73A33F',
-                  fontWeight: '600',
-                }}>
-                {submitMessage}
-              </EuiText>
-              <EuiText style={{
-                  fontSize: '15px',
-                  height: '25%',
-                  marginTop: '35px'
-                }}>
-                  {submiStatus === 'Success!' ? 'Data berhasil terupdate. Silahkan kembali untuk menambah data atau ke halaman utama.'
-                  : 'Data belum terupdate. Silahkan kembali untuk update data atau ke halaman utama.'}
-              </EuiText>
-            </EuiModalBody>
-            <EuiModalFooter>
-              <EuiButton onClick={closeSubmitModal} style={{ background: "#73A33F", color: "white" }}>
-                Tutup
-              </EuiButton>
-            </EuiModalFooter>
-          </EuiModal>
+      {isEditResult && (
+        <EuiModal>
+          <EuiModalBody>
+            <EuiText style={{
+                fontSize: '22px',
+                height: '25%',
+                marginTop: '25px',
+                color: editStatus === 'Success!' ? '#D52424' : '#73A33F',
+                fontWeight: '600',
+              }}>
+              {editMessage}
+            </EuiText>
+            <EuiText style={{
+                fontSize: '15px',
+                height: '25%',
+                marginTop: '35px'
+              }}>
+                {editStatus === 'Success!' ? 'Data berhasil terupdate.  Silahkan kembali untuk menambah data atau ke halaman utama. Data belum terupdate. Silahkan kembali untuk update data atau ke halaman utama.'
+                : '  Data berhasil terupdate.'}
+            </EuiText>
+          </EuiModalBody>
+          <EuiModalFooter>
+            <EuiButton onClick={closeEditModal} style={{ background: "#73A33F", color: "white" }}>
+              Tutup
+            </EuiButton>
+          </EuiModalFooter>
+        </EuiModal>
       )}
 
-    {isConfirmAddStatus && (
-        <EuiModal onClose={closeConfirmAddModal}>
+{isConfirmEditStatus && (
+        <EuiModal onClose={closeConfirmEditModal}>
         <EuiModalBody>
           <EuiText style={{
               fontSize: '22px',
               height: '25%',
               marginTop: '25px',
-              color: modalType === 'success' ? '#73A33F' : '#D52424',
+              color: resultStatus === 'success' ? '#73A33F' : '#D52424',
               fontWeight: '600',
             }}>
-            {modalMessage}
+            {/* {resultMessage} */}
           </EuiText>
           <EuiText style={{
               fontSize: '15px',
               height: '25%',
               marginTop: '35px'
             }}>
-              Apakah data yang diisi sudah benar ?
+              Apakah anda ingin menyimpan data  ?
           </EuiText>
         </EuiModalBody>
 
@@ -503,12 +605,13 @@ const ModalFormAddIssued = () => {
           <EuiButton onClick={handleSubmitData} style={{ background: "#73A33F", color: "white" }}>
             Ya
           </EuiButton>
-          <EuiButton onClick={closeConfirmAddModal} style={{ background: "crimson", color: "white" }}>
-            Batal
+          <EuiButton onClick={closeConfirmEditModal} style={{ background: "crimson", color: "white" }}>
+            Tutup
           </EuiButton>
         </EuiModalFooter>
       </EuiModal>
-    )}
+      )}
+      
     </>
   );
 };

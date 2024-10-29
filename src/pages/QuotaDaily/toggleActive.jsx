@@ -1,8 +1,5 @@
-import React, { useEffect, useState, useCallback } from 'react';
-import {
-  EuiButton,
-  EuiSwitch
-} from '@elastic/eui';
+import React, { useEffect, useState } from 'react';
+import { EuiSwitch } from '@elastic/eui';
 import dailyQuotaService from '../../services/dailyQuotaService';
 
 
@@ -18,23 +15,24 @@ const ToogleActive = ({row}) => {
               // window.location.reload()
             }else{
               // window.location.reload()
+
             }
-        }catch(error){
-            console.log(error)
+        } catch (error) {
+            console.log("Error:", error);
+            // Optionally revert the toggle state if an error occurs
+            setIsChecked(isChecked);
         }
     };
 
-
     return (
-    <>
-    <div>
-      <EuiSwitch
-        checked={isChecked} 
-        onChange={handleToggle} 
-      />
-    </div>
-    </>
-  );
-}
+        <div>
+            <EuiSwitch
+                checked={isChecked}
+                onChange={handleToggle}
+                label={row.unitNo} // Optional label for better accessibility
+            />
+        </div>
+    );
+};
 
-export default ToogleActive;
+export default ToggleActive;
