@@ -48,6 +48,8 @@ const insertData = async (requestBody) => {
     }
 };
 
+
+
 const updateData = async (requestBody) => {
     try {
       const response = await api.put(URL_API.updateTransaction, requestBody, {
@@ -72,6 +74,8 @@ const updateData = async (requestBody) => {
       throw error; // Rethrow the error to propagate it up
     }
   };
+  
+
   
 
 const delData = async (id) => {

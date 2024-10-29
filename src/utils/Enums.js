@@ -39,6 +39,7 @@ export const URL_USER_API = {
 // Export Admin API URLs
 export const URL_API = {
     summaryHome: `${linkBe}/api/admin/get-dashboard`,
+    getUnitPrev: `${linkBe}/api/operator/get-data/:unitNo`,
     tableHome: `${linkBe}/api/admin/get-dashboard-table`,
     stationHome: `${linkBe}/api/admin/get-dashboard-station`,
     stationTable:`${linkBe}/api/admin/get-dashboard-table-station`,

@@ -14,6 +14,7 @@ import moment from "moment";
 import TableData from "./table";
 import { useAtom } from "jotai";
 import { option } from "../../helpers/generalState"
+import MainService from "../../services/HomeData";
 
 const HomePage = () => {
   // const storedDate = JSON.parse(localStorage.getItem('formattedOption'));
@@ -52,7 +53,10 @@ const HomePage = () => {
   const handleOption = () => {
     setOpt({tanggal: formattedDates, option: selectedOption})
   }
-
+//  useEffect(async()=>{
+//   const res = await MainService.getDataPrevTR()
+//   console.log('data_prev', res)
+//  })
   return (
     <>
       <div className="content-padding">

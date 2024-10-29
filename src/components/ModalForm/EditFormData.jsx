@@ -25,10 +25,10 @@ import moment from 'moment';
 import UserService from '../../services/UserService';
 import EquipService from '../../services/EquiptmentService';
 import FormData from '../../services/formDashboard';
-import { useParams } from 'react-router-dom';
+import { Navigate, useParams } from 'react-router-dom';
 import formService from '../../services/formDashboard';
 
-const ModalFormDataEdit = ({row}) => {
+const ModalFormDataEdit = ({row, onClose}) => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [selectedTime, setSelectedTime] = useState(moment());
   const [selectedTimeEnd, setSelectedTimeEnd] = useState(moment());
@@ -45,7 +45,6 @@ const ModalFormDataEdit = ({row}) => {
   const [hmStart, setHmStart] = useState(row.hm_last || "")
   const [hmLast, setHmLast] = useState(row.hm_km || "")
   const [qty, setQty] = useState(row.qty || 0)
-  const [qtyLast, setQtyLast] = useState(row.qtyLast || 0)
   const [flowStart, setFlowStart] = useState(row.flow_start || 0)
   const [flowEnd, setflowEnd] = useState(row.flow_end || 0)
   const [empId, setEmpId] = useState(row.jde_operator || "")
@@ -77,9 +76,11 @@ const ModalFormDataEdit = ({row}) => {
   const [editMessage, setEditMessage] = useState('');
   const [editStatus, setEditStatus] = useState(''); 
   const showEditModal = () => setIsEditResult(true);
+
   const closeEditModal = () => {
     setIsEditResult(false)
-    window.location.reload();
+    setIsConfirmEditStatus(false)
+    Navigate("/form-data/:lkfId")
   }
 
   const [isConfirmStatus, setIsConfirmStatus] = useState(false)
@@ -90,10 +91,29 @@ const ModalFormDataEdit = ({row}) => {
 
   const [isConfirmEditStatus, setIsConfirmEditStatus] = useState(false)
   const showConfirmEditModal = () => setIsConfirmEditStatus(true);
+  
   const closeConfirmEditModal = () => {
     setIsConfirmEditStatus(false)
     setIsModalVisible(false)
+    
   }
+
+
+  const [formData, setFormData] = useState({
+    from_data_id: row.from_data_id || "",
+    no_unit: row.no_unit || "",
+    model_unit: row.model_unit || "",
+    owner: row.owner || "",
+    date_trx: row.date_trx || "",
+    qty: row.qty || "",
+    fbr: row.fbr || "",
+    hm_last: row.hm_last|| "",
+    hm_km: row.hm_km|| "",
+    flow_start: row.flow_start || "",
+    flow_end: row.flow_end || "",
+    jde_operator: row.jde_operator || "",
+    name_operator: row.name_operator || "",
+  });
 
   const onFileChange = async(event) => {
     const file = event.target.files[0];
@@ -113,9 +133,10 @@ const ModalFormDataEdit = ({row}) => {
 
 
 
-
-  
-  
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+  };
 
 
   const handleChageStart = (time) => {
@@ -169,16 +190,19 @@ const ModalFormDataEdit = ({row}) => {
       fetchUser()
     }, []);
 
-  const handleUnitChange = (e) => {
-    const val = String(e.target.value)
-    const itemSelected = equipData.find((units)=> units.unit_no === val)
-    if(itemSelected){
-      setUnitNo(e.target.value)
-      setModel(itemSelected.type)
-      setOwner(itemSelected.owner)
-    }
-  }
-
+    const handleUnitChange = (e) => {
+      const selectedUnit = equipData.find((unit) => unit.unit_no === e.target.value);
+      if (selectedUnit) {
+        setUnitNo(selectedUnit.unit_no); // Update the unitNo state
+        setFormData((prev) => ({
+          ...prev,
+          no_unit: selectedUnit.unit_no,
+          model_unit: selectedUnit.type,
+          owner: selectedUnit.owner,
+        }));
+      }
+    };
+    
   const handleUserChange = (e) => {
     const val = String(e.target.value)
     const itemSelected = userData.find((item)=> item.JDE === val)
@@ -192,10 +216,38 @@ const ModalFormDataEdit = ({row}) => {
     setTrxType(value);
   };
 
+
+
+  const handleSubmitData = async () => {
+    try {
+      const res = await formService.updateData({ id: row.id, ...formData });
+      console.log('Form Data before submission:', formData);
+
+      
+      if (res.status === 200|| res.status === "201" ) {
+        setEditStatus('Success');
+        setEditMessage('Data successfully saved!');
+        showEditModal(); 
+      } else {
+        throw new Error('Data not saved! Please try again.');
+      }
+    } catch (error) {
+      console.error('Error updating data:', error);
+      setEditStatus('Error');
+      setEditMessage('Terjadi kesalahan saat update data. Data tidak tersimpan!');
+      showEditModal(); 
+    } finally {
+      closeModal(); 
+    }
+  };
+  
+ 
+
   const handleDelete = async () => {
     try {
       const res = await FormData.delData(row.from_data_id);
       if (res.status === '200') {
+        
         setResultStatus('success');
         setResultMessage('Data berhasil dihapus');
       } else {
@@ -210,96 +262,23 @@ const ModalFormDataEdit = ({row}) => {
     }
   };
 
-  const calculationFbr = async () => {
-    try {
-      const hmkmTransaction = parseFloat(hmStart); 
-      const hmkmUnit = parseFloat(hmLast); 
-      const issuedQty = parseFloat(qty); 
-  
-    
-      if (issuedQty === 0) {
-        throw new Error("Issued quantity cannot be zero.");
-      }
-  
-      
-      const fbrValue = ( hmkmUnit - hmkmTransaction) / issuedQty;
-      console.log("data",fbrValue)
-  
-      
-      setFbr(fbrValue.toFixed(2)); 
-  
-    } catch (error) {
-      console.error("Error calculating FBR:", error);
-     
+
+  const calFbr = (hm_last, hm_km, qty) => {
+    if (qty === 0) {
+      return 0; // Prevent division by zero
     }
-  };
-  
+    return (hm_km - hm_last ) / qty;
+  }
 
+  useEffect(() => {
+    const hm_last = parseFloat(formData.hm_last) || 0;
+    const hm_km = parseFloat(formData.hm_km) || 0; 
+    const qty = parseFloat(formData.qty) || 0; 
+    const newFbr = calFbr(hm_last, hm_km, qty);
+    setFbr(newFbr);
+  }, [formData.hm_last, formData.hm_km, formData.qty]);
 
-  const handleQtyChange = (e) => {
-    setQty(e.target.value);
-   
-    calculationFbr(); // Optionally recalculate FBR
-  };
-  
-  const handleHmStartChange = (e) => {
-    setHmStart(e.target.value);
-
-    calculationFbr(); // Optionally recalculate FBR
-  };
-  
-  const handleHmLastChange = (e) => {
-    setHmLast(e.target.value);
-
-    calculationFbr(); // Optionally recalculate FBR
-  };
-
-
-  const handleSubmitData = async () => {
-    try {
-      const data = {
-        from_data_id: dataId,  // Make sure this is correct and consistent
-        no_unit: unitNo,
-        model_unit: model,
-        owner: owner,
-        date_trx: dates ? dates : new Date().toISOString(),
-        hm_last: hmStart,
-        hm_km: hmLast,
-        qty_last: qtyLast,
-        qty: qty,
-        flow_start: flowStart,
-        flow_end: flowEnd,
-        jde_operator: empId,
-        name_operator: nameEmp,
-        start: timeStart,
-        end: timeEnd,
-        fbr: fbr,
-        lkf_id: lkfId,
-        signature: sign,
-        type: trxType,
-        photo: picture,
-        updated_at: user.JDE
-      };
-  
-      console.log("Sending data to server:", data);  
-  
-      const res = await FormData.updateData(data);
-  
-      if (res.status === 201 || res.status === '201') {
-        setEditStatus('Success');
-        setEditMessage('Data successfully saved!');
-      } else {
-        setEditStatus('Failed');
-        setEditMessage('Data not saved! Please try again.');
-      }
-    } catch (error) {
-      console.error('Error updating data:', error);
-      setEditStatus('Error');
-      setEditMessage('Terjadi kesalahan saat update data. Data tidak tersimpan!');
-    } finally {
-      showEditModal();
-    }
-  };
+ 
   
   return (
     <>
@@ -312,7 +291,7 @@ const ModalFormDataEdit = ({row}) => {
           style={{ width: "880px" }}
         >
           <EuiModalHeader>
-            <EuiModalHeaderTitle id={modalTitleId}> Edit Transaksi</EuiModalHeaderTitle>
+            <EuiModalHeaderTitle id={modalTitleId}> Edit Unit Transaksi</EuiModalHeaderTitle>
           </EuiModalHeader>
             <EuiModalBody>
                 <EuiForm id={modalFormId} component="form">
@@ -320,10 +299,11 @@ const ModalFormDataEdit = ({row}) => {
                     <EuiFormRow label="No Unit">
                     <EuiSelect
                     options={equipData.map(items => ({
+                      
                       value: items.unit_no,  
                       text: items.unit_no  
                     }))}
-                    value={unitNo}  
+                    value={formData.no_unit}  
                     onChange={handleUnitChange} 
                     hasNoInitialSelection
                     >
@@ -333,7 +313,7 @@ const ModalFormDataEdit = ({row}) => {
                   <EuiFieldText 
                     name='model'
                     placeholder='Model Unit'
-                    value={model}
+                    value={formData.model_unit}
                     disabled />
                 </EuiFormRow>
 
@@ -341,7 +321,7 @@ const ModalFormDataEdit = ({row}) => {
                    <EuiFieldText 
                       name='owner'
                       placeholder='Input'
-                      value={owner}
+                      value={formData.owner}
                       disabled
                     />
                 </EuiFormRow>
@@ -377,15 +357,13 @@ const ModalFormDataEdit = ({row}) => {
                     />
                 </div>
                   
-               
-                <EuiFormRow label="Qty">
+                <EuiFormRow label="Qty" >
                   <EuiFieldText 
-                    name='issued'
-                    placeholder='Input'
-                    value={qty}
-                    onChange={handleQtyChange} // Attach handler here
-                  />
-             
+                  placeholder='Input'
+                  name='qty'
+                  value={formData.qty}
+                  onChange={handleChange}
+               />
                 </EuiFormRow>
 
                 <EuiFormRow label="Fuel Burn Rate(FBR)" style={{marginTop:"0px"}}>
@@ -393,42 +371,41 @@ const ModalFormDataEdit = ({row}) => {
                   name='fbr'
                   placeholder='Input'
                   value={fbr}
-                  onChange={(e)=> setFbr(e.target.value)}
+                  // onChange={(e)=> setFbr(e.target.value)}
+                  // onChange={handleChange}
                 />
                 </EuiFormRow>
 
                 <EuiFormRow label="HM/KM Terakhir Transaksi" style={{marginTop:"0px"}}>
-                <EuiFieldText 
-                    name='hmkm'
+                   <EuiFieldText 
+                    name='hm_last'
                     placeholder='Input'
-                    value={hmLast}
-                
-                    onChange={(e)=> setHmLast(e.target.value)}
+                    value={formData.hm_last}
+                    onChange={handleChange}
                   />
                 </EuiFormRow>
 
                 <EuiFormRow label="HM/KM Unit" style={{marginTop:"0px"}}>
                    <EuiFieldText 
-                    name='hmkm_last'
-                    value={hmStart}
-                    onChange={handleHmStartChange} // Attach handler here
-                   
+                    name='hm_km'
+                    value={formData.hm_km}
+                    onChange={handleChange}
                   />
                 </EuiFormRow>
 
                 <EuiFormRow label="Flow Meter Awal" style={{marginTop:"0px"}}>
                    <EuiFieldText 
-                    name='flowStart'
-                    value={flowStart}
+                    name='flow_start'
+                    value={formData.flow_start}
                     placeholder='Input'
-                    onChange={(e)=> setFlowStart(e.target.value)}
+                    onChange={handleChange}
                   />
                 </EuiFormRow>
 
                 <EuiFormRow label="Flow Meter Akhir" style={{marginTop:"0px"}}>
                    <EuiFieldText 
-                    name='flowEnd'
-                    value={flowEnd}
+                    name='flow_end'
+                    value={formData.flow_end}
                     onChange={(e)=> setflowEnd(e.target.value)}
                     disabled
                   />
@@ -520,7 +497,8 @@ const ModalFormDataEdit = ({row}) => {
                 if (formElement) {
                   formElement.dispatchEvent(new Event('submit'));
                 }
-                showConfirmEditModal()
+                showConfirmEditModal();
+              
               }}
               fill
             >
@@ -556,8 +534,8 @@ const ModalFormDataEdit = ({row}) => {
                 height: '25%',
                 marginTop: '35px'
               }}>
-                {editStatus === 'Success!' ? 'Data berhasil terupdate. Silahkan kembali untuk menambah data atau ke halaman utama.'
-                : 'Data belum terupdate. Silahkan kembali untuk update data atau ke halaman utama.'}
+                {editStatus === 'Success!' ? 'Data berhasil terupdate.  Silahkan kembali untuk menambah data atau ke halaman utama. Data belum terupdate. Silahkan kembali untuk update data atau ke halaman utama.'
+                : '  Data berhasil terupdate.'}
             </EuiText>
           </EuiModalBody>
           <EuiModalFooter>
