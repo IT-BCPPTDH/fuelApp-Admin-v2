@@ -15,9 +15,9 @@ import {
   EuiModalHeaderTitle,
   EuiRadio,
   EuiSelect,
-  EuiTextArea,
+
   useGeneratedHtmlId,
-  EuiFilePicker,
+ 
   EuiButtonIcon,
   EuiText
 } from '@elastic/eui';
