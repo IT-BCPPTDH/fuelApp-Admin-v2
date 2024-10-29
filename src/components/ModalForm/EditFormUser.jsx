@@ -73,10 +73,8 @@ const ModalEditUser = ({row}) => {
       fullname: row.fullname || "",
       position: row.position || "",
       division: row.division || "",
-      fuelman: row.fuelman || "",
-      admin_fuel: row.admin_fuel || "",
-      fuelman: row.fuelman || false,
-      admin_fuel: row.admin_fuel || false
+      fuelman: row.fuelman || false,  
+      admin_fuel: row.admin_fuel || false  
     });
     setEditingId(row.id);
   }, [row]);
