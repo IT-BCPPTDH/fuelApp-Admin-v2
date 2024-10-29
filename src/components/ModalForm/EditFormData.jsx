@@ -216,18 +216,12 @@ const ModalFormDataEdit = ({row, onClose}) => {
     setTrxType(value);
   };
 
-
-
   const handleSubmitData = async () => {
     try {
       const res = await formService.updateData({ id: row.id, ...formData });
-      console.log('Form Data before submission:', formData);
-
-      
-      if (res.status === 200|| res.status === "201" ) {
+      if (res.status === 200) {
         setEditStatus('Success');
         setEditMessage('Data successfully saved!');
-        showEditModal(); 
       } else {
         throw new Error('Data not saved! Please try again.');
       }
@@ -235,14 +229,13 @@ const ModalFormDataEdit = ({row, onClose}) => {
       console.error('Error updating data:', error);
       setEditStatus('Error');
       setEditMessage('Terjadi kesalahan saat update data. Data tidak tersimpan!');
-      showEditModal(); 
     } finally {
-      closeModal(); 
+      closeModal(); // Close the modal after submission
     }
   };
-  
- 
 
+  
+  
   const handleDelete = async () => {
     try {
       const res = await FormData.delData(row.from_data_id);
