@@ -9,10 +9,10 @@
 
 // URLs from environment variables
 const link = import.meta.env.VITE_BACKEND; 
-const userLink = import.meta.env.VITE_LINK_BE_USER;
+const userLink = import.meta.env.VITE_BE_USER;
 const linkSocket = import.meta.env.VITE_SOCKET_USER;
-const linkBe = import.meta.env.VITE_BACKEND_URL; 
-const linkMasterData = import.meta.env.VITE_BELINK_MASTER_URL; 
+const linkBe = import.meta.env.VITE_API_BASE_URL; 
+const linkMasterData = import.meta.env.VITE_MASTER_DATA; 
 // Export URL Enums
 export const URL_ENUMS = {
     linkWebSocket: linkSocket,
@@ -67,7 +67,7 @@ export const URL_API = {
     generateReport: linkBe + "/api/downloads/",
     generateTemplate: linkBe + "/api/upload/template/",
     getDataPrint :`${linkBe}/api/admin/get-print-lkf/`,
-    uploadData :`${linkBe}/api/upload`
+    uploadData :`${linkBe}/api/admin/upload`
 };
 
 export const URL_MASTER_DATA = {

@@ -35,4 +35,4 @@ const ToogleActive = ({row}) => {
     );
 };
 
-export default ToggleActive;
+export default ToogleActive;
