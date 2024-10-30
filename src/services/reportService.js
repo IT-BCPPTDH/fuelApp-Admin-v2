@@ -77,12 +77,17 @@ const reportLkfElipse = async (paramsBody) => {
 
 const uploadDatas = async (paramsBody) => {
     try {
-        const response = await api.post(URL_API.uploadData, paramsBody, {
+        const token = localStorage.getItem('session_token')
+        const response = await fetch(URL_API.uploadData, {
+            method:'POST',
+            body:paramsBody,
             headers: {
-                'Content-Type': 'multipart/form-data',
+                // 'Content-Type': 'multipart/form-data',
+                'custom_token': token
             },
         });
-        return response.data;
+        const data = await response.json(); 
+        return data;
     } catch (error) {
         console.error('Error fetching data:', error.message);
         throw error;

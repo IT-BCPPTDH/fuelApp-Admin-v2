@@ -21,33 +21,49 @@ const modalUpload = () => {
     const showModal = () => setIsModalVisible(true);
     const [file, setFile] = useState(null);
 
+    const [isSubmitResult, setIsSubmitResult] = useState(false)
+    const [submitMessage, setSubmitMessage] = useState('');
+    const [submitMessage1, setSubmitMessage1] = useState([]);
+    const [submitMessage2, setSubmitMessage2] = useState(0);
+    const [submiStatus, setSubmitStatus] = useState(''); 
+    const showSubmitModal = () => setIsSubmitResult(true);
+    const closeSubmitModal = () => {
+      setIsSubmitResult(false)
+      window.location.reload();
+    }
+
     const onFileChange = (event) => {
         const selectedFile = event.target.files[0];
-        console.log(selectedFile)
         if (selectedFile && selectedFile.name.endsWith('.xlsx')) {
           setFile(selectedFile);
-          setUploadStatus({ type: 'success', message: 'File yang diupload sesuai dengan template.' });
+          // setUploadStatus({ type: 'success', message: 'File yang diupload sesuai dengan template.' });
         } else {
           setFile(null);
-          setUploadStatus({ type: 'danger', message: 'File yang diupload tidak sesuai. Pastikan menggunakan template yang benar.' });
+          // setUploadStatus({ type: 'danger', message: 'File yang diupload tidak sesuai. Pastikan menggunakan template yang benar.' });
         }
     };
       
-
-  const handleImport = async() => {
-    try {
-        const response = await reportService.uploadDatas({files:file});
-        console.log(response)
-        onClose(); 
-    //     if (response.status === "200") { 
-    //         onClose(); 
-    //     } else {
-    //       console.log(`Gagal mendapatkan laporan: ${response.status}`);
-    //     }
+    const handleImport = async() => {
+      const formData = new FormData()
+      try {
+        formData.append('files',file)
+        const response = await reportService.uploadDatas(formData);
+        if (response.status === "200") { 
+          closeModal(); 
+          setSubmitStatus('Success!');
+          setSubmitMessage('Data successfully saved!');
+          setSubmitMessage1(response.data)
+          setSubmitMessage2(response.data.length)
+        } else {
+          setSubmitStatus('Failed');
+          setSubmitMessage('Data not saved!');
+        }
       } catch (error) {
-        console.error("Terjadi kesalahan saat melakukan ekspor:", error);
+        setSubmitStatus('error');
+        setSubmitMessage(error.message);
+      }finally {
+        showSubmitModal();
       }
-    
   };
 
   const handleDownloadTemplate = () => {
@@ -140,6 +156,35 @@ const modalUpload = () => {
               }}
             >
               Import
+            </EuiButton>
+          </EuiModalFooter>
+        </EuiModal>
+      )}
+
+      {isSubmitResult && (
+        <EuiModal>
+          <EuiModalBody>
+            <EuiText style={{
+                fontSize: '22px',
+                height: '25%',
+                marginTop: '25px',
+                color: submiStatus === 'Success!' ? '#73A33F' : '#D52424',
+                fontWeight: '600',
+              }}>
+              {submitMessage}
+            </EuiText>
+            <EuiText style={{
+                fontSize: '15px',
+                height: '25%',
+                marginTop: '35px'
+              }}>
+                Data unit kena batasan kuota :  {submitMessage2} <br/>
+                Data unit : {submitMessage1}
+            </EuiText>
+          </EuiModalBody>
+          <EuiModalFooter>
+            <EuiButton onClick={closeSubmitModal} style={{ background: "#73A33F", color: "white" }}>
+              Tutup
             </EuiButton>
           </EuiModalFooter>
         </EuiModal>

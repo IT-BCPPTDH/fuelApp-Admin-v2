@@ -16,6 +16,8 @@ import formService from '../../services/formDashboard';
 import reportService from '../../services/reportService';
 import { URL_API } from '../../utils/Enums';
 
+const dataForm = new FormData()
+
 const TableDataDetails = ({lkfId}) => {
   const navigate = useNavigate(); 
   const [searchValue, setSearchValue] = useState('');
@@ -210,7 +212,7 @@ const TableDataDetails = ({lkfId}) => {
       >
         Upload Data
       </EuiButton> */}
-      <UploadButton/>
+      <UploadButton dataForm={dataForm}/>
       <ModalFormAddIssued/>
       <EuiButton
         style={{ background: "#F04E98", color: "white" }}
