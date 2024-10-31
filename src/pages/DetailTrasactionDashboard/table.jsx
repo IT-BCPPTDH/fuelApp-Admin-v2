@@ -121,7 +121,6 @@ const TableData = () => {
       try {
         const opt = {...date, station:station}
         const res = await stationService.tableStation(opt)
-        console.log(res.data)
         if (res.status != 200) {
           throw new Error('Network response was not ok');
         }
