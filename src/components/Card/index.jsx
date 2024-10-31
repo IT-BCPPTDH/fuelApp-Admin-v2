@@ -13,7 +13,7 @@ const CardContentData = ({ cardsData }) => {
     <EuiFlexGroup gutterSize="l" wrap responsive={true}>
       {cardsData.map((card, index) => (
         <EuiFlexItem key={index} style={{ maxWidth: card.maxWidth || '32%', flexBasis: '100%' }}>
-          <EuiCard titleSize={card.titleSize || 'xs'} paddingSize={card.paddingSize || 'm'}>
+          <EuiCard title = {""} titleSize={card.titleSize || 'xs'} paddingSize={card.paddingSize || 'm'}>
             <EuiFlexGrid columns={2} gutterSize={card.gutterSize || 'm'}>
               <EuiFlexItem>
                 <EuiText

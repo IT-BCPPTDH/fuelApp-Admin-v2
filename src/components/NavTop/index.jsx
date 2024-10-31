@@ -157,7 +157,7 @@ const HeaderUserMenu = () => {
     localStorage.removeItem('user_data'); 
     Cookies.remove('token')
     Cookies.remove('user')
-    window.location.reload('/')
+    window.location.replace('/');
   }
 
   return (

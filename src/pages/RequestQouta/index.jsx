@@ -44,16 +44,16 @@ const RequestPage = () => {
       <div className="content-padding">
         <EuiFlexGrid columns={4}>
           <EuiFlexItem>
-            <EuiText paddingSize="l">
+            <EuiText paddingsize="l">
               <div className="summary">Dashboard Unit Request</div>
               <div style={{marginTop:"10px"}} className="date">{formattedDatesReq}</div>
             </EuiText>
           </EuiFlexItem>
           <EuiFlexItem>
-            <EuiText paddingSize="l"></EuiText>
+            <EuiText paddingsize="l"></EuiText>
           </EuiFlexItem>
           <EuiFlexItem>
-            <EuiText paddingSize="l"></EuiText>
+            <EuiText paddingsize="l"></EuiText>
           </EuiFlexItem>
           <EuiFlexItem>
             <EuiFlexGrid columns={2}>

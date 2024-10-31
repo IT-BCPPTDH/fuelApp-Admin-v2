@@ -50,7 +50,8 @@ const CardContent = () => {
     <EuiFlexGroup gutterSize="l" wrap responsive={true}>
       {cardsData.map((card, index) => (
         <EuiFlexItem key={index} style={{ maxWidth: '32%', flexBasis: '100%' }}>
-          <EuiCard titleSize="xs">
+          <EuiCard  title={""} 
+           titleSize="xs">
             <EuiFlexGrid columns={2} gutterSize="m">
               <EuiFlexItem>
                 <EuiText size="s" style={{ fontWeight: 'bold', fontSize: '36px', textAlign:"left", lineHeight:"1" }}>

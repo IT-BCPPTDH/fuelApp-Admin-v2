@@ -98,7 +98,6 @@ const ReportFuel = () => {
 
   const onChange = (event) => {
     const { value, checked } = event.target;
-    console.log(value)
     setCheckedItems(prevState => ({
       ...prevState,
       [value]: checked
@@ -126,12 +125,12 @@ const ReportFuel = () => {
 
   const handleStartDateChange = (date) => {
     setStartDate(date);
-    setFirstDate(moment(startDate).format('YYYY-MM-DD'))
+    setFirstDate(moment(date).format('YYYY-MM-DD'))
   };
 
   const handleEndDateChange = (date) => {
     setEndDate(date);
-    setLastDate(moment(endDate).format('YYYY-MM-DD'))
+    setLastDate(moment(date).format('YYYY-MM-DD'))
   };
 
   const handleRadioChange = (event) => {
@@ -172,6 +171,7 @@ const handleRadioDaily = (event) => {
       const response = await reportService.getReportLkfs(data);
       if (response.status === "200") { 
         const reportLink = response.link;
+        setTimeout(()=>{},3000)
         window.location.href = URL_API.generateReport + reportLink
       } else {
         console.log(`Gagal mendapatkan laporan: ${response.status}`);
@@ -183,7 +183,7 @@ const handleRadioDaily = (event) => {
 
   const handleDailyChange = (date) => {
     setendDaily(date);
-    setDailyDate(moment(endDaily).format('YYYY-MM-DD'))
+    setDailyDate(moment(date).format('YYYY-MM-DD'))
   };
 
   const handleExportDaily = async () => {
@@ -192,10 +192,13 @@ const handleRadioDaily = (event) => {
         untilDate: dailyDate,
         option: selectedOptDaily
       }
+      console.log(data.untilDate)
       const response = await reportService.generateReportDaily(data);
       if (response.status === "200") { 
         const reportLink = response.link;
-        window.location.href = URL_API.generateReport + reportLink
+        setTimeout(()=>{
+          window.location.href = URL_API.generateReport + reportLink
+        },5000)
       } else {
         console.log(`Gagal mendapatkan laporan: ${response.status}`);
       }

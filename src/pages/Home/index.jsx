@@ -62,16 +62,16 @@ const HomePage = () => {
       <div className="content-padding">
         <EuiFlexGrid columns={4}>
           <EuiFlexItem>
-            <EuiText paddingSize="l">
+            <EuiText paddingsize="l">
               <div className="summary">Fuel Summary</div>
               <div className="date">{formattedDate}</div>
             </EuiText>
           </EuiFlexItem>
           <EuiFlexItem>
-            <EuiText paddingSize="l"></EuiText>
+            <EuiText paddingsize="l"></EuiText>
           </EuiFlexItem>
           <EuiFlexItem>
-            <EuiText paddingSize="l"></EuiText>
+            <EuiText paddingsize="l"></EuiText>
           </EuiFlexItem>
           <EuiFlexItem>
             <EuiFlexGrid columns={3}>
@@ -116,7 +116,7 @@ const HomePage = () => {
         <div className="mt20">
           <EuiFlexGrid columns={2}>
             <EuiFlexItem>
-              <EuiText paddingSize="l">
+              <EuiText paddingsize="l">
                 <div className="summary">Fuel Station Summary</div>
               </EuiText>
               <EuiText>
