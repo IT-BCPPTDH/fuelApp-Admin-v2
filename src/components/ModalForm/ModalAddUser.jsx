@@ -72,6 +72,7 @@ const ModalAddUser = () => {
   };
 
   const handleSubmit = async(e) => {
+    closeConfirmAddModal()
     try {
       const updatedData = {
         ...data,

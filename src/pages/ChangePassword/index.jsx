@@ -70,7 +70,7 @@ const ChangePage = () => {
           breadcrumbs={breadcrumbs}
           pageTitleStyle={{ color: '#6a6a6a', fontSize: '24px' }}
         />
-        <EuiCard style={{width:"150vh", marginLeft:"20px", marginTop:"25px"}}>
+        <EuiCard title ={""} style={{width:"150vh", marginLeft:"20px", marginTop:"25px"}}>
           <EuiForm component="form" style={{width:"110vh", marginLeft:"18vh", marginTop:"30px"}}>
             {/* FlexGroup untuk menempatkan input New Password dan Confirm Password secara horizontal */}
             <EuiFlexGroup>

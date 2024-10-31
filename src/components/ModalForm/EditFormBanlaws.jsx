@@ -75,16 +75,15 @@ const ModalFormBanlawsEdit = ({row}) => {
         unit_banlaw: unitBanlaws,
         updated_by: user.JDE
       };
-      const res = UnitBanlawsService.updateUnitBanlaws(data)
-      if (res.status === '200') {
-          setEditStatus('Success!');
+      const res = await UnitBanlawsService.updateUnitBanlaws(data)
+      if (res.status === "200") {
+          setEditStatus("Success!");
           setEditMessage('Data successfully saved!');
       } else {
           setEditStatus('Failed');
           setEditMessage('Data not saved!');
       }
     } catch (error) {
-      console.log(first)
       setEditStatus('Error');
       setEditMessage('Terjadi kesalahan saat update data. Data tidak tersimpan!');
     } finally {
@@ -93,13 +92,14 @@ const ModalFormBanlawsEdit = ({row}) => {
   };
 
   const handleDelete = async () => {
+    closeConfirmModal()
     try {
       const res = await UnitBanlawsService.delUnitBanlaws(row.id);
       if (res.status === '200') {
-        setResultStatus('success');
+        setResultStatus('Success!');
         setResultMessage('Data berhasil dihapus');
       } else {
-        setResultStatus('failure');
+        setResultStatus('Failed');
         setResultMessage('Data gagal dihapus');
       }
     } catch (error) {
@@ -223,7 +223,7 @@ const ModalFormBanlawsEdit = ({row}) => {
                 fontSize: '22px',
                 height: '25%',
                 marginTop: '25px',
-                color: editStatus === 'Success!' ? '#D52424' : '#73A33F',
+                color: editStatus === 'Success!' ? '#73A33F' : '#D52424' ,
                 fontWeight: '600',
               }}>
               {editMessage}
@@ -252,7 +252,7 @@ const ModalFormBanlawsEdit = ({row}) => {
                 fontSize: '22px',
                 height: '25%',
                 marginTop: '25px',
-                color: resultStatus === 'success' ? '#73A33F' : '#D52424',
+                color: resultStatus === 'Success!' ? '#73A33F' : '#D52424',
                 fontWeight: '600',
               }}>
               {resultMessage}

@@ -102,7 +102,7 @@ const ModalEditEquipment = ({row}) => {
     closeModal()
     try {
       const updateList = {id: row.id, ...formData, updated_by: user.JDE}
-      const res = await EquipService.updateMasterDataUser(updateList)
+      const res = await EquipService.updateEquip(updateList)
       if (res.status === '200') {
           setEditStatus('Success!');
           setEditMessage('Data successfully saved!');
@@ -293,7 +293,7 @@ const ModalEditEquipment = ({row}) => {
                 fontSize: '22px',
                 height: '25%',
                 marginTop: '25px',
-                color: editStatus === 'Success!' ? '#D52424' : '#73A33F',
+                color: editStatus === 'Success!' ? '#73A33F' :'#D52424',
                 fontWeight: '600',
               }}>
               {editMessage}
@@ -382,7 +382,7 @@ const ModalEditEquipment = ({row}) => {
               fontSize: '22px',
               height: '25%',
               marginTop: '25px',
-              color: resultStatus === 'success' ? '#73A33F' : '#D52424',
+              color: resultStatus === 'Success!' ? '#73A33F' : '#D52424',
               fontWeight: '600',
             }}>
             {resultMessage}

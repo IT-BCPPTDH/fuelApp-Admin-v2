@@ -13,6 +13,7 @@ import {
   EuiModalHeader,
   EuiModalHeaderTitle,
   useGeneratedHtmlId,
+  EuiText
 } from '@elastic/eui';
 import UnitBanlawsService from '../../services/unitBanlaws';
 
@@ -62,19 +63,20 @@ const ModalFormUnit = ({item}) => {
         creation_by: user.JDE
     };
     try {
-        await UnitBanlawsService.insertUnitBanlaws(data).then((res) =>{
-            if(res.status == 200){
-              setSubmitMessage('Success!');
-              setSubmitStatus('Data successfully saved!');
-              closeModal();
-            }else
-            setSubmitMessage('Failed');
-            setSubmitStatus('Data not saved!');
-              closeModal();
-        })
+      const res = await UnitBanlawsService.insertUnitBanlaws(data)
+      console.log(res)
+      if(res.status == "200"){
+        setSubmitStatus('Success!');
+        setSubmitMessage('Data successfully saved!');
+        closeModal();
+      }else{
+        setSubmitStatus('Failed');
+        setSubmitMessage('Data not saved!');
+        closeModal();
+      }
     } catch (error) {
-      setSubmitMessage('error');
-      setSubmitStatus(error.message);
+      setSubmitStatus('error');
+      setSubmitMessage(error.message);
     } finally{
       showSubmitModal()
     }
@@ -201,7 +203,7 @@ const ModalFormUnit = ({item}) => {
                 fontSize: '22px',
                 height: '25%',
                 marginTop: '25px',
-                color: submiStatus === 'Success!' ? '#D52424' : '#73A33F',
+                color: submiStatus === 'Success!' ? '#73A33F' : '#D52424',
                 fontWeight: '600',
               }}>
               {submitMessage}

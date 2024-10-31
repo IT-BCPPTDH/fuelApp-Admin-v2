@@ -214,7 +214,7 @@ const ModalFormStationEdit = ({row}) => {
                 fontSize: '22px',
                 height: '25%',
                 marginTop: '25px',
-                color: editStatus === 'Success!' ? '#D52424' : '#73A33F',
+                color: editStatus === 'Success!' ? '#73A33F' : '#D52424',
                 fontWeight: '600',
               }}>
               {editMessage}
