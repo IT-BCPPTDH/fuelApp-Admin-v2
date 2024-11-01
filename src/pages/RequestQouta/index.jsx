@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Navtop from "../../components/NavTop";
 import CardContent from "./widget";
 import {
@@ -14,7 +14,10 @@ import TableData from "./table";
 import CardContentQouta from "./widget";
 
 const RequestPage = () => {
-  const [selectDate, setSelectDate] = useState(moment());
+  const storedDate = JSON.parse(localStorage.getItem('formattedDatesReq')) || {};
+  const initialDate = storedDate ? moment(storedDate) : moment();
+  const [selectDate, setSelectDate] = useState(initialDate);
+
 
   const breadcrumbs = [
     {
@@ -32,12 +35,18 @@ const RequestPage = () => {
   // Handle date range changes
   const handleStartDateChange = (date) => {
     setSelectDate(date);
+    localStorage.setItem("formattedDatesReq", JSON.stringify(date.format('YYYY-MM-DD')));
   };
 
   const formattedDateReq = moment(selectDate).format('dddd, DD-MM-YYYY');
   const formattedDatesReq = moment(selectDate).format('YYYY-MM-DD');
-  localStorage.setItem("tanggalReq", JSON.stringify(formattedDateReq))
   localStorage.setItem("formattedDatesReq", JSON.stringify(formattedDatesReq))
+
+  useEffect(() => {
+    if (!storedDate) {
+      localStorage.setItem("formattedDatesReq", JSON.stringify(initialDate.format('YYYY-MM-DD')));
+    }
+  }, [initialDate, storedDate]);
 
   return (
     <>
@@ -46,7 +55,7 @@ const RequestPage = () => {
           <EuiFlexItem>
             <EuiText paddingsize="l">
               <div className="summary">Dashboard Unit Request</div>
-              <div style={{marginTop:"10px"}} className="date">{formattedDatesReq}</div>
+              <div style={{marginTop:"10px"}} className="date">{formattedDateReq}</div>
             </EuiText>
           </EuiFlexItem>
           <EuiFlexItem>

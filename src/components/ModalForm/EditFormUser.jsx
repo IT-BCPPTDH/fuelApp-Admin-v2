@@ -108,7 +108,6 @@ const ModalEditUser = ({row}) => {
           setEditMessage('Data not saved!');
       }
     } catch (error) {
-      console.log("first", error)
       setEditStatus('Error');
       setEditMessage('Terjadi kesalahan saat update data. Data tidak tersimpan!');
     } finally {
@@ -117,6 +116,7 @@ const ModalEditUser = ({row}) => {
   };
 
   const handleDelete = async () => {
+    closeConfirmModal()
     try {
       const res = await UserService.deleteUser(row.id);
       if (res.status === '200') {

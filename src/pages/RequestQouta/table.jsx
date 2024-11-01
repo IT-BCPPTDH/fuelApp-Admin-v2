@@ -168,13 +168,13 @@ const TableData = () => {
     
         <ModalForm/>
         
-      <EuiButton
+        {/* <EuiButton
           style={{ background: "#73A33F", color: "white" }}
           color="primary"
           onClick={() => alert('Export button clicked')}
         >
           Export
-        </EuiButton>
+        </EuiButton> */}
         <EuiFieldSearch
           placeholder="Search data" 
           value={searchValue}
