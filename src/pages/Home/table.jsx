@@ -84,8 +84,13 @@ const TableData = () => {
       truncateText: true,
     },
     {
-      field: 'interShift',
-      name: 'Intershift',
+      field: 'intershiftDtoN',
+      name: 'Intershift D to N',
+      truncateText: true,
+    },
+    {
+      field: 'intershiftNtoD',
+      name: 'Intershift N to D',
       truncateText: true,
     },
   ];
@@ -211,20 +216,23 @@ const TableData = () => {
       <EuiText size="xs">
         Showing {resultsCount} <strong>Data</strong>
       </EuiText>
-      <EuiBasicTable style={{marginTop:"20px"}}
-        tableCaption="Demo of EuiBasicTable"
-        items={pageOfItems}
-        columns={columns}
-        rowProps={getRowProps}
-        cellProps={getCellProps}
-        pagination={pagination}
-        onChange={({ page }) => {
-          if (page) {
-            setPageIndex(page.index);
-            setPageSize(page.size);
-          }
-        }}
-      />
+      <div style={{ overflowX: 'auto' }}>
+        <EuiBasicTable
+          style={{ marginTop: "20px" }}
+          tableCaption="Demo of EuiBasicTable"
+          items={pageOfItems}
+          columns={columns}
+          rowProps={getRowProps}
+          cellProps={getCellProps}
+          pagination={pagination}
+          onChange={({ page }) => {
+            if (page) {
+              setPageIndex(page.index);
+              setPageSize(page.size);
+            }
+          }}
+        />
+      </div>
     </>
   );
 };
