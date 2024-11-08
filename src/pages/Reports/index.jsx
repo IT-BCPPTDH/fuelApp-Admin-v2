@@ -175,7 +175,7 @@ const handleRadioDaily = (event) => {
         setTimeout(()=>{
           window.location.href = URL_API.generateReport + reportLink
         },5000)
-        window.location.href = URL_API.generateReport + reportLink
+        // window.location.href = URL_API.generateReport + reportLink
       } else {
         console.log(`Gagal mendapatkan laporan: ${response.status}`);
       }
