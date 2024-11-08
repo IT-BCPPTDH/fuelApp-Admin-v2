@@ -378,6 +378,7 @@ const TableData = ({opt}) => {
           setConfirmStatus('Success!')
           setConfirmMessage('Data berhasil di generate.')
         }
+        window.location.reload()
       } catch (error) {
         setConfirmStatus('Error')
         setConfirmMessage('Data berhasil di generate.')
