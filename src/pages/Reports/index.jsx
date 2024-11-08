@@ -171,7 +171,10 @@ const handleRadioDaily = (event) => {
       const response = await reportService.getReportLkfs(data);
       if (response.status === "200") { 
         const reportLink = response.link;
-        setTimeout(()=>{},3000)
+        // setTimeout(()=>{},3000)
+        setTimeout(()=>{
+          window.location.href = URL_API.generateReport + reportLink
+        },5000)
         window.location.href = URL_API.generateReport + reportLink
       } else {
         console.log(`Gagal mendapatkan laporan: ${response.status}`);
@@ -192,7 +195,6 @@ const handleRadioDaily = (event) => {
         untilDate: dailyDate,
         option: selectedOptDaily
       }
-      console.log(data.untilDate)
       const response = await reportService.generateReportDaily(data);
       if (response.status === "200") { 
         const reportLink = response.link;

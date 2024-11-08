@@ -2,24 +2,25 @@ import React, { useEffect, useState } from 'react';
 import { EuiSwitch } from '@elastic/eui';
 import dailyQuotaService from '../../services/dailyQuotaService';
 
+const ToggleActive = ({ row }) => {
+    const [isChecked, setIsChecked] = useState(row.is_active || false);
 
-const ToogleActive = ({row}) => {
-    const [isChecked, setIsChecked] = useState(row.isActive || false);
-    const handleToggle = async() => {
-        try{
-            const newChecked = !isChecked; 
-            console.log(newChecked)
-            setIsChecked(newChecked); 
-            const update = await dailyQuotaService.updateData({ active: newChecked, unitNo: row.unitNo });
-            if(update.status == 200){
-              // window.location.reload()
-            }else{
-              // window.location.reload()
+    useEffect(() => {
+        setIsChecked(row.is_active);
+    }, [row.is_active]);
 
+    const handleToggle = async () => {
+        try {
+            const newChecked = !isChecked;
+            setIsChecked(newChecked);
+
+            const update = await dailyQuotaService.updateData({ active: newChecked, unit_no: row.unit_no });
+            if (update.status !== 200) {
+                setIsChecked(!newChecked);
+                console.error("Failed to update status");
             }
         } catch (error) {
-            console.log("Error:", error);
-            // Optionally revert the toggle state if an error occurs
+            console.error("Error:", error);
             setIsChecked(isChecked);
         }
     };
@@ -27,12 +28,12 @@ const ToogleActive = ({row}) => {
     return (
         <div>
             <EuiSwitch
+            label={""}
                 checked={isChecked}
                 onChange={handleToggle}
-                label={row.unitNo} // Optional label for better accessibility
             />
         </div>
     );
 };
 
-export default ToogleActive;
+export default ToggleActive;

@@ -36,9 +36,9 @@ const QuotaDailyPage = () => {
 
   const options = [
     { value: 'Daily', text: 'Daily' },
-    { value: 'Weekly', text: 'Weekly' },
-    { value: 'Montly', text: 'Montly' },
-    { value: 'YTD', text: 'YTD' },
+    // { value: 'Weekly', text: 'Weekly' },
+    // { value: 'Montly', text: 'Montly' },
+    // { value: 'YTD', text: 'YTD' },
   ];
   
   const handleChange = (event) => {

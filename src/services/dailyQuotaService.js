@@ -19,9 +19,9 @@ const getData = async (opt) => {
     }
 };
 
-const insertData = async () => {
+const insertData = async (bodyParams) => {
     try {
-        const response = await api.get(URL_API.insetQuota, {
+        const response = await api.post(URL_API.insetQuota, bodyParams,{
             headers: {
                 'Content-Type': 'application/json',
             },
@@ -61,9 +61,9 @@ const getActiveData = async (tanggal) => {
     }
 };
 
-const disableBusQuo = async (requestBody) => {
+const editableModel = async (requestBody) => {
     try {
-        const response = await api.put(URL_API.disableBus, requestBody, {
+        const response = await api.put(URL_API.editModel, requestBody, {
             headers: {
                 'Content-Type': 'application/json',
             },
@@ -75,9 +75,9 @@ const disableBusQuo = async (requestBody) => {
     }
 };
 
-const disableLvQuo = async (requestBody) => {
+const statusBusQuo = async (requestParams) => {
     try {
-        const response = await api.put(URL_API.disableLv, requestBody, {
+        const response = await api.get(URL_API.statusBus + requestParams, {
             headers: {
                 'Content-Type': 'application/json',
             },
@@ -89,9 +89,9 @@ const disableLvQuo = async (requestBody) => {
     }
 };
 
-const disableHlvQuo = async (requestBody) => {
+const statusLvQuo = async (requestParams) => {
     try {
-        const response = await api.put(URL_API.disableHlv, requestBody, {
+        const response = await api.get(URL_API.statusBus + requestParams, {
             headers: {
                 'Content-Type': 'application/json',
             },
@@ -102,15 +102,31 @@ const disableHlvQuo = async (requestBody) => {
         throw error;
     }
 };
+
+const statusHlvQuo = async (requestParams) => {
+    try {
+        const response = await api.get(URL_API.statusBus + requestParams, {
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        });
+        return response.data;
+    } catch (error) {
+        console.error('Error fetching data:', error.message);
+        throw error;
+    }
+};
+
 
 const dailyQuotaService = {
     getData,
     insertData,
     updateData,
     getActiveData,
-    disableBusQuo,
-    disableLvQuo,
-    disableHlvQuo
+    editableModel,
+    statusLvQuo,
+    statusHlvQuo,
+    statusBusQuo
 };
 
 export default dailyQuotaService;
