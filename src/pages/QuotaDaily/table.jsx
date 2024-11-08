@@ -6,7 +6,14 @@ import {
   EuiText,
   EuiModal,
   EuiModalBody,
-  EuiModalFooter
+  EuiModalFooter,
+  EuiModalHeader,
+  EuiModalHeaderTitle,
+  EuiForm,
+  EuiFlexGrid,
+  EuiFormRow,
+  EuiFieldText,
+  EuiCheckbox
 } from '@elastic/eui';
 // import { Data } from './data'; // Ensure this path is correct
 import { useNavigate } from 'react-router-dom'; 
@@ -24,12 +31,20 @@ const TableData = ({opt}) => {
   const [showPerPageOptions, setShowPerPageOptions] = useState(true);
   const [tables, setTables] = useState([])
 
-  const [toggle0On, setToggle0On] = useState(false);
-  const [toggle1On, setToggle1On] = useState(true);
+  const [formBus, setFormBus] = useState({
+    is_active : false,
+    quota: 0
+  })
 
-  const [labelLv, setLabelLv] = useState(true)
-  const [labelHLV, setLabelHLV] = useState(true)
-  const [labelBus, setLabelBus] = useState(true)
+  const [formLv, setFormLv] = useState({
+    is_active : false,
+    quota: 0
+  })
+
+  const [formHlv, setFormHlv] = useState({
+    is_active : false,
+    quota: 0
+  })
 
   const [confirmMessage, setConfirmMessage] = useState('');
   const [confirmStatus, setConfirmStatus] = useState(''); 
@@ -37,7 +52,50 @@ const TableData = ({opt}) => {
   const showConfirmModal = () => setIsConfirmStatus(true);
   const closeConfirmModal = () => {
     setIsConfirmStatus(false)
-    window.location.reload()
+  }
+
+  const [isModalBusStatus, setIsModalBusStatus] = useState(false)
+  const showModalBusModal = () => setIsModalBusStatus(true);
+  const closeBusModal = () => {
+    setIsModalBusStatus(false)
+  }
+
+  const [isModalLvStatus, setIsModalLvStatus] = useState(false)
+  const showModalLvModal = () => setIsModalLvStatus(true);
+  const closeLvModal = () => {
+    setIsModalLvStatus(false)
+  }
+
+  const [isModalHlvStatus, setIsModalHlvStatus] = useState(false)
+  const showModalHlvModal = () => setIsModalHlvStatus(true);
+  const closeHlvModal = () => {
+    setIsModalHlvStatus(false)
+  }
+
+  const [isConfirmEditStatusLv, setIsConfirmEditStatusLv] = useState(false)
+  const showConfirmEditModalLv = () => setIsConfirmEditStatusLv(true);
+  const closeConfirmEditModalLv = () => {
+    setIsConfirmEditStatusLv(false)
+  }
+
+  const [isConfirmEditStatusBus, setIsConfirmEditStatusBus] = useState(false)
+  const showConfirmEditModalBus = () => setIsConfirmEditStatusBus(true);
+  const closeConfirmEditModalBus = () => {
+    setIsConfirmEditStatusBus(false)
+  }
+
+  const [isConfirmEditStatusHlv, setIsConfirmEditStatusHlv] = useState(false)
+  const showConfirmEditModalHlv = () => setIsConfirmEditStatusHlv(true);
+  const closeConfirmEditModalHlv = () => {
+    setIsConfirmEditStatusHlv(false)
+  }
+
+  const [isEditResult, setIsEditResult] = useState(false)
+  const [editMessage, setEditMessage] = useState('');
+  const [editStatus, setEditStatus] = useState(''); 
+  const showEditModal = () => setIsEditResult(true);
+  const closeEditModal = () => {
+    setIsEditResult(false)
   }
 
   const columns = [
@@ -50,13 +108,19 @@ const TableData = ({opt}) => {
       name: 'Tanggal',
     },
     {
-      field: 'unitNo',
+      field: 'unit_no',
       name: 'No Unit',
       truncateText: true,
     },
     {
-      field: 'modelUnit',
+      field: 'model',
       name: 'Model',
+      truncateText: true,
+      width: '300px',
+    },
+    {
+      field: 'kategori',
+      name: 'Kategori',
       truncateText: true,
     },
     {
@@ -75,7 +139,7 @@ const TableData = ({opt}) => {
       truncateText: true,
     },
     {
-      field: 'isActive',
+      field: 'is_active',
       name: 'Active',
       render: (e, row) => (
         <>
@@ -103,10 +167,8 @@ const TableData = ({opt}) => {
   };
 
   const filteredItems = tables.filter(item =>
-    item.unitNo.toLowerCase().includes(searchValue.toLowerCase()) 
-    || item.modelUnit.toLowerCase().includes(searchValue.toLowerCase()) 
-    // ||
-    // item.request_by.toLowerCase().includes(searchValue.toLowerCase())
+    item.unit_no.toLowerCase().includes(searchValue.toLowerCase()) 
+    || item.model.toLowerCase().includes(searchValue.toLowerCase()) 
   );
 
   const findPageItems = useCallback((items, pageIndex, pageSize) => {
@@ -156,8 +218,6 @@ const TableData = ({opt}) => {
             setTables([]);
           }else{
             setTables(res.data);
-            const rest = res.data.some((item) => item.modelUnit == "BUS" && item.isActive == true) 
-            setLabelBus(rest)
           }
         } catch (error) {
           console.log(error)
@@ -168,71 +228,150 @@ const TableData = ({opt}) => {
         fetchTable(opt);
       }
     }, [opt]);
-    // console.log(labelBus)
 
-    const handleDisableBus = async() => {
+    useEffect(() => {
+      const fetchStatusBus = async (opt) => {
+        try {
+          const res = await dailyService.statusBusQuo(opt.tanggal)
+          if (res.status != 200) {
+            throw new Error('Network response was not ok');
+          }else if(res.status == 404){
+            throw new Error('Gagal fetch data');
+          }else{
+            res.data.map((item) => {
+              setFormBus({
+                is_active: item.activated || false,
+                quota: item.limited_quota || 0
+              })
+            })
+          }
+        } catch (error) {
+          console.log(error)
+          // setError(error);
+        } 
+      };
+
+      const fetchStatusLV = async (opt) => {
+        try {
+          const res = await dailyService.statusLvQuo(opt.tanggal)
+          if (res.status != 200) {
+            throw new Error('Network response was not ok');
+          }else if(res.status == 404){
+            throw new Error('Gagal fetch data');
+          }else{
+            res.data.map((item) => {
+              setFormLv({
+                is_active: item.activated || false,
+                quota: item.limited_quota || 0
+              })
+            })
+          }
+        } catch (error) {
+          console.log(error)
+        } 
+      };
+
+      const fetchStatusHlv = async (opt) => {
+        try {
+          const res = await dailyService.statusHlvQuo(opt.tanggal)
+          if (res.status != 200) {
+            throw new Error('Network response was not ok');
+          }else if(res.status == 404){
+            throw new Error('Gagal fetch data');
+          }else{
+            res.data.map((item) => {
+              setFormHlv({
+                is_active: item.activated || false,
+                quota: item.limited_quota || 0
+              })
+            })
+          }
+        } catch (error) {
+          console.log(error)
+          // setError(error);
+        } 
+      };
+      if (opt) {  
+        fetchStatusBus(opt);
+        fetchStatusLV(opt)
+        fetchStatusHlv(opt)
+      }
+    }, [opt]);
+
+    const handleSubmitBus = async() => {
       try {
-        
-        const res = await dailyService.disableBusQuo({tanggal : opt.tanggal, opt: true})
+        const updateList = {kategori: 'Bus', tanggal : opt.tanggal, ...formBus}
+        const res = await dailyService.editableModel(updateList)
         if (res.status != 200) {
-          setConfirmStatus('Error')
-          setConfirmMessage('Oops..sepertinya ada kesalahan!')
+          setEditStatus('Error')
+          setEditMessage('Oops..sepertinya ada kesalahan!')
+          closeConfirmEditModalBus()
         }else{
-          setConfirmStatus('Success!')
-          setConfirmMessage('Model unit bus berhasil disable!')
-          // setLabelBus(newStatus)
+          setEditStatus('Success!')
+          setEditMessage('Model unit bus berhasil diupdate!')
+          setTables(res.data)
+          closeConfirmEditModalBus()
         }
       } catch (error) {
-        console.log(error)
-        setConfirmStatus('Error')
-        setConfirmMessage('Yah, sepertinya ada yang error! ', error)
-      } finally{
-        showConfirmModal()
+        setEditStatus('Error')
+        setEditMessage('Yah, sepertinya ada yang error! ', error)
+        closeConfirmEditModalBus()
+      }finally{
+        showEditModal()
       }
     }
 
-    const handleDisableLV = async() => {
+    const handleSubmitHLV = async() => {
       try {
-        const res = await dailyService.disableLvQuo(opt.tanggal)
+        const updateList = {kategori: 'Triton', tanggal : opt.tanggal, ...formHlv}
+        const res = await dailyService.editableModel(updateList)
         if (res.status != 200) {
-          setConfirmStatus('Error')
-          setConfirmMessage('Oops..sepertinya ada kesalahan!')
-          setLabelLv(true)
+          setEditStatus('Error')
+          setEditMessage('Oops..sepertinya ada kesalahan!')
+          closeConfirmEditModalHlv()
         }else{
-          setConfirmStatus('Success!')
-          setConfirmMessage('Model unit Lv berhasil disable.')
+          setEditStatus('Success!')
+          setEditMessage('Model unit elf berhasil diupdate!')
+          setTables(res.data)
+          closeConfirmEditModalHlv()
         }
       } catch (error) {
-        setConfirmStatus('Error')
-        setConfirmMessage('Yah, sepertinya ada yang error! ', error)
-      } finally{
-        showConfirmModal()
+        setEditStatus('Error')
+        setEditMessage('Yah, sepertinya ada yang error! ', error)
+        closeConfirmEditModalHlv()
+      }finally{
+        showEditModal()
       }
     }
 
-    const handleDisableHLV = async() => {
+    const handleSubmitLV = async() => {
       try {
-        const res = await dailyService.disableHlvQuo(opt.tanggal)
+        const updateList = {model: 'Colt', tanggal : opt.tanggal, ...formLv}
+        const res = await dailyService.editableModel(updateList)
         if (res.status != 200) {
-          setConfirmStatus('Error')
-          setConfirmMessage('Oops..sepertinya ada kesalahan!')
-          setLabelHLV(true)
+          setEditStatus('Error')
+          setEditMessage('Oops..sepertinya ada kesalahan!')
+          closeConfirmEditModalLv()
         }else{
-          setConfirmStatus('Success!')
-          setConfirmMessage('Model unit Hlv berhasil disable.')
+          setEditStatus('Success!')
+          setEditMessage('Model unit lv berhasil diupdate!')
+          setTables(res.data)
+          closeConfirmEditModalLv()
         }
       } catch (error) {
-        setConfirmStatus('Error')
-        setConfirmMessage('Yah, sepertinya ada yang error! ', error)
-      } finally{
-        showConfirmModal()
+        setEditStatus('Error')
+        setEditMessage('Yah, sepertinya ada yang error! ', error)
+        closeConfirmEditModalLv()
+      }finally{
+        showEditModal()
       }
     }
 
     const generateData = async() => {
       try {
-        const res = await dailyService.insertData()
+        const res = await dailyService.insertData({tanggal: opt.tanggal})
         if (res.status != 200) {
+          setTables(res.data)
           setConfirmStatus('Error')
           setConfirmMessage('Network response was not ok')
         }else{
@@ -253,39 +392,32 @@ const TableData = ({opt}) => {
           style={{ background: "#0077CC", color: "white" }}
           color="primary"
           onClick={generateData}
+          isDisabled={tables.length > 0}
         >
           Generate data
         </EuiButton>
         <EuiButton
           style={{ background: "#F04E98", color: "white" }}
           color="primary"
-          onClick={handleDisableBus}
+          onClick={showModalBusModal}
         >
-          {labelBus  ?   'Disable Bus' : 'Enable Bus' } 
+          Editable Bus
         </EuiButton>
         <EuiButton
           style={{ background: "#FBBA6D", color: "white" }}
           color="primary"
-          onClick={handleDisableLV}
+          onClick={showModalLvModal}
         >
-          {labelHLV ? 'Disable Elf' : 'Enable Elf' }
+          Edit Lv
         </EuiButton>
         <EuiButton
           style={{ background: "#73A33F", color: "white" }}
           color="primary"
-          onClick={handleDisableHLV}
+          onClick={showModalHlvModal}
         >
-          {labelLv ? 'Disable LV' : 'Enable LV'}
-        </EuiButton>
+          Edit Elf
+        </EuiButton> 
 
-        {/* <EuiButton
-        onClick={() => {
-          setToggle0On((isOn) => !isOn);
-        }}
-      >
-        {toggle0On ? 'Hey there good lookin' : 'Toggle me'}
-      </EuiButton> */}
-      
       </>
     );
 
@@ -316,34 +448,356 @@ const TableData = ({opt}) => {
         onChange={handleTableChange}
       />
 
-      {isConfirmStatus && (
-        <EuiModal onClose={closeConfirmModal}>
+      {isModalBusStatus && (
+        <EuiModal
+          onClose={closeBusModal}
+          initialFocus="[name=popswitch]"
+          style={{ width: "880px" }}
+        >
+          <EuiModalHeader>
+            <EuiModalHeaderTitle >Submit Option</EuiModalHeaderTitle>
+          </EuiModalHeader>
+          <EuiModalBody>
+            <EuiForm component="form">
+              <EuiFlexGrid columns={2}>
+                <EuiFormRow  style={{marginTop:"0px"}}label="Set Limited Quota">
+                    <EuiFieldText 
+                     name='quota'
+                     placeholder='Quota'
+                     value={formBus.quota}
+                     onChange={(e) => setFormBus((prev) => ({ ...prev, quota: e.target.value }))}
+                    />
+                </EuiFormRow>
+                <EuiFlexGrid columns={2}>
+                    <EuiFormRow  style={{marginTop:"10px"}}label="Active">
+                        <EuiCheckbox
+                          id="is_active"
+                          label="Enable"
+                          checked={formBus.is_active === true} 
+                          onChange={() => setFormBus((prev) => ({ ...prev, is_active: true }))}
+                        />
+                    </EuiFormRow>
+                    <EuiFormRow  style={{marginTop:"30px"}}>
+                        <EuiCheckbox
+                          id="is_active"
+                          label="Disable"
+                          checked={formBus.is_active === false} 
+                          onChange={() => setFormBus((prev) => ({ ...prev, is_active: false }))}
+                        />
+                    </EuiFormRow>
+                </EuiFlexGrid>
+              </EuiFlexGrid>
+            </EuiForm>
+          </EuiModalBody>
+          <EuiModalFooter>
+            <EuiButton
+              type="button" 
+              style={{
+                background: "White",
+                color: "#73A33F",
+                width: "100px",
+              }}
+              onClick={() => {
+                closeBusModal(); 
+              }}
+              fill
+            >
+              Cancel
+            </EuiButton>
+            <EuiButton
+             style={{
+              background: "#73A33F",
+              color: "white",
+              width: "100px",
+            }}
+              type="button" 
+              onClick={() => {
+                closeBusModal(); 
+                showConfirmEditModalBus()
+              }}
+              fill
+            >
+              Save
+            </EuiButton>
+          </EuiModalFooter>
+        </EuiModal>
+      )}
+
+      {isConfirmEditStatusBus && (
+        <EuiModal onClose={closeConfirmEditModalBus}>
         <EuiModalBody>
           <EuiText style={{
               fontSize: '22px',
               height: '25%',
               marginTop: '25px',
-              color: confirmStatus === 'Success!' ? '#73A33F' : '#D52424',
+              color: confirmStatus === 'success' ? '#73A33F' : '#D52424',
               fontWeight: '600',
             }}>
-            {confirmStatus}
+            {confirmMessage}
           </EuiText>
           <EuiText style={{
               fontSize: '15px',
               height: '25%',
               marginTop: '35px'
             }}>
-            {confirmMessage}
+              Apakah anda ingin menyimpan perubahan ?
           </EuiText>
         </EuiModalBody>
 
         <EuiModalFooter>
-          <EuiButton onClick={closeConfirmModal} style={{ background: "crimson", color: "white" }}>
+          <EuiButton onClick={handleSubmitBus} style={{ background: "#73A33F", color: "white" }}>
+            Ya
+          </EuiButton>
+          <EuiButton onClick={closeConfirmEditModalBus} style={{ background: "crimson", color: "white" }}>
             Tutup
           </EuiButton>
         </EuiModalFooter>
       </EuiModal>
-    )}
+      )}
+
+      {isModalLvStatus && (
+        <EuiModal
+          onClose={closeLvModal}
+          initialFocus="[name=popswitch]"
+          style={{ width: "880px" }}
+        >
+          <EuiModalHeader>
+            <EuiModalHeaderTitle >Submit Option</EuiModalHeaderTitle>
+          </EuiModalHeader>
+          <EuiModalBody>
+            <EuiForm component="form">
+              <EuiFlexGrid columns={2}>
+                <EuiFormRow  style={{marginTop:"0px"}}label="Set Limited Quota">
+                    <EuiFieldText 
+                     name='quota'
+                     placeholder='Quota'
+                     value={formLv.quota}
+                     onChange={(e) => setFormLv((prev) => ({ ...prev, quota: e.target.value }))}
+                    />
+                </EuiFormRow>
+                <EuiFlexGrid columns={2}>
+                    <EuiFormRow  style={{marginTop:"10px"}}label="Active">
+                        <EuiCheckbox
+                          id="is_active"
+                          label="Enable"
+                          checked={formLv.is_active === true} 
+                          onChange={() => setFormLv((prev) => ({ ...prev, is_active: true }))}
+                        />
+                    </EuiFormRow>
+                    <EuiFormRow  style={{marginTop:"30px"}}>
+                        <EuiCheckbox
+                          id="is_active"
+                          label="Disable"
+                          checked={formLv.is_active === false} 
+                          onChange={() => setFormLv((prev) => ({ ...prev, is_active: false }))}
+                        />
+                    </EuiFormRow>
+                </EuiFlexGrid>
+              </EuiFlexGrid>
+            </EuiForm>
+          </EuiModalBody>
+          <EuiModalFooter>
+            <EuiButton
+              type="button" 
+              style={{
+                background: "White",
+                color: "#73A33F",
+                width: "100px",
+              }}
+              onClick={() => {
+                closeLvModal(); 
+              }}
+              fill
+            >
+              Cancel
+            </EuiButton>
+            <EuiButton
+             style={{
+              background: "#73A33F",
+              color: "white",
+              width: "100px",
+            }}
+              type="button" 
+              onClick={() => {
+                closeLvModal(); 
+                showConfirmEditModalLv()
+              }}
+              fill
+            >
+              Save
+            </EuiButton>
+          </EuiModalFooter>
+        </EuiModal>
+      )}
+
+      {isConfirmEditStatusLv && (
+        <EuiModal onClose={closeConfirmEditModalLv}>
+        <EuiModalBody>
+          <EuiText style={{
+              fontSize: '22px',
+              height: '25%',
+              marginTop: '25px',
+              color: confirmStatus === 'success' ? '#73A33F' : '#D52424',
+              fontWeight: '600',
+            }}>
+            {confirmMessage}
+          </EuiText>
+          <EuiText style={{
+              fontSize: '15px',
+              height: '25%',
+              marginTop: '35px'
+            }}>
+              Apakah anda ingin menyimpan perubahan ?
+          </EuiText>
+        </EuiModalBody>
+
+        <EuiModalFooter>
+          <EuiButton onClick={handleSubmitLV} style={{ background: "#73A33F", color: "white" }}>
+            Ya
+          </EuiButton>
+          <EuiButton onClick={closeConfirmEditModalLv} style={{ background: "crimson", color: "white" }}>
+            Tutup
+          </EuiButton>
+        </EuiModalFooter>
+      </EuiModal>
+      )}
+
+      {isModalHlvStatus && (
+        <EuiModal
+          onClose={closeHlvModal}
+          initialFocus="[name=popswitch]"
+          style={{ width: "880px" }}
+        >
+          <EuiModalHeader>
+            <EuiModalHeaderTitle >Submit Option</EuiModalHeaderTitle>
+          </EuiModalHeader>
+          <EuiModalBody>
+            <EuiForm component="form">
+              <EuiFlexGrid columns={2}>
+                <EuiFormRow  style={{marginTop:"0px"}}label="Set Limited Quota">
+                    <EuiFieldText 
+                     name='quota'
+                     placeholder='Quota'
+                     value={formHlv.quota}
+                     onChange={(e) => setFormHlv((prev) => ({ ...prev, quota: e.target.value }))}
+                    />
+                </EuiFormRow>
+                <EuiFlexGrid columns={2}>
+                    <EuiFormRow  style={{marginTop:"10px"}}label="Active">
+                        <EuiCheckbox
+                          id="is_active"
+                          label="Enable"
+                          checked={formHlv.is_active === true} 
+                          onChange={() => setFormHlv((prev) => ({ ...prev, is_active: true }))}
+                        />
+                    </EuiFormRow>
+                    <EuiFormRow  style={{marginTop:"30px"}}>
+                        <EuiCheckbox
+                          id="is_active"
+                          label="Disable"
+                          checked={formHlv.is_active === false} 
+                          onChange={() => setFormHlv((prev) => ({ ...prev, is_active: false }))}
+                        />
+                    </EuiFormRow>
+                </EuiFlexGrid>
+              </EuiFlexGrid>
+            </EuiForm>
+          </EuiModalBody>
+          <EuiModalFooter>
+            <EuiButton
+              type="button" 
+              style={{
+                background: "White",
+                color: "#73A33F",
+                width: "100px",
+              }}
+              onClick={() => {
+                closeHlvModal(); 
+              }}
+              fill
+            >
+              Cancel
+            </EuiButton>
+            <EuiButton
+             style={{
+              background: "#73A33F",
+              color: "white",
+              width: "100px",
+            }}
+              type="button" 
+              onClick={() => {
+                closeHlvModal(); 
+                showConfirmEditModalHlv()
+              }}
+              fill
+            >
+              Save
+            </EuiButton>
+          </EuiModalFooter>
+        </EuiModal>
+      )}
+
+      {isConfirmEditStatusHlv && (
+        <EuiModal onClose={closeConfirmEditModalHlv}>
+        <EuiModalBody>
+          <EuiText style={{
+              fontSize: '22px',
+              height: '25%',
+              marginTop: '25px',
+              color: confirmStatus === 'success' ? '#73A33F' : '#D52424',
+              fontWeight: '600',
+            }}>
+            {confirmMessage}
+          </EuiText>
+          <EuiText style={{
+              fontSize: '15px',
+              height: '25%',
+              marginTop: '35px'
+            }}>
+              Apakah anda ingin menyimpan perubahan ?
+          </EuiText>
+        </EuiModalBody>
+
+        <EuiModalFooter>
+          <EuiButton onClick={handleSubmitHLV} style={{ background: "#73A33F", color: "white" }}>
+            Ya
+          </EuiButton>
+          <EuiButton onClick={closeConfirmEditModalHlv} style={{ background: "crimson", color: "white" }}>
+            Tutup
+          </EuiButton>
+        </EuiModalFooter>
+      </EuiModal>
+      )}
+
+      {isEditResult && (
+        <EuiModal>
+          <EuiModalBody>
+            <EuiText style={{
+                fontSize: '22px',
+                height: '25%',
+                marginTop: '25px',
+                color: editStatus === 'Success!' ? '#73A33F' : '#D52424' ,
+                fontWeight: '600',
+              }}>
+              {editMessage}
+            </EuiText>
+            <EuiText style={{
+                fontSize: '15px',
+                height: '25%',
+                marginTop: '35px'
+              }}>
+                {editStatus === 'Success!' ? 'Data berhasil terupdate. Silahkan kembali untuk menambah data atau ke halaman utama.'
+                : 'Data belum terupdate. Silahkan kembali untuk update data atau ke halaman utama.'}
+            </EuiText>
+          </EuiModalBody>
+          <EuiModalFooter>
+            <EuiButton onClick={closeEditModal} style={{ background: "#73A33F", color: "white" }}>
+              Tutup
+            </EuiButton>
+          </EuiModalFooter>
+        </EuiModal>
+      )}
+
     </>
   );
 };

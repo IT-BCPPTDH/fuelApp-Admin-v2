@@ -134,10 +134,10 @@ const ModalForm = () => {
         const res = await EquipService.getEquip()
         const rest = await dailyQuotaService.getActiveData(tanggal)
         const newUnit = rest.data
-          .filter(b => b.isActive) // hanya mengambil yang aktif
+          .filter(b => b.is_active) // hanya mengambil yang aktif
           .map(b => {
-            const unitA = res.data.find(a => a.unit_no === b.unitNo); 
-            return unitA ? { ...b, modelUnit: unitA.type} : null; 
+            const unitA = res.data.find(a => a.unit_no === b.unit_no); 
+            return unitA ? { ...b, model: unitA.type} : null; 
           })
           .filter(c => c !== null); 
 
@@ -192,10 +192,10 @@ const ModalForm = () => {
 
   const handleApprovalChange = (e) => {
     const val = String(e.target.value)
-    const itemSelected = equipData.find((units)=> units.unitNo === val)
+    const itemSelected = equipData.find((units)=> units.unit_no === val)
     if(itemSelected){
       setNomorUnit(val)
-      setModel(itemSelected.modelUnit)
+      setModel(itemSelected.model)
     }
   }
 
@@ -279,8 +279,8 @@ const ModalForm = () => {
                 >
                   <EuiSelect
                    options={equipData.map(items => ({
-                    value: items.unitNo,  
-                    text: items.unitNo  
+                    value: items.unit_no,  
+                    text: items.unit_no  
                   }))}
                   value={nomorUnit}  
                   onChange={handleApprovalChange}  
@@ -302,7 +302,7 @@ const ModalForm = () => {
                 </EuiFormRow>
                 <EuiFormRow style={{marginTop:"0px"}}label="Model Unit">
                   <EuiFieldText 
-                  name='model_unit'
+                  name='model'
                   placeholder='Model Unit'
                   value={model}
                   disabled />

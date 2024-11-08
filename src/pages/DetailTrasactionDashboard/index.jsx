@@ -194,8 +194,8 @@ const DetailPage = () => {
         icon: Icon1,
       },{
         title: summaryAll.totalAllClosingDay ? summaryAll.totalAllClosingDay + ' Ltrs' : 0 + ' Ltrs',
-        description1: "Close Sonding",
-        description2: "Close Sonding",
+        description1: "Close Stock",
+        description2: "Close Stock",
         icon: Icon3,
       },
       {
@@ -226,8 +226,8 @@ const DetailPage = () => {
       },
       {
         title: summaryAll.totalAllClosingNigth ? summaryAll.totalAllClosingNigth + ' Ltrs' : 0 + ' Ltrs',
-        description1: "Close Sonding",
-        description2: "Close Sonding",
+        description1: "Close Stock",
+        description2: "Close Stock",
         icon: Icon3,
       },
       {
