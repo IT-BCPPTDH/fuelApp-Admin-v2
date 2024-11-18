@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import './login.css';
 import { EuiCard, EuiFieldText, EuiFieldPassword, EuiButton, EuiImage, EuiIcon, EuiForm } from "@elastic/eui";
-import Logo from "../../images/logo_darma_henwa.png";
+import Logo from "../../images/logo-dh-new.png";
 import { useNavigate } from "react-router-dom";
 import UserService from "../../services/UserService";
 import { HTTP_STATUS, STATUS_MESSAGE } from "../../utils/Enums";
@@ -57,7 +57,7 @@ const LoginUser = () => {
     <div className="login-container">
       <EuiCard title="">
         <div className="logo-container">
-          <EuiImage src={Logo} height="40px" alt="logo" />
+          <EuiImage src={Logo} alt="logo" style={{height:"85px", width:"150px"}}/>
         </div>
         <div className="version">Fuel App Admin V2.0</div>
         {errorMessage && <div className="error-message">{errorMessage}</div>}

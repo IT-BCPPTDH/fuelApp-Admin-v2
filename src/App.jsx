@@ -10,6 +10,8 @@ import { appendIconComponentCache } from '@elastic/eui/es/components/icon/icon';
 
 import { icon as EuiIconArrowDown } from '@elastic/eui/es/components/icon/assets/arrow_down';
 import { icon as EuiIconArrowLeft } from '@elastic/eui/es/components/icon/assets/arrow_left';
+import { icon as EuiIconArrowEnd } from '@elastic/eui/es/components/icon/assets/arrowEnd';
+import { icon as EuiIconArrowStart } from '@elastic/eui/es/components/icon/assets/arrowStart';
 import {icon as EuiIconLock} from '@elastic/eui/es/components/icon/assets/lock';
 import {icon as EuiIconUser} from '@elastic/eui/es/components/icon/assets/user';
 import {icon as EuiIconSearch} from '@elastic/eui/es/components/icon/assets/search';
@@ -35,6 +37,8 @@ appendIconComponentCache({
   arrowDown: EuiIconArrowDown,
   arrowLeft: EuiIconArrowLeft,
   arrowRight: EuiIconArrowRigth,
+  arrowEnd: EuiIconArrowEnd,
+  arrowStart: EuiIconArrowStart,
   lock: EuiIconLock,
   user: EuiIconUser,
   search:EuiIconSearch,
