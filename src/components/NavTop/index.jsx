@@ -16,7 +16,7 @@ import {
   EuiAvatar,
   EuiIcon,
 } from '@elastic/eui';
-import Logo from "../../images/logo_darma_henwa.png";
+import Logo from "../../images/logo-dh-150.png";
 import HeaderMasterDataMenu from './dropdown';
 import MenuDropdown from '../menu/dropdown';
 import Cookies from 'js-cookie';
@@ -76,7 +76,7 @@ const NavTop = () => {
   return (
     <EuiHeader>
       <div className='logo'>
-        <EuiImage src={Logo} alt='' style={{width:"120",height:"50px",padding:"10px"}} />
+        <EuiImage src={Logo} alt='' style={{width:"90px",height:"50px", marginLeft:"-10px"}} />
       </div >
       <div className='nav-lf'><EuiButton color="light" onClick={handlebackHome} >
       <EuiIcon type="home"/>

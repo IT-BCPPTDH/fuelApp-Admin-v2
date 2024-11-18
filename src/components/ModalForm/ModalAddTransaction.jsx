@@ -104,6 +104,15 @@ const ModalFormAddIssued = () => {
     }
   };
 
+  const convertToBase64 = (file) => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = (error) => reject(error);
+    });
+  };
+
   const onSignChange = async (event) => {
     const file = event.target.files[0];
     const base64 = await convertToBase64(file);
@@ -500,12 +509,26 @@ const handleUnitChange = (e) => {
                     />
                 </EuiFormRow>
 
-                <EuiFormRow label="Ambil Foto">
-                  <input
-                    type="file"
-                    onChange={onFileChange}
-                  />
-                </EuiFormRow>
+                <div>
+                  <EuiFormRow label="Ambil Foto">
+                    <input type="file" accept="image/*" onChange={onFileChange} />
+                  </EuiFormRow>
+                  {picture && (
+                    <div style={{ marginTop: '20px', textAlign: 'center' }}>
+                      <img
+                        src={picture}
+                        alt="Uploaded"
+                        style={{
+                          width: '250px',
+                          height: '250px',
+                          objectFit: 'cover',
+                          border: '1px solid #ccc',
+                          borderRadius: '10px',
+                        }}
+                      />
+                    </div>
+                  )}
+                </div>
                 <EuiFormRow label="Tanda Tangan">
                   <input
                     type="file"
@@ -524,7 +547,7 @@ const handleUnitChange = (e) => {
                 width: "100px",
               }}
               onClick={() => {
-                document.getElementById(modalFormId)?.dispatchEvent(new Event('submit')); // Trigger form submission
+                document.getElementById(modalFormId)?.dispatchEvent(new Event('submit')); 
                 closeModal(); 
               }}
               fill

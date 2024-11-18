@@ -69,6 +69,7 @@ export const URL_API = {
     statusBus :`${linkBe}/api/quota-usage/get-status-bus/`,
     statusLv : `${linkBe}/api/quota-usage/get-status-lv/`,
     statusHlv : `${linkBe}/api/quota-usage/get-status-hlv/`,
+    generateImg: linkBe + "/api/img/",
 };
 
 export const URL_MASTER_DATA = {
