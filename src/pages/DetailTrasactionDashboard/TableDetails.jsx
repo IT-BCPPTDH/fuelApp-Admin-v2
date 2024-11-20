@@ -7,8 +7,9 @@ import {
 const TableDataDetails = ({pageOfItems, columns, getCellProps}) => {
   return (
     <>
-    <EuiCard style={{  width: '600vh', overflowX: 'auto' }} >
+    <EuiCard style={{  width: '550vh', overflowX: 'auto' }} title="">
       <EuiBasicTable
+      
         tableCaption="Demo of EuiBasicTable"
         items={pageOfItems}
         columns={columns}

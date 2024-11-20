@@ -15,9 +15,8 @@ import {
   EuiModalHeaderTitle,
   EuiRadio,
   EuiSelect,
-
+  EuiComboBox,
   useGeneratedHtmlId,
- 
   EuiButtonIcon,
   EuiText
 } from '@elastic/eui';
@@ -28,34 +27,40 @@ import FormData from '../../services/formDashboard';
 import { Navigate, useParams } from 'react-router-dom';
 import formService from '../../services/formDashboard';
 
-const ModalFormDataEdit = ({row, onClose}) => {
-  const [isModalVisible, setIsModalVisible] = useState(false);
-  const [selectedTime, setSelectedTime] = useState(moment());
-  const [selectedTimeEnd, setSelectedTimeEnd] = useState(moment());
 
+const ModalFormDataEdit = ({row}) => {
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [options, setOptions] = useState([]);
+  // const [selectedTime, setSelectedTime] = useState(moment());
+  // const [selectedTimeEnd, setSelectedTimeEnd] = useState(moment());
   const user = JSON.parse(localStorage.getItem('user_data'))
   const dates = JSON.parse(localStorage.getItem('tanggal'))
+
+  const [selectedTheOption, setSelectedTheOptions] = useState([]);
+  const [searchMessage, setSearchMessage] = useState("");
+  const [formData, setFormData] = useState({
+    from_data_id: row.from_data_id || "",
+    no_unit: row.no_unit || "",
+    model_unit: row.model_unit || "",
+    owner: row.owner || "",
+    date_trx: row.date_trx || "",
+    qty: row.qty || 0,
+    fbr: row.fbr || 0,
+    hm_last: row.hm_last|| 0,
+    hm_km: row.hm_km|| 0,
+    flow_start: row.flow_start || 0,
+    flow_end: row.flow_end || 0,
+    jde_operator: row.jde_operator || "",
+    name_operator: row.name_operator || "",
+    start : row.start || "", 
+    end: row.end || "",
+    photo: row.photo || "",
+    signature: row.signature || "",
+    type: row.type || ""
+  });
+
   const [userData, setUserData] = useState([])
   const [equipData, setEquipData] = useState([])
-
-  const [dataId, setDataId] = useState("")
-  const [unitNo, setUnitNo] = useState(row.no_unit || "")
-  const [model, setModel] = useState(row.model_unit || "")
-  const [owner, setOwner] = useState(row.owner || "")
-  const [hmStart, setHmStart] = useState(row.hm_last || "")
-  const [hmLast, setHmLast] = useState(row.hm_km || "")
-  const [qty, setQty] = useState(row.qty || 0)
-  const [flowStart, setFlowStart] = useState(row.flow_start || 0)
-  const [flowEnd, setflowEnd] = useState(row.flow_end || 0)
-  const [empId, setEmpId] = useState(row.jde_operator || "")
-  const [nameEmp, setNameEmp] = useState(row.name_operator || "")
-  const [timeStart, setTimeStart] = useState(moment())
-  const [timeEnd, setTimeEnd] = useState(moment())
-  const [lkfId, setlkfId] = useState(row.lkf_id || "")
-  const [trxType, setTrxType] = useState(row.type || "")
-  const [fbr, setFbr] = useState(row.fbr || 0)
-  const [picture, setPicture] = useState("")
-  const [sign, setSign] = useState("")
 
   const modalFormId = useGeneratedHtmlId({ prefix: 'modalForm' });
   const modalTitleId = useGeneratedHtmlId();
@@ -78,9 +83,10 @@ const ModalFormDataEdit = ({row, onClose}) => {
   const showEditModal = () => setIsEditResult(true);
 
   const closeEditModal = () => {
-    setIsEditResult(false)
-    setIsConfirmEditStatus(false)
-    Navigate("/form-data/:lkfId")
+    // setIsEditResult(false)
+    // setIsConfirmEditStatus(false)
+    // Navigate("/form-data/:lkfId")
+    window.location.reload()
   }
 
   const [isConfirmStatus, setIsConfirmStatus] = useState(false)
@@ -95,25 +101,9 @@ const ModalFormDataEdit = ({row, onClose}) => {
   const closeConfirmEditModal = () => {
     setIsConfirmEditStatus(false)
     setIsModalVisible(false)
-    
   }
 
 
-  const [formData, setFormData] = useState({
-    from_data_id: row.from_data_id || "",
-    no_unit: row.no_unit || "",
-    model_unit: row.model_unit || "",
-    owner: row.owner || "",
-    date_trx: row.date_trx || "",
-    qty: row.qty || "",
-    fbr: row.fbr || "",
-    hm_last: row.hm_last|| "",
-    hm_km: row.hm_km|| "",
-    flow_start: row.flow_start || "",
-    flow_end: row.flow_end || "",
-    jde_operator: row.jde_operator || "",
-    name_operator: row.name_operator || "",
-  });
 
   const onFileChange = async(event) => {
     const file = event.target.files[0];
@@ -131,9 +121,8 @@ const ModalFormDataEdit = ({row, onClose}) => {
     setSign(base64);
   };
 
-
-
   const handleChange = (e) => {
+    
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
@@ -152,9 +141,6 @@ const ModalFormDataEdit = ({row, onClose}) => {
   };
 
   useEffect(() => {
-    let dt = Math.floor(Date.now() / 1000);
-    setDataId(dt)
-    setlkfId(row.id)
     const fetchUnit = async () => {
       try {
         const res = await EquipService.getEquip()
@@ -189,19 +175,6 @@ const ModalFormDataEdit = ({row, onClose}) => {
       fetchUnit()
       fetchUser()
     }, []);
-
-    const handleUnitChange = (e) => {
-      const selectedUnit = equipData.find((unit) => unit.unit_no === e.target.value);
-      if (selectedUnit) {
-        setUnitNo(selectedUnit.unit_no); // Update the unitNo state
-        setFormData((prev) => ({
-          ...prev,
-          no_unit: selectedUnit.unit_no,
-          model_unit: selectedUnit.type,
-          owner: selectedUnit.owner,
-        }));
-      }
-    };
     
   const handleUserChange = (e) => {
     const val = String(e.target.value)
@@ -217,10 +190,11 @@ const ModalFormDataEdit = ({row, onClose}) => {
   };
 
   const handleSubmitData = async () => {
+    closeModal();
     try {
-      const res = await formService.updateData({ id: row.id, ...formData });
-      if (res.status === 200) {
-        setEditStatus('Success');
+      const res = await formService.updateData({ id: row.id, ...formData, updated_by: user.JDE });
+      if (res.status === "200") {
+        setEditStatus('Success!');
         setEditMessage('Data successfully saved!');
       } else {
         throw new Error('Data not saved! Please try again.');
@@ -230,17 +204,14 @@ const ModalFormDataEdit = ({row, onClose}) => {
       setEditStatus('Error');
       setEditMessage('Terjadi kesalahan saat update data. Data tidak tersimpan!');
     } finally {
-      closeModal(); // Close the modal after submission
+      showEditModal(); 
     }
   };
-
-  
   
   const handleDelete = async () => {
     try {
       const res = await FormData.delData(row.from_data_id);
       if (res.status === '200') {
-        
         setResultStatus('success');
         setResultMessage('Data berhasil dihapus');
       } else {
@@ -258,7 +229,7 @@ const ModalFormDataEdit = ({row, onClose}) => {
 
   const calFbr = (hm_last, hm_km, qty) => {
     if (qty === 0) {
-      return 0; // Prevent division by zero
+      return 0;
     }
     return (hm_km - hm_last ) / qty;
   }
@@ -268,11 +239,92 @@ const ModalFormDataEdit = ({row, onClose}) => {
     const hm_km = parseFloat(formData.hm_km) || 0; 
     const qty = parseFloat(formData.qty) || 0; 
     const newFbr = calFbr(hm_last, hm_km, qty);
-    setFbr(newFbr);
+    // setFbr(newFbr);
   }, [formData.hm_last, formData.hm_km, formData.qty]);
 
- 
+
+  useEffect(() => {
+    setFormData({
+      from_data_id: row.from_data_id || "",
+      no_unit: row.no_unit || "",
+      model_unit: row.model_unit || "",
+      owner: row.owner || "",
+      date_trx: row.date_trx || "",
+      qty: row.qty || 0,
+      fbr: row.fbr || 0,
+      hm_last: row.hm_last|| 0,
+      hm_km: row.hm_km|| 0,
+      flow_start: row.flow_start || 0,
+      flow_end: row.flow_end || 0,
+      jde_operator: row.jde_operator || "",
+      name_operator: row.name_operator || "",
+      start : row.start ? moment(row.start, 'HH:mm:ss') : null,
+      end: row.end ? moment(row.end, 'HH:mm:ss') : null,
+      photo: row.photo || "",
+      signature: row.signature || "",
+      lkf_id: row.lkf_id || "",
+      type: row.type || ""
+    });
+  }, [row]);
+
   
+  useEffect(() => {
+    setOptions(
+      equipData.map(item => ({
+        label: item.unit_no 
+      }))
+    );
+
+    console.log(4, formData && formData.no_unit)
+    if (formData && formData.no_unit) {
+      setSelectedTheOptions([{ label: formData.no_unit }]);  
+    }
+  }, [equipData, formData]);
+
+
+  const onSelectedChange = (selected) => {
+    if (selected.length > 0) {
+      const selectedValue = selected[0].label;
+      handleUnitChange(selectedValue);
+      setSelectedTheOptions(selected)
+      setSearchMessage("");
+    } else {
+      handleUnitChange(""); 
+      setSelectedTheOptions([])
+    }
+  };
+
+  const handleUnitChange = (value) => {
+    const selectedUnit = equipData.find((unit) => unit.unit_no === value);
+    if (selectedUnit) {
+      setFormData((prev) => ({
+        ...prev,
+        no_unit: selectedUnit.unit_no,
+        model_unit: selectedUnit.type,
+        owner: selectedUnit.owner,
+      }));
+    }
+  };
+
+  const onSearchChange = (searchValue) => {
+    const normalizedSearchValue = searchValue.trim().toLowerCase();
+
+    if (!normalizedSearchValue) {
+      setSearchMessage(""); 
+      return;
+    }
+
+    const found = options.some((option) =>
+      option.label.toLowerCase().includes(normalizedSearchValue)
+    );
+
+    if (!found) {
+      setSearchMessage("Data tidak ditemukan"); 
+    } else {
+      setSearchMessage(""); 
+    }
+  };
+
   return (
     <>
      <EuiButtonIcon iconType="pencil"  onClick={() => setIsModalVisible(true)}>Edit</EuiButtonIcon>
@@ -290,18 +342,18 @@ const ModalFormDataEdit = ({row, onClose}) => {
                 <EuiForm id={modalFormId} component="form">
                  <EuiFlexGrid columns={2}>
                     <EuiFormRow label="No Unit">
-                    <EuiSelect
-                    options={equipData.map(items => ({
-                      
-                      value: items.unit_no,  
-                      text: items.unit_no  
-                    }))}
-                    value={formData.no_unit}  
-                    onChange={handleUnitChange} 
-                    hasNoInitialSelection
-                    >
-                    </EuiSelect>
-                </EuiFormRow>
+                    <EuiComboBox
+                      aria-label="Accessible screen reader label"
+                      placeholder="Select a unit..."
+                      singleSelection={{ asPlainText: true }}
+                      options={options}
+                      selectedOptions={selectedTheOption}
+                      onChange={onSelectedChange}
+                      onSearchChange={onSearchChange}
+                      customOptionText="Add {searchValue} as your occupation"
+                    />
+
+                    </EuiFormRow>
                 <EuiFormRow style={{marginTop:"0px"}} label="Model Unit">
                   <EuiFieldText 
                     name='model'
@@ -324,29 +376,29 @@ const ModalFormDataEdit = ({row, onClose}) => {
                     label="Issued"
                     id="issued"
                     value="issued"
-                    checked={trxType === 'issued'}
-                    onChange={(e) => handleOptionChange('issued')}
+                    checked={formData.type === 'Issued'}
+                    onChange={(e) => handleOptionChange('Issued')}
                     />
                      <EuiRadio 
                     id="receive"
                     label="Receive"
                     value="receive"
-                    checked={trxType === 'receive'}
-                    onChange={(e) => handleOptionChange('receive')}
+                    checked={formData.type === 'Receipt'}
+                    onChange={(e) => handleOptionChange('Receive')}
                     />
                     <EuiRadio 
                     id="transfer"
                     label="Transfer"
                     value="transfer"
-                    checked={trxType === 'transfer'}
-                    onChange={(e) => handleOptionChange('transfer')}
+                    checked={formData.type === 'Transfer'}
+                    onChange={(e) => handleOptionChange('Transfer')}
                     />
                      <EuiRadio 
                     label="Receive KPC"
                     id="receive_kpc"
                     value="receive_kpc"
-                    checked={trxType === 'receive_kpc'}
-                    onChange={(e) => handleOptionChange('receive_kpc')}
+                    checked={formData.type === 'Receipt KPC'}
+                    onChange={(e) => handleOptionChange('Receipt KPC')}
                     />
                 </div>
                   
@@ -363,9 +415,10 @@ const ModalFormDataEdit = ({row, onClose}) => {
                   <EuiFieldText 
                   name='fbr'
                   placeholder='Input'
-                  value={fbr}
+                  value={formData.fbr}
                   // onChange={(e)=> setFbr(e.target.value)}
                   // onChange={handleChange}
+                  disabled
                 />
                 </EuiFormRow>
 
@@ -410,7 +463,7 @@ const ModalFormDataEdit = ({row, onClose}) => {
                       value: items.JDE,  
                       text: items.JDE  
                     }))}
-                    value={empId}  
+                    value={formData.jde_operator}  
                     onChange={handleUserChange} 
                     hasNoInitialSelection
                     >
@@ -420,30 +473,32 @@ const ModalFormDataEdit = ({row, onClose}) => {
                 <EuiFieldText 
                   name='fullname'
                   placeholder='Input'
-                  value={nameEmp}
+                  value={formData.name_operator}
                   disabled
                 />
                 </EuiFormRow>
 
                 <EuiFormRow label="Jam Awal">
                     <EuiDatePicker
-                      selected={selectedTime}
+                      selected={formData.start}
                       onChange={handleChageStart}
                       showTimeSelect
                       showTimeSelectOnly
                       timeIntervals={1}
-                      dateFormat="hh:mm "
+                      dateFormat="HH:mm" 
+                      timeFormat="HH:mm" 
                     />
                 </EuiFormRow>
 
                 <EuiFormRow label="Jam Akhir">
                     <EuiDatePicker
-                      selected={selectedTimeEnd}
+                      selected={formData.end}
                       onChange={handleChangeEnd}
                       showTimeSelect
                       showTimeSelectOnly
                       timeIntervals={1}
-                      dateFormat="hh:mm "
+                      dateFormat="HH:mm" // Format 24 jam
+                      timeFormat="HH:mm" 
                     />
                 </EuiFormRow>
 
@@ -517,7 +572,7 @@ const ModalFormDataEdit = ({row, onClose}) => {
                 fontSize: '22px',
                 height: '25%',
                 marginTop: '25px',
-                color: editStatus === 'Success!' ? '#D52424' : '#73A33F',
+                color: editStatus === 'Success!' ? '#73A33F' :'#D52424' ,
                 fontWeight: '600',
               }}>
               {editMessage}
@@ -527,8 +582,8 @@ const ModalFormDataEdit = ({row, onClose}) => {
                 height: '25%',
                 marginTop: '35px'
               }}>
-                {editStatus === 'Success!' ? 'Data berhasil terupdate.  Silahkan kembali untuk menambah data atau ke halaman utama. Data belum terupdate. Silahkan kembali untuk update data atau ke halaman utama.'
-                : '  Data berhasil terupdate.'}
+                {editStatus === 'Success!' ? 'Data berhasil terupdate.  Silahkan kembali untuk menambah data atau ke halaman utama.'
+                : '  Data belum terupdate. Silahkan kembali untuk update data atau ke halaman utama.'}
             </EuiText>
           </EuiModalBody>
           <EuiModalFooter>

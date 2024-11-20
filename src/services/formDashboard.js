@@ -48,10 +48,9 @@ const insertData = async (requestBody) => {
     }
 };
 
-
-
 const updateData = async (requestBody) => {
     try {
+        console.log(requestBody)
       const response = await api.put(URL_API.updateTransaction, requestBody, {
         
         headers: {
@@ -75,12 +74,11 @@ const updateData = async (requestBody) => {
     }
   };
   
-
   
 
 const delData = async (id) => {
     try {
-        const response = await api.delete(URL_API.delTransaction+id, {
+        const response = await api.put(URL_API.delformData+id, {
             headers: {
                 'Content-Type': 'application/json',
             },
@@ -92,19 +90,19 @@ const delData = async (id) => {
     }
 };
 
-const unitData = async(unitNo) => {
-    try {
-        const response = await api.delete(URL_API.delTransaction+unitNo, {
-            headers: {
-                'Content-Type': 'application/json',
-            },
-        });
-        return response.data;
-    } catch (error) {
-        console.error('Error fetching data:', error.message);
-        throw error;
-    }
-}
+// const unitData = async(unitNo) => {
+//     try {
+//         const response = await api.delete(URL_API.delTransaction+unitNo, {
+//             headers: {
+//                 'Content-Type': 'application/json',
+//             },
+//         });
+//         return response.data;
+//     } catch (error) {
+//         console.error('Error fetching data:', error.message);
+//         throw error;
+//     }
+// }
 
 const getDataLKF = async (requestBody) => {
     try {
@@ -126,7 +124,7 @@ const formService = {
     insertData,
     delData,
     updateData,
-    unitData,
+    // unitData,
     getDataLKF
 };
 

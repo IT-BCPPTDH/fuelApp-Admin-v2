@@ -29,7 +29,7 @@ import {icon as EuiIconCopyClipboard} from '@elastic/eui/es/components/icon/asse
 import {icon as EuiIconTrash} from '@elastic/eui/es/components/icon/assets/trash';
 import {icon as EuiIconPen} from '@elastic/eui/es/components/icon/assets/pencil';
 import {icon as EuiIconHome} from '@elastic/eui/es/components/icon/assets/home';
-
+import {icon as EuiIconWarning} from '@elastic/eui/es/components/icon/assets/warning';
 
 
 // One or more icons are passed in as an object of iconKey (string): IconComponent
@@ -54,7 +54,8 @@ appendIconComponentCache({
   copy_clipboard:EuiIconCopyClipboard,
   trash:EuiIconTrash,
   pencil:EuiIconPen,
-  home:EuiIconHome
+  home:EuiIconHome,
+  warning:EuiIconWarning
 });
 
 

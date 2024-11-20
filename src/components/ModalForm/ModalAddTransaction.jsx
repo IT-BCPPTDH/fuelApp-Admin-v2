@@ -217,8 +217,6 @@ const ModalFormAddIssued = () => {
   }, []);
 
 
-
-
   useEffect(() => {
     const fetchUnitData = async () => {
       if (!selectedUnit) return;
@@ -240,7 +238,7 @@ const ModalFormAddIssued = () => {
             setHmLast(hmKmLastValue);
             setModel(latestUnitData.model_unit);
             setOwner(latestUnitData.owner);
-            setQty(lastUnitData.qty || 0); 
+            setQty(latestUnitData.qty || 0); 
             localStorage.setItem('latestUnitDataHMKM', JSON.stringify(latestUnitData));
           } else {
             setError('No data found');
@@ -296,7 +294,7 @@ const ModalFormAddIssued = () => {
   
 const handleUnitChange = (e) => {
   const val = String(e.target.value);
-  setSelectedUnit(val);  // Set the selected unit
+  setSelectedUnit(val);  
 };
 
   const handleUserChange = (e) => {
@@ -337,9 +335,6 @@ const handleUnitChange = (e) => {
 
   return (
     <>
-
-
-    
       <EuiButton style={{background:"#00BFB3", color:"white"}}  onClick={showModal}>Add Data</EuiButton>
       {isModalVisible && (
         <EuiModal 
