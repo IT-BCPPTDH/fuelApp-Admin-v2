@@ -201,6 +201,11 @@ const DetailsPageTransaction = () => {
       truncateText: true,
     },
     {
+      field: 'fbr',
+      name: 'FBR',
+      truncateText: true,
+    },
+    {
       field: 'flow_start',
       name: 'FM Start',
       truncateText: true,
@@ -244,7 +249,7 @@ const DetailsPageTransaction = () => {
       align:'center',
       width:'50vh',
       truncateText: true,
-      render: (signature) => <ModalPicture signature={signature} />,
+      render: (photo) => <ModalPicture photo={photo} />,
     },
     {
       field: 'type',

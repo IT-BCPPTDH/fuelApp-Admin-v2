@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { EuiOverlayMask, EuiModal, EuiModalBody, EuiImage } from '@elastic/eui';
+import signUnavailable from '../../images/no-sign.png';
 
 const SignatureCell = ({ signature }) => {
     const [isModalVisible, setIsModalVisible] = useState(false);
@@ -7,6 +8,7 @@ const SignatureCell = ({ signature }) => {
     const closeModal = () => setIsModalVisible(false);
     const showModal = () => setIsModalVisible(true);
   
+    const signSrc = signature ? signature : signUnavailable;
     return (
       <>
         <div
@@ -19,7 +21,7 @@ const SignatureCell = ({ signature }) => {
           onClick={showModal}
         >
           <img
-            src={signature}
+            src={signSrc}
             alt="Signature"
             style={{
               width: '50px',
@@ -37,7 +39,7 @@ const SignatureCell = ({ signature }) => {
             <EuiModal onClose={closeModal} style={{ maxWidth: 600 }}>
               <EuiModalBody>
                 <EuiImage
-                  src={signature}
+                  src={signSrc}
                   alt="Full Signature"
                   size="full"
                   style={{

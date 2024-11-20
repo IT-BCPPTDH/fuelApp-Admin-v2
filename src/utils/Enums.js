@@ -50,7 +50,7 @@ export const URL_API = {
     addData:`${linkBe}/api/admin/add-quota`,
     addTransaction:`${linkBe}/api/operator/post-data`,
     updateTransaction: `${linkBe}/api/admin/update-data`,
-    delTransaction:`${linkBe}/api/admin/delete-data/`,
+    delformData:`${linkBe}/api/admin/delete-data/`,
     unitDatas : `${linkBe}/api/operator/get-data/`,
     insetQuota:`${linkBe}/api/quota-usage/bulk-insert`,
     getQuota : `${linkBe}/api/quota-usage/get-data`,
