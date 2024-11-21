@@ -31,8 +31,6 @@ import formService from '../../services/formDashboard';
 const ModalFormDataEdit = ({row}) => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [options, setOptions] = useState([]);
-  // const [selectedTime, setSelectedTime] = useState(moment());
-  // const [selectedTimeEnd, setSelectedTimeEnd] = useState(moment());
   const user = JSON.parse(localStorage.getItem('user_data'))
   const dates = JSON.parse(localStorage.getItem('tanggal'))
 
@@ -103,8 +101,6 @@ const ModalFormDataEdit = ({row}) => {
     setIsModalVisible(false)
   }
 
-
-
   const onFileChange = async(event) => {
     const file = event.target.files[0];
     try {
@@ -122,11 +118,9 @@ const ModalFormDataEdit = ({row}) => {
   };
 
   const handleChange = (e) => {
-    
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
-
 
   const handleChageStart = (time) => {
     setSelectedTime(time);
@@ -228,7 +222,7 @@ const ModalFormDataEdit = ({row}) => {
 
 
   const calFbr = (hm_last, hm_km, qty) => {
-    if (qty === 0) {
+    if (hm_km === 0) {
       return 0;
     }
     return (hm_km - hm_last ) / qty;
@@ -239,7 +233,10 @@ const ModalFormDataEdit = ({row}) => {
     const hm_km = parseFloat(formData.hm_km) || 0; 
     const qty = parseFloat(formData.qty) || 0; 
     const newFbr = calFbr(hm_last, hm_km, qty);
-    // setFbr(newFbr);
+    setFormData((prev) => ({
+      ...prev,
+      fbr: newFbr
+    }))
   }, [formData.hm_last, formData.hm_km, formData.qty]);
 
 
@@ -275,7 +272,6 @@ const ModalFormDataEdit = ({row}) => {
       }))
     );
 
-    console.log(4, formData && formData.no_unit)
     if (formData && formData.no_unit) {
       setSelectedTheOptions([{ label: formData.no_unit }]);  
     }
@@ -352,7 +348,6 @@ const ModalFormDataEdit = ({row}) => {
                       onSearchChange={onSearchChange}
                       customOptionText="Add {searchValue} as your occupation"
                     />
-
                     </EuiFormRow>
                 <EuiFormRow style={{marginTop:"0px"}} label="Model Unit">
                   <EuiFieldText 
@@ -401,6 +396,24 @@ const ModalFormDataEdit = ({row}) => {
                     onChange={(e) => handleOptionChange('Receipt KPC')}
                     />
                 </div>
+
+                <EuiFormRow label="HM/KM Unit" style={{marginTop:"0px"}}>
+                   <EuiFieldText 
+                    name='hm_km'
+                    value={formData.hm_km}
+                    onChange={handleChange}
+                  />
+                </EuiFormRow>
+
+                <EuiFormRow label="HM/KM Terakhir Transaksi" style={{marginTop:"0px"}}>
+                   <EuiFieldText 
+                    name='hm_last'
+                    placeholder='Input'
+                    value={formData.hm_last}
+                    onChange={handleChange}
+                    disabled
+                  />
+                </EuiFormRow>
                   
                 <EuiFormRow label="Qty" >
                   <EuiFieldText 
@@ -411,7 +424,7 @@ const ModalFormDataEdit = ({row}) => {
                />
                 </EuiFormRow>
 
-                <EuiFormRow label="Fuel Burn Rate(FBR)" style={{marginTop:"0px"}}>
+                <EuiFormRow label="Fuel Burn Rate(FBR)" >
                   <EuiFieldText 
                   name='fbr'
                   placeholder='Input'
@@ -420,23 +433,6 @@ const ModalFormDataEdit = ({row}) => {
                   // onChange={handleChange}
                   disabled
                 />
-                </EuiFormRow>
-
-                <EuiFormRow label="HM/KM Terakhir Transaksi" style={{marginTop:"0px"}}>
-                   <EuiFieldText 
-                    name='hm_last'
-                    placeholder='Input'
-                    value={formData.hm_last}
-                    onChange={handleChange}
-                  />
-                </EuiFormRow>
-
-                <EuiFormRow label="HM/KM Unit" style={{marginTop:"0px"}}>
-                   <EuiFieldText 
-                    name='hm_km'
-                    value={formData.hm_km}
-                    onChange={handleChange}
-                  />
                 </EuiFormRow>
 
                 <EuiFormRow label="Flow Meter Awal" style={{marginTop:"0px"}}>

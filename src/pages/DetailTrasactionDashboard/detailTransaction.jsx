@@ -184,6 +184,7 @@ const DetailsPageTransaction = () => {
       field: 'model_unit',
       name: 'Model Unit',
       truncateText: true,
+      width: '70vh'
     },
     {
       field: 'hm_km',
@@ -194,36 +195,43 @@ const DetailsPageTransaction = () => {
       field: 'owner',
       name: 'Owner',
       truncateText: true,
+      width: '200px'
     },
     {
       field: 'qty',
       name: 'QTY',
       truncateText: true,
+      width: '100px'
     },
     {
       field: 'fbr',
       name: 'FBR',
       truncateText: true,
+      width: '100px'
     },
     {
       field: 'flow_start',
       name: 'FM Start',
       truncateText: true,
+      width: '100px'
     },
     {
       field: 'flow_end',
       name: 'FM Close',
       truncateText: true,
+      width: '100px'
     },
     {
       field: 'jde_operator',
       name: 'ID Operator',
       truncateText: true,
+      width: '100px'
     },
     {
       field: 'name_operator',
       name: 'Name',
       truncateText: true,
+      width: '100px'
     },
     {
       field: 'start',
@@ -239,7 +247,7 @@ const DetailsPageTransaction = () => {
       field: 'signature',
       name: 'Sign',
       align:'center',
-      width:'50vh',
+      width:'40vh',
       truncateText: true,
       render: (signature) => <ModalSign signature={signature} />,
     },
@@ -247,7 +255,7 @@ const DetailsPageTransaction = () => {
       field: 'photo',
       name: 'Picture',
       align:'center',
-      width:'50vh',
+      width:'40vh',
       truncateText: true,
       render: (photo) => <ModalPicture photo={photo} />,
     },
@@ -255,20 +263,28 @@ const DetailsPageTransaction = () => {
       field: 'type',
       name: 'Type',
       truncateText: true,
+      align:'center',
+      width: '100px'
     },
     {
       field: 'entry_time',
       name: 'Entry Time',
       truncateText: true,
+      width: '50vh',
+      align:'center',
     },
     {
       field: 'sync_time',
       name: 'Sync Time',
       truncateText: true,
+      width: '50vh',
+      align:'center',
     },
     {
       field: 'action',
       name: 'Action',
+      width: '30vh',
+      align:'center',
       render: (e, row) => (
         <>
         <ModalFormDataEdit row = {row}/>
