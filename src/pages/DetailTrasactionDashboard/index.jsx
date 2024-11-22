@@ -1,24 +1,22 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import Icon1 from "../../images/icon1.png";
-import Icon2 from "../../images/chart.png";
 import Icon3 from "../../images/circle.png";
-import Icon4 from "../../images/icon4.png";
 import CardStasion from "../../components/CardStasion/cardStation";
 import { EuiText } from "@elastic/eui";
-import NavTop from "../../components/NavTop";
 import TableData from "./table";
-import FormModal from "../../components/ModalForm";
 import { useParams } from "react-router-dom";
 import stationService from '../../services/stationDashboard';
 import DynamicPageHeader from "../../components/Breadcrumbs";
+import moment from "moment";
 
 const DetailPage = () => {
   const {station} = useParams()
   const [summaryAll, setSummaryAll] = useState(0)
+  const [dateFormat, setDateFormat] = useState("")
   const date = JSON.parse(localStorage.getItem('formattedOption'));
-  const dates= JSON.parse(localStorage.getItem('formattedDate'));
+  // const dates = JSON.parse(localStorage.getItem('formattedDate'));
   localStorage.setItem("storedStation", JSON.stringify(station))
-
+  
   let cardsDataAll, cardsDataShiftDay, cardsDataShiftNigth
   if(station == 'FT1116'){
     cardsDataAll = [
@@ -251,7 +249,6 @@ const DetailPage = () => {
     },
   ];
 
-
   useEffect(() => {
     const fetchTable = async () => {
       try {
@@ -263,12 +260,16 @@ const DetailPage = () => {
         setSummaryAll(res.data);
       } catch (error) {
         console.log(error)
-        // setError(error);
       } 
     };
     fetchTable()
   }, []);
-
+  
+  useEffect(() => {
+    const formattedDate = moment(date.tanggal).format('dddd, DD-MM-YYYY');
+    setDateFormat(formattedDate)
+  }, [])
+  
   return (
     <>
      
@@ -281,7 +282,7 @@ const DetailPage = () => {
         />
         </div>
         <EuiText>
-          <div className="date">{dates}</div>
+          <div className="date">{dateFormat}</div>
         </EuiText>
         <EuiText style={{ marginTop: "20px" }}>
           {" "}

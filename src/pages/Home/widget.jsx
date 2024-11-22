@@ -36,7 +36,7 @@ const CardContent = () => {
           return prevSummary;
         });
       } catch (error) {
-        console.log(2,error)
+        // console.log(2,error)
         // setError(error);
       } 
     };

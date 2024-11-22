@@ -16,7 +16,7 @@ import {
   EuiSelect,
   useGeneratedHtmlId,
   EuiText,
-
+  EuiComboBox
 } from '@elastic/eui';
 import moment from 'moment';
 import UserService from '../../services/UserService';
@@ -33,76 +33,65 @@ const ModalFormAddIssued = () => {
   const modalTitleId = useGeneratedHtmlId();
   const [selectedTime, setSelectedTime] = useState(moment());
   const [selectedTimeEnd, setSelectedTimeEnd] = useState(moment());
+  const [options, setOptions] = useState([]);
+  const [selectedTheOption, setSelectedTheOptions] = useState([]);
+  const [searchMessage, setSearchMessage] = useState("");
+  const [picture, setPicture] = useState("")
 
   const user = JSON.parse(localStorage.getItem('user_data'))
-  const dates = JSON.parse(localStorage.getItem('tanggal'))
   const [userData, setUserData] = useState([])
   const [equipData, setEquipData] = useState([])
 
-  const [dataId, setDataId] = useState("")
-  const [unitNo, setUnitNo] = useState("")
-  const [model, setModel] = useState("")
-  const [owner, setOwner] = useState("")
-  const [hmStart, setHmStart] = useState("")
-  const [hmLast, setHmLast] = useState("")
-  const [qty, setQty] = useState(0)
-  const [qtyLast, setQtyLast] = useState(0)
-  const [flowStart, setFlowStart] = useState(0)
-  const [flowEnd, setflowEnd] = useState(0)
-  const [empId, setEmpId] = useState("")
-  const [nameEmp, setNameEmp] = useState("")
-  const [timeStart, setTimeStart] = useState(moment())
-  const [timeEnd, setTimeEnd] = useState(moment())
-  const [lkfId, setlkfId] = useState("")
-  const [trxType, setTrxType] = useState("")
-  const [fbr, setFbr] = useState(0)
-  const [picture, setPicture] = useState("")
-  const [sign, setSign] = useState("")
-  const [date, setDate] = useState("")
-  const [showError, setShowError] = useState(false);
-  const [isSubmitResult, setIsSubmitResult] = useState(false)
-  const [submitMessage, setSubmitMessage] = useState('');
-  const [submiStatus, setSubmitStatus] = useState(''); 
+  const [formData, setFormData] = useState({
+    id: "",
+    lkf_id: "",
+    from_data_id: "",
+    no_unit: "",
+    model_unit: "",
+    owner:  "",
+    date_trx: "",
+    qty: 0,
+    qty_last: 0,
+    fbr: 0,
+    hm_last: 0,
+    hm_km: 0,
+    flow_start: 0,
+    flow_end: 0,
+    jde_operator: "",
+    name_operator: "",
+    start : "", 
+    end:  "",
+    photo:  null,
+    signature:  null,
+    type: ""
+  });
  
   const closeEditModal = () => {
-    setIsEditResult(false)
-    setIsConfirmEditStatus(false)
-    Navigate("/form-data/:lkfId")
+    // setIsEditResult(false)
+    // setIsConfirmEditStatus(false)
+    // Navigate("/form-data/:lkfId")
+    window.location.reload()
   }
-  const [koutaLimit, setKoutaLimit] = useState('');
+
   const [isConfirmEditStatus, setIsConfirmEditStatus] = useState(false)
   const showConfirmEditModal = () => setIsConfirmEditStatus(true);
   const [resultStatus, setResultStatus] = useState(''); 
-  const [qtyValue, setQtyValue] = useState("")
   const [editStatus, setEditStatus] = useState(''); 
   const [editMessage, setEditMessage] = useState('');
   const [isEditResult, setIsEditResult] = useState(false)
-  const [hmkmValue, setHmkmValue] = useState("");
   const showEditModal = () => setIsEditResult(true);
  
   const closeConfirmEditModal = () => {
     setIsConfirmEditStatus(false)
     setIsModalVisible(false)
-    
   }
-  const [selectedUnit, setSelectedUnit] = useState("");
-  const [isConfirmAddStatus, setIsConfirmAddStatus] = useState(false)
-  const showConfirmAddModal = () => setIsConfirmAddStatus(true);
+  // const [selectedUnit, setSelectedUnit] = useState("");
+  // const [isConfirmAddStatus, setIsConfirmAddStatus] = useState(false)
+  // const showConfirmAddModal = () => setIsConfirmAddStatus(true);
 
-  const closeConfirmAddModal = () => {
-    setIsConfirmAddStatus(false)
-  }
-
-  // Handle file selection
-  const onFileChange = async(event) => {
-    const file = event.target.files[0];
-    try {
-      const base64 = await convertToBase64(file);
-      setPicture(base64);
-    } catch (error) {
-      console.error("Error converting file to base64:", error);
-    }
-  };
+  // const closeConfirmAddModal = () => {
+  //   setIsConfirmAddStatus(false)
+  // }
 
   const convertToBase64 = (file) => {
     return new Promise((resolve, reject) => {
@@ -113,38 +102,39 @@ const ModalFormAddIssued = () => {
     });
   };
 
+  const onFileChange = async(event) => {
+    if (!event.target.files || event.target.files.length === 0) {
+      console.error("No file selected or input is invalid");
+      return;
+    }
+    
+    const file = event.target.files[0];
+    try {
+      const base64 = await convertToBase64(file);
+      setFormData(prevData => ({
+        ...prevData,
+        photo: base64 
+      }));
+    } catch (error) {
+      console.error("Error converting file to base64:", error);
+    }
+  };
+
   const onSignChange = async (event) => {
     const file = event.target.files[0];
     const base64 = await convertToBase64(file);
-    setSign(base64);
+    setFormData(prevData => ({
+      ...prevData,
+      signature: base64 
+    }));
   };
 
   const handleSubmitData = async () => {
     try {
       const data = {
-        from_data_id: dataId,
-        no_unit: unitNo,
-        model_unit: model,
-        owner: owner,
-        date_trx: new Date().toISOString(),
-        hm_last: hmStart,
-        hm_km: hmLast,
-        qty_last: qtyLast,
-        qty: qty,
-        flow_start: flowStart,
-        flow_end: flowEnd,
-        jde_operator: empId,
-        name_operator: nameEmp,
-        start: timeStart,
-        end: timeEnd,
-        fbr: fbr,
-        lkf_id: lkfId,
-        signature: sign,
-        type: trxType,
-        photo: picture,
-        created_by: user.JDE,
+        ...formData, created_by: user.JDE
       };
-  
+      console.log(data)
       const res = await formService.insertData(data);
       if (res.status === 200|| res.status === "201") {  
         setEditStatus('Success');
@@ -164,23 +154,33 @@ const ModalFormAddIssued = () => {
     }
   };
   
-
   const handleChageStart = (time) => {
-    setSelectedTime(time);
     const formattedDates = moment(time).format('hh:mm:ss');
-    setTimeStart(formattedDates)
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      start: formattedDates,
+    }));
+    setSelectedTime(time)
   };
 
   const handleChangeEnd = (time) => {
-    setSelectedTimeEnd(time);
     const formattedDates = moment(time).format('hh:mm:ss');
-    setTimeEnd(formattedDates)
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      end: formattedDates,
+    }));
+    
+    setSelectedTimeEnd(time)
   };
 
   useEffect(() => {
     let dt = Math.floor(Date.now() / 1000);
-    setDataId(dt)
-    setlkfId(id.lkfId)
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      id: dt,
+      lkf_id: id.lkfId, 
+    }));
+    
     const fetchUnit = async () => {
       try {
         const res = await EquipService.getEquip()
@@ -218,120 +218,154 @@ const ModalFormAddIssued = () => {
 
 
   useEffect(() => {
+    const dates = JSON.parse(localStorage.getItem('formattedDatesReq'))
     const fetchUnitData = async () => {
-      if (!selectedUnit) return;
-
-      setLoading(true);
-      setError(null);
+      if (!formData.no_unit) return;
       try {
-        const response = await MainService.getDataPrevTR(selectedUnit);
+        const response = await MainService.getDataPrevTR(formData.no_unit, dates);
 
         if (response.status === '200' && response.data.length > 0) {
-          const latestUnitData = response.data.sort(
-            (a, b) => new Date(b.date_trx) - new Date(a.date_trx)
-          )[0];
+          if(formData.type !== "" || formData.type == "Issued"){
+            const newHmLast = response.data[0].hm_km || 0;
+            const newQtyLast = response.data[0].qty || 0;
 
-          if (latestUnitData) {
-            const hmKmValue = Number(latestUnitData.hm_km) || 0; 
-            const hmKmLastValue = Number(latestUnitData.hm_last) || 0;
-            setHmkmValue(hmKmValue);
-            setHmLast(hmKmLastValue);
-            setModel(latestUnitData.model_unit);
-            setOwner(latestUnitData.owner);
-            setQty(latestUnitData.qty || 0); 
-            localStorage.setItem('latestUnitDataHMKM', JSON.stringify(latestUnitData));
-          } else {
-            setError('No data found');
+            setFormData((prev) => {
+              if (prev.hm_last === newHmLast && prev.qty_last === newQtyLast) {
+                return prev; 
+              }
+
+              return {
+                ...prev,
+                hm_last: newHmLast,
+                qty_last: newQtyLast,
+              };
+            });
+          }else{
+            setFormData((prev) =>( {
+              ...prev,
+              hm_last: 0,
+              qty_last: 0,
+            }));
           }
         } else {
-          setError('No data found');
+          console.log("Data not found")
         }
       } catch (err) {
-        setError('Failed to fetch unit data');
+        // setError('Failed to fetch unit data');
         console.error(err);
       } finally {
-        setLoading(false);
+        // setLoading(false);
       }
     };
 
     fetchUnitData();
-  }, [selectedUnit]);
-  
-
-//   const handleUnitChange = async (e) => {
-//     const val = String(e.target.value);
-//     console.log('Selected unit number:', val);
-    
-//     try {
-//         const itemSelected = await MainService.getDataPrevTR(val);
-        
-//         if (itemSelected && Array.isArray(itemSelected.data) && itemSelected.data.length > 0) {
-//             const unitData = itemSelected.data[0]; // Access the first item if it exists
-//             setUnitNo(val);
-//             setModel(unitData.type);
-//             setOwner(unitData.owner);
-//             setHmkmValue(unitData.hm_km);
-//             setHmLast(unitData.hm_last);
-//             setQty(unitData.qty);
-//             console.log('Fetched unit data:', unitData);
-//         } else {
-//             console.warn(`No previous transactions found for unit: ${val}`);
-//             // Optionally show a message to the user
-//             alert(`No previous transactions found for unit: ${val}`);
-//             // Reset state when no data is found
-//             setUnitNo('');
-//             setModel('');
-//             setOwner('');
-//             setHmkmValue('');
-//             setHmLast('');
-//             setQty(0);
-//         }
-//     } catch (error) {
-//         console.error('Error fetching unit data:', error.message);
-//     }
-// };
+  }, [formData.no_unit,formData.type]);
 
   
-const handleUnitChange = (e) => {
-  const val = String(e.target.value);
-  setSelectedUnit(val);  
-};
-
   const handleUserChange = (e) => {
     const val = String(e.target.value)
     const itemSelected = userData.find((item)=> item.JDE === val)
     if(itemSelected){
-      setEmpId(itemSelected.JDE)
-      setNameEmp(itemSelected.fullname)
+      setFormData((prevFormData) => ({
+        ...prevFormData,
+        jde_operator: itemSelected.JDE,
+        name_operator: itemSelected.fullname,
+      }));
     }
   }
 
   const handleOptionChange = (value) => {
-    setTrxType(value);
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      type: value
+    }));
   };
 
-  // useEffect(() => {
-  //   const fetchUnitPrev = async () => {
-  //     try {
-  //       const res = await formService.unitData(unitNo)
-  //       if (res.status != 200) {
-  //         throw new Error('Network response was not ok');
-  //       }else if(res.status == 404){
-  //         setEquipData([]);
-  //       }else{
-  //         setEquipData(res.data);
-  //       }
-  //     } catch (error) {
-  //       console.log(error)
-  //       // setError(error);
-  //     } 
-  //   };
+  const handleHmKm = (e) => {
+    const val = e.target.value; 
+    const numericVal = parseFloat(val);
+    
+    if (!isNaN(numericVal) && numericVal !== 0 && val !== "") {
+      const totalFbr = (numericVal - formData.hm_last) / formData.qty_last;
+      
+      if (formData.qty_last === 0) {
+        setFormData((prevFormData) => ({
+          ...prevFormData,
+          hm_km: numericVal,
+          fbr: 0, 
+        }));
+      } else {
+        setFormData((prevFormData) => ({
+          ...prevFormData,
+          hm_km: numericVal,
+          fbr: totalFbr,
+        }));
+      }
+    } else {
+      setFormData((prevFormData) => ({
+        ...prevFormData,
+        fbr: 0,
+      }));
+    }
+  };
+  
+  useEffect(() => {
+    setOptions(
+      equipData.map(item => ({
+        label: item.unit_no 
+      }))
+    );
 
-  //   fetchUnitPrev()
-  //   }, []);
+  }, [equipData]);
 
+  const handleUnitChange = (value) => {
+    const selectedUnit = equipData.find((unit) => unit.unit_no === value);
+    if (selectedUnit) {
+      setFormData((prev) => ({
+        ...prev,
+        no_unit: selectedUnit.unit_no,
+        model_unit: selectedUnit.type,
+        owner: selectedUnit.owner,
+      }));
+    }else{
+      setFormData((prev) => ({
+        ...prev,
+        model_unit: "",
+        owner: "",
+        hm_last: 0,
+        qty_last: 0,
+      }));
+      setSelectedTheOptions([])
+    }
+  };
 
+  const onSelectedChange = (selected) => {
+    if (selected.length > 0) {
+      const selectedValue = selected[0].label;
+      handleUnitChange(selectedValue);
+      setSelectedTheOptions(selected)
+      setSearchMessage("");
+    } else {
+      handleUnitChange(""); 
+      setSelectedTheOptions([])
+    }
+  };
 
+  const onSearchChange = (searchValue) => {
+    const normalizedSearchValue = searchValue.trim().toLowerCase();
+    if (!normalizedSearchValue) {
+      setSearchMessage(""); 
+      return;
+    }
+    const found = options.some((option) =>
+      option.label.toLowerCase().includes(normalizedSearchValue)
+    );
+    if (!found) {
+      setSearchMessage("Data tidak ditemukan"); 
+    } else {
+      setSearchMessage(""); 
+    }
+  };
 
   return (
     <>
@@ -351,22 +385,22 @@ const handleUnitChange = (e) => {
           <EuiForm id={modalFormId} component="form">
               <EuiFlexGrid columns={2}>
                 <EuiFormRow label="No Unit">
-                    <EuiSelect
-                    options={equipData.map(items => ({
-                      value: items.unit_no,  
-                      text: items.unit_no  
-                    }))}
-                    value={unitNo}  
-                    onChange={handleUnitChange} 
-                    hasNoInitialSelection
-                    >
-                    </EuiSelect>
+                    <EuiComboBox 
+                      aria-label="Accessible screen reader label"
+                      placeholder="Select a unit..."
+                      singleSelection={{ asPlainText: true }}
+                      options={options}
+                      selectedOptions={selectedTheOption}
+                      onChange={onSelectedChange}
+                      onSearchChange={onSearchChange}
+                      customOptionText="Add {searchValue} as your occupation"
+                    />
                 </EuiFormRow>
                 <EuiFormRow style={{marginTop:"0px"}} label="Model Unit">
                   <EuiFieldText 
                     name='model'
                     placeholder='Model Unit'
-                    value={model}
+                    value={formData.model_unit}
                     disabled />
                 </EuiFormRow>
 
@@ -374,7 +408,7 @@ const handleUnitChange = (e) => {
                    <EuiFieldText 
                       name='owner'
                       placeholder='Input'
-                      value={owner}
+                      value={formData.owner}
                       disabled
                     />
                 </EuiFormRow>
@@ -384,80 +418,94 @@ const handleUnitChange = (e) => {
                     label="Issued"
                     id="Issued"
                     value="Issued"
-                    checked={trxType === 'Issued'}
+                    checked={formData.type === 'Issued'}
                     onChange={(e) => handleOptionChange('Issued')}
                     />
                      <EuiRadio 
                     id="receive"
                     label="Receive"
                     value="Receive"
-                    checked={trxType === 'Receive'}
-                    onChange={(e) => handleOptionChange('Receive')}
+                    checked={formData.type === 'Receipt'}
+                    onChange={(e) => handleOptionChange('Receipt')}
                     />
                      <EuiRadio 
                     id="transfer"
                     label="Transfer"
                     value="Transfer"
-                    checked={trxType === 'Transfer'}
+                    checked={formData.type === 'Transfer'}
                     onChange={(e) => handleOptionChange('Transfer')}
                     />
                      <EuiRadio 
                     label="Receive KPC"
                     id="Receive kpc"
                     value="Receive KPC"
-                    checked={trxType === 'Receive KPC'}
-                    onChange={(e) => handleOptionChange('Receive KPC')}
+                    checked={formData.type === 'Receipt KPC'}
+                    onChange={(e) => handleOptionChange('Receipt KPC')}
                     />
                 </div>
-                  
+
+                <EuiFormRow label="HM/KM Transaksi" style={{marginTop:"0px"}}>
+                   <EuiFieldText 
+                    name='hmkm'
+                    placeholder='Input'
+                    onChange={handleHmKm}
+                  />
+                </EuiFormRow>
+
+                <EuiFormRow label="HM/KM Transaksi Terakhir" style={{marginTop:"0px"}}>
+                   <EuiFieldText 
+                    name='hmkm_last'
+                    value={formData.hm_last}
+                    disabled
+                  />
+                </EuiFormRow>
+
                 <EuiFormRow label="Qty" >
                   <EuiFieldText 
                   name='issued'
                   placeholder='Input'
-                  value={qty}
-                  onChange={(e)=> setQty(e.target.value)}
+                  onChange={(e) =>
+                    setFormData((prevFormData) => ({
+                      ...prevFormData,
+                      qty: e.target.value, 
+                    }))
+                  }
                />
                 </EuiFormRow>
 
-                <EuiFormRow label="Fuel Burn Rate(FBR)" style={{marginTop:"0px"}}>
+                <EuiFormRow label="Fuel Burn Rate(FBR)">
                   <EuiFieldText 
                   name='fbr'
                   placeholder='Input'
-                  value={fbr}
-                  onChange={(e)=> setFbr(e.target.value)}
+                  value={formData.fbr}
+                  disabled
                 />
-                </EuiFormRow>
-
-                <EuiFormRow label="HM/KM Terakhir Transaksi" style={{marginTop:"0px"}}>
-                   <EuiFieldText 
-                    name='hmkm'
-                    placeholder='Input'
-                    onChange={(e)=> setHmStart(e.target.value)}
-                    value={hmkmValue || ""}
-                  />
-                </EuiFormRow>
-
-                <EuiFormRow label="HM/KM Unit" style={{marginTop:"0px"}}>
-                   <EuiFieldText 
-                    name='hmkm_last'
-                    onChange={(e)=> setHmLast(e.target.value)}
-                  />
                 </EuiFormRow>
 
                 <EuiFormRow label="Flow Meter Awal" style={{marginTop:"0px"}}>
                    <EuiFieldText 
                     name='hmkm'
                     placeholder='Input'
-                    onChange={(e)=> setFlowStart(e.target.value)}
+                    onChange={(e) =>
+                      setFormData((prevFormData) => ({
+                        ...prevFormData,
+                        flow_start: e.target.value, 
+                      }))
+                    }
+                    value={formData.flow_start} 
                   />
                 </EuiFormRow>
 
                 <EuiFormRow label="Flow Meter Akhir" style={{marginTop:"0px"}}>
                    <EuiFieldText 
-                    name='hmkm_last'
-                    value={hmLast}
-                    onChange={(e)=> setflowEnd(e.target.value)}
-                    // disabled
+                    name='flow_end'
+                    onChange={(e) =>
+                      setFormData((prevFormData) => ({
+                        ...prevFormData,
+                        flow_end: e.target.value, 
+                      }))
+                    }
+                    value={formData.flow_end} 
                   />
                 </EuiFormRow>
 
@@ -467,7 +515,7 @@ const handleUnitChange = (e) => {
                       value: items.JDE,  
                       text: items.JDE  
                     }))}
-                    value={empId}  
+                    value={formData.jde_operator}  
                     onChange={handleUserChange} 
                     hasNoInitialSelection
                     >
@@ -477,7 +525,7 @@ const handleUnitChange = (e) => {
                 <EuiFieldText 
                   name='fullname'
                   placeholder='Input'
-                  value={nameEmp}
+                  value={formData.name_operator}
                   disabled
                 />
                 </EuiFormRow>
@@ -489,7 +537,8 @@ const handleUnitChange = (e) => {
                       showTimeSelect
                       showTimeSelectOnly
                       timeIntervals={1}
-                      dateFormat="hh:mm "
+                      dateFormat="HH:mm" 
+                      timeFormat="HH:mm" 
                     />
                 </EuiFormRow>
 
@@ -500,7 +549,8 @@ const handleUnitChange = (e) => {
                       showTimeSelect
                       showTimeSelectOnly
                       timeIntervals={1}
-                      dateFormat="hh:mm "
+                      dateFormat="HH:mm" 
+                      timeFormat="HH:mm" 
                     />
                 </EuiFormRow>
 
@@ -508,10 +558,10 @@ const handleUnitChange = (e) => {
                   <EuiFormRow label="Ambil Foto">
                     <input type="file" accept="image/*" onChange={onFileChange} />
                   </EuiFormRow>
-                  {picture && (
+                  {formData.photo && (
                     <div style={{ marginTop: '20px', textAlign: 'center' }}>
                       <img
-                        src={picture}
+                        src={formData.photo}
                         alt="Uploaded"
                         style={{
                           width: '250px',
@@ -524,12 +574,26 @@ const handleUnitChange = (e) => {
                     </div>
                   )}
                 </div>
-                <EuiFormRow label="Tanda Tangan">
-                  <input
-                    type="file"
-                    onChange={onSignChange}
-                  />
-                </EuiFormRow>
+                <div>
+                  <EuiFormRow label="Tanda Tangan">
+                    <input type="file" accept="image/*" onChange={onSignChange} />
+                  </EuiFormRow>
+                  {formData.signature && (
+                    <div style={{ marginTop: '20px', textAlign: 'center' }}>
+                      <img
+                        src={formData.signature}
+                        alt="Uploaded"
+                        style={{
+                          width: '250px',
+                          height: '250px',
+                          objectFit: 'cover',
+                          border: '1px solid #ccc',
+                          borderRadius: '10px',
+                        }}
+                      />
+                    </div>
+                  )}
+                </div>
               </EuiFlexGrid>
             </EuiForm>
           </EuiModalBody>
@@ -598,7 +662,7 @@ const handleUnitChange = (e) => {
         </EuiModal>
       )}
 
-{isConfirmEditStatus && (
+      {isConfirmEditStatus && (
         <EuiModal onClose={closeConfirmEditModal}>
         <EuiModalBody>
           <EuiText style={{

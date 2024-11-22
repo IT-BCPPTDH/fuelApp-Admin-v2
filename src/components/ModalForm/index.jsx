@@ -134,7 +134,7 @@ const ModalForm = () => {
         const res = await EquipService.getEquip()
         const rest = await dailyQuotaService.getActiveData(tanggal)
         const newUnit = rest.data
-          .filter(b => b.is_active) // hanya mengambil yang aktif
+          .filter(b => b.is_active) 
           .map(b => {
             const unitA = res.data.find(a => a.unit_no === b.unit_no); 
             return unitA ? { ...b, model: unitA.type} : null; 
