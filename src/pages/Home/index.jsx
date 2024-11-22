@@ -42,7 +42,7 @@ const HomePage = () => {
 
   const formattedDate = moment(selectDate).format('dddd, DD-MM-YYYY');
   const formattedDates = moment(selectDate).format('YYYY-MM-DD');
-  // localStorage.setItem("tanggal", JSON.stringify(formattedDates))
+  localStorage.setItem("tanggal", JSON.stringify(formattedDates))
   localStorage.setItem("formattedOption", JSON.stringify(opt))
 
   const handleOption = () => {
