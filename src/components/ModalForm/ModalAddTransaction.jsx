@@ -218,7 +218,7 @@ const ModalFormAddIssued = () => {
 
 
   useEffect(() => {
-    const dates = JSON.parse(localStorage.getItem('formattedDatesReq'))
+    const dates = JSON.parse(localStorage.getItem('tanggal'))
     const fetchUnitData = async () => {
       if (!formData.no_unit) return;
       try {
