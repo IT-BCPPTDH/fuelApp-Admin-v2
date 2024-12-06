@@ -33,6 +33,35 @@ const tableStation = async (requestBody) => {
     }
 };
 
+const editTrxStation = async (requestBody) => {
+    try {
+        // const response = await api.put(URL_API.editStation, requestBody, {
+        //     headers: {
+        //         'Content-Type': 'application/json',
+        //     },
+        // });
+        // return response.data;
+        return true
+    } catch (error) {
+        console.error('Error fetching data:', error.message);
+        throw error;
+    }
+};
+
+const delTrxStation = async (paramsBody) => {
+    try {
+        const response = await api.put(URL_API.delStation + paramsBody, {
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        });
+        return response.data;
+    } catch (error) {
+        console.error('Error fetching data:', error.message);
+        throw error;
+    }
+};
+
 const getStation = async () => {
     try {
         const response = await api.get(URL_MASTER_DATA.getAllStation,  {
@@ -95,7 +124,9 @@ const stationService = {
     getStation,
     insertStation,
     updateStation,
-    delStation
+    delStation,
+    editTrxStation,
+    delTrxStation
 };
 
 export default stationService;

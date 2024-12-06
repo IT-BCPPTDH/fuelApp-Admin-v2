@@ -30,6 +30,7 @@ import {icon as EuiIconTrash} from '@elastic/eui/es/components/icon/assets/trash
 import {icon as EuiIconPen} from '@elastic/eui/es/components/icon/assets/pencil';
 import {icon as EuiIconHome} from '@elastic/eui/es/components/icon/assets/home';
 import {icon as EuiIconWarning} from '@elastic/eui/es/components/icon/assets/warning';
+import {icon as EuiIconReturnKey} from '@elastic/eui/es/components/icon/assets/return_key';
 
 
 // One or more icons are passed in as an object of iconKey (string): IconComponent
@@ -55,7 +56,8 @@ appendIconComponentCache({
   trash:EuiIconTrash,
   pencil:EuiIconPen,
   home:EuiIconHome,
-  warning:EuiIconWarning
+  warning:EuiIconWarning,
+  return_key:EuiIconReturnKey
 });
 
 

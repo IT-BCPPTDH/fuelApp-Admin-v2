@@ -11,6 +11,7 @@ import { DataTrx } from './data';
 import { useNavigate } from 'react-router-dom'; 
 import { useParams } from "react-router-dom";
 import stationService from '../../services/stationDashboard';
+import EditStationTransaction from '../../components/ModalForm/editStationTransaction';
 
 
 const TableData = () => {
@@ -25,23 +26,6 @@ const TableData = () => {
       field: 'lkf_id',
       name: 'LKF No',
       'data-test-subj': 'stationCell',
-      mobileOptions: {
-        render: (item) => (
-          <EuiLink
-            href={`#${item.lkf_id}`}
-            onClick={(e) => {
-              e.preventDefault();
-              handleRowClick(item); 
-            }}
-          >
-            {item.lkf_id}
-          </EuiLink>
-        ),
-        header: false,
-        truncateText: false,
-        enlarge: true,
-        width: '100%',
-      },
     },
     {
       field: 'date',
@@ -58,7 +42,6 @@ const TableData = () => {
       name: 'Shift',
       truncateText: true,
     },
-    
     {
       field: 'status',
       name: 'Status',
@@ -79,14 +62,27 @@ const TableData = () => {
       name: 'Logout Time',
       truncateText: true,
     },
-  ];
+    {
+      field: 'action',
+      name: 'Action',
+      width: '30vh',
+      align:'center',
+      render: (e, row) => {
+        return (
+          <div onClick={(e) => e.stopPropagation()}>
+            <EditStationTransaction row={row} />
+          </div>
+        );
+      },
+      truncateText: true,
+    },
 
+  ];
  
   const handleRowClick = (item) => {
- 
     navigate(`/form-data/${item.lkf_id}`); 
-    
   };
+
   const getRowProps = (item) => ({
     'data-test-subj': `row-${item.lkf_id}`,
     className: 'customRowClass',

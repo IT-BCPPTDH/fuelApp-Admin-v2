@@ -23,6 +23,7 @@ import { DataTrxDetails } from './datadetails';
 import ModalFormDataEdit from '../../components/ModalForm/EditFormData';
 import ModalSign from '../../components/ModalForm/modalSign';
 import ModalPicture from '../../components/ModalForm/modalPicture';
+import moment from 'moment';
 
 import {
   EuiButton,
@@ -123,14 +124,14 @@ const DetailsPageTransaction = () => {
         },
         {
           title: formTotal.closeMeter ,
-          description1: "Close Meter)",
+          description1: "(Close Meter)",
           description2: "(Flow Meter End)",
           icon: Icon3,
         },
         {
           title:formTotal.totalMeter  ,
           description1: "Total Meter",
-          description2: "( Close Meter - Start Meter)",
+          description2: "(Close Meter - Start Meter)",
           icon: Icon1,
         },
     ]
@@ -179,75 +180,79 @@ const DetailsPageTransaction = () => {
         field: 'no_unit',
         name: 'Unit No',
         truncateText: true,
+        width: '10vh'
     },
     {
       field: 'model_unit',
       name: 'Model Unit',
       truncateText: true,
-      width: '70vh'
+      width: '20vh'
     },
     {
       field: 'hm_km',
       name: 'HM/KM',
       truncateText: true,
+      width: '10vh'
     },
     {
       field: 'owner',
       name: 'Owner',
       truncateText: true,
-      width: '200px'
+      width: '10vh'
     },
     {
       field: 'qty',
       name: 'QTY',
       truncateText: true,
-      width: '100px'
+      width: '8vh'
     },
     {
       field: 'fbr',
       name: 'FBR',
       truncateText: true,
-      width: '100px'
+      width: '8vh'
     },
     {
       field: 'flow_start',
       name: 'FM Start',
       truncateText: true,
-      width: '100px'
+      width: '10vh'
     },
     {
       field: 'flow_end',
       name: 'FM Close',
       truncateText: true,
-      width: '100px'
+      width: '10vh'
     },
     {
       field: 'jde_operator',
       name: 'ID Operator',
       truncateText: true,
-      width: '100px'
+      width: '10vh'
     },
     {
       field: 'name_operator',
       name: 'Name',
       truncateText: true,
-      width: '100px'
+      width: '10vh'
     },
     {
       field: 'start',
       name: 'Start Time',
       truncateText: true,
+      width: '10vh'
     },
     {
       field: 'end',
       name: 'Stop Time',
       truncateText: true,
+      width: '10vh'
     },
     {
       field: 'signature',
       name: 'Sign',
       align:'center',
-      width:'40vh',
+      width:'10vh',
       truncateText: true,
       render: (signature) => <ModalSign signature={signature} />,
     },
@@ -255,7 +260,7 @@ const DetailsPageTransaction = () => {
       field: 'photo',
       name: 'Picture',
       align:'center',
-      width:'40vh',
+      width:'10vh',
       truncateText: true,
       render: (photo) => <ModalPicture photo={photo} />,
     },
@@ -264,26 +269,26 @@ const DetailsPageTransaction = () => {
       name: 'Type',
       truncateText: true,
       align:'center',
-      width: '100px'
+      width: '10vh'
     },
     {
       field: 'entry_time',
       name: 'Entry Time',
       truncateText: true,
-      width: '50vh',
+      width: '10vh',
       align:'center',
     },
     {
       field: 'sync_time',
       name: 'Sync Time',
       truncateText: true,
-      width: '50vh',
+      width: '10vh',
       align:'center',
     },
     {
       field: 'action',
       name: 'Action',
-      width: '30vh',
+      width: '10vh',
       align:'center',
       render: (e, row) => (
         <>

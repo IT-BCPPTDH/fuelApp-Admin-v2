@@ -70,6 +70,8 @@ export const URL_API = {
     statusLv : `${linkBe}/api/quota-usage/get-status-lv/`,
     statusHlv : `${linkBe}/api/quota-usage/get-status-hlv/`,
     generateImg: linkBe + "/api/img/",
+    editStation : `${linkBe}/api/admin/update-station`,
+    delStation : `${linkBe}/api/admin/delete-station/`,
 };
 
 export const URL_MASTER_DATA = {

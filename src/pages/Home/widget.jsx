@@ -13,6 +13,7 @@ const CardContent = () => {
     { title: summary.prevSonding ? summary.prevSonding + ' Ltrs' : 0 + ' Ltrs', description1: 'Previous Close Sonding', description2: 'Total close sonding (h-1)', icon: Icon1 },
     { title: summary.openSonding ? summary.openSonding + ' Ltrs' : 0 + ' Ltrs', description1: 'Open Stock (Sonding)', description2: 'Summary Open Sonding (h)', icon: Icon1 },
     { title: summary.reciptKpc ? summary.reciptKpc + ' Ltrs' : 0 + ' Ltrs', description1: 'Receipt KPC', description2: 'Summary Receipt KPC', icon: Icon1 },
+    { title: summary.recipt ? summary.recipt + ' Ltrs' : 0 + ' Ltrs', description1: 'Receipt Transaction', description2: 'Summary Receipt', icon: Icon2 },
     { title: summary.issuedTrx ? summary.issuedTrx + ' Ltrs' : 0 + ' Ltrs', description1: 'Issued Transaction', description2: 'Summary Issued', icon: Icon2 },
     { title: summary.tfTrx ? summary.tfTrx + ' Ltrs' : 0 + ' Ltrs', description1 : 'Transfer Transaction', description2: 'Summary Transaction', icon: Icon2 },
     { title: summary.closeData ? summary.closeData + ' Ltrs' : 0 + ' Ltrs', description1: 'Close Data', description2: 'Total Close Data ', icon: Icon2 },
@@ -49,7 +50,7 @@ const CardContent = () => {
   return (
     <EuiFlexGroup gutterSize="l" wrap responsive={true}>
       {cardsData.map((card, index) => (
-        <EuiFlexItem key={index} style={{ maxWidth: '32%', flexBasis: '100%' }}>
+        <EuiFlexItem key={index} style={{ maxWidth: '23%', flexBasis: '100%' }}>
           <EuiCard  title={""} 
            titleSize="xs">
             <EuiFlexGrid columns={2} gutterSize="m">

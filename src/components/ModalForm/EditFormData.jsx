@@ -26,6 +26,51 @@ import EquipService from '../../services/EquiptmentService';
 import FormData from '../../services/formDashboard';
 import { Navigate, useParams } from 'react-router-dom';
 import formService from '../../services/formDashboard';
+import CreatableSelect from "react-select/creatable";
+import dailyQuotaService from '../../services/dailyQuotaService';
+
+const customStyles = {
+  indicatorSeparator: (base) => ({
+    ...base,
+    width: "1px",          
+    marginBottom: "12px",   
+    marginTop:"0px"
+  }),
+  dropdownIndicator: (base, state) => ({
+    ...base,
+    marginBottom:  "10px",
+  }),
+  control: (base) => ({
+    ...base,
+    height: "30px", 
+    margin: "0px"
+  }),
+  menu: (base) => ({
+    ...base,
+    fontSize: "14px",
+  }),
+  singleValue: (base) => ({
+    ...base,
+    fontSize: "16px", 
+    color: "#333", 
+    marginBottom:"10px",
+  }),
+  placeholder: (base) => ({
+    ...base,
+    marginBottom:"10px",
+    fontSize: "14px",
+    color: "#aaa",
+  }),
+  clearIndicator: (base) => ({
+    ...base,
+    marginBottom:"10px",
+  }),
+  input: (provided) => ({
+    ...provided,
+    fontSize: '16px',
+    marginBottom:"10px",
+  }),
+};
 
 
 const ModalFormDataEdit = ({row}) => {
@@ -34,8 +79,6 @@ const ModalFormDataEdit = ({row}) => {
   const user = JSON.parse(localStorage.getItem('user_data'))
   const dates = JSON.parse(localStorage.getItem('tanggal'))
 
-  const [selectedTheOption, setSelectedTheOptions] = useState([]);
-  const [searchMessage, setSearchMessage] = useState("");
   const [formData, setFormData] = useState({
     from_data_id: row.from_data_id || "",
     no_unit: row.no_unit || "",
@@ -59,6 +102,9 @@ const ModalFormDataEdit = ({row}) => {
 
   const [userData, setUserData] = useState([])
   const [equipData, setEquipData] = useState([])
+  const [limitedSet, setLimitedSet] = useState({})
+  const [errors, setErrors] = useState({});
+  const [optJde, setOptJde] = useState([])
 
   const modalFormId = useGeneratedHtmlId({ prefix: 'modalForm' });
   const modalTitleId = useGeneratedHtmlId();
@@ -168,18 +214,13 @@ const ModalFormDataEdit = ({row}) => {
       };
       fetchUnit()
       fetchUser()
-    }, []);
-    
-  const handleUserChange = (e) => {
-    const val = String(e.target.value)
-    const itemSelected = userData.find((item)=> item.JDE === val)
-    if(itemSelected){
-      setEmpId(itemSelected.JDE)
-      setNameEmp(itemSelected.fullname)
-    }
-  }
+  }, []);
 
   const handleOptionChange = (value) => {
+    setFormData((prev) => ({
+      ...prev,
+     type: value
+    }));
     setTrxType(value);
   };
 
@@ -268,57 +309,88 @@ const ModalFormDataEdit = ({row}) => {
   useEffect(() => {
     setOptions(
       equipData.map(item => ({
-        label: item.unit_no 
+        label: item.unit_no,
+        value: item.unit_no
       }))
     );
 
-    if (formData && formData.no_unit) {
-      setSelectedTheOptions([{ label: formData.no_unit }]);  
-    }
-  }, [equipData, formData]);
+    setOptJde(
+      userData.map(items => ({
+        label: items.JDE,  
+        value: items.JDE  
+      }))
+    );
+  
+  }, [equipData, userData]);
+  
 
-
-  const onSelectedChange = (selected) => {
-    if (selected.length > 0) {
-      const selectedValue = selected[0].label;
-      handleUnitChange(selectedValue);
-      setSelectedTheOptions(selected)
-      setSearchMessage("");
-    } else {
-      handleUnitChange(""); 
-      setSelectedTheOptions([])
-    }
+  const filterUnit = (option, inputValue) => {
+    const searchValue = String(inputValue).toLowerCase();
+    return (
+      option.value.toLowerCase().includes(searchValue) 
+    );
   };
 
-  const handleUnitChange = (value) => {
-    const selectedUnit = equipData.find((unit) => unit.unit_no === value);
-    if (selectedUnit) {
+  const getSelectedUnit = (no_unit) => {
+    if (!no_unit) return null; 
+    const matchedUnit = equipData.find((unit) => unit.unit_no === no_unit);
+    return matchedUnit ? { label: matchedUnit.unit_no, value: matchedUnit.unit_no } : null;
+  };
+
+  const handleUnitChange = (val) => {
+    if (!val) {
       setFormData((prev) => ({
         ...prev,
-        no_unit: selectedUnit.unit_no,
-        model_unit: selectedUnit.type,
-        owner: selectedUnit.owner,
+        no_unit: "",
+        model_unit: "",
+        owner: "",
+        // hm_last: 0,
+        // qty_last: 0,
+        // fbr: 0
       }));
-    }
-  };
-
-  const onSearchChange = (searchValue) => {
-    const normalizedSearchValue = searchValue.trim().toLowerCase();
-
-    if (!normalizedSearchValue) {
-      setSearchMessage(""); 
       return;
     }
+    const selectedUnit = equipData.find((unit) => unit.unit_no === val.value);
+    setFormData((prev) => ({
+      ...prev,
+      no_unit: selectedUnit?.unit_no || "",
+      model_unit: selectedUnit?.type || "",
+      owner: selectedUnit?.owner || "",
+      // hm_last: selectedUnit ? prev.hm_last : 0,
+      // qty_last: selectedUnit ? prev.qty_last : 0,
+      // fbr: selectedUnit ? prev.fbr : 0,
+    }));
+  };
 
-    const found = options.some((option) =>
-      option.label.toLowerCase().includes(normalizedSearchValue)
-    );
+  const handleCreateUnit = (inputValue) => {
+    const newOption = { label: inputValue, value: inputValue };
+    setOptions((prev) => [...prev, newOption]);
+  };
 
-    if (!found) {
-      setSearchMessage("Data tidak ditemukan"); 
-    } else {
-      setSearchMessage(""); 
-    }
+  const handleUserChange = (val) => {
+    const itemSelected = userData.find((item) => item.JDE === val?.value);
+  
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      jde_operator: itemSelected?.JDE || "",
+      name_operator: itemSelected?.fullname || "",
+    }));
+  };
+
+  const filterEmployee = (option, inputValue) => {
+    const searchValue = String(inputValue).toLowerCase();
+    return option.value.toLowerCase().includes(searchValue);
+  };
+
+  const getSelectedJde = (jde) => {
+    if (!jde) return null; 
+    const matchedUnit = optJde.find((emp) => emp.value === jde);
+    return matchedUnit || null;
+  };
+
+  const handleCreateEmployee = (inputValue) => {
+    const newOption = { label: inputValue, value: inputValue };
+    setOptJde((prev) => [...prev, newOption]);
   };
 
   return (
@@ -335,19 +407,17 @@ const ModalFormDataEdit = ({row}) => {
             <EuiModalHeaderTitle id={modalTitleId}> Edit Unit Transaksi</EuiModalHeaderTitle>
           </EuiModalHeader>
             <EuiModalBody>
-                <EuiForm id={modalFormId} component="form">
+            <EuiForm id={modalFormId} component="form">
                  <EuiFlexGrid columns={2}>
                     <EuiFormRow label="No Unit">
-                    <EuiComboBox
-                      aria-label="Accessible screen reader label"
-                      placeholder="Select a unit..."
-                      singleSelection={{ asPlainText: true }}
-                      options={options}
-                      selectedOptions={selectedTheOption}
-                      onChange={onSelectedChange}
-                      onSearchChange={onSearchChange}
-                      customOptionText="Add {searchValue} as your occupation"
-                    />
+                      <CreatableSelect styles={customStyles} options={options}
+                        value={getSelectedUnit(formData.no_unit)}
+                        filterOption={filterUnit} 
+                        onChange={handleUnitChange}
+                        onCreateOption={handleCreateUnit}
+                        isSearchable
+                        isClearable
+                      />
                     </EuiFormRow>
                 <EuiFormRow style={{marginTop:"0px"}} label="Model Unit">
                   <EuiFieldText 
@@ -376,10 +446,10 @@ const ModalFormDataEdit = ({row}) => {
                     />
                      <EuiRadio 
                     id="receive"
-                    label="Receive"
+                    label="Receipt"
                     value="receive"
                     checked={formData.type === 'Receipt'}
-                    onChange={(e) => handleOptionChange('Receive')}
+                    onChange={(e) => handleOptionChange('Receipt')}
                     />
                     <EuiRadio 
                     id="transfer"
@@ -389,7 +459,7 @@ const ModalFormDataEdit = ({row}) => {
                     onChange={(e) => handleOptionChange('Transfer')}
                     />
                      <EuiRadio 
-                    label="Receive KPC"
+                    label="KPC"
                     id="receive_kpc"
                     value="receive_kpc"
                     checked={formData.type === 'Receipt KPC'}
@@ -454,7 +524,16 @@ const ModalFormDataEdit = ({row}) => {
                 </EuiFormRow>
 
                 <EuiFormRow label="Employee Id">
-                    <EuiSelect
+                <CreatableSelect styles={customStyles} 
+                    options={optJde}
+                    filterOption={filterEmployee} 
+                    value={getSelectedJde(formData.jde_operator)}
+                    onCreateOption={handleCreateEmployee}
+                    onChange={handleUserChange}
+                    isSearchable
+                    isClearable
+                  />
+                    {/* <EuiSelect
                     options={userData.map(items => ({
                       value: items.JDE,  
                       text: items.JDE  
@@ -463,8 +542,9 @@ const ModalFormDataEdit = ({row}) => {
                     onChange={handleUserChange} 
                     hasNoInitialSelection
                     >
-                    </EuiSelect>
+                    </EuiSelect> */}
                 </EuiFormRow>
+
                 <EuiFormRow label="Nama Operator/Driver">
                 <EuiFieldText 
                   name='fullname'
