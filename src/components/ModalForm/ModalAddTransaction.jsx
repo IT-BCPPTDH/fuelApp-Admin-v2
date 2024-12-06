@@ -24,6 +24,53 @@ import EquipService from '../../services/EquiptmentService';
 import formService from '../../services/formDashboard';
 import { useParams } from 'react-router-dom';
 import MainService from '../../services/HomeData';
+import CreatableSelect from "react-select/creatable";
+import dailyQuotaService from '../../services/dailyQuotaService';
+
+
+const customStyles = {
+  indicatorSeparator: (base) => ({
+    ...base,
+    width: "1px",          
+    marginBottom: "12px",   
+    marginTop:"0px"
+  }),
+  dropdownIndicator: (base, state) => ({
+    ...base,
+    marginBottom:  "10px",
+  }),
+  control: (base) => ({
+    ...base,
+    height: "30px", 
+    margin: "0px"
+  }),
+  menu: (base) => ({
+    ...base,
+    fontSize: "14px",
+  }),
+  singleValue: (base) => ({
+    ...base,
+    fontSize: "16px", 
+    color: "#333", 
+    marginBottom:"10px",
+  }),
+  placeholder: (base) => ({
+    ...base,
+    marginBottom:"10px",
+    fontSize: "14px",
+    color: "#aaa",
+  }),
+  clearIndicator: (base) => ({
+    ...base,
+    marginBottom:"10px",
+  }),
+  input: (provided) => ({
+    ...provided,
+    fontSize: '16px',
+    marginBottom:"10px",
+  }),
+};
+
 const ModalFormAddIssued = () => {
   const id = useParams()
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -31,12 +78,12 @@ const ModalFormAddIssued = () => {
   const showModal = () => setIsModalVisible(true);
   const modalFormId = useGeneratedHtmlId({ prefix: 'modalForm' });
   const modalTitleId = useGeneratedHtmlId();
-  const [selectedTime, setSelectedTime] = useState(moment());
-  const [selectedTimeEnd, setSelectedTimeEnd] = useState(moment());
+  const [selectedTime, setSelectedTime] = useState(null);
+  const [selectedTimeEnd, setSelectedTimeEnd] = useState(null);
   const [options, setOptions] = useState([]);
-  const [selectedTheOption, setSelectedTheOptions] = useState([]);
-  const [searchMessage, setSearchMessage] = useState("");
-  const [picture, setPicture] = useState("")
+  const [limitedSet, setLimitedSet] = useState(null)
+  const [errors, setErrors] = useState({});
+  const [trxDate, setTrxDate] = useState(null)
 
   const user = JSON.parse(localStorage.getItem('user_data'))
   const [userData, setUserData] = useState([])
@@ -85,13 +132,6 @@ const ModalFormAddIssued = () => {
     setIsConfirmEditStatus(false)
     setIsModalVisible(false)
   }
-  // const [selectedUnit, setSelectedUnit] = useState("");
-  // const [isConfirmAddStatus, setIsConfirmAddStatus] = useState(false)
-  // const showConfirmAddModal = () => setIsConfirmAddStatus(true);
-
-  // const closeConfirmAddModal = () => {
-  //   setIsConfirmAddStatus(false)
-  // }
 
   const convertToBase64 = (file) => {
     return new Promise((resolve, reject) => {
@@ -129,29 +169,51 @@ const ModalFormAddIssued = () => {
     }));
   };
 
+  const handleValidation = () => {
+    const newErrors = {};
+  
+    if (!formData.no_unit) newErrors.no_unit = "Unit number is required";
+    if (!formData.type) newErrors.type = "type is required";
+    if (!formData.hm_km) newErrors.hm_km = "Hmkm ID is required";
+    if (!formData.qty) newErrors.qty = "Qty is required";
+    if (!formData.flow_end) newErrors.flow_end = "Flow end is required";
+    if (!formData.flow_start) newErrors.flow_start = "Flow Start is required";
+    if (!formData.jde_operator) newErrors.jde_operator = "Jde operator is required";
+    if (!formData.start) newErrors.start = "Start time is required";
+    if (!formData.end) newErrors.end = "End time is required";
+  
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0; 
+  };
+
   const handleSubmitData = async () => {
-    try {
-      const data = {
-        ...formData, created_by: user.JDE
-      };
-      console.log(data)
-      const res = await formService.insertData(data);
-      if (res.status === 200|| res.status === "201") {  
-        setEditStatus('Success');
-        setEditMessage('Data successfully saved!');
-        showEditModal(); 
-      } else {
-        throw new Error('Data not saved! Please try again.');
+    closeConfirmEditModal()
+    const isValid =  handleValidation()
+      if(!isValid){
+        setIsModalVisible(true)
+      }else{
+        try {
+          const data = {
+            ...formData, created_by: user.JDE
+          };
+          const res = await formService.insertData(data);
+          if (res.status === 200|| res.status === "201") {  
+            setEditStatus('Success');
+            setEditMessage('Data successfully saved!');
+            showEditModal(); 
+          } else {
+            throw new Error('Data not saved! Please try again.');
+          }
+        } catch (error) {
+          console.error('Error updating data:', error);
+          setEditStatus('Error');
+          setEditMessage('Terjadi kesalahan saat update data. Data tidak tersimpan!');
+          showEditModal(); 
+        } finally {
+          // closeModal(); 
+          // closeModal(); 
+        }
       }
-    } catch (error) {
-      console.error('Error updating data:', error);
-      setEditStatus('Error');
-      setEditMessage('Terjadi kesalahan saat update data. Data tidak tersimpan!');
-      showEditModal(); 
-    } finally {
-      // closeModal(); 
-      closeModal(); 
-    }
   };
   
   const handleChageStart = (time) => {
@@ -164,21 +226,36 @@ const ModalFormAddIssued = () => {
   };
 
   const handleChangeEnd = (time) => {
-    const formattedDates = moment(time).format('hh:mm:ss');
-    setFormData((prevFormData) => ({
-      ...prevFormData,
-      end: formattedDates,
-    }));
+    const formattedEnd = moment(time).format("HH:mm:ss");
     
-    setSelectedTimeEnd(time)
+    setFormData((prevFormData) => {
+      if (prevFormData.start && moment(formattedEnd, "HH:mm:ss").isBefore(moment(prevFormData.start, "HH:mm:ss"))) {
+        setErrors({
+          end: "Waktu selesai tidak boleh lebih kecil dari Waktu mulai!",
+        });
+        return prevFormData;
+      }
+
+      setErrors({
+        end: "",
+      });
+  
+      return {
+        ...prevFormData,
+        end: formattedEnd,
+      };
+    });
+  
+    setSelectedTimeEnd(time);
   };
 
   useEffect(() => {
     let dt = Math.floor(Date.now() / 1000);
     setFormData((prevFormData) => ({
       ...prevFormData,
-      id: dt,
+      from_data_id: dt,
       lkf_id: id.lkfId, 
+      date_trx: trxDate
     }));
     
     const fetchUnit = async () => {
@@ -219,13 +296,13 @@ const ModalFormAddIssued = () => {
 
   useEffect(() => {
     const dates = JSON.parse(localStorage.getItem('tanggal'))
+    setTrxDate(dates)
     const fetchUnitData = async () => {
       if (!formData.no_unit) return;
       try {
         const response = await MainService.getDataPrevTR(formData.no_unit, dates);
-
         if (response.status === '200' && response.data.length > 0) {
-          if(formData.type !== "" || formData.type == "Issued"){
+          if(formData.type !== "" && formData.type == "Issued"){
             const newHmLast = response.data[0].hm_km || 0;
             const newQtyLast = response.data[0].qty || 0;
 
@@ -245,6 +322,7 @@ const ModalFormAddIssued = () => {
               ...prev,
               hm_last: 0,
               qty_last: 0,
+              fbr: 0
             }));
           }
         } else {
@@ -253,26 +331,40 @@ const ModalFormAddIssued = () => {
       } catch (err) {
         // setError('Failed to fetch unit data');
         console.error(err);
-      } finally {
-        // setLoading(false);
+      } 
+    };
+
+    const fetchLimitedQuota = async () => {
+      try {
+        const response = await dailyQuotaService.getData({ option: "Daily", tanggal: dates });
+        if (response.status === "200" && Array.isArray(response.data) && response.data.length > 0) {
+          if (!formData.no_unit) return; 
+          const limited = response.data.find((item) => item.unit_no === formData.no_unit);
+          setLimitedSet(limited); 
+        } else {
+          console.log("Data not found");
+          setLimitedSet(null); 
+        }
+      } catch (err) {
+        console.error("Error fetching limited quota:", err);
       }
     };
 
     fetchUnitData();
+    fetchLimitedQuota()
   }, [formData.no_unit,formData.type]);
 
   
-  const handleUserChange = (e) => {
-    const val = String(e.target.value)
-    const itemSelected = userData.find((item)=> item.JDE === val)
-    if(itemSelected){
-      setFormData((prevFormData) => ({
-        ...prevFormData,
-        jde_operator: itemSelected.JDE,
-        name_operator: itemSelected.fullname,
-      }));
-    }
-  }
+  const handleUserChange = (val) => {
+    const itemSelected = userData.find((item) => item.JDE === val?.value);
+  
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      jde_operator: itemSelected?.JDE || "",
+      name_operator: itemSelected?.fullname || "",
+    }));
+  };
+  
 
   const handleOptionChange = (value) => {
     setFormData((prevFormData) => ({
@@ -298,7 +390,7 @@ const ModalFormAddIssued = () => {
         setFormData((prevFormData) => ({
           ...prevFormData,
           hm_km: numericVal,
-          fbr: totalFbr,
+          fbr: totalFbr.toFixed(2),
         }));
       }
     } else {
@@ -312,58 +404,79 @@ const ModalFormAddIssued = () => {
   useEffect(() => {
     setOptions(
       equipData.map(item => ({
-        label: item.unit_no 
+        label: item.unit_no,
+        value:  item.unit_no,
       }))
     );
 
   }, [equipData]);
 
-  const handleUnitChange = (value) => {
-    const selectedUnit = equipData.find((unit) => unit.unit_no === value);
-    if (selectedUnit) {
+  const handleUnitChange = (val) => {
+    if (!val) {
       setFormData((prev) => ({
         ...prev,
-        no_unit: selectedUnit.unit_no,
-        model_unit: selectedUnit.type,
-        owner: selectedUnit.owner,
-      }));
-    }else{
-      setFormData((prev) => ({
-        ...prev,
+        no_unit: "",
         model_unit: "",
         owner: "",
         hm_last: 0,
         qty_last: 0,
       }));
-      setSelectedTheOptions([])
-    }
-  };
-
-  const onSelectedChange = (selected) => {
-    if (selected.length > 0) {
-      const selectedValue = selected[0].label;
-      handleUnitChange(selectedValue);
-      setSelectedTheOptions(selected)
-      setSearchMessage("");
-    } else {
-      handleUnitChange(""); 
-      setSelectedTheOptions([])
-    }
-  };
-
-  const onSearchChange = (searchValue) => {
-    const normalizedSearchValue = searchValue.trim().toLowerCase();
-    if (!normalizedSearchValue) {
-      setSearchMessage(""); 
       return;
     }
-    const found = options.some((option) =>
-      option.label.toLowerCase().includes(normalizedSearchValue)
+    const selectedUnit = equipData.find((unit) => unit.unit_no === val.value);
+    setFormData((prev) => ({
+      ...prev,
+      no_unit: selectedUnit?.unit_no || "",
+      model_unit: selectedUnit?.type || "",
+      owner: selectedUnit?.owner || "",
+      hm_last: selectedUnit ? prev.hm_last : 0,
+      qty_last: selectedUnit ? prev.qty_last : 0,
+    }));
+  };
+  
+  const filterUnit = (option, inputValue) => {
+    const searchValue = String(inputValue).toLowerCase();
+    return (
+      option.value.toLowerCase().includes(searchValue) 
     );
-    if (!found) {
-      setSearchMessage("Data tidak ditemukan"); 
+  };
+
+  const filterEmployee = (option, inputValue) => {
+    const searchValue = String(inputValue).toLowerCase();
+    return (
+      option.value.toLowerCase().includes(searchValue) 
+    );
+  };
+
+  const handleQyt = (e) => {
+    const val = e.target.value;
+    if (formData.type !== "Issued" || (!limitedSet || limitedSet.length === 0)) {
+      setFormData((prevFormData) => ({
+        ...prevFormData,
+        qty: val, 
+      }));
+      return;
+    }
+  
+    if (!val) return;
+  
+    const total = parseFloat(val) + (limitedSet?.used || 0); 
+    const totalLimited = (limitedSet?.quota || 0) + (limitedSet?.additional || 0);
+  
+    if (total <= totalLimited) {
+      setFormData((prevFormData) => ({
+        ...prevFormData,
+        qty: val, 
+      }));
+      setErrors({end: ""});
     } else {
-      setSearchMessage(""); 
+      setFormData((prevFormData) => ({
+        ...prevFormData,
+        qty: 0, 
+      }));
+      setErrors({
+        qty: "Kuota terisi melebihi batas yang telah ditentukan! Silahkan melakukan request quota",
+      });
     }
   };
 
@@ -384,17 +497,13 @@ const ModalFormAddIssued = () => {
           <EuiModalBody>
           <EuiForm id={modalFormId} component="form">
               <EuiFlexGrid columns={2}>
-                <EuiFormRow label="No Unit">
-                    <EuiComboBox 
-                      aria-label="Accessible screen reader label"
-                      placeholder="Select a unit..."
-                      singleSelection={{ asPlainText: true }}
-                      options={options}
-                      selectedOptions={selectedTheOption}
-                      onChange={onSelectedChange}
-                      onSearchChange={onSearchChange}
-                      customOptionText="Add {searchValue} as your occupation"
-                    />
+                <EuiFormRow label="No Unit" isInvalid={!!errors.no_unit} error={errors.no_unit}>
+                  <CreatableSelect styles={customStyles} options={options}
+                    filterOption={filterUnit} 
+                    onChange={handleUnitChange}
+                    isSearchable
+                    isClearable
+                  />
                 </EuiFormRow>
                 <EuiFormRow style={{marginTop:"0px"}} label="Model Unit">
                   <EuiFieldText 
@@ -413,38 +522,45 @@ const ModalFormAddIssued = () => {
                     />
                 </EuiFormRow>
 
-                <div style={{display:"flex", gap:"15px", marginTop:"40px"}}>
-                   <EuiRadio 
-                    label="Issued"
-                    id="Issued"
-                    value="Issued"
-                    checked={formData.type === 'Issued'}
-                    onChange={(e) => handleOptionChange('Issued')}
+                <EuiFormRow 
+                  label="Pilih Tipe" 
+                  isInvalid={!!errors.type} 
+                  error={errors.type}
+                  style={{ marginTop: "20px" }}
+                >
+                  <div style={{ display: "flex", gap: "15px", marginTop:"5px" }}>
+                    <EuiRadio 
+                      label="Issued"
+                      id="Issued"
+                      value="Issued"
+                      checked={formData.type === 'Issued'}
+                      onChange={() => handleOptionChange('Issued')}
                     />
-                     <EuiRadio 
-                    id="receive"
-                    label="Receive"
-                    value="Receive"
-                    checked={formData.type === 'Receipt'}
-                    onChange={(e) => handleOptionChange('Receipt')}
+                    <EuiRadio 
+                      label="Receive"
+                      id="Receive"
+                      value="Receive"
+                      checked={formData.type === 'Receipt'}
+                      onChange={() => handleOptionChange('Receipt')}
                     />
-                     <EuiRadio 
-                    id="transfer"
-                    label="Transfer"
-                    value="Transfer"
-                    checked={formData.type === 'Transfer'}
-                    onChange={(e) => handleOptionChange('Transfer')}
+                    <EuiRadio 
+                      label="Transfer"
+                      id="Transfer"
+                      value="Transfer"
+                      checked={formData.type === 'Transfer'}
+                      onChange={() => handleOptionChange('Transfer')}
                     />
-                     <EuiRadio 
-                    label="Receive KPC"
-                    id="Receive kpc"
-                    value="Receive KPC"
-                    checked={formData.type === 'Receipt KPC'}
-                    onChange={(e) => handleOptionChange('Receipt KPC')}
+                    <EuiRadio 
+                      label="KPC"
+                      id="ReceiveKPC"
+                      value="KPC"
+                      checked={formData.type === 'Receipt KPC'}
+                      onChange={() => handleOptionChange('Receipt KPC')}
                     />
-                </div>
+                  </div>
+                </EuiFormRow>
 
-                <EuiFormRow label="HM/KM Transaksi" style={{marginTop:"0px"}}>
+                <EuiFormRow label="HM/KM Transaksi" style={{marginTop:"0px"}} isInvalid={!!errors.hm_km} error={errors.hm_km}>
                    <EuiFieldText 
                     name='hmkm'
                     placeholder='Input'
@@ -460,16 +576,11 @@ const ModalFormAddIssued = () => {
                   />
                 </EuiFormRow>
 
-                <EuiFormRow label="Qty" >
+                <EuiFormRow label="Qty" isInvalid={!!errors.qty} error={errors.qty}>
                   <EuiFieldText 
                   name='issued'
                   placeholder='Input'
-                  onChange={(e) =>
-                    setFormData((prevFormData) => ({
-                      ...prevFormData,
-                      qty: e.target.value, 
-                    }))
-                  }
+                  onChange={handleQyt}
                />
                 </EuiFormRow>
 
@@ -482,7 +593,7 @@ const ModalFormAddIssued = () => {
                 />
                 </EuiFormRow>
 
-                <EuiFormRow label="Flow Meter Awal" style={{marginTop:"0px"}}>
+                <EuiFormRow label="Flow Meter Awal" style={{marginTop:"0px"}} isInvalid={!!errors.flow_start} error={errors.flow_start}>
                    <EuiFieldText 
                     name='hmkm'
                     placeholder='Input'
@@ -492,11 +603,10 @@ const ModalFormAddIssued = () => {
                         flow_start: e.target.value, 
                       }))
                     }
-                    value={formData.flow_start} 
                   />
                 </EuiFormRow>
 
-                <EuiFormRow label="Flow Meter Akhir" style={{marginTop:"0px"}}>
+                <EuiFormRow label="Flow Meter Akhir" style={{marginTop:"0px"}} isInvalid={!!errors.flow_end} error={errors.flow_end}>
                    <EuiFieldText 
                     name='flow_end'
                     onChange={(e) =>
@@ -505,22 +615,23 @@ const ModalFormAddIssued = () => {
                         flow_end: e.target.value, 
                       }))
                     }
-                    value={formData.flow_end} 
+                    placeholder='Input' 
                   />
                 </EuiFormRow>
 
-                <EuiFormRow label="Employee Id">
-                    <EuiSelect
+                <EuiFormRow label="Employee Id" isInvalid={!!errors.jde_operator} error={errors.jde_operator}>
+                  <CreatableSelect styles={customStyles} 
                     options={userData.map(items => ({
-                      value: items.JDE,  
-                      text: items.JDE  
+                      label: items.JDE,  
+                      value: items.JDE  
                     }))}
-                    value={formData.jde_operator}  
-                    onChange={handleUserChange} 
-                    hasNoInitialSelection
-                    >
-                    </EuiSelect>
+                    filterOption={filterEmployee} 
+                    onChange={handleUserChange}
+                    isSearchable
+                    isClearable
+                  />
                 </EuiFormRow>
+                
                 <EuiFormRow label="Nama Operator/Driver">
                 <EuiFieldText 
                   name='fullname'
@@ -530,7 +641,7 @@ const ModalFormAddIssued = () => {
                 />
                 </EuiFormRow>
 
-                <EuiFormRow label="Jam Awal">
+                <EuiFormRow label="Jam Awal" isInvalid={!!errors.start} error={errors.start}>
                     <EuiDatePicker
                       selected={selectedTime}
                       onChange={handleChageStart}
@@ -539,10 +650,11 @@ const ModalFormAddIssued = () => {
                       timeIntervals={1}
                       dateFormat="HH:mm" 
                       timeFormat="HH:mm" 
+                      placeholderText="--:--"
                     />
                 </EuiFormRow>
 
-                <EuiFormRow label="Jam Akhir">
+                <EuiFormRow label="Jam Akhir" isInvalid={!!errors.end} error={errors.end}>
                     <EuiDatePicker
                       selected={selectedTimeEnd}
                       onChange={handleChangeEnd}
@@ -551,6 +663,7 @@ const ModalFormAddIssued = () => {
                       timeIntervals={1}
                       dateFormat="HH:mm" 
                       timeFormat="HH:mm" 
+                      placeholderText="--:--"
                     />
                 </EuiFormRow>
 
@@ -595,7 +708,7 @@ const ModalFormAddIssued = () => {
                   )}
                 </div>
               </EuiFlexGrid>
-            </EuiForm>
+          </EuiForm>
           </EuiModalBody>
           <EuiModalFooter>
             <EuiButton

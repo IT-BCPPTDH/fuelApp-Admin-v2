@@ -286,13 +286,6 @@ const DetailPage = () => {
         </EuiText>
         <EuiText style={{ marginTop: "20px" }}>
           {" "}
-          <h2>Summary All</h2>
-        </EuiText>
-        <div style={{ marginTop: "20px" }}>
-          <CardStasion cardsData={cardsDataAll} />
-        </div>
-        <EuiText style={{ marginTop: "20px" }}>
-          {" "}
           <h2>Summary Day Shift</h2>
         </EuiText>
         <div style={{ marginTop: "20px" }}>
@@ -304,6 +297,13 @@ const DetailPage = () => {
         </EuiText>
         <div style={{ marginTop: "20px" }}>
           <CardStasion cardsData={cardsDataShiftNigth} />
+        </div>
+        <EuiText style={{ marginTop: "20px" }}>
+          {" "}
+          <h2>Summary All</h2>
+        </EuiText>
+        <div style={{ marginTop: "20px" }}>
+          <CardStasion cardsData={cardsDataAll} />
         </div>
         <div className="mt20">
           <TableData />

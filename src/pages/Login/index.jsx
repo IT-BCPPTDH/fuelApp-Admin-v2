@@ -111,13 +111,13 @@ const LoginUser = () => {
           </div>
 
           <div className="button-container">
-            <EuiButton
+            {/* <EuiButton
               style={{ background: "#ffffff", color: "#73a440", border: "solid 0.8px" }}
               fullWidth
               onClick={() => navigate('/')}
             >
               Back To Home
-            </EuiButton>
+            </EuiButton> */}
           </div>
         </EuiForm>
       </EuiCard>

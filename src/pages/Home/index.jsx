@@ -25,6 +25,7 @@ const HomePage = () => {
   const [selectDate, setSelectDate] = useState(initialDate);
   const [selectedOption, setSelectedOption] = useState(initialOpt);
   const [opt, setOpt] = useState({ tanggal: initialDate, option: initialOpt });
+  const [dateFormatted, setDateFormatted] = useState("")
   const handleChageDate = (date) => {
     setSelectDate(date);
   };
