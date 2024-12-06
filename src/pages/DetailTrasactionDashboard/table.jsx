@@ -11,7 +11,7 @@ import { DataTrx } from './data';
 import { useNavigate } from 'react-router-dom'; 
 import { useParams } from "react-router-dom";
 import stationService from '../../services/stationDashboard';
-import EditStationTransaction from '../../components/ModalForm/editStationTransaction';
+import EditStationTransaction from '../../components/ModalForm/EditStationTransaction';
 
 
 const TableData = () => {
