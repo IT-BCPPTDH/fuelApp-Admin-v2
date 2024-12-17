@@ -103,6 +103,8 @@ const ModalFormDataEdit = ({row}) => {
   const [userData, setUserData] = useState([])
   const [equipData, setEquipData] = useState([])
   const [limitedSet, setLimitedSet] = useState({})
+  const [imgUrl, setImgUrl] = useState([])
+  const [signUrl, setSignUrl] = useState([])
   const [errors, setErrors] = useState({});
   const [optJde, setOptJde] = useState([])
 
@@ -224,22 +226,45 @@ const ModalFormDataEdit = ({row}) => {
     setTrxType(value);
   };
 
+  const handleValidation = () => {
+    const newErrors = {};
+  
+    if (!formData.no_unit) newErrors.no_unit = "Unit number is required";
+    if (!formData.type) newErrors.type = "type is required";
+    if (!formData.hm_km) newErrors.hm_km = "Hmkm ID is required";
+    if (!formData.qty) newErrors.qty = "Qty is required";
+    if (!formData.flow_end) newErrors.flow_end = "Flow end is required";
+    if (!formData.flow_start) newErrors.flow_start = "Flow Start is required";
+    if (!formData.jde_operator) newErrors.jde_operator = "Jde operator is required";
+    if (!formData.start) newErrors.start = "Start time is required";
+    if (!formData.end) newErrors.end = "End time is required";
+  
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0; 
+  };
+
   const handleSubmitData = async () => {
     closeModal();
-    try {
-      const res = await formService.updateData({ id: row.id, ...formData, updated_by: user.JDE });
-      if (res.status === "200") {
-        setEditStatus('Success!');
-        setEditMessage('Data successfully saved!');
-      } else {
-        throw new Error('Data not saved! Please try again.');
+    const isValid =  handleValidation()
+    if(!isValid){
+      closeConfirmEditModal()
+      setIsModalVisible(true)
+    }else{
+      try {
+        const res = await formService.updateData({ id: row.id, ...formData, updated_by: user.JDE });
+        if (res.status === "200") {
+          setEditStatus('Success!');
+          setEditMessage('Data successfully saved!');
+        } else {
+          throw new Error('Data not saved! Please try again.');
+        }
+      } catch (error) {
+        console.error('Error updating data:', error);
+        setEditStatus('Error');
+        setEditMessage('Terjadi kesalahan saat update data. Data tidak tersimpan!');
+      } finally {
+        showEditModal(); 
       }
-    } catch (error) {
-      console.error('Error updating data:', error);
-      setEditStatus('Error');
-      setEditMessage('Terjadi kesalahan saat update data. Data tidak tersimpan!');
-    } finally {
-      showEditModal(); 
     }
   };
   
@@ -393,6 +418,48 @@ const ModalFormDataEdit = ({row}) => {
     setOptJde((prev) => [...prev, newOption]);
   };
 
+  const fetchImage = async (photo) => {
+    if (imgUrl[photo]) return; 
+
+    try {
+      const response = await fetch(`${URL_API.generateImg}${photo}`, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'image/png', 
+        },
+      });
+      if (!response.ok) {
+        throw new Error('Failed to fetch image');
+      }
+      const imageBlob = await response.blob();
+      const imageUrl = URL.createObjectURL(imageBlob);
+      setImgUrl((prevUrls) => ({ ...prevUrls, [photo]: imageUrl }));
+    } catch (error) {
+      console.error('Error fetching image:', error);
+    }
+  };
+
+  const fetchSign = async (sign) => {
+    if (signUrl[sign]) return; 
+
+    try {
+      const response = await fetch(`${URL_API.generateSign}${sign}`, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'image/png', 
+        },
+      });
+      if (!response.ok) {
+        throw new Error('Failed to fetch image');
+      }
+      const imageBlob = await response.blob();
+      const imageUrl = URL.createObjectURL(imageBlob);
+      setSignUrl((prevUrls) => ({ ...prevUrls, [sign]: imageUrl }));
+    } catch (error) {
+      console.error('Error fetching image:', error);
+    }
+  };
+
   return (
     <>
      <EuiButtonIcon iconType="pencil"  onClick={() => setIsModalVisible(true)}>Edit</EuiButtonIcon>
@@ -408,17 +475,18 @@ const ModalFormDataEdit = ({row}) => {
           </EuiModalHeader>
             <EuiModalBody>
             <EuiForm id={modalFormId} component="form">
-                 <EuiFlexGrid columns={2}>
-                    <EuiFormRow label="No Unit">
-                      <CreatableSelect styles={customStyles} options={options}
-                        value={getSelectedUnit(formData.no_unit)}
-                        filterOption={filterUnit} 
-                        onChange={handleUnitChange}
-                        onCreateOption={handleCreateUnit}
-                        isSearchable
-                        isClearable
-                      />
-                    </EuiFormRow>
+              <EuiFlexGrid columns={2}>
+               <EuiFormRow label="No Unit" isInvalid={!!errors.no_unit} error={errors.no_unit}>
+                 <CreatableSelect styles={customStyles} options={options}
+                   value={getSelectedUnit(formData.no_unit)}
+                   filterOption={filterUnit} 
+                   onChange={handleUnitChange}
+                   onCreateOption={handleCreateUnit}
+                   isSearchable
+                   isClearable
+                 />
+               </EuiFormRow>
+
                 <EuiFormRow style={{marginTop:"0px"}} label="Model Unit">
                   <EuiFieldText 
                     name='model'
@@ -436,7 +504,14 @@ const ModalFormDataEdit = ({row}) => {
                     />
                 </EuiFormRow>
 
-                <div style={{display:"flex", gap:"15px", marginTop:"40px"}}>
+                <EuiFormRow 
+                  label="Pilih Tipe" 
+                  isInvalid={!!errors.type} 
+                  error={errors.type}
+                  style={{ marginTop: "20px" }}
+                >
+
+                  <div style={{display:"flex", gap:"15px", marginTop:"5px"}}>
                    <EuiRadio 
                     label="Issued"
                     id="issued"
@@ -467,6 +542,8 @@ const ModalFormDataEdit = ({row}) => {
                     />
                 </div>
 
+                </EuiFormRow>
+
                 <EuiFormRow label="HM/KM Unit" style={{marginTop:"0px"}}>
                    <EuiFieldText 
                     name='hm_km'
@@ -475,7 +552,7 @@ const ModalFormDataEdit = ({row}) => {
                   />
                 </EuiFormRow>
 
-                <EuiFormRow label="HM/KM Terakhir Transaksi" style={{marginTop:"0px"}}>
+                <EuiFormRow label="HM/KM Terakhir Transaksi" style={{marginTop:"0px"}} isInvalid={!!errors.hm_km} error={errors.hm_km}>
                    <EuiFieldText 
                     name='hm_last'
                     placeholder='Input'
@@ -485,7 +562,7 @@ const ModalFormDataEdit = ({row}) => {
                   />
                 </EuiFormRow>
                   
-                <EuiFormRow label="Qty" >
+                <EuiFormRow label="Qty" isInvalid={!!errors.qty} error={errors.qty}>
                   <EuiFieldText 
                   placeholder='Input'
                   name='qty'
@@ -505,7 +582,7 @@ const ModalFormDataEdit = ({row}) => {
                 />
                 </EuiFormRow>
 
-                <EuiFormRow label="Flow Meter Awal" style={{marginTop:"0px"}}>
+                <EuiFormRow label="Flow Meter Awal" style={{marginTop:"0px"}} isInvalid={!!errors.flow_start} error={errors.flow_start}>
                    <EuiFieldText 
                     name='flow_start'
                     value={formData.flow_start}
@@ -514,7 +591,7 @@ const ModalFormDataEdit = ({row}) => {
                   />
                 </EuiFormRow>
 
-                <EuiFormRow label="Flow Meter Akhir" style={{marginTop:"0px"}}>
+                <EuiFormRow label="Flow Meter Akhir" style={{marginTop:"0px"}} isInvalid={!!errors.flow_end} error={errors.flow_end}>
                    <EuiFieldText 
                     name='flow_end'
                     value={formData.flow_end}
@@ -523,7 +600,7 @@ const ModalFormDataEdit = ({row}) => {
                   />
                 </EuiFormRow>
 
-                <EuiFormRow label="Employee Id">
+                <EuiFormRow label="Employee Id" isInvalid={!!errors.jde_operator} error={errors.jde_operator}>
                 <CreatableSelect styles={customStyles} 
                     options={optJde}
                     filterOption={filterEmployee} 
@@ -533,16 +610,6 @@ const ModalFormDataEdit = ({row}) => {
                     isSearchable
                     isClearable
                   />
-                    {/* <EuiSelect
-                    options={userData.map(items => ({
-                      value: items.JDE,  
-                      text: items.JDE  
-                    }))}
-                    value={formData.jde_operator}  
-                    onChange={handleUserChange} 
-                    hasNoInitialSelection
-                    >
-                    </EuiSelect> */}
                 </EuiFormRow>
 
                 <EuiFormRow label="Nama Operator/Driver">
@@ -554,7 +621,7 @@ const ModalFormDataEdit = ({row}) => {
                 />
                 </EuiFormRow>
 
-                <EuiFormRow label="Jam Awal">
+                <EuiFormRow label="Jam Awal" isInvalid={!!errors.start} error={errors.start}>
                     <EuiDatePicker
                       selected={formData.start}
                       onChange={handleChageStart}
@@ -566,7 +633,7 @@ const ModalFormDataEdit = ({row}) => {
                     />
                 </EuiFormRow>
 
-                <EuiFormRow label="Jam Akhir">
+                <EuiFormRow label="Jam Akhir" isInvalid={!!errors.end} error={errors.end}>
                     <EuiDatePicker
                       selected={formData.end}
                       onChange={handleChangeEnd}
@@ -578,18 +645,47 @@ const ModalFormDataEdit = ({row}) => {
                     />
                 </EuiFormRow>
 
-                <EuiFormRow label="Ambil Foto">
-                  <input
-                    type="file"
-                    onChange={onFileChange}
-                  />
-                </EuiFormRow>
-                <EuiFormRow label="Tanda Tangan">
-                  <input
-                    type="file"
-                    onChange={onSignChange}
-                  />
-                </EuiFormRow>
+                <div>
+                  <EuiFormRow label="Ambil Foto">
+                    <input type="file" accept="image/*" onChange={onFileChange} />
+                  </EuiFormRow>
+                  {formData.photo && (
+                    <div style={{ marginTop: '20px', textAlign: 'center' }}>
+                      <img
+                        src={formData.photo}
+                        alt="Uploaded"
+                        style={{
+                          width: '250px',
+                          height: '250px',
+                          objectFit: 'cover',
+                          border: '1px solid #ccc',
+                          borderRadius: '10px',
+                        }}
+                      />
+                    </div>
+                  )}
+                </div>
+                
+                <div>
+                  <EuiFormRow label="Tanda Tangan">
+                    <input type="file" accept="image/*" onChange={onSignChange} />
+                  </EuiFormRow>
+                  {formData.signature && (
+                    <div style={{ marginTop: '20px', textAlign: 'center' }}>
+                      <img
+                        src={formData.signature}
+                        alt="Uploaded"
+                        style={{
+                          width: '250px',
+                          height: '250px',
+                          objectFit: 'cover',
+                          border: '1px solid #ccc',
+                          borderRadius: '10px',
+                        }}
+                      />
+                    </div>
+                  )}
+                </div>
               </EuiFlexGrid>
             </EuiForm>
           </EuiModalBody>

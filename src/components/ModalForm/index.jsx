@@ -23,6 +23,50 @@ import UserService from '../../services/UserService';
 import EquipService from '../../services/EquiptmentService';
 import dailyQuotaService from '../../services/dailyQuotaService';
 import stationService from '../../services/stationDashboard';
+import CreatableSelect from "react-select/creatable";
+
+const customStyles = {
+  indicatorSeparator: (base) => ({
+    ...base,
+    width: "1px",          
+    marginBottom: "12px",   
+    marginTop:"0px"
+  }),
+  dropdownIndicator: (base, state) => ({
+    ...base,
+    marginBottom:  "10px",
+  }),
+  control: (base) => ({
+    ...base,
+    height: "30px", 
+    margin: "0px"
+  }),
+  menu: (base) => ({
+    ...base,
+    fontSize: "14px",
+  }),
+  singleValue: (base) => ({
+    ...base,
+    fontSize: "16px", 
+    color: "#333", 
+    marginBottom:"10px",
+  }),
+  placeholder: (base) => ({
+    ...base,
+    marginBottom:"10px",
+    fontSize: "14px",
+    color: "#aaa",
+  }),
+  clearIndicator: (base) => ({
+    ...base,
+    marginBottom:"10px",
+  }),
+  input: (provided) => ({
+    ...provided,
+    fontSize: '16px',
+    marginBottom:"10px",
+  }),
+};
 
 const ModalForm = () => {
   const daily = [{id:1, shift: 'Day'}, {id:2, shift: 'Night'}]
@@ -56,6 +100,7 @@ const ModalForm = () => {
   const [equipData, setEquipData] = useState([])
   const [stationData, setStationData] = useState([])
   const [errorMessage, setErrorMessage] = useState(false)
+  const [errors, setErrors] = useState({});
 
   const [isSubmitResult, setIsSubmitResult] = useState(false)
   const [submitMessage, setSubmitMessage] = useState('');
@@ -72,47 +117,58 @@ const ModalForm = () => {
     setIsConfirmAddStatus(false)
   }
 
-  // Handle file selection
-  const onFileChange = (event) => {
+  const convertToBase64 = (file) => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = (error) => reject(error);
+    });
+  };
+
+  const onFileChange = async(event) => {
     const file = event.target.files[0];
-    setPicture(file);
+    const base64 = await convertToBase64(file);
+    setPicture(base64);
   };
 
   const handleSubmitData = async () => {
-    try {
-      const data = {
-        date :tanggal,
-        time:Waktu,
-        shift: shift,
-        unit_no: nomorUnit,
-        model:model,
-        hmkm:hmkm,
-        station: station,
-        quota_request: qty,
-        reason:reason,
-        document: picture,
-        request_by: idReq,
-        request_name:nameReq,
-        approve_by:idAprv,
-        approve_name: nameApprv,
-        created_by: user.JDE
-      };
-      if(!nomorUnit){
-        setErrorMessage(true)
+    const isValid =  handleValidation()
+    if(!isValid){
+      setIsModalVisible(true)
+    }else{
+      try {
+        const data = {
+          date :tanggal,
+          time:Waktu,
+          shift: shift,
+          unit_no: nomorUnit,
+          model:model,
+          hmkm:hmkm,
+          station: station,
+          quota_request: qty,
+          reason:reason,
+          document: picture,
+          request_by: idReq,
+          request_name:nameReq,
+          approve_by:idAprv,
+          approve_name: nameApprv,
+          created_by: user.JDE
+        };
+        const res = await requestService.insertRequest(data)
+        if (res.status === '201') {
+          setSubmitStatus('Success!');
+          setSubmitMessage('Data successfully saved!');
+        } else {
+          setSubmitStatus('Failed');
+          setSubmitMessage('Data not saved!');
+        }
+      } catch (error) {
+        setSubmitStatus('Error');
+        setSubmitMessage('Terjadi kesalahan saat update data. Data tidak tersimpan!');
+      } finally {
+        showSubmitModal();
       }
-      const res = await requestService.insertRequest(data)
-      if (res.status === '201') {
-        setSubmitStatus('Success!');
-        setSubmitMessage('Data successfully saved!');
-      } else {
-        setSubmitStatus('Failed');
-        setSubmitMessage('Data not saved!');
-      }
-    } catch (error) {
-      setSubmitStatus('Error');
-      setSubmitMessage('Terjadi kesalahan saat update data. Data tidak tersimpan!');
-    } finally {
-      showSubmitModal();
     }
   };
 
@@ -186,15 +242,13 @@ const ModalForm = () => {
     };
     fetchUnit()
     fetchUser()
-    fetchStation()
+    // fetchStation()
   }, [tanggal]);
 
-
-  const handleApprovalChange = (e) => {
-    const val = String(e.target.value)
-    const itemSelected = equipData.find((units)=> units.unit_no === val)
+  const handleApprovalChange = (val) => {
+    const itemSelected = equipData.find((units)=> units.unit_no === val?.value)
     if(itemSelected){
-      setNomorUnit(val)
+      setNomorUnit(val.value)
       setModel(itemSelected.model)
     }
   }
@@ -204,20 +258,18 @@ const ModalForm = () => {
     setStation(val)
   }
 
-  const handleUserChange = (e) => {
-    const val = String(e.target.value)
-    const itemSelected = userData.find((item)=> item.JDE === val)
+  const handleUserChange = (val) => {
+    const itemSelected = userData.find((item)=> item.JDE === val?.value)
     if(itemSelected){
       setidReq(itemSelected.JDE)
       setnameReq(itemSelected.fullname)
     }
   }
 
-  const handleUserApproveChange = (e) => {
-    const val = String(e.target.value)
-    const itemSelected = userData.find((item)=> item.JDE === val)
+  const handleUserApproveChange = (val) => {
+    const itemSelected = userData.find((item)=> item.JDE === val?.value)
     if(itemSelected){
-      setidAprv(val)
+      setidAprv(val.value)
       setnameApprv(itemSelected.fullname)
     }
     setErrorMessage(false)
@@ -235,9 +287,43 @@ const ModalForm = () => {
     setWaktu(formattedDates)
   };
 
+  const filterUnit = (option, inputValue) => {
+    const searchValue = String(inputValue).toLowerCase();
+    return (
+      option.value.toLowerCase().includes(searchValue) 
+    );
+  };
+
+  const filterReq = (option, inputValue) => {
+    const searchValue = String(inputValue).toLowerCase();
+    return (
+      option.value.toLowerCase().includes(searchValue) 
+    );
+  };
+
+  const filterApprove = (option, inputValue) => {
+    const searchValue = String(inputValue).toLowerCase();
+    return (
+      option.value.toLowerCase().includes(searchValue) 
+    );
+  };
+
+  const handleValidation = () => {
+    const newErrors = {};
+  
+    if (!nomorUnit) newErrors.nomorUnit = "Unit number is required";
+    if (!shift) newErrors.shift = "Shift is required";
+    if (!qty) newErrors.qty = "Qty ID is required";
+    if (!idReq) newErrors.idReq = "Id request is required";
+    if (!idAprv) newErrors.idAprv = "Id Approval end is required";
+  
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0; 
+  };
+
   return (
     <>
-      <EuiButton style={{background:"#1B46D9", color:"white"}}  onClick={showModal}>Tambah Kouta</EuiButton>
+      <EuiButton style={{background:"#1B46D9", color:"white"}}  onClick={showModal}>Tambah Quota</EuiButton>
       {isModalVisible && (
         <EuiModal
           aria-labelledby={modalTitleId}
@@ -246,7 +332,7 @@ const ModalForm = () => {
           style={{ width: "880px" }}
         >
           <EuiModalHeader>
-            <EuiModalHeaderTitle id={modalTitleId}> Tambah Kouta</EuiModalHeaderTitle>
+            <EuiModalHeaderTitle id={modalTitleId}> Tambah Quota</EuiModalHeaderTitle>
           </EuiModalHeader>
           <EuiModalBody>
             <EuiForm id={modalFormId} component="form">
@@ -261,54 +347,9 @@ const ModalForm = () => {
                     />
                   </EuiFormRow>
                 </EuiFlexItem>
-                <EuiFlexItem>
-                  <EuiFormRow label="Time">
-                    <EuiDatePicker
-                      selected={selectedTime}
-                      onChange={handleChageTime}
-                      showTimeSelect
-                      showTimeSelectOnly
-                      timeIntervals={1}
-                      dateFormat="hh:mm "
-                    />
-                  </EuiFormRow>
-                </EuiFlexItem>
-                <EuiFormRow label="Unit No"
-                isInvalid={errorMessage}
-                error={errorMessage ? 'Silahkan pilih unit lebih dahulu' : undefined}
-                >
+                <EuiFormRow style={{marginTop:"20px"}}>
                   <EuiSelect
-                   options={equipData.map(items => ({
-                    value: items.unit_no,  
-                    text: items.unit_no  
-                  }))}
-                  value={nomorUnit}  
-                  onChange={handleApprovalChange}  
-                  hasNoInitialSelection
-                  >
-                  </EuiSelect>
-                </EuiFormRow>
-                <EuiFormRow style={{marginTop:"0px"}}label="Station">
-                <EuiSelect
-                   options={stationData.map(items => ({
-                    value: items.fuel_station_name,  
-                    text: items.fuel_station_name  
-                  }))}
-                  value={station}  
-                  onChange={handleStationChange}  
-                  hasNoInitialSelection
-                  >
-                  </EuiSelect>
-                </EuiFormRow>
-                <EuiFormRow style={{marginTop:"0px"}}label="Model Unit">
-                  <EuiFieldText 
-                  name='model'
-                  placeholder='Model Unit'
-                  value={model}
-                  disabled />
-                </EuiFormRow>
-                <EuiFormRow style={{marginTop:"0px"}}label="Shift">
-                <EuiSelect
+                  
                    options={daily.map(items => ({
                     value: items.shift,  
                     text: items.shift  
@@ -319,54 +360,78 @@ const ModalForm = () => {
                   >
                   </EuiSelect>
                 </EuiFormRow>
-                <EuiFormRow label="Id Request">
-                  <EuiSelect
-                    options={userData.map(items => ({
-                      value: items.JDE,  
-                      text: items.JDE  
-                    }))}
-                    value={idReq}  
-                    onChange={handleUserChange}  
-                    hasNoInitialSelection
-                  >
-                    {/* Add options here */}
-                  </EuiSelect>
+                <EuiFormRow label="Unit No"
+                  isInvalid={errorMessage}
+                  error={errorMessage ? 'Silahkan pilih unit lebih dahulu' : undefined}
+                >
+                  <CreatableSelect styles={customStyles} 
+                   options={equipData.map(items => ({
+                    label: items.unit_no,  
+                    value: items.unit_no  
+                  }))}
+                  filterOption={filterUnit} 
+                  onChange={handleApprovalChange}
+                  isSearchable
+                  isClearable
+                  />
                 </EuiFormRow>
-                <EuiFormRow label="Name Request">
+                <EuiFormRow style={{marginTop:"20px"}}label="Model Unit">
+                  <EuiFieldText 
+                  name='model'
+                  placeholder='Model Unit'
+                  value={model}
+                  disabled />
+                </EuiFormRow>
+                <EuiFormRow label="Id Request"
+                isInvalid={errorMessage}
+                error={errorMessage ? 'Silahkan pilih Id Request lebih dahulu' : undefined}
+                >
+                  <CreatableSelect styles={customStyles} 
+                    options={userData.map(items => ({
+                      label: items.JDE,  
+                      value: items.JDE  
+                    }))}
+                    filterOption={filterReq} 
+                    onChange={handleUserChange}
+                    isSearchable
+                    isClearable
+                  />
+                </EuiFormRow>
+                <EuiFormRow label="Name of Requester">
                   <EuiFieldText 
                   name='request'
                   placeholder='Request Name'
                   value={nameReq}
                   disabled />
                 </EuiFormRow>
-                <EuiFormRow label="Id Apporoval">
-                  <EuiSelect
-                  options={userData.map(items => ({
-                    value: items.JDE,  
-                      text: items.JDE
-                  }))}
-                  value={idAprv}  
-                  onChange={handleUserApproveChange}  // fungsi yang memproses perubahan
-                  hasNoInitialSelection
-                  >
-                    {/* Add options here */}
-                  </EuiSelect>
+                <EuiFormRow label="Id Approver"
+                isInvalid={errorMessage}
+                error={errorMessage ? 'Silahkan pilih Id Approval lebih dahulu' : undefined}>
+                  <CreatableSelect styles={customStyles} 
+                    options={userData.map(items => ({
+                      label: items.JDE,  
+                      value: items.JDE  
+                    }))}
+                    filterOption={filterApprove} 
+                    onChange={handleUserApproveChange}
+                    isSearchable
+                    isClearable
+                  />
                 </EuiFormRow>
-                <EuiFormRow label="Name Appove">
+                <EuiFormRow label="Name of Approver">
                   <EuiFieldText 
                   name='approval'
                   placeholder='Approval Name'
                   value={nameApprv}
                   disabled />
                 </EuiFormRow>
-                <EuiFormRow label="HmKm">
-                  <EuiFieldText 
-                  name='hmkm'
-                  placeholder='Input Hm Km'
-                  onChange={(e)=> setHmkm(e.target.value)}
-                  />
+                <EuiFormRow label="Reason">
+                  <EuiTextArea  
+                   placeholder='Input Text'
+                   onChange={(e)=> setReason(e.target.value)}
+                   />
                 </EuiFormRow>
-                <EuiFormRow label="Quantity Qouta"
+                <EuiFormRow label="Quantity Quota"
                 isInvalid={errorMessage}
                 error={errorMessage ? 'Silahkan isi jumlah quota lebih dahulu' : undefined}
                 >
@@ -376,18 +441,29 @@ const ModalForm = () => {
                     onChange={(e)=> setQty(e.target.value)}
                   />
                 </EuiFormRow>
-                <EuiFormRow label="Reason">
-                  <EuiTextArea  
-                   placeholder='Input Text'
-                   onChange={(e)=> setReason(e.target.value)}
-                   />
-                </EuiFormRow>
-                <EuiFormRow label="Upload Image">
-                  <input
-                    type="file"
-                    onChange={onFileChange}
-                  />
-                </EuiFormRow>
+                <div>
+                  <EuiFormRow label="Ambil Foto"
+                  isInvalid={errorMessage}
+                  error={errorMessage ? 'Silahkan masukkan file' : undefined}
+                  >
+                    <input type="file" accept="image/*" onChange={onFileChange} />
+                  </EuiFormRow>
+                  {picture && (
+                    <div style={{ marginTop: '20px', textAlign: 'center' }}>
+                      <img
+                        src={picture}
+                        alt="Uploaded"
+                        style={{
+                          width: '250px',
+                          height: '250px',
+                          objectFit: 'cover',
+                          border: '1px solid #ccc',
+                          borderRadius: '10px',
+                        }}
+                      />
+                    </div>
+                  )}
+                </div>             
               </EuiFlexGrid>
             </EuiForm>
           </EuiModalBody>

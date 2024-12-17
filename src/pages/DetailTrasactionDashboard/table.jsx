@@ -108,8 +108,6 @@ const TableData = () => {
     <EuiButton   style={{ background: "#73A33F", color: "white" }}
       onClick={() => alert('Export button clicked')}>Export </EuiButton>
     </>
-   
-
   );
 
   useEffect(() => {
