@@ -442,7 +442,10 @@ const ModalForm = () => {
                   />
                 </EuiFormRow>
                 <div>
-                  <EuiFormRow label="Ambil Foto">
+                  <EuiFormRow label="Ambil Foto"
+                  isInvalid={errorMessage}
+                  error={errorMessage ? 'Silahkan masukkan file' : undefined}
+                  >
                     <input type="file" accept="image/*" onChange={onFileChange} />
                   </EuiFormRow>
                   {picture && (
