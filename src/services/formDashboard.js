@@ -74,7 +74,6 @@ const updateData = async (requestBody) => {
     }
   };
   
-  
 
 const delData = async (id) => {
     try {

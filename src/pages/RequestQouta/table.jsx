@@ -10,6 +10,8 @@ import { Data } from './data'; // Ensure this path is correct
 import { useNavigate } from 'react-router-dom'; 
 import ModalForm from '../../components/ModalForm';
 import requestService from '../../services/requestQuota';
+import { URL_API } from '../../utils/Enums';
+import ModalPicture from '../../components/ModalForm/modalPicture'
 
 
 const TableData = () => {
@@ -20,12 +22,32 @@ const TableData = () => {
   const [showPerPageOptions, setShowPerPageOptions] = useState(true);
   const [tables, setTables] = useState([])
   const date = JSON.parse(localStorage.getItem('formattedDatesReq'));
+  const [imgUrl, setImgUrl] = useState([])
+
+  const fetchImage = async (photo) => {
+    if (imgUrl[photo]) {
+      return;
+    }
+
+    try {
+      const response = await fetch(`${URL_API.generateImgReq}${photo}`, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'image/png', 
+        },
+      });
+      if (!response.ok) {
+        throw new Error('Failed to fetch image');
+      }
+      const imageBlob = await response.blob();
+      const imageUrl = URL.createObjectURL(imageBlob);
+      setImgUrl((prevUrls) => ({ ...prevUrls, [photo]: imageUrl }));
+    } catch (error) {
+      console.error('Error fetching image:', error);
+    }
+  };
 
   const columns = [
-    // {
-    //   field: index+1,
-    //   name: 'No',
-    // },
     {
       field: 'date',
       name: 'Tanggal',
@@ -37,16 +59,6 @@ const TableData = () => {
     {
       field: 'unit_no',
       name: 'No Unit',
-      truncateText: true,
-    },
-    {
-      field: 'station',
-      name: 'Station',
-      truncateText: true,
-    },
-    {
-      field: 'time',
-      name: 'Waktu',
       truncateText: true,
     },
     {
@@ -68,6 +80,13 @@ const TableData = () => {
       field: 'document',
       name: 'Form Permintaan',
       truncateText: true,
+      render: (document) => {
+        return imgUrl[document] ? (
+          <ModalPicture photo={imgUrl[document]} />
+        ) : (
+          <ModalPicture photo={document} />
+        );
+      },
     },
     {
       field: 'reason',
@@ -75,12 +94,6 @@ const TableData = () => {
       truncateText: true,
     },
   ];
-
-  // const handleRowClick = (item) => {
- 
-  //   navigate(`/details/${item.station}`); 
-    
-  // };
 
   const getRowProps = (item) => ({
     'data-test-subj': `row-${item.unit_no}`,
@@ -151,6 +164,9 @@ const TableData = () => {
             setTables([]);
           }else{
             setTables(res.data);
+            await Promise.all(res.data.map(async (item) => {
+              if(item.document) await fetchImage(item.document)
+            }))
           }
         } catch (error) {
           console.log(error)

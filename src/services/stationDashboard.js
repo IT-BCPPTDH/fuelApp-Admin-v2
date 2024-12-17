@@ -35,12 +35,12 @@ const tableStation = async (requestBody) => {
 
 const editTrxStation = async (requestBody) => {
     try {
-        // const response = await api.put(URL_API.editStation, requestBody, {
-        //     headers: {
-        //         'Content-Type': 'application/json',
-        //     },
-        // });
-        // return response.data;
+        const response = await api.put(URL_API.editStation, requestBody, {
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        });
+        return response.data;
         return true
     } catch (error) {
         console.error('Error fetching data:', error.message);

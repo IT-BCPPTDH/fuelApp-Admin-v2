@@ -281,6 +281,24 @@ const EditStationTransaction = ({row}) => {
       }
     };
 
+    const handleDelete = async () => {
+      try {
+        const res = await stationService.delTrxStation(row.lkf_id);
+        if (res.status === '200') {
+          setResultStatus('success');
+          setResultMessage('Data berhasil dihapus');
+        } else {
+          setResultStatus('failure');
+          setResultMessage('Data gagal dihapus');
+        }
+      } catch (error) {
+        setResultStatus('error');
+        setResultMessage('Terjadi kesalahan saat menghapus data');
+      } finally {
+        showResultModal();
+      }
+    };
+
     const filterStation = (option, inputValue) => {
       const searchValue = inputValue.toLowerCase();
       return (
@@ -439,13 +457,13 @@ const EditStationTransaction = ({row}) => {
             </EuiModal>
           )}
     
-          {/* <EuiButtonIcon
+          <EuiButtonIcon
             iconType="trash"
             aria-label="Delete"
             color="danger"
-            // onClick={() => showConfirmModal()}
+            onClick={() => showConfirmModal()}
             title="Delete"
-          /> */}
+          />
          
     
           {isEditResult && (

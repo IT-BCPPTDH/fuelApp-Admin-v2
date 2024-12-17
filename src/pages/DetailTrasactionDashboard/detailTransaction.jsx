@@ -56,6 +56,9 @@ const DetailsPageTransaction = () => {
   const [pageIndex, setPageIndex] = useState(0);
   const [pageSize, setPageSize] = useState(10);
 
+  const [imgUrl, setImgUrl] = useState([])
+  const [signUrl, setSignUrl] = useState([])
+
   const breadcrumbs = [
     {
       text: 'Dashboard',
@@ -89,7 +92,7 @@ const DetailsPageTransaction = () => {
       {
         title: formTotal.stock ? formTotal.stock + ' Ltrs'  : 0 + ' Ltrs' ,
         description1: "Stock",
-        description2: "(onHand)",
+        description2: "(Opening stock + Receipt)",
         icon: Icon1,
       },
       {
@@ -173,8 +176,6 @@ const DetailsPageTransaction = () => {
     fetchTable()
   }, []);
 
-  const data = DataTrxDetails || [];
-
   const columns = [
     {
         field: 'no_unit',
@@ -254,7 +255,14 @@ const DetailsPageTransaction = () => {
       align:'center',
       width:'10vh',
       truncateText: true,
-      render: (signature) => <ModalSign signature={signature} />,
+      // render: (signature) => <ModalSign signature={signature} />,
+      render: (signature) => {
+        return signUrl[signature] ? (
+          <ModalSign signature={signUrl[signature]} />
+        ) : (
+          <ModalSign signature={signature} />
+        );
+      },
     },
     {
       field: 'photo',
@@ -262,7 +270,13 @@ const DetailsPageTransaction = () => {
       align:'center',
       width:'10vh',
       truncateText: true,
-      render: (photo) => <ModalPicture photo={photo} />,
+      render: (photo) => {
+        return imgUrl[photo] ? (
+          <ModalPicture photo={imgUrl[photo]} />
+        ) : (
+          <ModalPicture photo={photo} />
+        );
+      },
     },
     {
       field: 'type',
@@ -298,6 +312,50 @@ const DetailsPageTransaction = () => {
       truncateText: true,
     },
   ];
+
+  const fetchImage = async (photo) => {
+    if (imgUrl[photo]) return; 
+
+    try {
+      const response = await fetch(`${URL_API.generateImg}${photo}`, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'image/png', 
+        },
+      });
+      if (!response.ok) {
+        throw new Error('Failed to fetch image');
+      }
+      const imageBlob = await response.blob();
+      const imageUrl = URL.createObjectURL(imageBlob);
+      console.log(imageUrl)
+      setImgUrl((prevUrls) => ({ ...prevUrls, [photo]: imageUrl }));
+    } catch (error) {
+      console.error('Error fetching image:', error);
+    }
+  };
+
+  console.log(imgUrl)
+  const fetchSign = async (sign) => {
+    if (signUrl[sign]) return; 
+
+    try {
+      const response = await fetch(`${URL_API.generateSign}${sign}`, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'image/png', 
+        },
+      });
+      if (!response.ok) {
+        throw new Error('Failed to fetch image');
+      }
+      const imageBlob = await response.blob();
+      const imageUrl = URL.createObjectURL(imageBlob);
+      setSignUrl((prevUrls) => ({ ...prevUrls, [sign]: imageUrl }));
+    } catch (error) {
+      console.error('Error fetching image:', error);
+    }
+  };
 
   const getCellProps = (item, column) => ({
     className: 'customCellClass',
@@ -340,18 +398,24 @@ const DetailsPageTransaction = () => {
           throw new Error('Network response was not ok');
         }
         setformData(res.data);
+        await Promise.all(res.data.map(async (item) => {
+          if(item.photo) await fetchImage(item.photo)
+          if(item.sign) await fetchSign(item.sign)
+        }
+          
+        ));
       } catch (error) {
         console.log(error)
         // setError(error);
       } 
     };
+    // fetchImg();
     fetchTable()
-  }, []);
+  }, [setformData]);
 
   const openNewTab = () => {
     window.open(`/form_lkf/Lkf_print.html?id=${lkfId}`, '_blank', 'noopener,noreferrer');
   }
-
 
   const handleExport = async () => {
     try {
@@ -360,7 +424,6 @@ const DetailsPageTransaction = () => {
         lkfId: lkfId
       }
       const response = await reportService.reportLkf(data);
-      console.log(response)
       if (response.status === "200") { 
         const reportLink = response.link;
         window.location.href = URL_API.generateReport + reportLink
@@ -426,7 +489,6 @@ const DetailsPageTransaction = () => {
 
   return (
     <>
-     
       <div className="padding-content">
         <div style={{ marginTop: "20px" }}>
           <DynamicPageHeader

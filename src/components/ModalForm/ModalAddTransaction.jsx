@@ -217,25 +217,28 @@ const ModalFormAddIssued = () => {
   };
   
   const handleChageStart = (time) => {
-    const formattedDates = moment(time).format('hh:mm:ss');
+    const formattedDates = moment(time).format("HH:mm:ss"); 
     setFormData((prevFormData) => ({
       ...prevFormData,
       start: formattedDates,
     }));
-    setSelectedTime(time)
+    setSelectedTime(time);
   };
-
+  
   const handleChangeEnd = (time) => {
     const formattedEnd = moment(time).format("HH:mm:ss");
     
     setFormData((prevFormData) => {
-      if (prevFormData.start && moment(formattedEnd, "HH:mm:ss").isBefore(moment(prevFormData.start, "HH:mm:ss"))) {
+      if (
+        prevFormData.start && 
+        moment(formattedEnd, "HH:mm:ss").isBefore(moment(prevFormData.start, "HH:mm:ss"))
+      ) {
         setErrors({
           end: "Waktu selesai tidak boleh lebih kecil dari Waktu mulai!",
         });
         return prevFormData;
       }
-
+  
       setErrors({
         end: "",
       });
@@ -247,7 +250,7 @@ const ModalFormAddIssued = () => {
     });
   
     setSelectedTimeEnd(time);
-  };
+  };  
 
   useEffect(() => {
     let dt = Math.floor(Date.now() / 1000);

@@ -87,7 +87,7 @@ const NavTop = () => {
         buttonLabel="LKF"
         onItemClick={handleItemClick}
       />
-            <EuiButton color="light" onClick={handleQouta}>Tambah Kouta</EuiButton>
+            <EuiButton color="light" onClick={handleQouta}>Tambah Quota</EuiButton>
       <MenuDropdown
         items={menuItemstMaster}
         buttonLabel="Master"
