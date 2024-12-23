@@ -99,7 +99,7 @@ const ChangePage = () => {
             )}
 
             {/* FlexGroup for aligning the buttons to the right */}
-            <EuiFlexGroup justifyContent="flexEnd" style={{marginTop:"30px", marginRight: "35px"}}>
+            <EuiFlexGroup justifyContent="flexEnd" style={{marginTop:"30px", marginRight: "85px"}}>
               <EuiFlexItem grow={false}>
                 <EuiButton color="text" 
                 // onClick={handleCancel}

@@ -28,6 +28,10 @@ import { Navigate, useParams } from 'react-router-dom';
 import formService from '../../services/formDashboard';
 import CreatableSelect from "react-select/creatable";
 import dailyQuotaService from '../../services/dailyQuotaService';
+import MainService from '../../services/HomeData';
+import signUnavailable from '../../images/no-sign.png';
+import imgUnavailable from '../../images/no-img.png';
+import { URL_API } from '../../utils/Enums';
 
 const customStyles = {
   indicatorSeparator: (base) => ({
@@ -79,13 +83,16 @@ const ModalFormDataEdit = ({row}) => {
   const user = JSON.parse(localStorage.getItem('user_data'))
   const dates = JSON.parse(localStorage.getItem('tanggal'))
 
+  const [lastTR, setLastTR] = useState([])
+
   const [formData, setFormData] = useState({
     from_data_id: row.from_data_id || "",
     no_unit: row.no_unit || "",
     model_unit: row.model_unit || "",
     owner: row.owner || "",
-    date_trx: row.date_trx || "",
+    date_trx: row.date_trx,
     qty: row.qty || 0,
+    qty_last: row.qty_last || 0,
     fbr: row.fbr || 0,
     hm_last: row.hm_last|| 0,
     hm_km: row.hm_km|| 0,
@@ -102,9 +109,9 @@ const ModalFormDataEdit = ({row}) => {
 
   const [userData, setUserData] = useState([])
   const [equipData, setEquipData] = useState([])
-  const [limitedSet, setLimitedSet] = useState({})
-  const [imgUrl, setImgUrl] = useState([])
-  const [signUrl, setSignUrl] = useState([])
+  const [limitedSet, setLimitedSet] = useState([])
+  const [imgUrl, setImgUrl] = useState(null)
+  const [signUrl, setSignUrl] = useState(null)
   const [errors, setErrors] = useState({});
   const [optJde, setOptJde] = useState([])
 
@@ -149,38 +156,77 @@ const ModalFormDataEdit = ({row}) => {
     setIsModalVisible(false)
   }
 
-  const onFileChange = async(event) => {
-    const file = event.target.files[0];
+  const fetchUnitData = async (no_unit) => {
+    if (!no_unit) return;
     try {
-      const base64 = await convertToBase64(file);
-      setPicture(base64);
-    } catch (error) {
-      console.error("Error converting file to base64:", error);
-    }
+      const response = await MainService.getDataPrevTR(no_unit, dates);
+      if (response.status === '200' && response.data.length > 0) {
+        return response.data
+      } else {
+        console.log("Data not found")
+      }
+    } catch (err) {
+      console.error(err);
+    } 
   };
 
-  const onSignChange = async (event) => {
-    const file = event.target.files[0];
-    const base64 = await convertToBase64(file);
-    setSign(base64);
-  };
+  const handleQuota = async(no_unit) => {
+    const storedLimited = JSON.parse(sessionStorage.getItem('limited'));
+    const unitQuota = storedLimited.find((item) => item.unit_no === no_unit);
+    return unitQuota
+  }
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
-  };
+  useEffect(() => {
+    setFormData({
+      from_data_id: row.from_data_id || "",
+      no_unit: row.no_unit || "",
+      model_unit: row.model_unit || "",
+      owner: row.owner || "",
+      date_trx: row.date_trx,
+      qty: row.qty || 0,
+      qty_last: row.qty_last || 0,
+      fbr: row.fbr || 0,
+      hm_last: row.hm_last|| 0,
+      hm_km: row.hm_km|| 0,
+      flow_start: row.flow_start || 0,
+      flow_end: row.flow_end || 0,
+      jde_operator: row.jde_operator || "",
+      name_operator: row.name_operator || "",
+      start : row.start ? moment(row.start, 'HH:mm:ss') : null,
+      end: row.end ? moment(row.end, 'HH:mm:ss') : null,
+      photo: row.photo || "",
+      signature: row.signature || "",
+      lkf_id: row.lkf_id || "",
+      type: row.type || ""
+    });
+  }, [row]);
 
-  const handleChageStart = (time) => {
-    setSelectedTime(time);
-    const formattedDates = moment(time).format('hh:mm:ss');
-    setTimeStart(formattedDates)
-  };
+  
+  useEffect(() => {
+    setOptions(
+      equipData.map(item => ({
+        label: item.unit_no,
+        value: item.unit_no
+      }))
+    );
 
-  const handleChangeEnd = (time) => {
-    setSelectedTimeEnd(time);
-    const formattedDates = moment(time).format('hh:mm:ss');
-    setTimeEnd(formattedDates)
-  };
+    setOptJde(
+      userData.map(items => ({
+        label: items.JDE,  
+        value: items.JDE  
+      }))
+    );
+
+    const dataTrx = JSON.parse(sessionStorage.getItem('transaction'))
+    setFormData((prev)=>({
+      ...prev,
+      date_trx: dataTrx[0].date_trx
+    }))
+
+    fetchImage(formData.photo)
+    fetchSign(formData.signature)
+  
+  }, [equipData, userData, formData.photo, formData.signature]);
 
   useEffect(() => {
     const fetchUnit = async () => {
@@ -218,12 +264,163 @@ const ModalFormDataEdit = ({row}) => {
       fetchUser()
   }, []);
 
+  const calcFBR = (hmkm, hm_last, qty_last) => {
+    let total = 0
+    total = (hmkm - hm_last) / qty_last
+    return total
+  }
+
+  const convertToBase64 = (file) => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = (error) => reject(error);
+    });
+  }; 
+
+  const onFileChange = async(event) => {
+    const file = event.target.files[0];
+    try {
+      const base64 = await convertToBase64(file);
+      setImgUrl(base64);
+    } catch (error) {
+      console.error("Error converting file to base64:", error);
+    }
+  };
+
+  const onSignChange = async (event) => {
+    const file = event.target.files[0];
+    const base64 = await convertToBase64(file);
+    setSignUrl(base64);
+  };
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+  };
+
+  const handleChangeQty = async(e) => {
+    const val = e.target.value;
+  
+    if (val === "") {
+      setFormData((prevFormData) => ({
+        ...prevFormData,
+        qty: "",
+        flow_end: 0,
+      }));
+      setErrors({ qty: "" });
+      return;
+    }
+  
+    if (
+      formData.type !== "Issued" &&
+      formData.type !== "Transfer" &&
+      (!limitedSet || limitedSet.length === 0)
+    ) {
+      setFormData((prevFormData) => ({
+        ...prevFormData,
+        qty: val,
+      }));
+      setFormData((prevFormData) => ({
+        ...prevFormData,
+        flow_end: 0,
+      }));
+      return;
+    }
+  
+    if (!val) return;
+    const jmlFlow = formData.flow_start + parseFloat(val);
+    const fetchLimited = await handleQuota(formData.no_unit)
+    const total = parseFloat(val) + (fetchLimited?.used || 0);
+    const totalLimited = (fetchLimited?.quota || 0) + (fetchLimited?.additional || 0);
+  
+    if (totalLimited === 0) {
+      setFormData((prevFormData) => ({
+        ...prevFormData,
+        qty: val,
+        flow_end: jmlFlow,
+      }));
+    } else if (total <= totalLimited) {
+      setFormData((prevFormData) => ({
+        ...prevFormData,
+        qty: val,
+        flow_end: jmlFlow,
+      }));
+      setErrors({ qty: "" });
+    } else {
+      setFormData((prevFormData) => ({
+        ...prevFormData,
+        qty: 0,
+      }));
+      setErrors({
+        qty: "Kuota terisi melebihi batas yang telah ditentukan! Silahkan melakukan request quota.",
+      });
+    }
+  };
+  
+  const handleChangeHmkm = (e) => {
+    const val = e.target.value;
+    const numericVal = parseFloat(val);
+  
+    if (val === "") {
+      setFormData((prevFormData) => ({
+        ...prevFormData,
+        hm_km: 0,
+        fbr: 0,
+      }));
+    } else if (!isNaN(numericVal) && numericVal !== 0) {
+      const totalFbr = calcFBR(numericVal, formData.hm_last,formData.qty_last) 
+  
+      setFormData((prevFormData) => ({
+        ...prevFormData,
+        hm_km: numericVal,
+        fbr: formData.qty_last === 0 ? 0 : totalFbr.toFixed(2),
+      }));
+    } else {
+      setFormData((prevFormData) => ({
+        ...prevFormData,
+        fbr: 0,
+      }));
+    }
+  };
+
+  const handleChageStart = (time) => {
+    setSelectedTime(time);
+    const formattedDates = moment(time).format('hh:mm:ss');
+    setTimeStart(formattedDates)
+  };
+
+  const handleChangeEnd = (time) => {
+    setSelectedTimeEnd(time);
+    const formattedDates = moment(time).format('hh:mm:ss');
+    setTimeEnd(formattedDates)
+  };
+
   const handleOptionChange = (value) => {
-    setFormData((prev) => ({
-      ...prev,
-     type: value
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      type: value
     }));
-    setTrxType(value);
+    const storedTrx = JSON.parse(sessionStorage.getItem('transaction'));
+    const filteredData = storedTrx.filter(item => 
+      item.type === "Transfer" || item.type === "Issued"
+    );
+    const lastData = filteredData.at(-1)
+    const totalFbr = calcFBR(formData.hm_km, formData.hm_last, formData.qty_last)
+    if(value == 'Issued' || value == 'Transfer'){
+      setFormData((prevFormData) => ({
+        ...prevFormData,
+        flow_start: lastData.flow_end, 
+        flow_end: lastData.flow_end + formData.qty, 
+      }))
+    }else{
+      setFormData((prevFormData) => ({
+        ...prevFormData,
+        flow_start: 0, 
+        flow_end: 0, 
+      }))
+    }
   };
 
   const handleValidation = () => {
@@ -286,69 +483,6 @@ const ModalFormDataEdit = ({row}) => {
     }
   };
 
-
-  const calFbr = (hm_last, hm_km, qty) => {
-    if (hm_km === 0) {
-      return 0;
-    }
-    return (hm_km - hm_last ) / qty;
-  }
-
-  useEffect(() => {
-    const hm_last = parseFloat(formData.hm_last) || 0;
-    const hm_km = parseFloat(formData.hm_km) || 0; 
-    const qty = parseFloat(formData.qty) || 0; 
-    const newFbr = calFbr(hm_last, hm_km, qty);
-    setFormData((prev) => ({
-      ...prev,
-      fbr: newFbr
-    }))
-  }, [formData.hm_last, formData.hm_km, formData.qty]);
-
-
-  useEffect(() => {
-    setFormData({
-      from_data_id: row.from_data_id || "",
-      no_unit: row.no_unit || "",
-      model_unit: row.model_unit || "",
-      owner: row.owner || "",
-      date_trx: row.date_trx || "",
-      qty: row.qty || 0,
-      fbr: row.fbr || 0,
-      hm_last: row.hm_last|| 0,
-      hm_km: row.hm_km|| 0,
-      flow_start: row.flow_start || 0,
-      flow_end: row.flow_end || 0,
-      jde_operator: row.jde_operator || "",
-      name_operator: row.name_operator || "",
-      start : row.start ? moment(row.start, 'HH:mm:ss') : null,
-      end: row.end ? moment(row.end, 'HH:mm:ss') : null,
-      photo: row.photo || "",
-      signature: row.signature || "",
-      lkf_id: row.lkf_id || "",
-      type: row.type || ""
-    });
-  }, [row]);
-
-  
-  useEffect(() => {
-    setOptions(
-      equipData.map(item => ({
-        label: item.unit_no,
-        value: item.unit_no
-      }))
-    );
-
-    setOptJde(
-      userData.map(items => ({
-        label: items.JDE,  
-        value: items.JDE  
-      }))
-    );
-  
-  }, [equipData, userData]);
-  
-
   const filterUnit = (option, inputValue) => {
     const searchValue = String(inputValue).toLowerCase();
     return (
@@ -362,28 +496,46 @@ const ModalFormDataEdit = ({row}) => {
     return matchedUnit ? { label: matchedUnit.unit_no, value: matchedUnit.unit_no } : null;
   };
 
-  const handleUnitChange = (val) => {
+  const handleUnitChange = async(val) => {
     if (!val) {
       setFormData((prev) => ({
         ...prev,
         no_unit: "",
         model_unit: "",
         owner: "",
-        // hm_last: 0,
-        // qty_last: 0,
-        // fbr: 0
+        hm_last: 0,
+        qty_last: 0,
+        fbr: 0
       }));
       return;
     }
     const selectedUnit = equipData.find((unit) => unit.unit_no === val.value);
+    const lastTR = await fetchUnitData(val.value)
+    const fetchLimited = await handleQuota(val.value)
+    const totalLimited = (fetchLimited?.quota || 0) + (fetchLimited?.additional || 0);
+    const totalFbr = calcFBR(lastTR[0].hm_km, formData.hm_km, lastTR[0].qty) 
+    if(totalLimited <= formData.qty){
+      setErrors({
+        qty: "Kuota terisi melebihi batas yang telah ditentukan! Silahkan melakukan request quota.",
+      });
+      setFormData((prev) => ({
+        ...prev,
+        no_unit: selectedUnit?.unit_no || "",
+        model_unit: selectedUnit?.type || "",
+        owner: selectedUnit?.owner || "",
+        hm_last: lastTR[0].hm_km,
+        qty_last: lastTR[0].qty,
+        fbr: totalFbr,
+      }));
+    }
     setFormData((prev) => ({
       ...prev,
       no_unit: selectedUnit?.unit_no || "",
       model_unit: selectedUnit?.type || "",
       owner: selectedUnit?.owner || "",
-      // hm_last: selectedUnit ? prev.hm_last : 0,
-      // qty_last: selectedUnit ? prev.qty_last : 0,
-      // fbr: selectedUnit ? prev.fbr : 0,
+      hm_last: lastTR[0].hm_km,
+      qty_last: lastTR[0].qty,
+      fbr: totalFbr,
     }));
   };
 
@@ -419,7 +571,10 @@ const ModalFormDataEdit = ({row}) => {
   };
 
   const fetchImage = async (photo) => {
-    if (imgUrl[photo]) return; 
+    if (!photo) {
+      console.error("Photo parameter is missing.");
+      return;
+    } 
 
     try {
       const response = await fetch(`${URL_API.generateImg}${photo}`, {
@@ -433,14 +588,15 @@ const ModalFormDataEdit = ({row}) => {
       }
       const imageBlob = await response.blob();
       const imageUrl = URL.createObjectURL(imageBlob);
-      setImgUrl((prevUrls) => ({ ...prevUrls, [photo]: imageUrl }));
+      const photoSrc = imageUrl || imgUnavailable;
+      setImgUrl(photoSrc)
     } catch (error) {
       console.error('Error fetching image:', error);
     }
   };
 
   const fetchSign = async (sign) => {
-    if (signUrl[sign]) return; 
+    if (!sign) return; 
 
     try {
       const response = await fetch(`${URL_API.generateSign}${sign}`, {
@@ -454,7 +610,8 @@ const ModalFormDataEdit = ({row}) => {
       }
       const imageBlob = await response.blob();
       const imageUrl = URL.createObjectURL(imageBlob);
-      setSignUrl((prevUrls) => ({ ...prevUrls, [sign]: imageUrl }));
+      const signSrc = imageUrl || signUnavailable;
+      setSignUrl(signSrc);
     } catch (error) {
       console.error('Error fetching image:', error);
     }
@@ -548,7 +705,7 @@ const ModalFormDataEdit = ({row}) => {
                    <EuiFieldText 
                     name='hm_km'
                     value={formData.hm_km}
-                    onChange={handleChange}
+                    onChange={handleChangeHmkm}
                   />
                 </EuiFormRow>
 
@@ -557,7 +714,7 @@ const ModalFormDataEdit = ({row}) => {
                     name='hm_last'
                     placeholder='Input'
                     value={formData.hm_last}
-                    onChange={handleChange}
+                    // onChange={handleChange}
                     disabled
                   />
                 </EuiFormRow>
@@ -567,7 +724,7 @@ const ModalFormDataEdit = ({row}) => {
                   placeholder='Input'
                   name='qty'
                   value={formData.qty}
-                  onChange={handleChange}
+                  onChange={handleChangeQty}
                />
                 </EuiFormRow>
 
@@ -595,7 +752,7 @@ const ModalFormDataEdit = ({row}) => {
                    <EuiFieldText 
                     name='flow_end'
                     value={formData.flow_end}
-                    onChange={(e)=> setflowEnd(e.target.value)}
+                    onChange={(e)=> setFormData((prev) => ({...prev, flow_end: e.target.value}))}
                     disabled
                   />
                 </EuiFormRow>
@@ -649,10 +806,10 @@ const ModalFormDataEdit = ({row}) => {
                   <EuiFormRow label="Ambil Foto">
                     <input type="file" accept="image/*" onChange={onFileChange} />
                   </EuiFormRow>
-                  {formData.photo && (
+                  {imgUrl && (
                     <div style={{ marginTop: '20px', textAlign: 'center' }}>
                       <img
-                        src={formData.photo}
+                        src={imgUrl}
                         alt="Uploaded"
                         style={{
                           width: '250px',
@@ -670,10 +827,10 @@ const ModalFormDataEdit = ({row}) => {
                   <EuiFormRow label="Tanda Tangan">
                     <input type="file" accept="image/*" onChange={onSignChange} />
                   </EuiFormRow>
-                  {formData.signature && (
+                  {signUrl && (
                     <div style={{ marginTop: '20px', textAlign: 'center' }}>
                       <img
-                        src={formData.signature}
+                        src={signUrl}
                         alt="Uploaded"
                         style={{
                           width: '250px',

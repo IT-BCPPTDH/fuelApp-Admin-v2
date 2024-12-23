@@ -35,6 +35,7 @@ import {
   EuiSelect
 } from '@elastic/eui';
 import PictureCell from '../../components/ModalForm/modalPicture';
+import dailyQuotaService from '../../services/dailyQuotaService';
 const dataForm = new FormData()
 
 const pageSizeOptions = [
@@ -255,8 +256,8 @@ const DetailsPageTransaction = () => {
       align:'center',
       width:'10vh',
       truncateText: true,
-      // render: (signature) => <ModalSign signature={signature} />,
       render: (signature) => {
+        sessionStorage.setItem('sign', JSON.stringify(signUrl[signature]))
         return signUrl[signature] ? (
           <ModalSign signature={signUrl[signature]} />
         ) : (
@@ -271,6 +272,7 @@ const DetailsPageTransaction = () => {
       width:'10vh',
       truncateText: true,
       render: (photo) => {
+        sessionStorage.setItem('photo', JSON.stringify(imgUrl[photo]))
         return imgUrl[photo] ? (
           <ModalPicture photo={imgUrl[photo]} />
         ) : (
@@ -328,19 +330,17 @@ const DetailsPageTransaction = () => {
       }
       const imageBlob = await response.blob();
       const imageUrl = URL.createObjectURL(imageBlob);
-      console.log(imageUrl)
       setImgUrl((prevUrls) => ({ ...prevUrls, [photo]: imageUrl }));
     } catch (error) {
       console.error('Error fetching image:', error);
     }
   };
 
-  console.log(imgUrl)
-  const fetchSign = async (sign) => {
-    if (signUrl[sign]) return; 
+  const fetchSign = async (signature) => {
+    if (signUrl[signature]) return; 
 
     try {
-      const response = await fetch(`${URL_API.generateSign}${sign}`, {
+      const response = await fetch(`${URL_API.generateSign}${signature}`, {
         method: 'GET',
         headers: {
             'Content-Type': 'image/png', 
@@ -351,7 +351,7 @@ const DetailsPageTransaction = () => {
       }
       const imageBlob = await response.blob();
       const imageUrl = URL.createObjectURL(imageBlob);
-      setSignUrl((prevUrls) => ({ ...prevUrls, [sign]: imageUrl }));
+      setSignUrl((prevUrls) => ({ ...prevUrls, [signature]: imageUrl }));
     } catch (error) {
       console.error('Error fetching image:', error);
     }
@@ -398,18 +398,34 @@ const DetailsPageTransaction = () => {
           throw new Error('Network response was not ok');
         }
         setformData(res.data);
+        sessionStorage.setItem('transaction', JSON.stringify(res.data))
         await Promise.all(res.data.map(async (item) => {
           if(item.photo) await fetchImage(item.photo)
-          if(item.sign) await fetchSign(item.sign)
-        }
-          
+          if(item.signature) await fetchSign(item.signature)
+        }   
         ));
       } catch (error) {
         console.log(error)
-        // setError(error);
       } 
     };
-    // fetchImg();
+
+    const fetchLimitedQuota = async () => {
+      try {
+        const dates = JSON.parse(localStorage.getItem('tanggal'))
+        const response = await dailyQuotaService.getData({ option: "Daily", tanggal: dates });
+        if (response.status === "200" ) {
+          sessionStorage.setItem('limited', JSON.stringify(response.data)) 
+        } else {
+          sessionStorage.setItem('limited', JSON.stringify([])) 
+          console.error("data not found", err); 
+        }
+      } catch (err) {
+        console.error("Error fetching limited quota:", err);
+      }
+    };
+
+    
+    fetchLimitedQuota()
     fetchTable()
   }, [setformData]);
 

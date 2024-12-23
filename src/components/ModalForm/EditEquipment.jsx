@@ -147,7 +147,7 @@ const ModalEditEquipment = ({row}) => {
           style={{ width: "880px" }}
         >
           <EuiModalHeader>
-            <EuiModalHeaderTitle id={modalTitleId}> Edit Employee</EuiModalHeaderTitle>
+            <EuiModalHeaderTitle id={modalTitleId}> Edit Equipment</EuiModalHeaderTitle>
           </EuiModalHeader>
           <EuiModalBody>
           <EuiForm id={modalFormId} component="form">

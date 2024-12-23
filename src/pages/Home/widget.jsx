@@ -20,7 +20,7 @@ const CardContent = () => {
     { title: summary.closeSonding ? summary.closeSonding + ' Ltrs': 0 + ' Ltrs', description1: 'Close Sonding', description2: 'Total Close Sonding ', icon: Icon2 },
     { title: summary.variant ? summary.variant + ' Ltrs' : 0 + ' Ltrs', description1: 'Variant', description2: 'Summary Transaction', icon: Icon3 },
     { title: summary.intershiftDtoN ? summary.intershiftDtoN + ' Ltrs' : 0 + ' Ltrs', description1: 'Intershift O/C Variance', description2: 'Total Intershift (D to N)', icon: Icon3 },
-    { title: summary.intershiftNtoD  ? summary.intershiftNtoD + ' Ltrs' : 0 + ' Ltrs', description1: 'Intershift O/C Variance', description2: ' Total Intershift (N to D)', icon: Icon4 },
+    { title: summary.intershiftNtoD  ? summary.intershiftNtoD + ' Ltrs' : 0 + ' Ltrs', description1: 'Intershift O/C Variance', description2: ' Total Intershift (N to D)', icon: Icon3 },
   ];
 
   useEffect(() => {
