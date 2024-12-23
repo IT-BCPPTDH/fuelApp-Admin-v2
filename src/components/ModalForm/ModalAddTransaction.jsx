@@ -345,7 +345,6 @@ const ModalFormAddIssued = () => {
           const limited = response.data.find((item) => item.unit_no === formData.no_unit);
           setLimitedSet(limited); 
         } else {
-          console.log("Data not found");
           setLimitedSet(null); 
         }
       } catch (err) {
@@ -374,6 +373,22 @@ const ModalFormAddIssued = () => {
       ...prevFormData,
       type: value
     }));
+    const storedTrx = JSON.parse(sessionStorage.getItem('transaction'));
+    const filteredData = storedTrx.filter(item => 
+      item.type === "Transfer" || item.type === "Issued"
+    );
+    const lastData = filteredData.at(-1)
+    if(value == 'Issued' || value == 'Transfer'){
+      setFormData((prevFormData) => ({
+        ...prevFormData,
+        flow_start: lastData.flow_end, 
+      }))
+    }else{
+      setFormData((prevFormData) => ({
+        ...prevFormData,
+        flow_start: 0, 
+      }))
+    }
   };
 
   const handleHmKm = (e) => {
@@ -453,32 +468,49 @@ const ModalFormAddIssued = () => {
 
   const handleQyt = (e) => {
     const val = e.target.value;
-    if (formData.type !== "Issued" || (!limitedSet || limitedSet.length === 0)) {
+    if (
+      formData.type !== "Issued" && 
+      formData.type !== "Transfer" && 
+      (!limitedSet || limitedSet.length === 0)
+    ) {
       setFormData((prevFormData) => ({
         ...prevFormData,
-        qty: val, 
+        qty: val,
+      }));
+      setFormData((prevFormData) => ({
+        ...prevFormData,
+        flow_end: 0,
       }));
       return;
-    }
+    }    
   
     if (!val) return;
+
+    const jmlFlow = formData.flow_start + parseFloat(val)
   
     const total = parseFloat(val) + (limitedSet?.used || 0); 
     const totalLimited = (limitedSet?.quota || 0) + (limitedSet?.additional || 0);
   
-    if (total <= totalLimited) {
+    if (totalLimited === 0) {
       setFormData((prevFormData) => ({
         ...prevFormData,
-        qty: val, 
+        qty: val,
+        flow_end: jmlFlow
       }));
-      setErrors({end: ""});
+    } else if (total <= totalLimited) {
+      setFormData((prevFormData) => ({
+        ...prevFormData,
+        qty: val,
+        flow_end: jmlFlow
+      }));
+      setErrors({ end: "" });
     } else {
       setFormData((prevFormData) => ({
         ...prevFormData,
-        qty: 0, 
+        qty: 0,
       }));
       setErrors({
-        qty: "Kuota terisi melebihi batas yang telah ditentukan! Silahkan melakukan request quota",
+        qty: "Kuota terisi melebihi batas yang telah ditentukan! Silahkan melakukan request quota.",
       });
     }
   };
@@ -600,6 +632,7 @@ const ModalFormAddIssued = () => {
                    <EuiFieldText 
                     name='hmkm'
                     placeholder='Input'
+                    value={formData.flow_start}
                     onChange={(e) =>
                       setFormData((prevFormData) => ({
                         ...prevFormData,
@@ -612,6 +645,7 @@ const ModalFormAddIssued = () => {
                 <EuiFormRow label="Flow Meter Akhir" style={{marginTop:"0px"}} isInvalid={!!errors.flow_end} error={errors.flow_end}>
                    <EuiFieldText 
                     name='flow_end'
+                    value={formData.flow_end}
                     onChange={(e) =>
                       setFormData((prevFormData) => ({
                         ...prevFormData,

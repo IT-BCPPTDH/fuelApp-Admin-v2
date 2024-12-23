@@ -50,7 +50,6 @@ const insertData = async (requestBody) => {
 
 const updateData = async (requestBody) => {
     try {
-        console.log(requestBody)
       const response = await api.put(URL_API.updateTransaction, requestBody, {
         
         headers: {
@@ -58,12 +57,10 @@ const updateData = async (requestBody) => {
         },
       });
   
-      // Check if the response status indicates success (200 or 201)
       if (response.status === 200 || response.status === 201) {
         return response.data; 
         
       } else {
-        // Handle other response statuses (e.g., 400, 500)
         console.error('Error: Unexpected response status', response.status);
         throw new Error(`Failed to update. Status code: ${response.status}`);
       }
