@@ -55,6 +55,7 @@ const modalUpload = () => {
       try {
         formData.append('files',file)
         const response = await reportService.uploadDatas(formData);
+        console.log(response)
         if (response.status === "200") { 
           closeModal(); 
           setSubmitStatus('Success!');
@@ -64,6 +65,7 @@ const modalUpload = () => {
         } else {
           setSubmitStatus('Failed');
           setSubmitMessage('Data not saved!');
+          setSubmitMessage1(response.error)
         }
       } catch (error) {
         setSubmitStatus('error');
@@ -186,8 +188,19 @@ const modalUpload = () => {
                 height: '25%',
                 marginTop: '35px'
               }}>
-                Data unit kena batasan kuota :  {submitMessage2} <br/>
-                Data unit : {submitMessage1}
+                <div>
+                  {submiStatus === "Failed" ? (
+                    <>
+                      {submitMessage} <br/>
+                      {submitMessage1}
+                    </>
+                  ) : (
+                    <>
+                      Data unit kena batasan kuota: {submitMessage2} <br />
+                      Data unit: {submitMessage1}
+                    </>
+                  )}
+                  </div>
             </EuiText>
           </EuiModalBody>
           <EuiModalFooter>

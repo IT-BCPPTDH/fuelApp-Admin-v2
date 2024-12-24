@@ -35,7 +35,7 @@ const DetailPage = () => {
       {
         title: summaryAll.totalAllIssued ? summaryAll.totalAllIssued  + ' Ltrs' : 0 + ' Ltrs',
         description1: "Issued",
-        description2: "Summary Issued",
+        description2: "Summary Issued + Transfer",
         icon: Icon1,
       },
       {
@@ -50,12 +50,6 @@ const DetailPage = () => {
         description2: "Total Variance",
         icon: Icon3,
       },
-      // {
-      //   title: summaryAll.totalAllCloseData ? summaryAll.totalAllCloseData + ' Ltrs' : 0 + ' Ltrs',
-      //   description1: "Close Data",
-      //   description2: "Total Close Data",
-      //   icon: Icon2,
-      // }
     ];
     cardsDataShiftDay = [
       {
@@ -73,7 +67,7 @@ const DetailPage = () => {
       {
         title: summaryAll.totalAllIssuedDay ? summaryAll.totalAllIssuedDay + ' Ltrs' : 0 + ' Ltrs',
         description1: "Issued",
-        description2: "Issued Transaction",
+        description2: "Issued + Transfer",
         icon: Icon1,
       },
       {
@@ -106,7 +100,7 @@ const DetailPage = () => {
       {
         title: summaryAll.totalAllIssuedNigth ? summaryAll.totalAllIssuedNigth + ' Ltrs' : 0 + ' Ltrs',
         description1: "Issued",
-        description2: "Issued Transaction",
+        description2: "Issued + Transfer",
         icon: Icon1,
       },
       {
@@ -139,7 +133,7 @@ const DetailPage = () => {
       {
         title: summaryAll.totalAllIssued ? summaryAll.totalAllIssued  + ' Ltrs' : 0 + ' Ltrs',
         description1: "Issued",
-        description2: "Summary Issued",
+        description2: "Issued + Transfer",
         icon: Icon1,
       },
       {
@@ -171,7 +165,7 @@ const DetailPage = () => {
       {
         title: summaryAll.totalAllIssuedDay ? summaryAll.totalAllIssuedDay + ' Ltrs' : 0 + ' Ltrs',
         description1: "Issued",
-        description2: "Issued Transaction",
+        description2: "Issued + Transfer",
         icon: Icon1,
       },
       {
@@ -203,7 +197,7 @@ const DetailPage = () => {
       {
         title: summaryAll.totalAllIssuedNigth ? summaryAll.totalAllIssuedNigth + ' Ltrs' : 0 + ' Ltrs',
         description1: "Issued",
-        description2: "Issued Transaction",
+        description2: "Issued + Transfer",
         icon: Icon1,
       },
       {

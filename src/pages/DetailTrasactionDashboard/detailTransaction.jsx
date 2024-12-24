@@ -51,6 +51,7 @@ const DetailsPageTransaction = () => {
   const [formTotal, setFormTotal] = useState(0)
   const date = JSON.parse(localStorage.getItem('formattedDate'));
   const station = JSON.parse(localStorage.getItem('storedStation'))
+  const [flowEnd, setflowEnd] = useState(0)
 
   const navigate = useNavigate(); 
   const [formData, setformData] = useState([])
@@ -59,6 +60,7 @@ const DetailsPageTransaction = () => {
 
   const [imgUrl, setImgUrl] = useState([])
   const [signUrl, setSignUrl] = useState([])
+  const [replaceTotal, setReplaceTotal] = useState(0)
 
   const breadcrumbs = [
     {
@@ -85,7 +87,9 @@ const DetailsPageTransaction = () => {
         icon: Icon1,
       },
       {
-        title: station =='FT1116' ? formTotal.receipt_kpc + ' Ltrs' : formTotal.receipt + ' Ltrs',
+        title: station === 'FT1116' 
+            ? (formTotal.receipt_kpc + ' Ltrs') 
+            : (formTotal.receipt ? (formTotal.receipt + ' Ltrs') : '0 Ltrs'),
         description1: "Receipt",
         description2: "(From Other FS or FT)",
         icon: Icon1,
@@ -127,13 +131,13 @@ const DetailsPageTransaction = () => {
           icon: Icon3,
         },
         {
-          title: formTotal.closeMeter ,
+          title: formTotal.closeMeter == 0 ? flowEnd :  formTotal.closeMeter ,
           description1: "(Close Meter)",
           description2: "(Flow Meter End)",
           icon: Icon3,
         },
         {
-          title:formTotal.totalMeter  ,
+          title: formTotal.closeMeter === 0 ? replaceTotal.toLocaleString('en-US') : formTotal.totalMeter,
           description1: "Total Meter",
           description2: "(Close Meter - Start Meter)",
           icon: Icon1,
@@ -161,15 +165,21 @@ const DetailsPageTransaction = () => {
     },
   ];
 
+  useEffect(()=>{
+    const startMeter = parseInt(formTotal?.startMeter?.replace(/,/g, ""), 10);
+    const result = flowEnd - startMeter
+    setReplaceTotal(result)
+  },[flowEnd, formTotal?.startMeter])
+
   useEffect(() => {
     const fetchTable = async () => {
       try {
         const res = await formService.summaryForm(lkfId)
+        sessionStorage.setItem('dasboardTrx', JSON.stringify(res.data))
         if (res.status != 200) {
           throw new Error('Network response was not ok');
         }
         setFormTotal(res.data);
-        console.log(res.data)
       } catch (error) {
         console.log(error)
         // setError(error);
@@ -399,7 +409,8 @@ const DetailsPageTransaction = () => {
           throw new Error('Network response was not ok');
         }
         setformData(res.data);
-        //get Last transaction flow_end
+        const filterData = res.data.at(-1)
+        setflowEnd(filterData?.flow_end ?? 0)
         sessionStorage.setItem('transaction', JSON.stringify(res.data))
         await Promise.all(res.data.map(async (item) => {
           if(item.photo) await fetchImage(item.photo)
