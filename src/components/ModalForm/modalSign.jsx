@@ -3,6 +3,7 @@ import { EuiOverlayMask, EuiModal, EuiModalBody, EuiImage } from '@elastic/eui';
 import signUnavailable from '../../images/no-sign.png';
 
 const SignatureCell = ({ signature }) => {
+  // console.log("first", signature)
     const [isModalVisible, setIsModalVisible] = useState(false);
   
     const closeModal = () => setIsModalVisible(false);

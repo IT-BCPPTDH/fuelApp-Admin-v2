@@ -218,9 +218,10 @@ const ModalFormDataEdit = ({row}) => {
     );
 
     const dataTrx = JSON.parse(sessionStorage.getItem('transaction'))
+    const dates = JSON.parse(localStorage.getItem('tanggal'))
     setFormData((prev)=>({
       ...prev,
-      date_trx: dataTrx[0].date_trx
+      date_trx: dates
     }))
 
     fetchImage(formData.photo)
@@ -351,7 +352,7 @@ const ModalFormDataEdit = ({row}) => {
         qty: val,
         flow_end: jmlFlow,
       }));
-    } else if (total <= totalLimited) {
+    } else if (parseFloat(val) <= totalLimited) {
       setFormData((prevFormData) => ({
         ...prevFormData,
         qty: val,

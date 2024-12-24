@@ -333,17 +333,21 @@ const DetailsPageTransaction = () => {
     if (imgUrl[photo]) return; 
 
     try {
-      const response = await fetch(`${URL_API.generateImg}${photo}`, {
+      const response = await fetch(`${URL_API.generateImgFl}${photo}`, {
         method: 'GET',
         headers: {
             'Content-Type': 'image/png', 
-        },
+        }, 
       });
+      
+      console.log(response)
       if (!response.ok) {
         throw new Error('Failed to fetch image');
       }
+      
       const imageBlob = await response.blob();
       const imageUrl = URL.createObjectURL(imageBlob);
+      console.log(imageUrl)
       setImgUrl((prevUrls) => ({ ...prevUrls, [photo]: imageUrl }));
     } catch (error) {
       console.error('Error fetching image:', error);
