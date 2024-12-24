@@ -582,7 +582,6 @@ const ModalFormDataEdit = ({row}) => {
 
   const fetchImage = async (photo) => {
     if (!photo) {
-      console.error("Photo parameter is missing.");
       return;
     } 
 
@@ -615,9 +614,9 @@ const ModalFormDataEdit = ({row}) => {
             'Content-Type': 'image/png', 
         },
       });
-      if (!response.ok) {
-        throw new Error('Failed to fetch image');
-      }
+      // if (!response.ok) {
+      //   throw new Error('Failed to fetch image');
+      // }
       const imageBlob = await response.blob();
       const imageUrl = URL.createObjectURL(imageBlob);
       const signSrc = imageUrl || signUnavailable;
