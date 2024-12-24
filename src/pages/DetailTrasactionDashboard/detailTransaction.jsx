@@ -165,11 +165,14 @@ const DetailsPageTransaction = () => {
     },
   ];
 
-  useEffect(()=>{
-    const startMeter = parseInt(formTotal?.startMeter?.replace(/,/g, ""), 10);
-    const result = flowEnd - startMeter
-    setReplaceTotal(result)
-  },[flowEnd, formTotal?.startMeter])
+  useEffect(() => {
+    const startMeter = typeof formTotal?.startMeter === 'string' 
+      ? parseInt(formTotal.startMeter.replace(/,/g, ""), 10) 
+      : formTotal?.startMeter; // Jika bukan string, langsung gunakan angka
+    const result = flowEnd - startMeter;
+    setReplaceTotal(result);
+  }, [flowEnd, formTotal?.startMeter]);
+  
 
   useEffect(() => {
     const fetchTable = async () => {
@@ -357,9 +360,9 @@ const DetailsPageTransaction = () => {
             'Content-Type': 'image/png', 
         },
       });
-      if (!response.ok) {
-        throw new Error('Failed to fetch image');
-      }
+      // if (!response.ok) {
+      //   throw new Error('Failed to fetch image');
+      // }
       const imageBlob = await response.blob();
       const imageUrl = URL.createObjectURL(imageBlob);
       setSignUrl((prevUrls) => ({ ...prevUrls, [signature]: imageUrl }));
