@@ -20,6 +20,7 @@ const modalUpload = () => {
     const closeModal = () => setIsModalVisible(false);
     const showModal = () => setIsModalVisible(true);
     const [file, setFile] = useState(null);
+    const [errorMessage, setErrorMessage] = useState('');
 
     const [isSubmitResult, setIsSubmitResult] = useState(false)
     const [submitMessage, setSubmitMessage] = useState('');
@@ -33,14 +34,20 @@ const modalUpload = () => {
     }
 
     const onFileChange = (event) => {
-        const selectedFile = event.target.files[0];
-        if (selectedFile && selectedFile.name.endsWith('.xlsx')) {
+      const selectedFile = event.target.files[0];
+    
+      if (selectedFile) {
+        if (selectedFile.name.endsWith('.xlsx')) {
           setFile(selectedFile);
-          // setUploadStatus({ type: 'success', message: 'File yang diupload sesuai dengan template.' });
+          setErrorMessage(''); 
         } else {
           setFile(null);
-          // setUploadStatus({ type: 'danger', message: 'File yang diupload tidak sesuai. Pastikan menggunakan template yang benar.' });
+          setErrorMessage('File harus Excel!');
         }
+      } else {
+        setFile(null);
+        setErrorMessage('File tidak ditemukan');
+      }
     };
       
     const handleImport = async() => {
@@ -118,6 +125,7 @@ const modalUpload = () => {
                   cursor: 'pointer',
                 }}
               />
+              {errorMessage && <div style={{ color: 'red' }}>{errorMessage}</div>}
               <button
                 style={{
                   width: '100%',

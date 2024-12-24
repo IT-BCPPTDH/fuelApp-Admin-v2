@@ -169,6 +169,7 @@ const DetailsPageTransaction = () => {
           throw new Error('Network response was not ok');
         }
         setFormTotal(res.data);
+        console.log(res.data)
       } catch (error) {
         console.log(error)
         // setError(error);
@@ -398,6 +399,7 @@ const DetailsPageTransaction = () => {
           throw new Error('Network response was not ok');
         }
         setformData(res.data);
+        //get Last transaction flow_end
         sessionStorage.setItem('transaction', JSON.stringify(res.data))
         await Promise.all(res.data.map(async (item) => {
           if(item.photo) await fetchImage(item.photo)
@@ -424,7 +426,6 @@ const DetailsPageTransaction = () => {
       }
     };
 
-    
     fetchLimitedQuota()
     fetchTable()
   }, [setformData]);

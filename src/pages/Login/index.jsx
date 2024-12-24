@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import './login.css';
 import { EuiCard, EuiFieldText, EuiFieldPassword, EuiButton, EuiImage, EuiIcon, EuiForm } from "@elastic/eui";
 import Logo from "../../images/logo-dh-new.png";
@@ -33,9 +33,6 @@ const LoginUser = () => {
         localStorage.setItem('user_data', JSON.stringify(response.data));
         localStorage.setItem('access', response.access);
   
-        // Optionally, store additional data
-        // localStorage.setItem('other_key', 'value');
-  
         login(response.session_token, response.data, response.access);
         window.location.reload();
       } else if (response.status === HTTP_STATUS.NO_CONTENT) {
@@ -51,6 +48,39 @@ const LoginUser = () => {
       setErrorMessage(STATUS_MESSAGE.ERR_AUTH);
     }
   };
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      const controller = new AbortController();
+      const signal = controller.signal;
+
+      try {
+        const cachedUsers = sessionStorage.getItem("admin");
+        if (cachedUsers) return;
+
+        const res = await UserService.getAllEmployee()
+
+        if (res.status === '404') {
+          sessionStorage.setItem("admin", JSON.stringify([]));
+        } else if (res.status === '200') {
+          const result = res.data.filter(item => item.admin_fuel === true);
+          sessionStorage.setItem("admin", JSON.stringify(result));
+        } else {
+          throw new Error("Network response was not ok");
+        }
+      } catch (error) {
+        if (error.name !== "AbortError") {
+          console.error("Fetch error:", error);
+        }
+      }
+
+      return () => {
+        controller.abort();
+      };
+    };
+
+    fetchUser();
+  }, []);
   
 
   return (
@@ -59,7 +89,7 @@ const LoginUser = () => {
         <div className="logo-container">
           <EuiImage src={Logo} alt="logo" style={{height:"85px", width:"150px"}}/>
         </div>
-        <div className="version">Fuel App Admin V2.0</div>
+        <div className="version" style={{fontWeight: 700}}>Fuel App Admin V2.0</div>
         {errorMessage && <div className="error-message">{errorMessage}</div>}
         <EuiForm >
           <div className="input-container">
@@ -111,13 +141,13 @@ const LoginUser = () => {
           </div>
 
           <div className="button-container">
-            {/* <EuiButton
+            <EuiButton
               style={{ background: "#ffffff", color: "#73a440", border: "solid 0.8px" }}
               fullWidth
-              onClick={() => navigate('/')}
+              onClick={() => navigate('/forgotPassword')}
             >
-              Back To Home
-            </EuiButton> */}
+              Forgot Password
+            </EuiButton>
           </div>
         </EuiForm>
       </EuiCard>
