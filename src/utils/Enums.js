@@ -69,7 +69,7 @@ export const URL_API = {
     statusBus :`${linkBe}/api/quota-usage/get-status-bus/`,
     statusLv : `${linkBe}/api/quota-usage/get-status-lv/`,
     statusHlv : `${linkBe}/api/quota-usage/get-status-hlv/`,
-    generateImg: linkBe + "/api/img/flowmeter/",
+    generateImgFl: linkBe + "/api/img/flowmeter/",
     generateSign: linkBe + "/api/img/signature/",
     generateImgReq: linkBe + "/api/img/req/",
     editStation : `${linkBe}/api/admin/update-station`,
