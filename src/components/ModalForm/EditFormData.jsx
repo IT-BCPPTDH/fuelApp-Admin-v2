@@ -458,13 +458,13 @@ const ModalFormDataEdit = ({row}) => {
       setIsModalVisible(true)
     }else{
       try {
-        // const res = await formService.updateData({ id: row.id, ...formData, updated_by: user.JDE });
-        // if (res.status === "200") {
-        //   setEditStatus('Success!');
-        //   setEditMessage('Data successfully saved!');
-        // } else {
-        //   throw new Error('Data not saved! Please try again.');
-        // }
+        const res = await formService.updateData({ id: row.id, ...formData, updated_by: user.JDE });
+        if (res.status === "200") {
+          setEditStatus('Success!');
+          setEditMessage('Data successfully saved!');
+        } else {
+          throw new Error('Data not saved! Please try again.');
+        }
       } catch (error) {
         console.error('Error updating data:', error);
         setEditStatus('Error');
