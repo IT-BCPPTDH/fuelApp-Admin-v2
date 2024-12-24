@@ -85,6 +85,8 @@ const ModalFormAddIssued = () => {
   const [errors, setErrors] = useState({});
   const [trxDate, setTrxDate] = useState(null)
 
+  const [flowsStart, setFlowsStart] = useState("")
+
   const user = JSON.parse(localStorage.getItem('user_data'))
   const [userData, setUserData] = useState([])
   const [equipData, setEquipData] = useState([])
@@ -297,10 +299,21 @@ const ModalFormAddIssued = () => {
     fetchUser()
   }, []);
 
+  const handleFMStart = (e) => {
+    const val = e.target.value;
+    const total = parseFloat(formData.qty) + parseFloat(val || 0)
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      flow_start: val,
+      flow_end: total
+    }));
+  }
 
   useEffect(() => {
     const dates = JSON.parse(localStorage.getItem('tanggal'))
     setTrxDate(dates)
+    const flows = JSON.parse(sessionStorage.getItem('dasboardTrx'));
+    setFlowsStart(flows.startMeter)
     const fetchUnitData = async () => {
       if (!formData.no_unit) return;
       try {
@@ -639,12 +652,7 @@ const ModalFormAddIssued = () => {
                     name='hmkm'
                     placeholder='Input'
                     value={formData.flow_start}
-                    onChange={(e) =>
-                      setFormData((prevFormData) => ({
-                        ...prevFormData,
-                        flow_start: e.target.value, 
-                      }))
-                    }
+                    onChange={handleFMStart}
                   />
                 </EuiFormRow>
 
