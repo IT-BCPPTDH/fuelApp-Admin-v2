@@ -197,6 +197,7 @@ const ModalFormAddIssued = () => {
             ...formData, created_by: user.JDE
           };
           const res = await formService.insertData(data);
+          console.log(data)
           if (res.status === 200|| res.status === "201") {  
             setEditStatus('Success');
             setEditMessage('Data successfully saved!');
@@ -291,9 +292,9 @@ const ModalFormAddIssued = () => {
           console.log(error)
           // setError(error);
         } 
-      };
-      fetchUnit()
-      fetchUser()
+    };
+    fetchUnit()
+    fetchUser()
   }, []);
 
 
@@ -378,7 +379,12 @@ const ModalFormAddIssued = () => {
       item.type === "Transfer" || item.type === "Issued"
     );
     const lastData = filteredData.at(-1)
-    if(value == 'Issued' || value == 'Transfer'){
+    if(lastData === undefined){
+      setFormData((prevFormData) => ({
+        ...prevFormData,
+        flow_start: 0, 
+      }))
+    }else if(value == 'Issued' || value == 'Transfer'){
       setFormData((prevFormData) => ({
         ...prevFormData,
         flow_start: lastData.flow_end, 

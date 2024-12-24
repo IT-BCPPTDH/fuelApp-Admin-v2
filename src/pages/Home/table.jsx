@@ -84,13 +84,13 @@ const TableData = () => {
       truncateText: true,
     },
     {
-      field: 'intershiftDtoN',
-      name: 'Intershift D to N',
+      field: 'intershiftNtoD',
+      name: 'Intershift N to D',
       truncateText: true,
     },
     {
-      field: 'intershiftNtoD',
-      name: 'Intershift N to D',
+      field: 'intershiftDtoN',
+      name: 'Intershift D to N',
       truncateText: true,
     },
   ];

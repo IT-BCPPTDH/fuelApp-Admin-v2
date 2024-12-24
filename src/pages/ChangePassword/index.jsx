@@ -54,7 +54,6 @@ const ChangePage = () => {
           setEditMessage('Data not saved!');
       }
     } catch (error) {
-      console.log(first)
       setEditStatus('Error');
       setEditMessage('Terjadi kesalahan saat update data. Data tidak tersimpan!');
     } finally {

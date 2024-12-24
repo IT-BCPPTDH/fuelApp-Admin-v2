@@ -300,6 +300,16 @@ const ModalFormDataEdit = ({row}) => {
     setFormData({ ...formData, [name]: value });
   };
 
+  const handleFMStart = (e) => {
+    const val = e.target.value;
+    const total = parseFloat(formData.qty) + parseFloat(val || 0)
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      flow_start: val,
+      flow_end: total
+    }));
+  };
+
   const handleChangeQty = async(e) => {
     const val = e.target.value;
   
@@ -448,13 +458,13 @@ const ModalFormDataEdit = ({row}) => {
       setIsModalVisible(true)
     }else{
       try {
-        const res = await formService.updateData({ id: row.id, ...formData, updated_by: user.JDE });
-        if (res.status === "200") {
-          setEditStatus('Success!');
-          setEditMessage('Data successfully saved!');
-        } else {
-          throw new Error('Data not saved! Please try again.');
-        }
+        // const res = await formService.updateData({ id: row.id, ...formData, updated_by: user.JDE });
+        // if (res.status === "200") {
+        //   setEditStatus('Success!');
+        //   setEditMessage('Data successfully saved!');
+        // } else {
+        //   throw new Error('Data not saved! Please try again.');
+        // }
       } catch (error) {
         console.error('Error updating data:', error);
         setEditStatus('Error');
@@ -744,7 +754,7 @@ const ModalFormDataEdit = ({row}) => {
                     name='flow_start'
                     value={formData.flow_start}
                     placeholder='Input'
-                    onChange={handleChange}
+                    onChange={handleFMStart}
                   />
                 </EuiFormRow>
 
@@ -877,6 +887,7 @@ const ModalFormDataEdit = ({row}) => {
                 showConfirmEditModal();
               
               }}
+              isDisabled={Number(formData.qty) === 0} 
               fill
             >
               Save

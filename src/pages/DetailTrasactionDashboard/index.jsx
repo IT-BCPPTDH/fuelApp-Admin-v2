@@ -21,15 +21,9 @@ const DetailPage = () => {
   if(station == 'FT1116'){
     cardsDataAll = [
       {
-        title: summaryAll.totalAllOpening ? summaryAll.totalAllOpening + ' Ltrs'  : 0 + ' Ltrs',
+        title: summaryAll.totalAllOpeningDay ? summaryAll.totalAllOpeningDay + ' Ltrs'  : 0 + ' Ltrs',
         description1: "Opening Stock",
         description2: "Total sonding",
-        icon: Icon1,
-      },
-      {
-        title: summaryAll.totalAllIssued ? summaryAll.totalAllIssued  + ' Ltrs' : 0 + ' Ltrs',
-        description1: "Issued",
-        description2: "Summary Issued",
         icon: Icon1,
       },
       {
@@ -39,7 +33,13 @@ const DetailPage = () => {
         icon: Icon1,
       },
       {
-        title: summaryAll.totalAllClosing ? summaryAll.totalAllClosing + ' Ltrs' : 0 + ' Ltrs',
+        title: summaryAll.totalAllIssued ? summaryAll.totalAllIssued  + ' Ltrs' : 0 + ' Ltrs',
+        description1: "Issued",
+        description2: "Summary Issued",
+        icon: Icon1,
+      },
+      {
+        title: summaryAll.totalAllClosingNigth ? summaryAll.totalAllClosingNigth + ' Ltrs' : 0 + ' Ltrs',
         description1: "Closing Stock",
         description2: "Closing Stock",
         icon: Icon3,
@@ -65,17 +65,18 @@ const DetailPage = () => {
         icon: Icon1,
       },
       {
+        title: summaryAll.totalAllKpcDay ? summaryAll.totalAllKpcDay + ' Ltrs' : 0 + ' Ltrs',
+        description1: "Receipt KPC",
+        description2: "Summary Receipt KPC",
+        icon: Icon1,
+      },
+      {
         title: summaryAll.totalAllIssuedDay ? summaryAll.totalAllIssuedDay + ' Ltrs' : 0 + ' Ltrs',
         description1: "Issued",
         description2: "Issued Transaction",
         icon: Icon1,
       },
       {
-        title: summaryAll.totalAllKpcDay ? summaryAll.totalAllKpcDay + ' Ltrs' : 0 + ' Ltrs',
-        description1: "Receipt KPC",
-        description2: "Summary Receipt KPC",
-        icon: Icon1,
-      },{
         title: summaryAll.totalAllClosingDay ? summaryAll.totalAllClosingDay + ' Ltrs' : 0 + ' Ltrs',
         description1: "Closing Stock",
         description2: "Close Sonding",
@@ -87,12 +88,6 @@ const DetailPage = () => {
         description2: "Variance",
         icon: Icon3,
       },
-      // {
-      //   title: summaryAll.totalAllCloseDataDay ? summaryAll.totalAllCloseDataDay + ' Ltrs' : 0 + ' Ltrs',
-      //   description1: "Close Data",
-      //   description2: "Close Data",
-      //   icon: Icon2,
-      // },
     ];
   
     cardsDataShiftNigth = [
@@ -103,15 +98,15 @@ const DetailPage = () => {
         icon: Icon1,
       },
       {
-        title: summaryAll.totalAllIssuedNigth ? summaryAll.totalAllIssuedNigth + ' Ltrs' : 0 + ' Ltrs',
-        description1: "Issued",
-        description2: "Issued Transaction",
-        icon: Icon1,
-      },
-      {
         title: summaryAll.totalAllKpcNigth ? summaryAll.totalAllKpcNigth + ' Ltrs' : 0 + ' Ltrs',
         description1: "Receipt KPC",
         description2: "Summary Receipt KPC",
+        icon: Icon1,
+      },
+      {
+        title: summaryAll.totalAllIssuedNigth ? summaryAll.totalAllIssuedNigth + ' Ltrs' : 0 + ' Ltrs',
+        description1: "Issued",
+        description2: "Issued Transaction",
         icon: Icon1,
       },
       {
@@ -126,25 +121,13 @@ const DetailPage = () => {
         description2: "Variance",
         icon: Icon3,
       },
-      // {
-      //   title: summaryAll.totalAllCloseDataNigth ? summaryAll.totalAllCloseDataNigth + ' Ltrs' : 0 + ' Ltrs',
-      //   description1: "Close Data",
-      //   description2: "Close Data",
-      //   icon: Icon2,
-      // },
     ];
   }else{
     cardsDataAll = [
       {
-        title: summaryAll.totalAllOpening ? summaryAll.totalAllOpening + ' Ltrs'  : 0 + ' Ltrs',
+        title: summaryAll.totalAllOpeningDay ? summaryAll.totalAllOpeningDay + ' Ltrs'  : 0 + ' Ltrs',
         description1: "Opening Stock",
         description2: "Opening Sonding",
-        icon: Icon1,
-      },
-      {
-        title: summaryAll.totalAllIssued ? summaryAll.totalAllIssued  + ' Ltrs' : 0 + ' Ltrs',
-        description1: "Issued",
-        description2: "Summary Issued",
         icon: Icon1,
       },
       {
@@ -154,7 +137,13 @@ const DetailPage = () => {
         icon: Icon1,
       },
       {
-        title: summaryAll.totalAllClosing ? summaryAll.totalAllClosing + ' Ltrs' : 0 + ' Ltrs',
+        title: summaryAll.totalAllIssued ? summaryAll.totalAllIssued  + ' Ltrs' : 0 + ' Ltrs',
+        description1: "Issued",
+        description2: "Summary Issued",
+        icon: Icon1,
+      },
+      {
+        title: summaryAll.totalAllClosingNigth ? summaryAll.totalAllClosingNigth + ' Ltrs' : 0 + ' Ltrs',
         description1: "Closing Stock",
         description2: "Closing Stock",
         icon: Icon3,
@@ -165,12 +154,6 @@ const DetailPage = () => {
         description2: "Total Variance",
         icon: Icon3,
       },
-      // {
-      //   title: summaryAll.totalAllCloseData ? summaryAll.totalAllCloseData + ' Ltrs' : 0 + ' Ltrs',
-      //   description1: "Close Data",
-      //   description2: "Total Close Data",
-      //   icon: Icon2,
-      // }
     ];
     cardsDataShiftDay = [
       {
@@ -180,17 +163,18 @@ const DetailPage = () => {
         icon: Icon1,
       },
       {
+        title: summaryAll.totalAllReceiptDay ? summaryAll.totalAllReceiptDay + ' Ltrs' : 0 + ' Ltrs',
+        description1: "Receipt",
+        description2: "Receipt Transaction",
+        icon: Icon1,
+      },
+      {
         title: summaryAll.totalAllIssuedDay ? summaryAll.totalAllIssuedDay + ' Ltrs' : 0 + ' Ltrs',
         description1: "Issued",
         description2: "Issued Transaction",
         icon: Icon1,
       },
       {
-        title: summaryAll.totalAllReceiptDay ? summaryAll.totalAllReceiptDay + ' Ltrs' : 0 + ' Ltrs',
-        description1: "Receipt",
-        description2: "Receipt Transaction",
-        icon: Icon1,
-      },{
         title: summaryAll.totalAllClosingDay ? summaryAll.totalAllClosingDay + ' Ltrs' : 0 + ' Ltrs',
         description1: "Close Stock",
         description2: "Close Stock",
@@ -211,15 +195,15 @@ const DetailPage = () => {
         icon: Icon1,
       },
       {
-        title: summaryAll.totalAllIssuedNigth ? summaryAll.totalAllIssuedNigth + ' Ltrs' : 0 + ' Ltrs',
-        description1: "Issued",
-        description2: "Issued Transaction",
-        icon: Icon1,
-      },
-      {
         title: summaryAll.totalAllReceiptNigth  + ' Ltrs',
         description1: "Receipt",
         description2: "Receipt Transaction",
+        icon: Icon1,
+      },
+      {
+        title: summaryAll.totalAllIssuedNigth ? summaryAll.totalAllIssuedNigth + ' Ltrs' : 0 + ' Ltrs',
+        description1: "Issued",
+        description2: "Issued Transaction",
         icon: Icon1,
       },
       {
@@ -272,7 +256,6 @@ const DetailPage = () => {
   
   return (
     <>
-     
       <div className="padding-content">
         <div style={{ marginTop: "20px" }}>
         <DynamicPageHeader

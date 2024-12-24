@@ -22,7 +22,8 @@ const ChangePswdPage = lazy(()=>import('./pages/ChangePassword'));
 const UserPage = lazy(()=>import('./pages/User'));
 const EquipPage = lazy(()=>import('./pages/Equipment'));
 const QuotaDailyPage = lazy(()=>import('./pages/QuotaDaily'));
-// const printLKfPage = lazy(()=>import('./pages/printLKF'));
+const ForgotPsw = lazy(()=>import('./pages/ForgottedPassword/index'));
+const NewPsw = lazy(()=>import('./pages/ForgottedPassword/newPswd'));
 
 const RouteApp = () => {
   const {isLogged}=useAuth()
@@ -186,7 +187,24 @@ const RouteApp = () => {
       path: "/",
       errorElement: <FallbackUI />,
     },
-    
+    {
+      element: (
+        <Suspense fallback={<div>Loading ...</div>}>
+          <ForgotPsw />
+        </Suspense>
+      ),
+      path: "/forgotPassword",
+      errorElement: <FallbackUI />,
+    },
+    {
+      element: (
+        <Suspense fallback={<div>Loading ...</div>}>
+          <NewPsw />
+        </Suspense>
+      ),
+      path: "/newPassword",
+      errorElement: <FallbackUI />,
+    },
   ]
 
   const router = createBrowserRouter(routes);
