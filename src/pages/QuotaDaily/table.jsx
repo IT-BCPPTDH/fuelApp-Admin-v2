@@ -21,7 +21,7 @@ import ModalForm from '../../components/ModalForm';
 import ToogleActive from './toggleActive';
 import dailyService from '../../services/dailyQuotaService';
 import moment from "moment";
-import AddQuota from '../../components/ModalForm/addQuotaDaily';
+import AddQuota from '../../components/ModalForm/AddQuotaDaily';
 
 
 const TableData = ({opt}) => {
