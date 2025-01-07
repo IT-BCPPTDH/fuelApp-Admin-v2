@@ -21,6 +21,7 @@ import ModalForm from '../../components/ModalForm';
 import ToogleActive from './toggleActive';
 import dailyService from '../../services/dailyQuotaService';
 import moment from "moment";
+import AddQuota from '../../components/ModalForm/addQuotaDaily';
 
 
 const TableData = ({opt}) => {
@@ -321,47 +322,48 @@ const TableData = ({opt}) => {
       }
     }
 
-    const handleSubmitHLV = async() => {
-      try {
-        const updateList = {kategori: 'Triton', tanggal : opt.tanggal, ...formHlv}
-        const res = await dailyService.editableModel(updateList)
-        if (res.status != 200) {
-          setEditStatus('Error')
-          setEditMessage('Oops..sepertinya ada kesalahan!')
-          closeConfirmEditModalHlv()
-        }else{
-          setEditStatus('Success!')
-          setEditMessage('Model unit elf berhasil diupdate!')
-          setTables(res.data)
-          closeConfirmEditModalHlv()
-        }
-      } catch (error) {
-        setEditStatus('Error')
-        setEditMessage('Yah, sepertinya ada yang error! ', error)
-        closeConfirmEditModalHlv()
-      }finally{
-        showEditModal()
-      }
-    }
-
     const handleSubmitLV = async() => {
+      closeConfirmEditModalLv()
       try {
-        const updateList = {model: 'Colt', tanggal : opt.tanggal, ...formLv}
+        const updateList = {kategori: 'LIGHT VEHICLE', model: 'TRITON', tanggal : opt.tanggal, ...formLv}
         const res = await dailyService.editableModel(updateList)
         if (res.status != 200) {
           setEditStatus('Error')
           setEditMessage('Oops..sepertinya ada kesalahan!')
-          closeConfirmEditModalLv()
+          closeEditModal()
         }else{
           setEditStatus('Success!')
-          setEditMessage('Model unit lv berhasil diupdate!')
+          setEditMessage('Model unit LV berhasil diupdate!')
           setTables(res.data)
-          closeConfirmEditModalLv()
+          closeEditModal()
         }
       } catch (error) {
         setEditStatus('Error')
         setEditMessage('Yah, sepertinya ada yang error! ', error)
         closeConfirmEditModalLv()
+      }finally{
+        showEditModal()
+      }
+    }
+
+    const handleSubmitHLV = async() => {
+      closeConfirmEditModalHlv()
+      try {
+        const updateList = {kategori: 'BUS', model: 'COLT', tanggal : opt.tanggal, ...formHlv}
+        const res = await dailyService.editableModel(updateList)
+        if (res.status != 200) {
+          setEditStatus('Error')
+          setEditMessage('Oops..sepertinya ada kesalahan!')
+          closeEditModal()
+        }else{
+          setEditStatus('Success!')
+          setEditMessage('Model unit Hlv berhasil diupdate!')
+          setTables(res.data)
+          closeEditModal()
+        }
+      } catch (error) {
+        setEditStatus('Error')
+        setEditMessage('Yah, sepertinya ada yang error! ', error)
       }finally{
         showEditModal()
       }
@@ -397,28 +399,27 @@ const TableData = ({opt}) => {
         >
           Generate data
         </EuiButton>
-        <EuiButton
+        {/* <EuiButton
           style={{ background: "#F04E98", color: "white" }}
           color="primary"
           onClick={showModalBusModal}
         >
           Editable Bus
-        </EuiButton>
+        </EuiButton> */}
         <EuiButton
           style={{ background: "#FBBA6D", color: "white" }}
           color="primary"
           onClick={showModalLvModal}
         >
-          Edit Lv
+          Edit LV
         </EuiButton>
         <EuiButton
           style={{ background: "#73A33F", color: "white" }}
           color="primary"
           onClick={showModalHlvModal}
         >
-          Edit Elf
+          Edit HLV
         </EuiButton> 
-
       </>
     );
 
@@ -426,7 +427,6 @@ const TableData = ({opt}) => {
     <>
       <div style={{ marginBottom: '10px', display: "flex", justifyContent: "flex-end",gap:"15px",alignItems: "center" }}>
         
-        {renderHeader()}
         <EuiFieldSearch
           placeholder="Search data" 
           value={searchValue}
@@ -434,6 +434,8 @@ const TableData = ({opt}) => {
           aria-label="Search data"
           style={{ marginRight: '10px' }}
         />
+        <AddQuota/>
+        {renderHeader()}
         
       </div>
       <EuiText size="xs">

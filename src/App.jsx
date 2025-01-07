@@ -31,6 +31,7 @@ import {icon as EuiIconPen} from '@elastic/eui/es/components/icon/assets/pencil'
 import {icon as EuiIconHome} from '@elastic/eui/es/components/icon/assets/home';
 import {icon as EuiIconWarning} from '@elastic/eui/es/components/icon/assets/warning';
 import {icon as EuiIconReturnKey} from '@elastic/eui/es/components/icon/assets/return_key';
+import {icon as EuiIconPlusSquare} from '@elastic/eui/es/components/icon/assets/plus_in_square';
 
 
 // One or more icons are passed in as an object of iconKey (string): IconComponent
@@ -57,7 +58,8 @@ appendIconComponentCache({
   pencil:EuiIconPen,
   home:EuiIconHome,
   warning:EuiIconWarning,
-  return_key:EuiIconReturnKey
+  return_key:EuiIconReturnKey,
+  plusInSquare: EuiIconPlusSquare
 });
 
 

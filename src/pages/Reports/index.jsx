@@ -61,9 +61,9 @@ const ReportFuel = () => {
   ];
 
   const reports = [
-    { id: 1, label: 'Export to Excel', value: 'Excel'},
-    { id: 2,label: 'Export to Elipse', value: 'Elipse' },
-    { id: 3,label: 'Export Raw', value:'Raw' },
+    { id: 1, text: 'Export to Excel', value: 'Excel'},
+    { id: 2,text: 'Export to Elipse', value: 'Elipse' },
+    { id: 3,text: 'Export Raw', value:'Raw' },
   ];
 
   const stationData =  station.map((item, index) => ({
@@ -219,7 +219,7 @@ const handleRadioDaily = (event) => {
       content: (
         <>
         <div className='mt20'>
-        <EuiCard className="cardContainer">
+        <EuiCard className="cardContainer" title="">
             <div className="formRowContainer">
               <EuiFlexGrid>
                 <EuiFormRow  style={{marginTop:"0px"}} label="Mulai pada tanggal">
@@ -255,7 +255,9 @@ const handleRadioDaily = (event) => {
               {stationData.map(item => (
                 <EuiFormRow key={item.id} className="euiFormRow">
                   <EuiCheckbox
-                    value={item.id}
+                  style={{marginRight: "20px"}}
+                  id={`checkbox-${item.id}`} 
+                    value={item.id || ""}
                     label={<span className="checkboxLabel">{item.label}</span>}
                     checked={!!checkedItems[item.id]}
                     onChange={onChange}
@@ -289,7 +291,6 @@ const handleRadioDaily = (event) => {
               onChange={handleOptionReport}
               ></EuiSelect>
             </div>
-            
 
             <EuiButton
                   size="s"
@@ -318,7 +319,7 @@ const handleRadioDaily = (event) => {
       content: (
         <>
         <div className='mt20'>
-        <EuiCard className="cardContainer">
+        <EuiCard className="cardContainer" title = "">
             <div className="formRowContainer">
               <EuiFlexGrid>
                 <EuiFormRow  style={{marginTop:"0px"}} label="Sampai tanggal">

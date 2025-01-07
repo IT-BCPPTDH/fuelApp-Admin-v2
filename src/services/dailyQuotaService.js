@@ -91,7 +91,7 @@ const statusBusQuo = async (requestParams) => {
 
 const statusLvQuo = async (requestParams) => {
     try {
-        const response = await api.get(URL_API.statusBus + requestParams, {
+        const response = await api.get(URL_API.statusLv + requestParams, {
             headers: {
                 'Content-Type': 'application/json',
             },
@@ -105,7 +105,21 @@ const statusLvQuo = async (requestParams) => {
 
 const statusHlvQuo = async (requestParams) => {
     try {
-        const response = await api.get(URL_API.statusBus + requestParams, {
+        const response = await api.get(URL_API.statusHlv + requestParams, {
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        });
+        return response.data;
+    } catch (error) {
+        console.error('Error fetching data:', error.message);
+        throw error;
+    }
+};
+
+const insertQuo = async (bodyParams) => {
+    try {
+        const response = await api.post(URL_API.insertLimit, bodyParams,{
             headers: {
                 'Content-Type': 'application/json',
             },
@@ -126,7 +140,8 @@ const dailyQuotaService = {
     editableModel,
     statusLvQuo,
     statusHlvQuo,
-    statusBusQuo
+    statusBusQuo,
+    insertQuo
 };
 
 export default dailyQuotaService;
