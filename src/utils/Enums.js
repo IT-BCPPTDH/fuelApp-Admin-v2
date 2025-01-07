@@ -74,6 +74,7 @@ export const URL_API = {
     generateImgReq: linkBe + "/api/img/req/",
     editStation : `${linkBe}/api/admin/update-station`,
     delStation : `${linkBe}/api/admin/delete-station/`,
+    insertLimit : `${linkBe}/api/quota-usage/insert`,
 };
 
 export const URL_MASTER_DATA = {
