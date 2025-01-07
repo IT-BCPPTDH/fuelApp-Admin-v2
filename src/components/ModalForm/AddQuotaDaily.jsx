@@ -81,6 +81,7 @@ const AddQuota = () => {
 
   useEffect(() => {
     const dates = JSON.parse(localStorage.getItem('optionLimited')); 
+    console.log(dates)
     setData((prev) =>({
       ...prev,
       date: dates.tanggal
