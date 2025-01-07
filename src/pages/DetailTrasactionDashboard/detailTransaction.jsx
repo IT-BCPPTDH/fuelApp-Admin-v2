@@ -196,79 +196,86 @@ const DetailsPageTransaction = () => {
         field: 'no_unit',
         name: 'Unit No',
         truncateText: true,
-        width: '10vh'
+        width: '5vh'
     },
     {
       field: 'model_unit',
       name: 'Model Unit',
       truncateText: true,
-      width: '20vh'
+      width: '9vh'
+    },
+    {
+      field: 'type',
+      name: 'Type',
+      truncateText: true,
+      align:'center',
+      width: '5vh'
     },
     {
       field: 'hm_km',
       name: 'HM/KM',
       truncateText: true,
-      width: '10vh'
+      width: '5vh'
     },
     {
       field: 'owner',
       name: 'Owner',
       truncateText: true,
-      width: '10vh'
+      width: '6vh'
     },
     {
       field: 'qty',
       name: 'QTY',
       truncateText: true,
-      width: '8vh'
+      width: '5vh'
     },
     {
       field: 'fbr',
       name: 'FBR',
       truncateText: true,
-      width: '8vh'
+      width: '5vh'
     },
     {
       field: 'flow_start',
       name: 'FM Start',
       truncateText: true,
-      width: '10vh'
+      width: '5vh'
     },
     {
       field: 'flow_end',
       name: 'FM Close',
       truncateText: true,
-      width: '10vh'
+      width: '5vh'
     },
     {
       field: 'jde_operator',
       name: 'ID Operator',
       truncateText: true,
-      width: '10vh'
+      width: '5vh'
     },
     {
       field: 'name_operator',
       name: 'Name',
       truncateText: true,
-      width: '10vh'
+      width: '8vh'
     },
     {
       field: 'start',
       name: 'Start Time',
       truncateText: true,
-      width: '10vh'
+      width: '5vh'
     },
     {
       field: 'end',
       name: 'Stop Time',
       truncateText: true,
-      width: '10vh'
+      width: '5vh'
     },
     {
       field: 'signature',
       name: 'Sign',
       align:'center',
-      width:'10vh',
+      width:'5vh',
       truncateText: true,
       render: (signature) => {
         sessionStorage.setItem('sign', JSON.stringify(signUrl[signature]))
@@ -283,7 +290,7 @@ const DetailsPageTransaction = () => {
       field: 'photo',
       name: 'Picture',
       align:'center',
-      width:'10vh',
+      width:'5vh',
       truncateText: true,
       render: (photo) => {
         sessionStorage.setItem('photo', JSON.stringify(imgUrl[photo]))
@@ -295,30 +302,23 @@ const DetailsPageTransaction = () => {
       },
     },
     {
-      field: 'type',
-      name: 'Type',
-      truncateText: true,
-      align:'center',
-      width: '10vh'
-    },
-    {
       field: 'entry_time',
       name: 'Entry Time',
       truncateText: true,
-      width: '10vh',
+      width: '5vh',
       align:'center',
     },
     {
       field: 'sync_time',
       name: 'Sync Time',
       truncateText: true,
-      width: '10vh',
+      width: '5vh',
       align:'center',
     },
     {
       field: 'action',
       name: 'Action',
-      width: '10vh',
+      width: '5vh',
       align:'center',
       render: (e, row) => (
         <>
