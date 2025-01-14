@@ -3,7 +3,6 @@ import { EuiOverlayMask, EuiModal, EuiModalBody, EuiImage } from '@elastic/eui';
 import imgUnavailable from '../../images/no-img.png';
 
 const PictureCell = ({ photo }) => {
-  console.log("photo", photo)
   const [isModalVisible, setIsModalVisible] = useState(false);
 
   const closeModal = () => setIsModalVisible(false);

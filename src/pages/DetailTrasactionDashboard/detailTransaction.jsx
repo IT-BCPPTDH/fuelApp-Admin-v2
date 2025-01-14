@@ -168,7 +168,7 @@ const DetailsPageTransaction = () => {
   useEffect(() => {
     const startMeter = typeof formTotal?.startMeter === 'string' 
       ? parseInt(formTotal.startMeter.replace(/,/g, ""), 10) 
-      : formTotal?.startMeter; // Jika bukan string, langsung gunakan angka
+      : formTotal?.startMeter; 
     const result = flowEnd - startMeter;
     setReplaceTotal(result);
   }, [flowEnd, formTotal?.startMeter]);
@@ -182,6 +182,7 @@ const DetailsPageTransaction = () => {
         if (res.status != 200) {
           throw new Error('Network response was not ok');
         }
+        console.log(res.data)
         setFormTotal(res.data);
       } catch (error) {
         console.log(error)
@@ -340,7 +341,6 @@ const DetailsPageTransaction = () => {
         }, 
       });
       
-      console.log(response)
       if (!response.ok) {
         throw new Error('Failed to fetch image');
       }
@@ -364,9 +364,9 @@ const DetailsPageTransaction = () => {
             'Content-Type': 'image/png', 
         },
       });
-      // if (!response.ok) {
-      //   throw new Error('Failed to fetch image');
-      // }
+      if (!response.ok) {
+        throw new Error('Failed to fetch image');
+      }
       const imageBlob = await response.blob();
       const imageUrl = URL.createObjectURL(imageBlob);
       setSignUrl((prevUrls) => ({ ...prevUrls, [signature]: imageUrl }));
