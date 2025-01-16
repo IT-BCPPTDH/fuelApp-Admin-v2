@@ -155,6 +155,7 @@ const HeaderUserMenu = () => {
 
   const handlelLogout = () => {
     localStorage.removeItem('user_data'); 
+    localStorage.clear();
     Cookies.remove('token')
     Cookies.remove('user')
     window.location.replace('/');
