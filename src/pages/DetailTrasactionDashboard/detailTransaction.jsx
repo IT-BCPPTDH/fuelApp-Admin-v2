@@ -182,7 +182,6 @@ const DetailsPageTransaction = () => {
         if (res.status != 200) {
           throw new Error('Network response was not ok');
         }
-        console.log(res.data)
         setFormTotal(res.data);
       } catch (error) {
         console.log(error)
@@ -210,7 +209,7 @@ const DetailsPageTransaction = () => {
       name: 'Type',
       truncateText: true,
       align:'center',
-      width: '5vh'
+      width: '7vh'
     },
     {
       field: 'hm_km',
@@ -306,14 +305,14 @@ const DetailsPageTransaction = () => {
       field: 'entry_time',
       name: 'Entry Time',
       truncateText: true,
-      width: '5vh',
+      width: '10vh',
       align:'center',
     },
     {
       field: 'sync_time',
       name: 'Sync Time',
       truncateText: true,
-      width: '5vh',
+      width: '10vh',
       align:'center',
     },
     {

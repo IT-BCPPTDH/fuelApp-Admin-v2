@@ -90,7 +90,7 @@ const ModalFormDataEdit = ({row}) => {
     no_unit: row.no_unit || "",
     model_unit: row.model_unit || "",
     owner: row.owner || "",
-    date_trx: row.date_trx,
+    // date_trx: row.date_trx,
     qty: row.qty || 0,
     qty_last: row.qty_last || 0,
     fbr: row.fbr || 0,
@@ -114,6 +114,9 @@ const ModalFormDataEdit = ({row}) => {
   const [signUrl, setSignUrl] = useState(null)
   const [errors, setErrors] = useState({});
   const [optJde, setOptJde] = useState([])
+
+  const [selectedTime, setSelectedTime] = useState(null);
+  const [selectedTimeEnd, setSelectedTimeEnd] = useState(null);
 
   const modalFormId = useGeneratedHtmlId({ prefix: 'modalForm' });
   const modalTitleId = useGeneratedHtmlId();
@@ -182,7 +185,7 @@ const ModalFormDataEdit = ({row}) => {
       no_unit: row.no_unit || "",
       model_unit: row.model_unit || "",
       owner: row.owner || "",
-      date_trx: row.date_trx,
+      // date_trx: row.date_trx,
       qty: row.qty || 0,
       qty_last: row.qty_last || 0,
       fbr: row.fbr || 0,
@@ -216,13 +219,6 @@ const ModalFormDataEdit = ({row}) => {
         value: items.JDE  
       }))
     );
-
-    const dataTrx = JSON.parse(sessionStorage.getItem('transaction'))
-    const dates = JSON.parse(localStorage.getItem('tanggal'))
-    setFormData((prev)=>({
-      ...prev,
-      date_trx: dates
-    }))
 
     fetchImage(formData.photo)
     fetchSign(formData.signature)
@@ -397,15 +393,39 @@ const ModalFormDataEdit = ({row}) => {
   };
 
   const handleChageStart = (time) => {
+    const formattedDates = moment(time).format("HH:mm:ss"); 
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      start: formattedDates,
+    }));
     setSelectedTime(time);
-    const formattedDates = moment(time).format('hh:mm:ss');
-    setTimeStart(formattedDates)
   };
 
   const handleChangeEnd = (time) => {
+    const formattedEnd = moment(time).format("HH:mm:ss");
+    
+    setFormData((prevFormData) => {
+      if (
+        prevFormData.start && 
+        moment(formattedEnd, "HH:mm:ss").isBefore(moment(prevFormData.start, "HH:mm:ss"))
+      ) {
+        setErrors({
+          end: "Waktu selesai tidak boleh lebih kecil dari Waktu mulai!",
+        });
+        return prevFormData;
+      }
+  
+      setErrors({
+        end: "",
+      });
+  
+      return {
+        ...prevFormData,
+        end: formattedEnd,
+      };
+    });
+  
     setSelectedTimeEnd(time);
-    const formattedDates = moment(time).format('hh:mm:ss');
-    setTimeEnd(formattedDates)
   };
 
   const handleOptionChange = (value) => {
@@ -459,7 +479,8 @@ const ModalFormDataEdit = ({row}) => {
       setIsModalVisible(true)
     }else{
       try {
-        const res = await formService.updateData({ id: row.id, ...formData, updated_by: user.JDE });
+        const dates = JSON.parse(localStorage.getItem('tanggal'))
+        const res = await formService.updateData({ id: row.id, date_trx : dates, ...formData, updated_by: user.JDE });
         if (res.status === "200") {
           setEditStatus('Success!');
           setEditMessage('Data successfully saved!');
@@ -790,7 +811,7 @@ const ModalFormDataEdit = ({row}) => {
 
                 <EuiFormRow label="Jam Awal" isInvalid={!!errors.start} error={errors.start}>
                     <EuiDatePicker
-                      selected={formData.start}
+                      selected={selectedTime ? selectedTime : formData.start}
                       onChange={handleChageStart}
                       showTimeSelect
                       showTimeSelectOnly
@@ -802,7 +823,7 @@ const ModalFormDataEdit = ({row}) => {
 
                 <EuiFormRow label="Jam Akhir" isInvalid={!!errors.end} error={errors.end}>
                     <EuiDatePicker
-                      selected={formData.end}
+                      selected={selectedTimeEnd ? selectedTimeEnd : formData.end}
                       onChange={handleChangeEnd}
                       showTimeSelect
                       showTimeSelectOnly
