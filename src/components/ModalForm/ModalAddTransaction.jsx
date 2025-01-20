@@ -313,11 +313,9 @@ const ModalFormAddIssued = () => {
     const dates = JSON.parse(localStorage.getItem('tanggal'))
     setTrxDate(dates)
     const flowsData = sessionStorage.getItem('dasboardTrx');
-    console.log(JSON.parse(flowsData))
     const flows = flowsData ? JSON.parse(flowsData) : null;
 
     if (flows && flows.startMeter) {
-      console.log(flows.startMeter);
       setFlowsStart(flows.startMeter);
     } else {
       console.warn('No startMeter found in flows or flows is null');
