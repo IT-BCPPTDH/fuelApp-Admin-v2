@@ -49,7 +49,7 @@ const DetailsPageTransaction = () => {
   const [searchValue, setSearchValue] = useState('');
   const {lkfId} = useParams()
   const [formTotal, setFormTotal] = useState(0)
-  const date = JSON.parse(localStorage.getItem('formattedDate'));
+  const date = JSON.parse(localStorage.getItem('tanggal'));
   const station = JSON.parse(localStorage.getItem('storedStation'))
   const [flowEnd, setflowEnd] = useState(0)
 
@@ -454,7 +454,7 @@ const DetailsPageTransaction = () => {
   const handleExport = async () => {
     try {
       const data = {
-        tanggal : date.tanggal,
+        tanggal : date,
         lkfId: lkfId
       }
       const response = await reportService.reportLkf(data);
@@ -472,7 +472,7 @@ const DetailsPageTransaction = () => {
   const handleExportElipse = async() => {
     try {
       const data = {
-        tanggal: date.tanggal,
+        tanggal: date,
         lkfId: lkfId
       }
       const response = await reportService.reportLkfElipse(data);
