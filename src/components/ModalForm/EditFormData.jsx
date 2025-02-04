@@ -394,11 +394,32 @@ const ModalFormDataEdit = ({row}) => {
 
   const handleChageStart = (time) => {
     const formattedDates = moment(time).format("HH:mm:ss"); 
-    setFormData((prevFormData) => ({
-      ...prevFormData,
-      start: formattedDates,
-    }));
+    // setFormData((prevFormData) => ({
+    //   ...prevFormData,
+    //   start: formattedDates,
+    // }));
     setSelectedTime(time);
+    setFormData((prevFormData) => {
+      const startTime = moment(formattedDates, "HH:mm:ss");
+      const endTime = moment(prevFormData.end, "HH:mm:ss");
+  
+      let newErrors = {};
+  
+      if (prevFormData.end && startTime.isAfter(endTime)) {
+        newErrors.start = "Waktu mulai tidak boleh lebih besar dari Waktu selesai!";
+      }
+  
+      setErrors(newErrors);
+  
+      if (Object.keys(newErrors).length > 0) {
+        return prevFormData; 
+      }
+  
+      return {
+        ...prevFormData,
+        start: formattedDates,
+      };
+    });
   };
 
   const handleChangeEnd = (time) => {
