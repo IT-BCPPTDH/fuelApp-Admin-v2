@@ -22,8 +22,6 @@ import UserService from '../../services/UserService';
 import moment from "moment";
 import CreatableSelect from "react-select/creatable";
 
-
-
 const customStyles = {
   indicatorSeparator: (base) => ({
     ...base,
@@ -346,6 +344,7 @@ const EditStationTransaction = ({row}) => {
                         onChange={handleChageDate}
                         dateFormat="DD/MM/YYYY"  
                         locale="en-gb" 
+                        maxDate={selectedDate}
                       />
                     </EuiFormRow>
                     <EuiFormRow label="Stations" style={{marginTop:"0px"}} isInvalid={!!errors.station}
