@@ -11,6 +11,7 @@ import { useNavigate } from 'react-router-dom';
 import ModalFormStation from '../../components/ModalForm/ModalAddStation';
 import stationService from '../../services/stationDashboard';
 import ModalFormStationEdit from '../../components/ModalForm/EditFormStation';
+import ModalBulkStation from '../../components/ModalForm/ModalBulkStation';
 
 const TableData = () => {
   const navigate = useNavigate(); 
@@ -134,14 +135,6 @@ const TableData = () => {
   return (
     <>
       <div style={{ marginBottom: '10px', display: "flex", justifyContent: "flex-end", gap: "15px", alignItems: "center" }}>
-        <ModalFormStation />
-        {/* <EuiButton
-          style={{ background: "#73A33F", color: "white" }}
-          color="primary"
-          onClick={() => alert('Export button clicked')}
-        >
-          Export
-        </EuiButton> */}
         <EuiFieldSearch
           placeholder="Search data" 
           value={searchValue}
@@ -149,6 +142,8 @@ const TableData = () => {
           aria-label="Search data"
           style={{ marginRight: '10px' }}
         />
+        <ModalFormStation />
+        <ModalBulkStation />
       </div>
       <EuiText size="xs">
         Showing {resultsCount} <strong>Data</strong>
