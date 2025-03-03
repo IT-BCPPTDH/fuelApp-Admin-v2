@@ -12,6 +12,7 @@ import { useNavigate } from 'react-router-dom';
 import ModalFormStock from '../../components/ModalForm/ModalStockSystem';
 import ModalSondingnEdit from '../../components/ModalForm/EditFormSonding';
 import sondingService from '../../services/masterSonding';
+import ModalBulkSonding from '../../components/ModalForm/ModalBulkSonding';
 
 const TableData = () => {
   const navigate = useNavigate(); 
@@ -137,8 +138,6 @@ const TableData = () => {
   return (
     <>
       <div style={{ marginBottom: '10px', display: "flex", justifyContent: "flex-end",gap:"15px",alignItems: "center" }}>
-    
-        <ModalFormStock/>
         <EuiFieldSearch
           placeholder="Search data" 
           value={searchValue}
@@ -146,7 +145,8 @@ const TableData = () => {
           aria-label="Search data"
           style={{ marginRight: '10px' }}
         />
-        
+        <ModalFormStock/>
+        <ModalBulkSonding/>
       </div>
       <EuiText size="xs">
         Showing {resultsCount} <strong>Data</strong>

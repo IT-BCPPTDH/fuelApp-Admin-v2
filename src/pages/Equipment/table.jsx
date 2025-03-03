@@ -8,6 +8,7 @@ import { useNavigate } from 'react-router-dom';
 import ModalAddEquip from '../../components/ModalForm/ModalAddEquip';
 import ModalEditEquipment from '../../components/ModalForm/EditEquipment';
 import EquipService from '../../services/EquiptmentService';
+import ModalBulkUnit from '../../components/ModalForm/ModalBulkUnit';
 
 const TableData = () => {
   const navigate = useNavigate(); 
@@ -150,7 +151,6 @@ const TableData = () => {
   return (
     <>
       <div style={{ marginBottom: '10px', display: "flex", justifyContent: "flex-end",gap:"15px",alignItems: "center" }}>
-        <ModalAddEquip/>
         <EuiFieldSearch
           placeholder="Search data" 
           value={searchValue}
@@ -158,7 +158,8 @@ const TableData = () => {
           aria-label="Search data"
           style={{ marginRight: '10px' }}
         />
-        
+        <ModalAddEquip/>
+        <ModalBulkUnit/>
       </div>
       <EuiText size="xs">
         Showing {resultsCount} <strong>Data</strong>

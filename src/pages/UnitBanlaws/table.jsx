@@ -11,6 +11,7 @@ import { useNavigate } from 'react-router-dom';
 import ModalFormUnit from '../../components/ModalForm/ModalUnitBanlaws';
 import ModalFormBanlawsEdit from '../../components/ModalForm/EditFormBanlaws';
 import UnitBanlawsService from '../../services/unitBanlaws';
+import ModalBulkBanlaws from '../../components/ModalForm/ModalBulkBanlaws';
 
 const TableData = () => {
   const navigate = useNavigate(); 
@@ -134,7 +135,6 @@ const TableData = () => {
   return (
     <>
       <div style={{ marginBottom: '10px', display: "flex", justifyContent: "flex-end",gap:"15px",alignItems: "center" }}>
-        <ModalFormUnit/>
         <EuiFieldSearch
           placeholder="Search data" 
           value={searchValue}
@@ -142,7 +142,8 @@ const TableData = () => {
           aria-label="Search data"
           style={{ marginRight: '10px' }}
         />
-        
+        <ModalFormUnit/>
+        <ModalBulkBanlaws/>
       </div>
       <EuiText size="xs">
         Showing {resultsCount} <strong>Data</strong>

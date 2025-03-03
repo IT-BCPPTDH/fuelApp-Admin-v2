@@ -13,6 +13,7 @@ const userLink = import.meta.env.VITE_BE_USER;
 const linkSocket = import.meta.env.VITE_SOCKET_USER;
 const linkBe = import.meta.env.VITE_API_BASE_URL; 
 const linkMasterData = import.meta.env.VITE_MASTER_DATA; 
+const linkMDUpload = import.meta.env.VITE_BULK_MASTER;
 // Export URL Enums
 export const URL_ENUMS = {
     linkWebSocket: linkSocket,
@@ -75,6 +76,11 @@ export const URL_API = {
     editStation : `${linkBe}/api/admin/update-station`,
     delStation : `${linkBe}/api/admin/delete-station/`,
     insertLimit : `${linkBe}/api/quota-usage/insert`,
+    bulkStation : `${linkMDUpload}/upload_station`,
+    bulkElipse : `${linkMDUpload}/upload_elipses`,
+    bulkSonding : `${linkMDUpload}/upload_sonding`,
+    bulkBanlaws : `${linkMDUpload}/upload_unit_banlaws`,
+    bulkUnit : `${linkMDUpload}/upload_unit`
 };
 
 export const URL_MASTER_DATA = {

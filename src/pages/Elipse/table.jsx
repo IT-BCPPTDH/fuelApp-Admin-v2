@@ -13,6 +13,7 @@ import ModalForm from '../../components/ModalForm';
 import ModalFormElipse from '../../components/ModalForm/ModalAddElipse';
 import ModalFormEditElipse from '../../components/ModalForm/EditFormElipse';
 import masterElipseService from '../../services/masterElipse';
+import ModalBulkElipse from '../../components/ModalForm/ModalBulkElipse';
 
 const TableData = () => {
   const navigate = useNavigate(); 
@@ -93,12 +94,6 @@ const TableData = () => {
     },
   ];
 
-  // const handleRowClick = (item) => {
- 
-  //   navigate(`/details/${item.station}`); 
-    
-  // };
-
   const getRowProps = (item) => ({
     'data-test-subj': `row-${item.station}`,
     className: 'customRowClass',
@@ -171,24 +166,6 @@ const TableData = () => {
   return (
     <>
       <div style={{ marginBottom: '10px', display: "flex", justifyContent: "flex-end",gap:"15px",alignItems: "center" }}>
-    
-        
-        {/* <EuiButton
-          style={{ background: "#73A33F", color: "white" }}
-          color="primary"
-          onClick={() => alert('Export button clicked')}
-        >
-          Import Master Elipse
-        </EuiButton>
-        <EuiButton
-          style={{ background: "#FEC514", color: "white" }}
-          color="primary"
-          onClick={() => alert('Export button clicked')}
-        >
-          Export Master Elipse
-        </EuiButton> */}
-        <ModalFormElipse/>
-      
         <EuiFieldSearch
           placeholder="Search data" 
           value={searchValue}
@@ -196,7 +173,8 @@ const TableData = () => {
           aria-label="Search data"
           style={{ marginRight: '10px' }}
         />
-        
+        <ModalFormElipse/>
+        <ModalBulkElipse/>
       </div>
       <EuiText size="xs">
         Showing {resultsCount} <strong>Data</strong>
