@@ -41,6 +41,7 @@ const NavTop = () => {
     navigate('/master-elipse');
     navigate('/unit-banlaws');
     navigate('/limited-quota-daily');
+    navigate('/master-operator');
   };
 
   const handlebackHome = () => {
@@ -66,6 +67,7 @@ const NavTop = () => {
     { label: 'Equipment', action: () => navigate('/equipment') },
     { label: 'Limited Quota', action: () => navigate('/limited-quota-daily') },
     { label: 'Master Data Elipse', action: () => navigate('/master-elipse') },
+    { label: 'Master Operator', action: () => navigate('/master-operator') },
     { label: 'Sonding Master', action: () => navigate('/master-stock-system') },
     { label: 'Station', action: () => navigate('/master-station') },
     { label: 'Unit Banlaws', action: () => navigate('/unit-banlaws') },

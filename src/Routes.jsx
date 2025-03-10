@@ -24,6 +24,7 @@ const EquipPage = lazy(()=>import('./pages/Equipment'));
 const QuotaDailyPage = lazy(()=>import('./pages/QuotaDaily'));
 const ForgotPsw = lazy(()=>import('./pages/ForgottedPassword/index'));
 const NewPsw = lazy(()=>import('./pages/ForgottedPassword/newPswd'));
+const Operator = lazy(()=>import('./pages/Operator/index'));
 
 const RouteApp = () => {
   const {isLogged}=useAuth()
@@ -174,6 +175,17 @@ const RouteApp = () => {
         </Layout>
       ),
       path: '/limited-quota-daily',
+      errorElement: <FallbackUI />,
+    },
+    {
+      element: (
+        <Layout>
+          <Suspense fallback={<div>Loading Operator...</div>}>
+            <Operator/>
+          </Suspense>
+        </Layout>
+      ),
+      path: '/master-operator',
       errorElement: <FallbackUI />,
     },
   ]:[

@@ -77,12 +77,28 @@ const bulkUnit = async (paramsBody) => {
         throw error;
     }
 };
+
+const bulkOperator = async (paramsBody) => {
+    try {
+        const response = await fetch(URL_API.bulkOperators, {
+            method:'POST',
+            body:paramsBody,
+        });
+        console.log(response)
+        const data = await response.json(); 
+        return data;
+    } catch (error) {
+        console.error('Error fetching data:', error.message);
+        throw error;
+    }
+};
 const bulkMasterData = {
     bulkStation,
     bulkUnit,
     bulkBanlaws,
     bulkElipse,
-    bulkSonding
+    bulkSonding,
+    bulkOperator
 };
 
 export default bulkMasterData;
