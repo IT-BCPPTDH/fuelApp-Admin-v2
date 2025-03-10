@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import DynamicPageHeader from "../../components/Breadcrumbs";
 import TableData from './table';
 
-const EquipPage = () => {
+const OperatorPage = () => {
   const [checkedItems, setCheckedItems] = useState({});
 
   const breadcrumbs = [
@@ -11,7 +11,7 @@ const EquipPage = () => {
       href: '/',
     },
     {
-      text: 'Equipment',
+      text: 'Opeator',
       href: '#',
       onClick: (e) => e.preventDefault(),
     },
@@ -31,4 +31,4 @@ const EquipPage = () => {
   );
 }
 
-export default EquipPage;
+export default OperatorPage;
