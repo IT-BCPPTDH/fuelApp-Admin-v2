@@ -66,11 +66,10 @@ const TableData = () => {
   };
 
   const filteredItems = operator.filter(item =>
-    String(item.unit_no).toLowerCase().includes(searchValue.toLowerCase()) ||
-    String(item.type).toLowerCase().includes(searchValue.toLowerCase()) ||
-    item.category.toLowerCase().includes(searchValue.toLowerCase()) ||
-    item.site.toLowerCase().includes(searchValue.toLowerCase()) ||
-    item.owner.toLowerCase().includes(searchValue.toLowerCase())
+    String(item.JDE).toLowerCase().includes(searchValue.toLowerCase()) ||
+    String(item.fullname).toLowerCase().includes(searchValue.toLowerCase()) ||
+    item.position.toLowerCase().includes(searchValue.toLowerCase()) ||
+    item.division.toLowerCase().includes(searchValue.toLowerCase()) 
   );
 
   const findPageItems = (items, pageIndex, pageSize) => {
