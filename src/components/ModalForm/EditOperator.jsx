@@ -83,7 +83,7 @@ const ModalEditOperator = ({row}) => {
   const handleEditData = async () => {
     closeModal()
     try {
-      const updateList = {id: row.id, ...formData, updated_by: user.JDE}
+      const updateList = {id: row.id, ...formData}
       const res = await OperatorService.editOperator(updateList)
       if (res.status === '200') {
           setEditStatus('Success!');
@@ -106,9 +106,11 @@ const ModalEditOperator = ({row}) => {
       if (res.status === '200') {
         setResultStatus('success');
         setResultMessage('Data berhasil dihapus');
+        closeConfirmModal()
       } else {
         setResultStatus('failure');
         setResultMessage('Data gagal dihapus');
+        closeConfirmModal()
       }
     } catch (error) {
       setResultStatus('error');

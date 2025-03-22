@@ -66,17 +66,17 @@ const ModalAddOperator = () => {
   const handleSubmit = async(e) => {
     try {
       const updatedData = {
-        ...data,
-        creation_by : user.JDE
+        ...data
       };
-      console.log(updatedData)
       const res = await OperatorServices.insertOperator(updatedData)
       if (res.status === '200') {
         setSubmitStatus('Success!');
         setSubmitMessage('Data successfully saved!');
+        closeConfirmAddModal()
       } else {
         setSubmitStatus('Failed');
         setSubmitMessage('Data not saved!');
+        closeConfirmAddModal()
       }
     } catch (error) {
       setModalType('error');

@@ -418,7 +418,7 @@ const TableData = ({opt}) => {
           color="primary"
           onClick={showModalHlvModal}
         >
-          Edit HLV
+          Edit BUS
         </EuiButton> 
       </>
     );
