@@ -32,8 +32,8 @@ export const URL_USER_API = {
     updateUser: `${userLink}/api-user/update-fuel-employee`,
     resetPswd: `${userLink}/api-user/reset-password`,
     getAllRoles: `${userLink}/api-user/get-all-roles`,
-    getUserFuels: `${userLink}/api-user/get-user-fuel`,
-    createUser: `${userLink}/api-user/add-user-role`,
+    getUserFuels: `${userLink}/api-user/get-admin-fuel`,
+    createUser: `${userLink}/api-user/add-employee-fuel`,
     delUser :`${userLink}/api-user/delete/`
 };
 
@@ -107,10 +107,11 @@ export const URL_MASTER_DATA = {
     delMDEquip: `${linkMasterData}/master/unit/delete/`,
     insertEquip:`${linkMasterData}/master/unit/insert`,
     updateEquip:`${linkMasterData}/master/unit/edit`,
-    getOperator:`${linkMasterData}/master/operator-fuel`,
-    delOperator: `${linkMasterData}/master/operator-fuel/delete/`,
-    insertOperator:`${linkMasterData}/master/operator-fuel/insert`,
-    updateOperator:`${linkMasterData}/master/operator-fuel/edit`
+
+    getOperator:`${userLink}/master/operator-fuel`,
+    delOperator: `${userLink}/master/operator-fuel/delete/`,
+    insertOperator:`${userLink}/master/operator-fuel/insert`,
+    updateOperator:`${userLink}/master/operator-fuel/edit`
 };
 
 // HTTP Status Codes

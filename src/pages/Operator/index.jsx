@@ -21,7 +21,7 @@ const OperatorPage = () => {
     <>
       <div className="padding-content">
         <DynamicPageHeader
-          pageTitle="Equipment"
+          pageTitle="Operator"
           breadcrumbs={breadcrumbs}
           pageTitleStyle={{ color: '#6a6a6a', fontSize: '24px' }}
         />
