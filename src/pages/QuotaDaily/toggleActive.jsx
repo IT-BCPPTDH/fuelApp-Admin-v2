@@ -13,10 +13,9 @@ const ToggleActive = ({ row }) => {
         try {
             const newChecked = !isChecked;
             setIsChecked(newChecked);
-
-            const update = await dailyQuotaService.updateData({ active: newChecked, unit_no: row.unit_no });
-            if (update.status !== 200) {
-                setIsChecked(!newChecked);
+            const update = await dailyQuotaService.updateData({ active: newChecked, unit_no: row.unit_no, date: row.date });
+            if (update.status !== '200') {
+                setIsChecked(update.data);
                 console.error("Failed to update status");
             }
         } catch (error) {
