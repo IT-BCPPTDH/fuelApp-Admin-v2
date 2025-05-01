@@ -82,8 +82,8 @@ const ModalFormDataEdit = ({row}) => {
   const [options, setOptions] = useState([]);
   const user = JSON.parse(localStorage.getItem('user_data'))
   const dates = JSON.parse(localStorage.getItem('tanggal'))
-
-  const [lastTR, setLastTR] = useState([])
+  const [unitBefore, setUnitBefore] = useState(null)
+  const [qtyBefore, setQtyBefore] = useState(row.qty)
 
   const [formData, setFormData] = useState({
     from_data_id: row.from_data_id || "",
@@ -137,6 +137,8 @@ const ModalFormDataEdit = ({row}) => {
   const [editMessage, setEditMessage] = useState('');
   const [editStatus, setEditStatus] = useState(''); 
   const showEditModal = () => setIsEditResult(true);
+
+  const [buttonDisable, setButtonDisable] = useState(false)
 
   const closeEditModal = () => {
     // setIsEditResult(false)
@@ -262,10 +264,15 @@ const ModalFormDataEdit = ({row}) => {
   }, []);
 
   const calcFBR = (hmkm, hm_last, qty_last) => {
-    let total = 0
-    total = (hmkm - hm_last) / qty_last
-    return total
-  }
+    // Pastikan qty_last bukan nol dan semua nilai valid
+    if (!qty_last || isNaN(hmkm) || isNaN(hm_last) || isNaN(qty_last)) return 0;
+  
+    const selisihHm = Math.abs(hm_last - hmkm);
+    const fbr = selisihHm / qty_last;
+  
+    // Cegah hasil NaN atau Infinity
+    return isFinite(fbr) ? fbr : 0;
+  };
 
   const convertToBase64 = (file) => {
     return new Promise((resolve, reject) => {
@@ -340,8 +347,10 @@ const ModalFormDataEdit = ({row}) => {
     const jmlFlow = formData.flow_start + parseFloat(val);
     const fetchLimited = await handleQuota(formData.no_unit)
     const total = parseFloat(val) + (fetchLimited?.used || 0);
-    const totalLimited = (fetchLimited?.quota || 0) + (fetchLimited?.additional || 0);
-  
+    // const lastTR = await fetchUnitData(formData.no_unit);
+    const totalLimited = (fetchLimited?.quota || 0) + (fetchLimited?.additional || 0)
+    // console.log(lastTR[0].qty)
+    // const totalLimited = (fetchLimited?.quota || 0) + (fetchLimited?.additional || 0 + lastTR[0].qty);  
     if (totalLimited === 0) {
       setFormData((prevFormData) => ({
         ...prevFormData,
@@ -364,40 +373,64 @@ const ModalFormDataEdit = ({row}) => {
         qty: "Kuota terisi melebihi batas yang telah ditentukan! Silahkan melakukan request quota.",
       });
     }
+
+    setQtyBefore(row.qty)
   };
   
-  const handleChangeHmkm = (e) => {
+  const handleChangeHmkm = async (e) => {
     const val = e.target.value;
     const numericVal = parseFloat(val);
+  
+    // Selalu update nilai input saat user mengetik
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      hm_km: val,
+    }));
   
     if (val === "") {
       setFormData((prevFormData) => ({
         ...prevFormData,
-        hm_km: 0,
         fbr: 0,
       }));
-    } else if (!isNaN(numericVal) && numericVal !== 0) {
-      const totalFbr = calcFBR(numericVal, formData.hm_last,formData.qty_last) 
-  
-      setFormData((prevFormData) => ({
-        ...prevFormData,
-        hm_km: numericVal,
-        fbr: formData.qty_last === 0 ? 0 : totalFbr.toFixed(2),
-      }));
-    } else {
-      setFormData((prevFormData) => ({
-        ...prevFormData,
-        fbr: 0,
-      }));
+      setErrors({});
+      setButtonDisable(true);
+      return;
     }
-  };
+  
+    if (!isNaN(numericVal)) {
+      if (numericVal <= formData.hm_last) {
+        setErrors({
+          hm_km: "HM unit tidak boleh kurang dari atau sama dengan HM last",
+        });
+        setFormData((prevFormData) => ({
+          ...prevFormData,
+          fbr: 0,
+        }));
+        setButtonDisable(true);
+      } else {
+        const lastTR = await fetchUnitData(formData.no_unit);
+        const totalFbr = calcFBR(numericVal, lastTR[0].hm_last, lastTR[0].qty_last);
+        setFormData((prevFormData) => ({
+          ...prevFormData,
+          fbr: formData.qty_last === 0 ? 0 : totalFbr.toFixed(2),
+        }));
+        setErrors({});
+        setButtonDisable(false);
+      }
+    } else {
+      setErrors({
+        hm_km: "Input tidak valid",
+      });
+      setFormData((prevFormData) => ({
+        ...prevFormData,
+        fbr: 0,
+      }));
+      setButtonDisable(true);
+    }
+  };  
 
   const handleChageStart = (time) => {
     const formattedDates = moment(time).format("HH:mm:ss"); 
-    // setFormData((prevFormData) => ({
-    //   ...prevFormData,
-    //   start: formattedDates,
-    // }));
     setSelectedTime(time);
     setFormData((prevFormData) => {
       const startTime = moment(formattedDates, "HH:mm:ss");
@@ -433,12 +466,14 @@ const ModalFormDataEdit = ({row}) => {
         setErrors({
           end: "Waktu selesai tidak boleh lebih kecil dari Waktu mulai!",
         });
+        setButtonDisable(true)
         return prevFormData;
       }
   
       setErrors({
         end: "",
       });
+      setButtonDisable(false)
   
       return {
         ...prevFormData,
@@ -479,17 +514,22 @@ const ModalFormDataEdit = ({row}) => {
     const newErrors = {};
   
     if (!formData.no_unit) newErrors.no_unit = "Unit number is required";
-    if (!formData.type) newErrors.type = "type is required";
+    if (!formData.type) newErrors.type = "Type is required";
     if (!formData.hm_km) newErrors.hm_km = "Hmkm ID is required";
     if (!formData.qty) newErrors.qty = "Qty is required";
-    if (!formData.flow_end) newErrors.flow_end = "Flow end is required";
-    if (!formData.flow_start) newErrors.flow_start = "Flow Start is required";
     if (!formData.jde_operator) newErrors.jde_operator = "Jde operator is required";
     if (!formData.start) newErrors.start = "Start time is required";
     if (!formData.end) newErrors.end = "End time is required";
   
+    // Hanya validasi flow_start dan flow_end jika type !== 'Issued'
+    if (formData.type === 'Issued') {
+      if (!formData.flow_start) newErrors.flow_start = "Flow start is required";
+      if (!formData.flow_end) newErrors.flow_end = "Flow end is required";
+    }
+  
     setErrors(newErrors);
-    return Object.keys(newErrors).length === 0; 
+    setButtonDisable(true)
+    return Object.keys(newErrors).length === 0;
   };
 
   const handleSubmitData = async () => {
@@ -501,7 +541,7 @@ const ModalFormDataEdit = ({row}) => {
     }else{
       try {
         const dates = JSON.parse(localStorage.getItem('tanggal'))
-        const res = await formService.updateData({ id: row.id, date_trx : dates, ...formData, updated_by: user.JDE });
+        const res = await formService.updateData({ id: row.id, unitBefore: unitBefore, qtyBefore: qtyBefore, date_trx : dates, ...formData, updated_by: user.JDE });
         if (res.status === "200") {
           setEditStatus('Success!');
           setEditMessage('Data successfully saved!');
@@ -549,7 +589,9 @@ const ModalFormDataEdit = ({row}) => {
     return matchedUnit ? { label: matchedUnit.unit_no, value: matchedUnit.unit_no } : null;
   };
 
-  const handleUnitChange = async(val) => {
+  const handleUnitChange = async (val) => {
+    setUnitBefore(row.no_unit);
+  
     if (!val) {
       setFormData((prev) => ({
         ...prev,
@@ -558,29 +600,40 @@ const ModalFormDataEdit = ({row}) => {
         owner: "",
         hm_last: 0,
         qty_last: 0,
-        fbr: 0
+        fbr: 0,
       }));
       return;
     }
     const selectedUnit = equipData.find((unit) => unit.unit_no === val.value);
-    const lastTR = await fetchUnitData(val.value)
-    const fetchLimited = await handleQuota(val.value)
-    const totalLimited = (fetchLimited?.quota || 0) + (fetchLimited?.additional || 0);
-    const totalFbr = calcFBR(lastTR[0].hm_km, formData.hm_km, lastTR[0].qty) 
-    if(totalLimited <= formData.qty){
+    const lastTR = await fetchUnitData(val.value);
+    const fetchLimited = await handleQuota(val.value);
+    if(formData.hm_km <= lastTR[0].hm_km){
       setErrors({
-        qty: "Kuota terisi melebihi batas yang telah ditentukan! Silahkan melakukan request quota.",
+        hm_km: "HM unit tidak boleh kurang dari atau sama dengan HM last",
       });
-      setFormData((prev) => ({
-        ...prev,
-        no_unit: selectedUnit?.unit_no || "",
-        model_unit: selectedUnit?.type || "",
-        owner: selectedUnit?.owner || "",
-        hm_last: lastTR[0].hm_km,
-        qty_last: lastTR[0].qty,
-        fbr: totalFbr,
-      }));
+      setButtonDisable(true)
     }
+    const totalFbr = calcFBR(lastTR[0].hm_km, formData.hm_km, lastTR[0].qty);
+    setErrors({
+      hm_km: "",
+    });
+    setButtonDisable(false)
+  
+    // Reset error terlebih dahulu
+    setErrors((prev) => ({ ...prev, qty: null }));
+  
+    // Jika unit punya kuota, cek apakah melebihi limit
+    if (fetchLimited) {
+      const totalLimited = (fetchLimited.quota || 0) + (fetchLimited.additional || 0);
+      if (formData.qty >= totalLimited) {
+        setErrors((prev) => ({
+          ...prev,
+          qty: "Kuota terisi melebihi batas yang telah ditentukan! Silahkan melakukan request quota.",
+        }));
+      }
+    }
+  
+    // Update form data tetap dilakukan
     setFormData((prev) => ({
       ...prev,
       no_unit: selectedUnit?.unit_no || "",
@@ -753,21 +806,21 @@ const ModalFormDataEdit = ({row}) => {
 
                 </EuiFormRow>
 
-                <EuiFormRow label="HM/KM Unit" style={{marginTop:"0px"}}>
-                   <EuiFieldText 
-                    name='hm_km'
-                    value={formData.hm_km}
-                    onChange={handleChangeHmkm}
-                  />
-                </EuiFormRow>
-
-                <EuiFormRow label="HM/KM Terakhir Transaksi" style={{marginTop:"0px"}} isInvalid={!!errors.hm_km} error={errors.hm_km}>
+                <EuiFormRow label="HM/KM Transaksi Terakhir" style={{marginTop:"0px"}} >
                    <EuiFieldText 
                     name='hm_last'
                     placeholder='Input'
                     value={formData.hm_last}
                     // onChange={handleChange}
                     disabled
+                  />
+                </EuiFormRow>
+
+                <EuiFormRow label="HM/KM Unit" style={{marginTop:"0px"}} isInvalid={!!errors.hm_km} error={errors.hm_km}>
+                   <EuiFieldText 
+                    name='hm_km'
+                    value={formData.hm_km}
+                    onChange={handleChangeHmkm}
                   />
                 </EuiFormRow>
                   
@@ -931,6 +984,7 @@ const ModalFormDataEdit = ({row}) => {
               }}
               isDisabled={Number(formData.qty) === 0} 
               fill
+              disabled={buttonDisable}
             >
               Save
             </EuiButton>

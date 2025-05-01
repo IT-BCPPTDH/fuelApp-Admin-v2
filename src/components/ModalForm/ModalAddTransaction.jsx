@@ -98,7 +98,6 @@ const ModalFormAddIssued = () => {
     no_unit: "",
     model_unit: "",
     owner:  "",
-    date_trx: "",
     qty: 0,
     qty_last: 0,
     fbr: 0,
@@ -195,11 +194,12 @@ const ModalFormAddIssued = () => {
         setIsModalVisible(true)
       }else{
         try {
+          const dates = JSON.parse(localStorage.getItem('tanggal'))
           const data = {
-            ...formData, created_by: user.JDE
+            ...formData, date_trx : dates, created_by: user.JDE
           };
           const res = await formService.insertData(data);
-          console.log(data)
+          console.log(res.status)
           if (res.status === 200|| res.status === "201") {  
             setEditStatus('Success');
             setEditMessage('Data successfully saved!');
@@ -421,27 +421,31 @@ const ModalFormAddIssued = () => {
     const numericVal = parseFloat(val);
     
     if (!isNaN(numericVal) && numericVal !== 0 && val !== "") {
-      const totalFbr = (numericVal - formData.hm_last) / formData.qty_last;
-      
-      if (formData.qty_last === 0) {
-        setFormData((prevFormData) => ({
-          ...prevFormData,
-          hm_km: numericVal,
-          fbr: 0, 
-        }));
+      if (numericVal <= formData.hm_last) {
+        setErrors({
+          hm_km: "HM unit tidak boleh kurang dari atau sama dengan HM last",
+        });
       } else {
+        console.log(numericVal, formData.hm_last, formData.qty_last)
+        const totalFbr = calcFBR(numericVal, formData.hm_last, formData.qty_last);
+    
+        setErrors({}); 
         setFormData((prevFormData) => ({
           ...prevFormData,
           hm_km: numericVal,
-          fbr: totalFbr.toFixed(2),
+          fbr: formData.qty_last === 0 ? 0 : totalFbr.toFixed(2),
         }));
       }
     } else {
       setFormData((prevFormData) => ({
         ...prevFormData,
+        hm_km: "", 
         fbr: 0,
       }));
-    }
+      setErrors({
+        hm_km: "Nilai HM tidak valid",
+      });
+    }    
   };
   
   useEffect(() => {
@@ -540,6 +544,17 @@ const ModalFormAddIssued = () => {
     }
   };
 
+  const calcFBR = (hmkm, hm_last, qty_last) => {
+    // Pastikan qty_last bukan nol dan semua nilai valid
+    if (!qty_last || isNaN(hmkm) || isNaN(hm_last) || isNaN(qty_last)) return 0;
+  
+    const selisihHm = Math.abs(hm_last - hmkm);
+    const fbr = selisihHm / qty_last;
+  
+    // Cegah hasil NaN atau Infinity
+    return isFinite(fbr) ? fbr : 0;
+  };
+
   return (
     <>
       <EuiButton style={{background:"#00BFB3", color:"white"}}  onClick={showModal}>Add Data</EuiButton>
@@ -620,19 +635,19 @@ const ModalFormAddIssued = () => {
                   </div>
                 </EuiFormRow>
 
-                <EuiFormRow label="HM/KM Transaksi" style={{marginTop:"0px"}} isInvalid={!!errors.hm_km} error={errors.hm_km}>
-                   <EuiFieldText 
-                    name='hmkm'
-                    placeholder='Input'
-                    onChange={handleHmKm}
-                  />
-                </EuiFormRow>
-
                 <EuiFormRow label="HM/KM Transaksi Terakhir" style={{marginTop:"0px"}}>
                    <EuiFieldText 
                     name='hmkm_last'
                     value={formData.hm_last}
                     disabled
+                  />
+                </EuiFormRow>
+
+                <EuiFormRow label="HM/KM Transaksi" style={{marginTop:"0px"}} isInvalid={!!errors.hm_km} error={errors.hm_km}>
+                   <EuiFieldText 
+                    name='hmkm'
+                    placeholder='Input'
+                    onChange={handleHmKm}
                   />
                 </EuiFormRow>
 
@@ -810,7 +825,7 @@ const ModalFormAddIssued = () => {
                 fontSize: '22px',
                 height: '25%',
                 marginTop: '25px',
-                color: editStatus === 'Success!' ? '#D52424' : '#73A33F',
+                color: editStatus === 'Success' ? '#73A33F': '#D52424',
                 fontWeight: '600',
               }}>
               {editMessage}
@@ -820,8 +835,8 @@ const ModalFormAddIssued = () => {
                 height: '25%',
                 marginTop: '35px'
               }}>
-                {editStatus === 'Success!' ? 'Data berhasil terupdate.  Silahkan kembali untuk menambah data atau ke halaman utama. Data belum terupdate. Silahkan kembali untuk update data atau ke halaman utama.'
-                : '  Data berhasil terupdate.'}
+                {editStatus === 'Success' ? 'Data berhasil terupdate.'
+                : '  Data tidak berhasil terupdate. Silahkan kembali untuk menambah data atau ke halaman utama.'}
             </EuiText>
           </EuiModalBody>
           <EuiModalFooter>
