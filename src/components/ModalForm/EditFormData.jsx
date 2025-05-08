@@ -1047,7 +1047,7 @@ const ModalFormDataEdit = ({row}) => {
                 height: '25%',
                 marginTop: '35px'
               }}>
-                Data telah dihapus.
+                {resultStatus === 'success' ? "Data telah dihapus" : "Data gagal dihapus"}
             </EuiText>
           </EuiModalBody>
           <EuiModalFooter>
