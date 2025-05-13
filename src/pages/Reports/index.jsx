@@ -214,7 +214,7 @@ const ReportFuel = () => {
       title,
       text,
       color: "success",
-      iconType: "check",
+      // iconType: "check",
     }));
   };
 
@@ -224,7 +224,7 @@ const ReportFuel = () => {
       title,
       text,
       color: "danger",
-      iconType: "alert",
+      // iconType: "alert",
     }));
   };
 
@@ -247,7 +247,7 @@ const ReportFuel = () => {
       const data = {
         tanggalFrom: firstDate,
         tanggalTo: lastDate,
-        station: isAllChecked ? ["ALL"] : selectedStations, // Kirim ["ALL"] jika isAllChecked
+        station:  selectedStations, 
         type: selectedRadio,
         option: selectedOption
       }
@@ -273,7 +273,7 @@ const ReportFuel = () => {
           addErrorToast("Report Generation Failed", `Failed to generate LKF report: ${response.message || 'Unknown error'}`);
           console.log(`Gagal mendapatkan laporan: ${response.status} - ${response.message}`);
         }
-      }, 3000); // Waktu tunggu sebelum mencoba download, sesuaikan jika perlu
+      }, 3000);
 
     } catch (error) {
       console.error("Terjadi kesalahan saat melakukan ekspor LKF:", error);

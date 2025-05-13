@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   EuiButton,
   EuiFieldText,
@@ -19,12 +19,20 @@ import UnitBanlawsService from '../../services/unitBanlaws';
 
 const ModalFormBanlawsEdit = ({row}) => {
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [unitInput, setUnitInput] = useState(row.unit_input || "")
-  const [unitElipse, setUnitElipse] = useState(row.unit_elipse || "")
-  const [owner, setOwner] = useState(row.owner || "")
-  const [pin, setPin] = useState(row.pin_banlaw || "")
-  const [unitBanlaws, setUnitBanlaws] = useState(row.unit_banlaw || "")
+  const [unitInput, setUnitInput] = useState("")
+  const [unitElipse, setUnitElipse] = useState("")
+  const [owner, setOwner] = useState("")
+  const [pin, setPin] = useState("")
+  const [unitBanlaws, setUnitBanlaws] = useState("")
   const user = JSON.parse(localStorage.getItem('user_data'));
+
+  useEffect(() => { 
+      setUnitInput(row.unit_input || ""); 
+      setUnitElipse(row.unit_elipse || ""); 
+      setOwner(row.owner || ""); 
+      setPin(row.pin_banlaw || ""); 
+      setUnitBanlaws(row.unit_banlaw || "")
+    }, [row]);
 
   const modalFormId = useGeneratedHtmlId({ prefix: 'modalForm' });
   const modalTitleId = useGeneratedHtmlId();

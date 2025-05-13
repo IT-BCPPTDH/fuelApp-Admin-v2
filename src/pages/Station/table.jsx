@@ -22,10 +22,10 @@ const TableData = () => {
   const [tables, setTables] = useState([])
   
   const columns = [
-    {
-      field: 'id',
-      name: 'No',
-      truncateText: true,
+    { 
+      name: 'No', 
+      render: (row) => ( <span>{row.pageIndex + 1}</span> ), 
+      truncateText: true, 
     },
     {
       field: 'fuel_station_name',
@@ -82,11 +82,10 @@ const TableData = () => {
   );
 
   const findPageItems = (items, pageIndex, pageSize) => {
-    const startIndex = pageIndex * pageSize;
-    return {
-      pageOfItems: items.slice(startIndex, startIndex + pageSize),
-      totalItemCount: items.length,
-    };
+     const startIndex = pageIndex * pageSize; 
+     const pageOfItems = items.slice(startIndex, startIndex + pageSize)
+     .map((item, index) => ({ ...item, pageIndex: startIndex + index, })); 
+     return { pageOfItems, totalItemCount: items.length, }; 
   };
 
   const { pageOfItems, totalItemCount } = findPageItems(filteredItems, pageIndex, pageSize);

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   EuiButton,
   EuiFieldText,
@@ -19,23 +19,37 @@ import masterElipseService from '../../services/masterElipse';
 
 const ModalFormElipseEdit = ({row}) => {
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [unitNo, setUnitNo] = useState(row.equip_no_unit||"")
-  const [showNo, setShowNo] = useState(row.equip_no_show||"")
-  const [model, setModel] = useState(row.equip_model_egi||"")
-  const [desc, setDesc] = useState(row.equip_description||"")
-  const [cat, setCat] = useState(row.equip_category|| "")
-  const [cap, setCap] = useState(row.equip_cap_tank|| "")
-  const [fbr, setFbr] = useState(row.equip_fbr||"")
-  const [position, setPosition] = useState(row.equip_position||"")
-  const [protes, setProtes] = useState(row.equip_owner_protes||"")
-  const [elipse, setElipse] = useState(row.equip_owner_elipse||"")
-  const [ket, setKet] = useState(row.keterangan||"")
+  const [unitNo, setUnitNo] = useState("")
+  const [showNo, setShowNo] = useState("")
+  const [model, setModel] = useState("")
+  const [desc, setDesc] = useState("")
+  const [cat, setCat] = useState("")
+  const [cap, setCap] = useState("")
+  const [fbr, setFbr] = useState("")
+  const [position, setPosition] = useState("")
+  const [protes, setProtes] = useState("")
+  const [elipse, setElipse] = useState("")
+  const [ket, setKet] = useState("")
   const user = JSON.parse(localStorage.getItem('user_data'));
   const modalFormId = useGeneratedHtmlId({ prefix: 'modalForm' });
   const modalTitleId = useGeneratedHtmlId();
   const closeModal = () => {
     setIsModalVisible(false);
   };
+
+  useEffect(() => { 
+    setUnitNo(row.equip_no_unit||""); 
+    setShowNo(row.equip_no_show||""); 
+    setModel(row.equip_model_egi||""); 
+    setDesc(row.equip_description||""); 
+    setCat(row.equip_category|| "")
+    setCap(row.equip_cap_tank|| "")
+    setFbr(row.equip_fbr||"")
+    setPosition(row.equip_position||"")
+    setProtes(row.equip_owner_protes||"")
+    setElipse(row.equip_owner_elipse||"")
+    setKet(row.keterangan||"")
+  }, [row]);
 
   const [isResultModalVisible, setIsResultModalVisible] = useState(false);
   const [resultMessage, setResultMessage] = useState('');
