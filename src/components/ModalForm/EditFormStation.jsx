@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   EuiButton,
   EuiFieldText,
@@ -19,16 +19,24 @@ import stationService from '../../services/stationDashboard';
 
 const ModalFormStationEdit = ({row}) => {
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [stationName, setStationName] = useState(row.fuel_station_name || "");
-  const [stationType, setStationType] = useState(row.fuel_station_type || "");
-  const [capacity, setCapacity] = useState(row.fuel_capacity || 0);
-  const [nozel, setNozel] = useState(row.fuel_nozel || 0);
+  const [stationName, setStationName] = useState("");
+  const [stationType, setStationType] = useState("");
+  const [capacity, setCapacity] = useState(0);
+  const [nozel, setNozel] = useState(0);
   const user = JSON.parse(localStorage.getItem('user_data'));
   const modalFormId = useGeneratedHtmlId({ prefix: 'modalForm' });
   const modalTitleId = useGeneratedHtmlId();
   const closeModal = () => {
     setIsModalVisible(false);
   };
+
+  useEffect(() => { 
+    setStationName(row.fuel_station_name || ""); 
+    setStationType(row.fuel_station_type || ""); 
+    setCapacity(row.fuel_capacity || 0); 
+    setNozel(row.fuel_nozel || 0); 
+  }, [row]);
+
 
   const [isResultModalVisible, setIsResultModalVisible] = useState(false);
   const [resultMessage, setResultMessage] = useState('');
@@ -87,6 +95,7 @@ const ModalFormStationEdit = ({row}) => {
       setEditMessage('Terjadi kesalahan saat update data. Data tidak tersimpan!');
     } finally {
       showEditModal();
+      fetchStation();
     }
   };
 
