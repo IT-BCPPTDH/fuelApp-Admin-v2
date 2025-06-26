@@ -34,6 +34,8 @@ const ModalAddElipse = () => {
   const [protes, setProtes] = useState("")
   const [elipse, setElipse] = useState("")
   const [ket, setKet] = useState("")
+   const [modalType, setModalType] = useState('');
+   const [modalMessage, setModalMessage] = useState('');
   const user = JSON.parse(localStorage.getItem('user_data'))
 
   const [isSubmitResult, setIsSubmitResult] = useState(false)
@@ -49,6 +51,8 @@ const ModalAddElipse = () => {
   const showConfirmAddModal = () => setIsConfirmAddStatus(true);
   const closeConfirmAddModal = () => {
     setIsConfirmAddStatus(false)
+    setModalType('')
+    setModalMessage('');
   }
 
   const handleSubmitData = async () => {
@@ -77,6 +81,8 @@ const ModalAddElipse = () => {
       }
     } catch (error) {
       setSubmitStatus('Error');
+      setModalType('error');
+      setModalMessage(error.message);
       setSubmitMessage('Terjadi kesalahan saat update data. Data tidak tersimpan!');
     } finally {
         showSubmitModal();
@@ -225,7 +231,7 @@ const ModalAddElipse = () => {
                 fontSize: '22px',
                 height: '25%',
                 marginTop: '25px',
-                color: submiStatus === 'Success!' ? '#D52424' : '#73A33F',
+                color: submiStatus === 'Success!' ?  '#73A33F' :'#D52424' ,
                 fontWeight: '600',
               }}>
               {submitMessage}
