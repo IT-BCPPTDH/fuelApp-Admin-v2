@@ -81,7 +81,8 @@ export const URL_API = {
     bulkSonding : `${linkMDUpload}/upload_sonding`,
     bulkBanlaws : `${linkMDUpload}/upload_unit_banlaws`,
     bulkUnit : `${linkMDUpload}/upload_unit`,
-    bulkOperators : `${linkMDUpload}/upload_operator`
+    bulkOperators : `${linkMDUpload}/upload_operator`,
+    addTrxStations : `${linkBe}/api/admin/add-station`
 };
 
 export const URL_MASTER_DATA = {
