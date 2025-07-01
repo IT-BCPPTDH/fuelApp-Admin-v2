@@ -62,6 +62,20 @@ const delTrxStation = async (paramsBody) => {
     }
 };
 
+const addTrxStation = async (requestBody) => {
+    try {
+        const response = await api.post(URL_API.addTrxStations, requestBody, {
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        });
+        return response.data;
+    } catch (error) {
+        console.error('Error fetching data:', error.message);
+        throw error;
+    }
+};
+
 const getStation = async () => {
     try {
         const response = await api.get(URL_MASTER_DATA.getAllStation,  {
@@ -126,7 +140,8 @@ const stationService = {
     updateStation,
     delStation,
     editTrxStation,
-    delTrxStation
+    delTrxStation,
+    addTrxStation
 };
 
 export default stationService;

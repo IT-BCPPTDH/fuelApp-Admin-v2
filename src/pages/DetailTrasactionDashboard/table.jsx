@@ -12,6 +12,7 @@ import { useNavigate } from 'react-router-dom';
 import { useParams } from "react-router-dom";
 import stationService from '../../services/stationDashboard';
 import EditStationTransaction from '../../components/ModalForm/EditStationTransaction';
+import AddStationTransaction from '../../components/ModalForm/AddStationTransaction';
 
 
 const TableData = () => {
@@ -105,8 +106,7 @@ const TableData = () => {
 
   const renderHeader = () => (
     <>
-    <EuiButton   style={{ background: "#73A33F", color: "white" }}
-      onClick={() => alert('Export button clicked')}>Export </EuiButton>
+    <AddStationTransaction/>
     </>
   );
 
@@ -132,7 +132,7 @@ const TableData = () => {
     <>
       <div style={{ marginBottom: '10px', float: "inline-end", display: "flex", gap: "10px" }}>
       
-        {/* {renderHeader()} */}
+        {renderHeader()}
         <EuiFieldSearch
           placeholder="Search data"
           value={searchValue}
