@@ -27,9 +27,9 @@ const DetailPage = () => {
         icon: Icon1,
       },
       {
-        title: summaryAll.totalAllKpc ? summaryAll.totalAllKpc + ' Ltrs' : 0 + ' Ltrs',
+        title: summaryAll.totalAllReceipt ? summaryAll.totalAllReceipt + ' Ltrs' : 0 + ' Ltrs',
         description1: "Receipt",
-        description2: "Summary Receipt",
+        description2: "Receipt + KPC",
         icon: Icon1,
       },
       {
@@ -59,9 +59,9 @@ const DetailPage = () => {
         icon: Icon1,
       },
       {
-        title: summaryAll.totalAllKpcDay ? summaryAll.totalAllKpcDay + ' Ltrs' : 0 + ' Ltrs',
+        title: summaryAll.totalAllReceiptDay ? summaryAll.totalAllReceiptDay + ' Ltrs' : 0 + ' Ltrs',
         description1: "Receipt KPC",
-        description2: "Summary Receipt KPC",
+        description2: "Receipt + KPC",
         icon: Icon1,
       },
       {
@@ -92,9 +92,9 @@ const DetailPage = () => {
         icon: Icon1,
       },
       {
-        title: summaryAll.totalAllKpcNigth ? summaryAll.totalAllKpcNigth + ' Ltrs' : 0 + ' Ltrs',
+        title: summaryAll.totalAllReceiptNigth ? summaryAll.totalAllReceiptNigth + ' Ltrs' : 0 + ' Ltrs',
         description1: "Receipt KPC",
-        description2: "Summary Receipt KPC",
+        description2: "Receipt + KPC",
         icon: Icon1,
       },
       {
@@ -127,7 +127,7 @@ const DetailPage = () => {
       {
         title: summaryAll.totalAllReceipt ? summaryAll.totalAllReceipt + ' Ltrs' : 0 + ' Ltrs',
         description1: "Receipt",
-        description2: "Summary Receipt",
+        description2: "Receipt + KPC",
         icon: Icon1,
       },
       {
@@ -159,7 +159,7 @@ const DetailPage = () => {
       {
         title: summaryAll.totalAllReceiptDay ? summaryAll.totalAllReceiptDay + ' Ltrs' : 0 + ' Ltrs',
         description1: "Receipt",
-        description2: "Receipt Transaction",
+        description2: "Receipt + KPC",
         icon: Icon1,
       },
       {
@@ -191,7 +191,7 @@ const DetailPage = () => {
       {
         title: summaryAll.totalAllReceiptNigth  + ' Ltrs',
         description1: "Receipt",
-        description2: "Receipt Transaction",
+        description2: "Receipt + KPC",
         icon: Icon1,
       },
       {
