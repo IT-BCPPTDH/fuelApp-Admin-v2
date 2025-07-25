@@ -74,7 +74,6 @@ const ModalAddEquip = () => {
         ...data,
         operator : user.JDE
       };
-      console.log(updatedData)
       const res = await EquipService.insertEquip(updatedData)
       if (res.status === '200') {
         setSubmitStatus('Success!');
