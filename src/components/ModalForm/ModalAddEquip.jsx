@@ -26,7 +26,6 @@ const ModalAddEquip = () => {
     unit_no: "",
     brand: "",
     type: "",
-    tank_capacity: "",
     category: "",
     usage: "",
     site: "",
@@ -137,13 +136,13 @@ const ModalAddEquip = () => {
                   >
                   </EuiSelect> */}
                 </EuiFormRow>
-                <EuiFormRow  style={{marginTop:"0px"}}label="Tank Capacity/L">
+                {/* <EuiFormRow  style={{marginTop:"0px"}}label="Tank Capacity/L">
                     <EuiFieldText 
                      name='tank_capacity'
                      placeholder='Tank Capacity/L'
                      onChange={handleChange}
                     />
-                </EuiFormRow>
+                </EuiFormRow> */}
                 <EuiFormRow label="Category" style={{marginTop:"0px"}}>
                   <EuiFieldText 
                       name='category'

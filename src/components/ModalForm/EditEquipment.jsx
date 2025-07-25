@@ -42,7 +42,6 @@ const ModalEditEquipment = ({ row, onActionComplete }) => {
         unit_no: row.unit_no || "",
         brand: row.brand || "",
         type: row.type || "",
-        tank_cap: row.tank_cap || "",
         category: row.category || "",
         usage: row.usage || "",
         site: row.site || "",
@@ -60,6 +59,7 @@ const ModalEditEquipment = ({ row, onActionComplete }) => {
 
   const closeModal = () => {
     setModalState({ type: 'closed' });
+    window.location.reload();
   };
 
   // Handler untuk form submit (aksi Save)
