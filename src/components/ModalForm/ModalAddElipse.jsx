@@ -91,7 +91,7 @@ const ModalAddElipse = () => {
 
   return (
     <>
-      <EuiButton style={{background:"#1B46D9", color:"white"}}  onClick={showModal}>Tambah Station</EuiButton>
+      <EuiButton style={{background:"#1B46D9", color:"white"}}  onClick={showModal}>Tambah Data</EuiButton>
       {isModalVisible && (
         <EuiModal
           aria-labelledby={modalTitleId}
@@ -175,7 +175,7 @@ const ModalAddElipse = () => {
                   onChange={(e) => setElipse(e.target.value)}
                   />
                 </EuiFormRow>
-                <EuiFormRow label="Keteragan">
+                <EuiFormRow label="Keterangan">
                   <EuiFieldText 
                   name='keterangan'
                   placeholder='Input'
