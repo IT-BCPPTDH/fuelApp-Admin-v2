@@ -8,13 +8,13 @@ import {
     EuiModalHeaderTitle,
     EuiText,
     useGeneratedHtmlId,
-    EuiIcon
+    // EuiIcon // EuiIcon tidak digunakan di dalam div, jadi bisa dihapus jika tidak perlu
 } from '@elastic/eui';
 import { URL_API } from '../../utils/Enums';
 import reportService from '../../services/reportService';
 
 
-const modalUpload = () => {
+const ModalUpload = () => {
     const modalTitleId = useGeneratedHtmlId();
     const [isModalVisible, setIsModalVisible] = useState(false);
     const closeModal = () => setIsModalVisible(false);
@@ -22,14 +22,18 @@ const modalUpload = () => {
     const [file, setFile] = useState(null);
     const [errorMessage, setErrorMessage] = useState('');
 
-    const [isSubmitResult, setIsSubmitResult] = useState(false)
+    // State untuk modal hasil submit
+    const [isSubmitResult, setIsSubmitResult] = useState(false);
     const [submitMessage, setSubmitMessage] = useState('');
-    const [submitMessage1, setSubmitMessage1] = useState([]);
-    const [submitMessage2, setSubmitMessage2] = useState(0);
     const [submiStatus, setSubmitStatus] = useState(''); 
+    
+    // State baru untuk menampung seluruh response data dari API
+    const [uploadResult, setUploadResult] = useState(null);
+
     const showSubmitModal = () => setIsSubmitResult(true);
     const closeSubmitModal = () => {
-      setIsSubmitResult(false)
+      setIsSubmitResult(false);
+      setUploadResult(null); // Reset hasil upload saat modal ditutup
       window.location.reload();
     }
 
@@ -42,7 +46,7 @@ const modalUpload = () => {
           setErrorMessage(''); 
         } else {
           setFile(null);
-          setErrorMessage('File harus Excel!');
+          setErrorMessage('File harus berformat .xlsx!');
         }
       } else {
         setFile(null);
@@ -51,26 +55,29 @@ const modalUpload = () => {
     };
       
     const handleImport = async() => {
-      const formData = new FormData()
+      const formData = new FormData();
+      formData.append('files', file);
+
       try {
-        formData.append('files',file)
         const response = await reportService.uploadDatas(formData);
-        console.log(response)
-        if (response.status === "200") { 
+        
+        // Asumsi jika request berhasil (status 2xx), response.data akan berisi objek hasil
+        if (response.data) { 
           closeModal(); 
           setSubmitStatus('Success!');
-          setSubmitMessage('Data successfully saved!');
-          setSubmitMessage1(response.data)
-          setSubmitMessage2(response.data.length)
+          setSubmitMessage('Data Successfully submit!');
+          setUploadResult(response.data); // Simpan seluruh objek response
         } else {
-          setSubmitStatus('Failed');
-          setSubmitMessage('Data not saved!');
-          setSubmitMessage1(response.error)
+          // Skenario jika response sukses tapi tidak ada data
+          throw new Error('Received an empty response from the server.');
         }
       } catch (error) {
         setSubmitStatus('error');
-        setSubmitMessage(error.message);
-      }finally {
+        // Menampilkan pesan error yang lebih informatif dari server jika ada
+        const serverError = error.response?.data?.message || error.message;
+        setSubmitMessage(`Upload Failed: ${serverError}`);
+        setUploadResult(null); // Pastikan tidak ada data lama yang ditampilkan
+      } finally {
         showSubmitModal();
       }
   };
@@ -78,6 +85,26 @@ const modalUpload = () => {
   const handleDownloadTemplate = () => {
     const template = 'upload_data_template.xlsx'
     window.location.href = URL_API.generateTemplate + template
+  };
+
+  // Helper function untuk merender list alasan gagal
+  const renderFailedReasons = () => {
+    if (!uploadResult || !uploadResult.failedData || uploadResult.failedData.length === 0) {
+      return null;
+    }
+
+    return (
+      <>
+        <p style={{ marginTop: '10px', fontWeight: 'bold' }}>Alasan gagal:</p>
+        <ol style={{ paddingLeft: '20px', margin: 0 }}>
+          {uploadResult.failedData.map((item, index) => (
+            <li key={index}>
+              {item.no_unit}: {item.reason}
+            </li>
+          ))}
+        </ol>
+      </>
+    );
   };
 
   return (
@@ -88,7 +115,6 @@ const modalUpload = () => {
            aria-labelledby={modalTitleId}
            onClose={closeModal}
            initialFocus="[name=popswitch]"
-        
         >
           <EuiModalHeader style={{ background: "#e4e4e4", color: "white" }}>
             <EuiModalHeaderTitle>
@@ -98,7 +124,6 @@ const modalUpload = () => {
 
           <EuiModalBody>
             <div  style={{ backgroundColor: '#4f726b', padding: '10px', borderRadius: '5px', marginTop:'30px' }}>
-            {/* <EuiIcon type="warningFilled" size="m" style={{ marginRight: '10px' }} /> */}
               <strong style={{ color: '#ffffff'}}>Kolom ini untuk mengupload data yang tidak ada pada system.</strong>
               <p style={{ color: '#ffffff'}}>Pastikan anda mengupload menggunakan template file excel dibawah ini.</p>
             </div>
@@ -119,6 +144,7 @@ const modalUpload = () => {
               <input
                 type="file"
                 onChange={onFileChange}
+                accept=".xlsx" // Menambahkan validasi tipe file di input
                 style={{
                   position: 'absolute',
                   opacity: 0,
@@ -172,36 +198,43 @@ const modalUpload = () => {
       )}
 
       {isSubmitResult && (
-        <EuiModal>
+        <EuiModal onClose={closeSubmitModal}>
           <EuiModalBody>
             <EuiText style={{
                 fontSize: '22px',
-                height: '25%',
                 marginTop: '25px',
                 color: submiStatus === 'Success!' ? '#73A33F' : '#D52424',
                 fontWeight: '600',
               }}>
               {submitMessage}
             </EuiText>
-            <EuiText style={{
-                fontSize: '15px',
-                height: '25%',
-                marginTop: '35px'
-              }}>
+            
+            {/* Tampilkan detail hasil hanya jika uploadResult ada dan statusnya success */}
+            {uploadResult && submiStatus === 'Success!' && (
+              <EuiText style={{ fontSize: '15px', marginTop: '20px', lineHeight: '1.6' }}>
                 <div>
-                  {submiStatus === "Failed" ? (
+                  <p>Jumlah data berhasil: <strong>{uploadResult.successCount || 0}</strong></p>
+                  
+                  {/* Bagian Unit Kuota */}
+                  {uploadResult.quotaAffectedUnits && uploadResult.quotaAffectedUnits.length > 0 && (
                     <>
-                      {submitMessage} <br/>
-                      {submitMessage1}
-                    </>
-                  ) : (
-                    <>
-                      Data unit kena batasan kuota: {submitMessage2} <br />
-                      Data unit: {submitMessage1}
+                      <p>Jumlah unit quota: <strong>{uploadResult.quotaAffectedUnits.length}</strong></p>
+                      <p>Unit kuota: {uploadResult.quotaAffectedUnits.join(', ')}</p>
                     </>
                   )}
-                  </div>
-            </EuiText>
+
+                  {/* Bagian Unit Gagal */}
+                  {uploadResult.failedCount > 0 && uploadResult.failedData && (
+                    <>
+                      <p style={{ marginTop: '10px' }}>Jumlah Unit gagal: <strong>{uploadResult.failedCount}</strong></p>
+                      <p>Unit gagal: {uploadResult.failedData.map(item => item.no_unit).join(', ')}</p>
+                      {renderFailedReasons()}
+                    </>
+                  )}
+                </div>
+              </EuiText>
+            )}
+
           </EuiModalBody>
           <EuiModalFooter>
             <EuiButton onClick={closeSubmitModal} style={{ background: "#73A33F", color: "white" }}>
@@ -214,4 +247,4 @@ const modalUpload = () => {
   );
 };
 
-export default modalUpload;
+export default ModalUpload;
