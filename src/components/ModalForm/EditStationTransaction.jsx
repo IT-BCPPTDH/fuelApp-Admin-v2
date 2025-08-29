@@ -255,7 +255,7 @@ const EditStationTransaction = ({row}) => {
       }else{
         try {
           const updateList = (({ date, fuelman_id, lkf_id, station, shift }) => ({
-              date: moment(date, 'DD-MM-YYYY').format('YYYY-MM-DD'), 
+              date: date, 
               fuelman_id,
               lkf_id,
               station,
