@@ -591,56 +591,69 @@ const ModalFormDataEdit = ({row}) => {
 
   const handleUnitChange = async (val) => {
     setUnitBefore(row.no_unit);
-  
+
     if (!val) {
       setFormData((prev) => ({
         ...prev,
-        no_unit: "",
-        model_unit: "",
-        owner: "",
+        no_unit: '',
+        model_unit: '',
+        owner: '',
         hm_last: 0,
         qty_last: 0,
         fbr: 0,
       }));
       return;
     }
+
     const selectedUnit = equipData.find((unit) => unit.unit_no === val.value);
     const lastTR = await fetchUnitData(val.value);
     const fetchLimited = await handleQuota(val.value);
-    if(formData.hm_km <= lastTR[0].hm_km){
-      setErrors({
-        hm_km: "HM unit tidak boleh kurang dari atau sama dengan HM last",
-      });
-      setButtonDisable(true)
+    const lastTransaction = lastTR && lastTR.length > 0 ? lastTR[0] : null;
+
+    let totalFbr = 0;
+    if (lastTransaction) {
+      if (formData.hm_km <= lastTransaction.hm_km) {
+        setErrors({
+          hm_km: 'HM unit tidak boleh kurang dari atau sama dengan HM last',
+        });
+        setButtonDisable(true);
+      } else {
+        setErrors({ hm_km: '' });
+        setButtonDisable(false);
+      }
+      totalFbr = calcFBR(
+        formData.hm_km,
+        lastTransaction.hm_km,
+        lastTransaction.qty
+      );
+    } else {
+      setErrors({ hm_km: '' });
+      setButtonDisable(false);
     }
-    const totalFbr = calcFBR(lastTR[0].hm_km, formData.hm_km, lastTR[0].qty);
-    setErrors({
-      hm_km: "",
-    });
-    setButtonDisable(false)
-  
+
     // Reset error terlebih dahulu
     setErrors((prev) => ({ ...prev, qty: null }));
-  
+
     // Jika unit punya kuota, cek apakah melebihi limit
     if (fetchLimited) {
-      const totalLimited = (fetchLimited.quota || 0) + (fetchLimited.additional || 0);
+      const totalLimited =
+        (fetchLimited.quota || 0) + (fetchLimited.additional || 0);
       if (formData.qty >= totalLimited) {
         setErrors((prev) => ({
           ...prev,
-          qty: "Kuota terisi melebihi batas yang telah ditentukan! Silahkan melakukan request quota.",
+          qty: 'Kuota terisi melebihi batas yang telah ditentukan! Silahkan melakukan request quota.',
         }));
       }
     }
-  
+
     // Update form data tetap dilakukan
     setFormData((prev) => ({
       ...prev,
-      no_unit: selectedUnit?.unit_no || "",
-      model_unit: selectedUnit?.type || "",
-      owner: selectedUnit?.owner || "",
-      hm_last: lastTR[0].hm_km,
-      qty_last: lastTR[0].qty,
+      no_unit: selectedUnit?.unit_no || '',
+      model_unit: selectedUnit?.type || '',
+      owner: selectedUnit?.owner || '',
+      hm_last: lastTransaction ? lastTransaction.hm_km : 0,
+      qty_last: lastTransaction ? lastTransaction.qty : 0,
       fbr: totalFbr,
     }));
   };
