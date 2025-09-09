@@ -264,11 +264,20 @@ const ModalFormDataEdit = ({row}) => {
   }, []);
 
   const calcFBR = (hmkm, hm_last, qty_last) => {
+    const num_qty_last = Number(qty_last);
     // Pastikan qty_last bukan nol dan semua nilai valid
-    if (!qty_last || isNaN(hmkm) || isNaN(hm_last) || isNaN(qty_last)) return 0;
+    if (
+      !num_qty_last ||
+      num_qty_last === 0 ||
+      isNaN(hmkm) ||
+      isNaN(hm_last) ||
+      isNaN(num_qty_last)
+    ) {
+      return 0;
+    }
   
-    const selisihHm = Math.abs(hm_last - hmkm);
-    const fbr = selisihHm / qty_last;
+    const selisihHm = Math.abs(Number(hm_last) - Number(hmkm));
+    const fbr = selisihHm / num_qty_last;
   
     // Cegah hasil NaN atau Infinity
     return isFinite(fbr) ? fbr : 0;
@@ -540,8 +549,16 @@ const ModalFormDataEdit = ({row}) => {
       setIsModalVisible(true)
     }else{
       try {
+        const dataToSubmit = { ...formData };
+        if (!selectedTime) {
+          dataToSubmit.start = row.start;
+        }
+        if (!selectedTimeEnd) {
+          dataToSubmit.end = row.end;
+        }
+        console.log(dataToSubmit)
         const dates = JSON.parse(localStorage.getItem('tanggal'))
-        const res = await formService.updateData({ id: row.id, unitBefore: unitBefore, qtyBefore: qtyBefore, date_trx : dates, ...formData, updated_by: user.JDE });
+        const res = await formService.updateData({ id: row.id, unitBefore: unitBefore, qtyBefore: qtyBefore, date_trx : dates, ...dataToSubmit, updated_by: user.JDE });
         if (res.status === "200") {
           setEditStatus('Success!');
           setEditMessage('Data successfully saved!');
