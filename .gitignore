@@ -31,3 +31,4 @@ restart.sh.log
 
 # Actions runner folder
 actions-runner/
+Dockerfile
