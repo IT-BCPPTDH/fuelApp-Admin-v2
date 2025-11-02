@@ -28,3 +28,8 @@ bun.lockb
 
 .env
 restart.sh.log
+
+# Actions runner folder
+actions-runner/
+Dockerfile
+.github/
