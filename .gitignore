@@ -33,3 +33,5 @@ restart.sh.log
 actions-runner/
 Dockerfile
 .github/
+vite.config.js.timestamp-*.mjs
+
