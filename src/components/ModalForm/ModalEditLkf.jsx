@@ -44,7 +44,7 @@ const ModalEditLkf = () => {
   const [editStatus, setEditStatus] = useState("");
   const [editMessage, setEditMessage] = useState("");
   const [isEditResult, setIsEditResult] = useState(false);
-
+  const [statusAwal, setStatusAwal] = useState("");
   const showEditModal = () => setIsEditResult(true);
   const closeEditModal = () => {
     setIsEditResult(false);
@@ -52,6 +52,8 @@ const ModalEditLkf = () => {
   };
 
   useEffect(() => {
+    if (!lkfId) return;
+
     const fetchData = async () => {
       const res = await formService.getDataById(lkfId);
       if (
@@ -60,19 +62,17 @@ const ModalEditLkf = () => {
         res.data.length > 0
       ) {
         const data = res.data[0];
-
         setFormData({
-          lkf_id: data.lkf_id || "",
-          opening_dip: data.opening_dip || "",
-          opening_sonding: data.opening_sonding || "",
-          closing_dip: data.closing_dip || "",
-          closing_sonding: data.closing_sonding || "",
-          // close_data: data.close_data || "",
-          // variant: data.variant || "",
-          flow_meter_start: data.flow_meter_start || "",
-          flow_meter_end: data.flow_meter_end || "",
-          status: data.status || "",
+          lkf_id: data.lkf_id ?? "",
+          opening_dip: data.opening_dip ?? "",
+          opening_sonding: data.opening_sonding ?? "",
+          closing_dip: data.closing_dip ?? "",
+          closing_sonding: data.closing_sonding ?? "",
+          flow_meter_start: data.flow_meter_start ?? 0,
+          flow_meter_end: data.flow_meter_end ?? "",
+          status: data.status ?? "",
         });
+        setStatusAwal(data.status ?? "");
       }
     };
     fetchData();
@@ -80,23 +80,76 @@ const ModalEditLkf = () => {
 
   const handleSubmit = async () => {
     try {
+      if (formData.status === "Open") {
+        const allowedFields = ["opening_dip", "opening_sonding"];
+
+        const newFormData = Object.keys(formData).reduce((acc, key) => {
+          if (allowedFields.includes(key)) {
+            acc[key] = formData[key];
+          } else {
+            acc[key] = formData[key];
+          }
+          return acc;
+        }, {});
+
+        const payload = {
+          ...newFormData,
+          updated_by: user?.JDE || "",
+        };
+
+        const res = await formService.updateLkf(payload);
+
+        if (res.status === 200 || res.status === "200") {
+          setEditStatus("Success");
+          setEditMessage("Data berhasil diperbarui (status Open).");
+        } else {
+          setEditStatus("Failed");
+          setEditMessage("Gagal memperbarui data (status Open).");
+        }
+
+        showEditModal();
+        return;
+      }
+
+      if (formData.status === "Close") {
+        const kosong = Object.keys(formData).filter(
+          (key) =>
+            formData[key] === "" ||
+            formData[key] === null ||
+            formData[key] === undefined
+        );
+
+        if (kosong.length > 0) {
+          setEditStatus("Failed");
+          setEditMessage(
+            `Tidak dapat menutup LKF. Field berikut harus diisi: ${kosong.join(
+              ", "
+            )}`
+          );
+          showEditModal();
+          return;
+        }
+      }
       const payload = {
         ...formData,
         updated_by: user?.JDE || "",
       };
+
       const res = await formService.updateLkf(payload);
-      if (res.status === "200" || res.status === 200) {
+
+      if (res.status === 200 || res.status === "200") {
         setEditStatus("Success");
-        setEditMessage("Data successfully updated!");
+        setEditMessage("Data berhasil diperbarui!");
       } else {
         setEditStatus("Failed");
-        setEditMessage("Update failed. Please try again!");
+        setEditMessage("Update gagal. Silakan coba lagi!");
       }
+
       showEditModal();
     } catch (err) {
       console.error(err);
       setEditStatus("Error");
-      setEditMessage("Terjadi kesalahan saat update data!");
+      setEditMessage("Terjadi kesalahan saat memperbarui data!");
       showEditModal();
     }
   };
@@ -150,6 +203,11 @@ const ModalEditLkf = () => {
                                 ...formData,
                                 [key]: e.target.value,
                               })
+                            }
+                            disabled={
+                              formData.status === "Open" &&
+                              key !== "opening_dip" &&
+                              key !== "opening_sonding"
                             }
                           />
                         )}

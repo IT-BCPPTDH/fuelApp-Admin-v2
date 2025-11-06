@@ -287,36 +287,36 @@ const DetailsPageTransaction = () => {
       truncateText: true,
       width: "5vh",
     },
-    {
-      field: "signature",
-      name: "Sign",
-      align: "center",
-      width: "5vh",
-      truncateText: true,
-      render: (signature) => {
-        sessionStorage.setItem("sign", JSON.stringify(signUrl[signature]));
-        return signUrl[signature] ? (
-          <ModalSign signature={signUrl[signature]} />
-        ) : (
-          <ModalSign signature={signature} />
-        );
-      },
-    },
-    {
-      field: "photo",
-      name: "Picture",
-      align: "center",
-      width: "5vh",
-      truncateText: true,
-      render: (photo) => {
-        sessionStorage.setItem("photo", JSON.stringify(imgUrl[photo]));
-        return imgUrl[photo] ? (
-          <ModalPicture photo={imgUrl[photo]} />
-        ) : (
-          <ModalPicture photo={photo} />
-        );
-      },
-    },
+    // {
+    //   field: "signature",
+    //   name: "Sign",
+    //   align: "center",
+    //   width: "5vh",
+    //   truncateText: true,
+    //   render: (signature) => {
+    //     sessionStorage.setItem("sign", JSON.stringify(signUrl[signature]));
+    //     return signUrl[signature] ? (
+    //       <ModalSign signature={signUrl[signature]} />
+    //     ) : (
+    //       <ModalSign signature={signature} />
+    //     );
+    //   },
+    // },
+    // {
+    //   field: "photo",
+    //   name: "Picture",
+    //   align: "center",
+    //   width: "5vh",
+    //   truncateText: true,
+    //   render: (photo) => {
+    //     sessionStorage.setItem("photo", JSON.stringify(imgUrl[photo]));
+    //     return imgUrl[photo] ? (
+    //       <ModalPicture photo={imgUrl[photo]} />
+    //     ) : (
+    //       <ModalPicture photo={photo} />
+    //     );
+    //   },
+    // },
     {
       field: "entry_time",
       name: "Entry Time",
@@ -396,9 +396,18 @@ const DetailsPageTransaction = () => {
     textOnly: true,
   });
 
-  const filteredItems = formData.filter((item) =>
-    item.no_unit.toLowerCase().includes(searchValue.toLowerCase())
-  );
+  const filteredItems = formData.filter((item) => {
+    const search = searchValue.toLowerCase();
+
+    return (
+      item.no_unit?.toLowerCase().includes(search) ||
+      item.model_unit?.toLowerCase().includes(search) ||
+      item.owner?.toLowerCase().includes(search) ||
+      item.jde_operator?.toLowerCase().includes(search) ||
+      item.name_operator?.toLowerCase().includes(search) ||
+      item.type?.toLowerCase().includes(search)
+    );
+  });
 
   const findPageItems = (items, pageIndex, pageSize) => {
     const startIndex = pageIndex * pageSize;
