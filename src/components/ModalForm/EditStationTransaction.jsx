@@ -21,6 +21,7 @@ import stationService from "../../services/stationDashboard";
 import UserService from "../../services/UserService";
 import moment from "moment";
 import CreatableSelect from "react-select/creatable";
+import { EuiGlobalToastList } from "@elastic/eui";
 
 const customStyles = {
   indicatorSeparator: (base) => ({
@@ -87,9 +88,29 @@ const EditStationTransaction = ({ row }) => {
     shift: row.shift || false,
     status: row.status || false,
   });
+  console.log(formData);
   const [errors, setErrors] = useState({});
   const [selectedOption, setSelectedOption] = useState(null);
   const [selectedDate, setSelectedDate] = useState(moment());
+  const [isEditable, setIsEditable] = useState(true);
+
+  const [toasts, setToasts] = useState([]);
+
+  const addToast = (title, color = "success") => {
+    setToasts((prevToasts) => [
+      ...prevToasts,
+      {
+        id: new Date().getTime(),
+        title,
+        color,
+        iconType: color === "success" ? "check" : "alert",
+      },
+    ]);
+  };
+
+  const removeToast = (toast) => {
+    setToasts((prevToasts) => prevToasts.filter((t) => t.id !== toast.id));
+  };
 
   const user = JSON.parse(localStorage.getItem("user_data"));
   const modalFormId = useGeneratedHtmlId({ prefix: "modalForm" });
@@ -169,7 +190,14 @@ const EditStationTransaction = ({ row }) => {
     } else {
       setSelectedDate(null);
     }
+
+    if (row.status === "Open") {
+      setIsEditable(false);
+    } else {
+      setIsEditable(true);
+    }
   }, [row]);
+
   useEffect(() => {
     const fetchUser = async () => {
       try {
@@ -505,6 +533,13 @@ const EditStationTransaction = ({ row }) => {
               }}
               type="button"
               onClick={() => {
+                if (formData.status === "Open") {
+                  addToast(
+                    "⚠️ Status masih Open, harap Close dahulu sebelum mengedit data!"
+                  );
+                  return;
+                }
+
                 const formElement = document.getElementById(modalFormId);
                 if (formElement) {
                   formElement.dispatchEvent(new Event("submit"));
@@ -515,6 +550,11 @@ const EditStationTransaction = ({ row }) => {
             >
               Save
             </EuiButton>
+            <EuiGlobalToastList
+              toasts={toasts}
+              dismissToast={removeToast}
+              toastLifeTimeMs={4000}
+            />
           </EuiModalFooter>
         </EuiModal>
       )}

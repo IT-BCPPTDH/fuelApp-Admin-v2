@@ -5,6 +5,12 @@ import {
   EuiFieldSearch,
   EuiFieldText,
   EuiLink,
+  EuiModal,
+  EuiModalBody,
+  EuiModalHeader,
+  EuiModalHeaderTitle,
+  EuiModalFooter,
+  EuiButtonEmpty,
 } from "@elastic/eui";
 
 import { DataTrx } from "./data";
@@ -20,6 +26,18 @@ const TableData = () => {
   const [formLkf, setFormLkf] = useState([]);
   const { station } = useParams();
   const date = JSON.parse(localStorage.getItem("formattedOption"));
+  const [selectedNote, setSelectedNote] = useState(null);
+  const [isModalVisible, setIsModalVisible] = useState(false);
+
+  const showNoteModal = (note) => {
+    setSelectedNote(note);
+    setIsModalVisible(true);
+  };
+
+  const closeModal = () => {
+    setIsModalVisible(false);
+    setSelectedNote(null);
+  };
 
   const columns = [
     {
@@ -61,6 +79,23 @@ const TableData = () => {
       truncateText: true,
     },
     {
+      field: "note",
+      name: "Catatan",
+      truncateText: true,
+      render: (note) => (
+        <EuiButton
+          size="s"
+          color="primary"
+          onClick={(e) => {
+            e.stopPropagation();
+            showNoteModal(note);
+          }}
+        >
+          Lihat
+        </EuiButton>
+      ),
+    },
+    {
       field: "action",
       name: "Action",
       width: "30vh",
@@ -96,9 +131,17 @@ const TableData = () => {
     setSearchValue(value);
   };
 
-  const filteredItems = formLkf.filter((item) =>
-    item.lkf_id.toLowerCase().includes(searchValue.toLowerCase())
-  );
+  const filteredItems = formLkf.filter((item) => {
+    const search = (value) =>
+      value?.toLowerCase().includes(searchValue.toLowerCase());
+    return (
+      search(item.lkf_id) ||
+      search(item.station) ||
+      search(item.fuelman_id) ||
+      search(item.status) ||
+      search(item.shift)
+    );
+  });
 
   const renderHeader = () => (
     <>
@@ -151,6 +194,20 @@ const TableData = () => {
         rowProps={getRowProps}
         cellProps={getCellProps}
       />
+
+      {isModalVisible && (
+        <EuiModal onClose={closeModal}>
+          <EuiModalHeader>
+            <EuiModalHeaderTitle>Catatan</EuiModalHeaderTitle>
+          </EuiModalHeader>
+          <EuiModalBody>
+            <p>{selectedNote || "Tidak ada catatan"}</p>
+          </EuiModalBody>
+          <EuiModalFooter>
+            <EuiButtonEmpty onClick={closeModal}>Tutup</EuiButtonEmpty>
+          </EuiModalFooter>
+        </EuiModal>
+      )}
     </>
   );
 };
